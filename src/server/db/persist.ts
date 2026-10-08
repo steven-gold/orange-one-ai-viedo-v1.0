@@ -62,6 +62,15 @@ import {
   STR_ROUTE,
   STR_VISIBLE_CONTROLS,
 } from "../domain/str";
+import {
+  INFO_CHAIN,
+  INFO_CONTROL_ACTIONS,
+  INFO_PAGE_UID,
+  INFO_PERMISSION,
+  INFO_PROJECTION,
+  INFO_ROUTE,
+  INFO_VISIBLE_CONTROLS,
+} from "../domain/info";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -79,6 +88,8 @@ import type {
   PermissionAssignment,
   QaFieldValue,
   QaReadModel,
+  InfoFieldValue,
+  InfoReadModel,
   StrFieldValue,
   StrReadModel,
   VideoFieldValue,
@@ -614,6 +625,62 @@ export async function persistRecordStrAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface InfoFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasInfoPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_info_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, INFO_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListInfoFields(): Promise<InfoFieldValue[]> {
+  const rows = await getSqlClient().all<InfoFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_info_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return INFO_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetInfoReadModel(accountUid: string): Promise<InfoReadModel> {
+  const authorized = await persistHasInfoPermission(accountUid);
+  const fields = authorized ? await persistListInfoFields() : [];
+  return {
+    projectionUid: INFO_PROJECTION,
+    pageUid: INFO_PAGE_UID,
+    route: INFO_ROUTE,
+    permission: INFO_PERMISSION,
+    chainUid: INFO_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownInfoAction(controlUid: string, actionUid: string): boolean {
+  return INFO_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordInfoAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_info_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

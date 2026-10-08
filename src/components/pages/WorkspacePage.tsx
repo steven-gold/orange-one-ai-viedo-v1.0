@@ -6,6 +6,7 @@ import { DashboardVisual } from "./DashboardVisual";
 import { EditVisual } from "./EditVisual";
 import { DbVisual } from "./DbVisual";
 import { QaVisual } from "./QaVisual";
+import { InfoVisual } from "./InfoVisual";
 import { StrVisual } from "./StrVisual";
 import { VideoVisual } from "./VideoVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
@@ -44,6 +45,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "workspace:STR-01") {
     return <StrVisual />;
+  }
+  if (page.pageUid === "workspace:INFO-01") {
+    return <InfoVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

@@ -155,3 +155,18 @@ export interface StrReadModel {
   authorized: boolean;
   fields: StrFieldValue[];
 }
+
+export interface InfoFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface InfoReadModel {
+  projectionUid: "InfoWorkbenchProjection";
+  pageUid: "workspace:INFO-01";
+  route: "/info";
+  permission: "information.read";
+  chainUid: "INFO-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: InfoFieldValue[];
+}

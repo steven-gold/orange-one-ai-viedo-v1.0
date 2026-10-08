@@ -547,3 +547,62 @@ export async function postStrAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface InfoFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface InfoReadModel {
+  projectionUid: "InfoWorkbenchProjection";
+  pageUid: "workspace:INFO-01";
+  route: "/info";
+  permission: "information.read";
+  chainUid: "INFO-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: InfoFieldValue[];
+}
+
+export class InfoClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "InfoClientError";
+  }
+}
+
+export async function fetchInfoReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<InfoReadModel> {
+  const response = await fetch("/api/info", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new InfoClientError("INFO_READ_UNAVAILABLE", `info request failed: ${response.status}`);
+  }
+  return (await response.json()) as InfoReadModel;
+}
+
+export async function postInfoAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/info/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}
