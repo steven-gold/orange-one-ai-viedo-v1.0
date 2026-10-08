@@ -170,3 +170,18 @@ export interface InfoReadModel {
   authorized: boolean;
   fields: InfoFieldValue[];
 }
+
+export interface SysFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface SysReadModel {
+  projectionUid: "SysWorkbenchProjection";
+  pageUid: "admin:SYS-01";
+  route: "/admin/system";
+  permission: "system.change.propose";
+  chainUid: "SYS-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: SysFieldValue[];
+}

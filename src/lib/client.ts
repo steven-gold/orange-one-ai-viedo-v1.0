@@ -606,3 +606,62 @@ export async function postInfoAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface SysFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface SysReadModel {
+  projectionUid: "SysWorkbenchProjection";
+  pageUid: "admin:SYS-01";
+  route: "/admin/system";
+  permission: "system.change.propose";
+  chainUid: "SYS-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: SysFieldValue[];
+}
+
+export class SysClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "SysClientError";
+  }
+}
+
+export async function fetchSysReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<SysReadModel> {
+  const response = await fetch("/api/system", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new SysClientError("SYS_READ_UNAVAILABLE", `system request failed: ${response.status}`);
+  }
+  return (await response.json()) as SysReadModel;
+}
+
+export async function postSysAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/system/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

@@ -8,6 +8,7 @@ import { DbVisual } from "./DbVisual";
 import { QaVisual } from "./QaVisual";
 import { InfoVisual } from "./InfoVisual";
 import { StrVisual } from "./StrVisual";
+import { SysVisual } from "./SysVisual";
 import { VideoVisual } from "./VideoVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
 import { useI18n } from "@/i18n/LocaleProvider";
@@ -48,6 +49,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "workspace:INFO-01") {
     return <InfoVisual />;
+  }
+  if (page.pageUid === "admin:SYS-01") {
+    return <SysVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

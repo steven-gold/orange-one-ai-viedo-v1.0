@@ -71,6 +71,15 @@ import {
   INFO_ROUTE,
   INFO_VISIBLE_CONTROLS,
 } from "../domain/info";
+import {
+  SYS_CHAIN,
+  SYS_CONTROL_ACTIONS,
+  SYS_PAGE_UID,
+  SYS_PERMISSION,
+  SYS_PROJECTION,
+  SYS_ROUTE,
+  SYS_VISIBLE_CONTROLS,
+} from "../domain/sys";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -92,6 +101,8 @@ import type {
   InfoReadModel,
   StrFieldValue,
   StrReadModel,
+  SysFieldValue,
+  SysReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -681,6 +692,62 @@ export async function persistRecordInfoAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_info_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface SysFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasSysPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_sys_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, SYS_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListSysFields(): Promise<SysFieldValue[]> {
+  const rows = await getSqlClient().all<SysFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_sys_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return SYS_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetSysReadModel(accountUid: string): Promise<SysReadModel> {
+  const authorized = await persistHasSysPermission(accountUid);
+  const fields = authorized ? await persistListSysFields() : [];
+  return {
+    projectionUid: SYS_PROJECTION,
+    pageUid: SYS_PAGE_UID,
+    route: SYS_ROUTE,
+    permission: SYS_PERMISSION,
+    chainUid: SYS_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownSysAction(controlUid: string, actionUid: string): boolean {
+  return SYS_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordSysAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_sys_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
