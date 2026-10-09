@@ -215,3 +215,18 @@ export interface DevReadModel {
   authorized: boolean;
   fields: DevFieldValue[];
 }
+
+export interface SocFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface SocReadModel {
+  projectionUid: "SocWorkbenchProjection";
+  pageUid: "admin:SOC-01";
+  route: "/admin/social";
+  permission: "social.account.configure";
+  chainUid: "SOC-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: SocFieldValue[];
+}

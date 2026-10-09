@@ -783,3 +783,62 @@ export async function postDevAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface SocFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface SocReadModel {
+  projectionUid: "SocWorkbenchProjection";
+  pageUid: "admin:SOC-01";
+  route: "/admin/social";
+  permission: "social.account.configure";
+  chainUid: "SOC-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: SocFieldValue[];
+}
+
+export class SocClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "SocClientError";
+  }
+}
+
+export async function fetchSocReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<SocReadModel> {
+  const response = await fetch("/api/social", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new SocClientError("SOC_READ_UNAVAILABLE", `social request failed: ${response.status}`);
+  }
+  return (await response.json()) as SocReadModel;
+}
+
+export async function postSocAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/social/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

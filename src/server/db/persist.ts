@@ -98,6 +98,15 @@ import {
   DEV_ROUTE,
   DEV_VISIBLE_CONTROLS,
 } from "../domain/dev";
+import {
+  SOC_CHAIN,
+  SOC_CONTROL_ACTIONS,
+  SOC_PAGE_UID,
+  SOC_PERMISSION,
+  SOC_PROJECTION,
+  SOC_ROUTE,
+  SOC_VISIBLE_CONTROLS,
+} from "../domain/soc";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -125,6 +134,8 @@ import type {
   IamReadModel,
   DevFieldValue,
   DevReadModel,
+  SocFieldValue,
+  SocReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -882,6 +893,62 @@ export async function persistRecordDevAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_dev_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface SocFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasSocPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_soc_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, SOC_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListSocFields(): Promise<SocFieldValue[]> {
+  const rows = await getSqlClient().all<SocFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_soc_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return SOC_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetSocReadModel(accountUid: string): Promise<SocReadModel> {
+  const authorized = await persistHasSocPermission(accountUid);
+  const fields = authorized ? await persistListSocFields() : [];
+  return {
+    projectionUid: SOC_PROJECTION,
+    pageUid: SOC_PAGE_UID,
+    route: SOC_ROUTE,
+    permission: SOC_PERMISSION,
+    chainUid: SOC_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownSocAction(controlUid: string, actionUid: string): boolean {
+  return SOC_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordSocAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_soc_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
