@@ -230,3 +230,18 @@ export interface SocReadModel {
   authorized: boolean;
   fields: SocFieldValue[];
 }
+
+export interface ErpFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface ErpReadModel {
+  projectionUid: "ErpWorkbenchProjection";
+  pageUid: "admin:ERP-01";
+  route: "/admin/erp";
+  permission: "erp.connector.read";
+  chainUid: "ERP-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: ErpFieldValue[];
+}

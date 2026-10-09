@@ -107,6 +107,15 @@ import {
   SOC_ROUTE,
   SOC_VISIBLE_CONTROLS,
 } from "../domain/soc";
+import {
+  ERP_CHAIN,
+  ERP_CONTROL_ACTIONS,
+  ERP_PAGE_UID,
+  ERP_PERMISSION,
+  ERP_PROJECTION,
+  ERP_ROUTE,
+  ERP_VISIBLE_CONTROLS,
+} from "../domain/erp";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -136,6 +145,8 @@ import type {
   DevReadModel,
   SocFieldValue,
   SocReadModel,
+  ErpFieldValue,
+  ErpReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -949,6 +960,62 @@ export async function persistRecordSocAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_soc_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface ErpFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasErpPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_erp_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, ERP_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListErpFields(): Promise<ErpFieldValue[]> {
+  const rows = await getSqlClient().all<ErpFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_erp_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return ERP_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetErpReadModel(accountUid: string): Promise<ErpReadModel> {
+  const authorized = await persistHasErpPermission(accountUid);
+  const fields = authorized ? await persistListErpFields() : [];
+  return {
+    projectionUid: ERP_PROJECTION,
+    pageUid: ERP_PAGE_UID,
+    route: ERP_ROUTE,
+    permission: ERP_PERMISSION,
+    chainUid: ERP_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownErpAction(controlUid: string, actionUid: string): boolean {
+  return ERP_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordErpAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_erp_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

@@ -1,0 +1,385 @@
+.page {
+  position: relative;
+  --erp-surface: #0c1026;
+  --erp-input: #0a0f24;
+  --erp-border: rgba(142, 112, 255, 0.28);
+  --erp-border-active: rgba(179, 140, 255, 0.46);
+  --erp-purple: #8b5cff;
+  --erp-text: #f3f5ff;
+  --erp-muted: #7f88a8;
+  --erp-secondary: #aeb7d9;
+  --erp-danger: #ff6b7a;
+  --erp-ok: #3ddc97;
+  --erp-warn: #f5b942;
+  --erp-info: #4d8dff;
+  min-width: 1280px;
+  min-height: calc(100vh - 84px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  color: var(--erp-text);
+  overflow-y: auto;
+}
+
+.error {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--erp-danger);
+  border-radius: 10px;
+  color: var(--erp-danger);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 2px 0;
+  min-height: 56px;
+}
+
+.headingTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.headingMeta {
+  margin: 0;
+  color: var(--erp-muted);
+  font-size: 12px;
+}
+
+.views {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-height: 52px;
+}
+
+.viewBtn {
+  height: 44px;
+  border: 1px solid var(--erp-border);
+  border-radius: 12px;
+  background: var(--erp-surface);
+  color: var(--erp-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.viewBtn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.viewActive {
+  background: var(--erp-purple);
+  border-color: var(--erp-purple);
+  color: #fff;
+  font-weight: 600;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 72fr) minmax(300px, 28fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.workspace {
+  border: 1px solid var(--erp-border);
+  border-radius: 16px;
+  background: var(--erp-surface);
+  padding: 16px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.workspace h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.rail {
+  border: 1px solid var(--erp-border);
+  border-radius: 16px;
+  background: var(--erp-surface);
+  padding: 16px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rail h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.note {
+  margin: 0;
+  color: var(--erp-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.duo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid var(--erp-border);
+  border-radius: 14px;
+  background: rgba(10, 15, 36, 0.45);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.statusBar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  border: 1px solid var(--erp-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(10, 15, 36, 0.45);
+}
+
+.statusItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 16px;
+}
+
+.statusItem span {
+  color: var(--erp-muted);
+  font-size: 11px;
+}
+
+.statusItem strong {
+  color: var(--erp-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metric {
+  border: 1px solid var(--erp-border);
+  border-radius: 12px;
+  background: var(--erp-input);
+  min-height: 72px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metric span {
+  color: var(--erp-muted);
+  font-size: 12px;
+}
+
+.metric strong {
+  color: var(--erp-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.decisionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.decisionRow {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding-right: 18px;
+}
+
+.decisionRow span {
+  color: var(--erp-muted);
+  font-size: 12px;
+}
+
+.decisionRow strong {
+  color: var(--erp-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.kvList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kvRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.kvHead {
+  color: var(--erp-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--erp-border);
+  padding-bottom: 6px;
+}
+
+.kvRow span {
+  color: var(--erp-muted);
+}
+
+.kvRow strong {
+  color: var(--erp-secondary);
+  font-weight: 500;
+  text-align: right;
+}
+
+.kvRow em {
+  color: var(--erp-secondary);
+  font-style: normal;
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 56px;
+  align-items: center;
+}
+
+.railCard {
+  border: 1px solid var(--erp-border);
+  border-radius: 12px;
+  background: rgba(10, 15, 36, 0.55);
+  padding: 12px 14px;
+  position: relative;
+}
+
+.railCard span {
+  display: block;
+  color: var(--erp-text);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.railCard strong {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--erp-muted);
+}
+
+.dot {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusItem .dot,
+.decisionRow .dot {
+  top: 6px;
+  right: 0;
+}
+
+.dotOk {
+  background: var(--erp-ok);
+}
+
+.dotInfo {
+  background: var(--erp-info);
+}
+
+.dotWarn {
+  background: var(--erp-warn);
+}
+
+.dotDanger {
+  background: var(--erp-danger);
+}
+
+.railActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.btn {
+  height: 36px;
+  min-width: 88px;
+  padding: 0 16px;
+  border: 1px solid var(--erp-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--erp-text);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--erp-border-active);
+}
+
+.btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: var(--erp-purple);
+  border-color: var(--erp-purple);
+  color: #fff;
+}
+
+.drawer {
+  width: 520px;
+  max-width: 100%;
+  border: 1px solid var(--erp-border);
+  border-radius: 16px;
+  background: var(--erp-surface);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawer h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}

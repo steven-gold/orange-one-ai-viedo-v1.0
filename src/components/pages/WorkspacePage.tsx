@@ -12,6 +12,7 @@ import { SysVisual } from "./SysVisual";
 import { IamVisual } from "./IamVisual";
 import { DevVisual } from "./DevVisual";
 import { SocVisual } from "./SocVisual";
+import { ErpVisual } from "./ErpVisual";
 import { VideoVisual } from "./VideoVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
 import { useI18n } from "@/i18n/LocaleProvider";
@@ -64,6 +65,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "admin:SOC-01") {
     return <SocVisual />;
+  }
+  if (page.pageUid === "admin:ERP-01") {
+    return <ErpVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

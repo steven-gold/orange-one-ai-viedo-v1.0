@@ -842,3 +842,62 @@ export async function postSocAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface ErpFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface ErpReadModel {
+  projectionUid: "ErpWorkbenchProjection";
+  pageUid: "admin:ERP-01";
+  route: "/admin/erp";
+  permission: "erp.connector.read";
+  chainUid: "ERP-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: ErpFieldValue[];
+}
+
+export class ErpClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "ErpClientError";
+  }
+}
+
+export async function fetchErpReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<ErpReadModel> {
+  const response = await fetch("/api/erp", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new ErpClientError("ERP_READ_UNAVAILABLE", `erp request failed: ${response.status}`);
+  }
+  return (await response.json()) as ErpReadModel;
+}
+
+export async function postErpAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/erp/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}
