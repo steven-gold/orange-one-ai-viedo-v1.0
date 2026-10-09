@@ -5,6 +5,7 @@ import { DB_PERMISSION, DB_VISIBLE_CONTROLS } from "../domain/db";
 import { QA_PERMISSION, QA_VISIBLE_CONTROLS } from "../domain/qa";
 import { INFO_PERMISSION, INFO_VISIBLE_CONTROLS } from "../domain/info";
 import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
+import { IAM_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
 import { STR_PERMISSION, STR_VISIBLE_CONTROLS } from "../domain/str";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
@@ -201,6 +202,22 @@ const DDL = [
     PRIMARY KEY (account_uid, permission_uid)
   )`,
   `CREATE TABLE IF NOT EXISTS ghsn_sys_audit_event (
+    event_uid TEXT PRIMARY KEY,
+    account_uid TEXT NOT NULL,
+    control_uid TEXT NOT NULL,
+    action_uid TEXT NOT NULL,
+    occurred_at TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_iam_field_projection (
+    control_uid TEXT PRIMARY KEY,
+    value_text TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_account_iam_permission (
+    account_uid TEXT NOT NULL,
+    permission_uid TEXT NOT NULL,
+    PRIMARY KEY (account_uid, permission_uid)
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_iam_audit_event (
     event_uid TEXT PRIMARY KEY,
     account_uid TEXT NOT NULL,
     control_uid TEXT NOT NULL,
@@ -414,6 +431,21 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
      ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
     ["ACC-DEMO", SYS_PERMISSION],
   );
+
+  for (const controlUid of IAM_VISIBLE_CONTROLS) {
+    await client.run(
+      `INSERT INTO ghsn_iam_field_projection (control_uid, value_text)
+       VALUES (?, ?)
+       ON CONFLICT (control_uid) DO NOTHING`,
+      [controlUid, null],
+    );
+  }
+  await client.run(
+    `INSERT INTO ghsn_account_iam_permission (account_uid, permission_uid)
+     VALUES (?, ?)
+     ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+    ["ACC-DEMO", IAM_PERMISSION],
+  );
 }
 
 export async function bootstrapDatabase(): Promise<MigrationResult> {
@@ -436,6 +468,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
     "010_str.sql",
     "011_info.sql",
     "012_sys.sql",
+    "013_iam.sql",
   ];
   const newlyApplied: string[] = [];
   const alreadyApplied: string[] = [];

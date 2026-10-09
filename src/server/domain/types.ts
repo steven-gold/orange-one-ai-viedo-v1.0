@@ -185,3 +185,18 @@ export interface SysReadModel {
   authorized: boolean;
   fields: SysFieldValue[];
 }
+
+export interface IamFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface IamReadModel {
+  projectionUid: "IamWorkbenchProjection";
+  pageUid: "admin:IAM-01";
+  route: "/admin/accounts";
+  permission: "iam.user.configure";
+  chainUid: "IAM-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: IamFieldValue[];
+}

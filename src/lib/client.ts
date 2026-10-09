@@ -665,3 +665,62 @@ export async function postSysAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface IamFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface IamReadModel {
+  projectionUid: "IamWorkbenchProjection";
+  pageUid: "admin:IAM-01";
+  route: "/admin/accounts";
+  permission: "iam.user.configure";
+  chainUid: "IAM-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: IamFieldValue[];
+}
+
+export class IamClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "IamClientError";
+  }
+}
+
+export async function fetchIamReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<IamReadModel> {
+  const response = await fetch("/api/accounts", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new IamClientError("IAM_READ_UNAVAILABLE", `accounts request failed: ${response.status}`);
+  }
+  return (await response.json()) as IamReadModel;
+}
+
+export async function postIamAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/accounts/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

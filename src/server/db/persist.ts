@@ -80,6 +80,15 @@ import {
   SYS_ROUTE,
   SYS_VISIBLE_CONTROLS,
 } from "../domain/sys";
+import {
+  IAM_CHAIN,
+  IAM_CONTROL_ACTIONS,
+  IAM_PAGE_UID,
+  IAM_PERMISSION,
+  IAM_PROJECTION,
+  IAM_ROUTE,
+  IAM_VISIBLE_CONTROLS,
+} from "../domain/iam";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -103,6 +112,8 @@ import type {
   StrReadModel,
   SysFieldValue,
   SysReadModel,
+  IamFieldValue,
+  IamReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -748,6 +759,62 @@ export async function persistRecordSysAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_sys_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface IamFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasIamPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_iam_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, IAM_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListIamFields(): Promise<IamFieldValue[]> {
+  const rows = await getSqlClient().all<IamFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_iam_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return IAM_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetIamReadModel(accountUid: string): Promise<IamReadModel> {
+  const authorized = await persistHasIamPermission(accountUid);
+  const fields = authorized ? await persistListIamFields() : [];
+  return {
+    projectionUid: IAM_PROJECTION,
+    pageUid: IAM_PAGE_UID,
+    route: IAM_ROUTE,
+    permission: IAM_PERMISSION,
+    chainUid: IAM_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownIamAction(controlUid: string, actionUid: string): boolean {
+  return IAM_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordIamAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_iam_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
