@@ -200,3 +200,18 @@ export interface IamReadModel {
   authorized: boolean;
   fields: IamFieldValue[];
 }
+
+export interface DevFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface DevReadModel {
+  projectionUid: "DevWorkbenchProjection";
+  pageUid: "admin:DEV-01";
+  route: "/admin/dev";
+  permission: "outreach.discovery.configure";
+  chainUid: "DEV-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: DevFieldValue[];
+}

@@ -10,6 +10,7 @@ import { InfoVisual } from "./InfoVisual";
 import { StrVisual } from "./StrVisual";
 import { SysVisual } from "./SysVisual";
 import { IamVisual } from "./IamVisual";
+import { DevVisual } from "./DevVisual";
 import { VideoVisual } from "./VideoVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
 import { useI18n } from "@/i18n/LocaleProvider";
@@ -56,6 +57,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "admin:IAM-01") {
     return <IamVisual />;
+  }
+  if (page.pageUid === "admin:DEV-01") {
+    return <DevVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

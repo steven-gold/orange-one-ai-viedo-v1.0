@@ -724,3 +724,62 @@ export async function postIamAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface DevFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface DevReadModel {
+  projectionUid: "DevWorkbenchProjection";
+  pageUid: "admin:DEV-01";
+  route: "/admin/dev";
+  permission: "outreach.discovery.configure";
+  chainUid: "DEV-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: DevFieldValue[];
+}
+
+export class DevClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "DevClientError";
+  }
+}
+
+export async function fetchDevReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<DevReadModel> {
+  const response = await fetch("/api/dev", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new DevClientError("DEV_READ_UNAVAILABLE", `dev request failed: ${response.status}`);
+  }
+  return (await response.json()) as DevReadModel;
+}
+
+export async function postDevAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/dev/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

@@ -89,6 +89,15 @@ import {
   IAM_ROUTE,
   IAM_VISIBLE_CONTROLS,
 } from "../domain/iam";
+import {
+  DEV_CHAIN,
+  DEV_CONTROL_ACTIONS,
+  DEV_PAGE_UID,
+  DEV_PERMISSION,
+  DEV_PROJECTION,
+  DEV_ROUTE,
+  DEV_VISIBLE_CONTROLS,
+} from "../domain/dev";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -114,6 +123,8 @@ import type {
   SysReadModel,
   IamFieldValue,
   IamReadModel,
+  DevFieldValue,
+  DevReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -815,6 +826,62 @@ export async function persistRecordIamAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_iam_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface DevFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasDevPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_dev_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, DEV_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListDevFields(): Promise<DevFieldValue[]> {
+  const rows = await getSqlClient().all<DevFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_dev_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return DEV_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetDevReadModel(accountUid: string): Promise<DevReadModel> {
+  const authorized = await persistHasDevPermission(accountUid);
+  const fields = authorized ? await persistListDevFields() : [];
+  return {
+    projectionUid: DEV_PROJECTION,
+    pageUid: DEV_PAGE_UID,
+    route: DEV_ROUTE,
+    permission: DEV_PERMISSION,
+    chainUid: DEV_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownDevAction(controlUid: string, actionUid: string): boolean {
+  return DEV_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordDevAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_dev_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
