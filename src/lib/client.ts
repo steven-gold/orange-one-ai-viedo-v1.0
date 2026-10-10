@@ -1019,3 +1019,62 @@ export async function postSg02Action(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface AdminStrFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface AdminStrReadModel {
+  projectionUid: "AdminStrWorkbenchProjection";
+  pageUid: "admin:STR-01";
+  route: "/admin/strategy";
+  permission: "strategy.administration.read";
+  chainUid: "ADMIN-STR-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: AdminStrFieldValue[];
+}
+
+export class AdminStrClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "AdminStrClientError";
+  }
+}
+
+export async function fetchAdminStrReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<AdminStrReadModel> {
+  const response = await fetch("/api/admin-strategy", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new AdminStrClientError("ADMIN_STR_READ_UNAVAILABLE", `admin strategy request failed: ${response.status}`);
+  }
+  return (await response.json()) as AdminStrReadModel;
+}
+
+export async function postAdminStrAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/admin-strategy/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

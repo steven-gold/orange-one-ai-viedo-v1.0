@@ -134,6 +134,15 @@ import {
   SG02_ROUTE,
   SG02_VISIBLE_CONTROLS,
 } from "../domain/sg02";
+import {
+  ADMIN_STR_CHAIN,
+  ADMIN_STR_CONTROL_ACTIONS,
+  ADMIN_STR_PAGE_UID,
+  ADMIN_STR_PERMISSION,
+  ADMIN_STR_PROJECTION,
+  ADMIN_STR_ROUTE,
+  ADMIN_STR_VISIBLE_CONTROLS,
+} from "../domain/adminStr";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -169,6 +178,8 @@ import type {
   AiapiReadModel,
   Sg02FieldValue,
   Sg02ReadModel,
+  AdminStrFieldValue,
+  AdminStrReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -1150,6 +1161,62 @@ export async function persistRecordSg02Action(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_sg02_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface AdminStrFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasAdminStrPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_admin_str_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, ADMIN_STR_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListAdminStrFields(): Promise<AdminStrFieldValue[]> {
+  const rows = await getSqlClient().all<AdminStrFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_admin_str_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return ADMIN_STR_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetAdminStrReadModel(accountUid: string): Promise<AdminStrReadModel> {
+  const authorized = await persistHasAdminStrPermission(accountUid);
+  const fields = authorized ? await persistListAdminStrFields() : [];
+  return {
+    projectionUid: ADMIN_STR_PROJECTION,
+    pageUid: ADMIN_STR_PAGE_UID,
+    route: ADMIN_STR_ROUTE,
+    permission: ADMIN_STR_PERMISSION,
+    chainUid: ADMIN_STR_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownAdminStrAction(controlUid: string, actionUid: string): boolean {
+  return ADMIN_STR_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordAdminStrAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_admin_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

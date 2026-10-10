@@ -15,6 +15,7 @@ import { SocVisual } from "./SocVisual";
 import { ErpVisual } from "./ErpVisual";
 import { AiapiVisual } from "./AiapiVisual";
 import { Sg02Visual } from "./Sg02Visual";
+import { AdminStrVisual } from "./AdminStrVisual";
 import { VideoVisual } from "./VideoVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
 import { useI18n } from "@/i18n/LocaleProvider";
@@ -76,6 +77,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "admin:SG-02") {
     return <Sg02Visual />;
+  }
+  if (page.pageUid === "admin:STR-01") {
+    return <AdminStrVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

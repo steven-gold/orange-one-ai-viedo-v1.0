@@ -275,3 +275,18 @@ export interface Sg02ReadModel {
   authorized: boolean;
   fields: Sg02FieldValue[];
 }
+
+export interface AdminStrFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface AdminStrReadModel {
+  projectionUid: "AdminStrWorkbenchProjection";
+  pageUid: "admin:STR-01";
+  route: "/admin/strategy";
+  permission: "strategy.administration.read";
+  chainUid: "ADMIN-STR-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: AdminStrFieldValue[];
+}
