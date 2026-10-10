@@ -960,3 +960,62 @@ export async function postAiapiAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface Sg02FieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface Sg02ReadModel {
+  projectionUid: "Sg02WorkbenchProjection";
+  pageUid: "admin:SG-02";
+  route: "/admin/qa-criteria";
+  permission: "quality.criteria.configure";
+  chainUid: "SG-02-FWC-PAGE-01";
+  authorized: boolean;
+  fields: Sg02FieldValue[];
+}
+
+export class Sg02ClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "Sg02ClientError";
+  }
+}
+
+export async function fetchSg02ReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<Sg02ReadModel> {
+  const response = await fetch("/api/sg02", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new Sg02ClientError("SG02_READ_UNAVAILABLE", `sg02 request failed: ${response.status}`);
+  }
+  return (await response.json()) as Sg02ReadModel;
+}
+
+export async function postSg02Action(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/sg02/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

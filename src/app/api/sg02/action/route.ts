@@ -1,0 +1,27 @@
+import { NextResponse } from "next/server";
+import { jsonError, requireAuth } from "@/server/auth/requireAuth";
+import { knownSg02Action, persistHasSg02Permission, persistRecordSg02Action } from "@/server/db/persist";
+import { SG02_PERMISSION } from "@/server/domain/sg02";
+
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
+  const principal = await requireAuth(request);
+  if (principal instanceof NextResponse) return principal;
+  try {
+    const body = (await request.json()) as { controlUid?: string; actionUid?: string };
+    const controlUid = String(body.controlUid ?? "");
+    const actionUid = String(body.actionUid ?? "");
+    if (!knownSg02Action(controlUid, actionUid)) {
+      return jsonError("SG02_ACTION_UNAVAILABLE", `Unknown control ${controlUid}`, 404);
+    }
+    const allowed = await persistHasSg02Permission(principal.accountUid);
+    if (!allowed) {
+      return jsonError("AUTHORIZATION_DENIED", `${SG02_PERMISSION} required`, 403);
+    }
+    const eventUid = await persistRecordSg02Action(principal.accountUid, controlUid, actionUid);
+    return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
+  } catch {
+    return jsonError("INTERNAL_ERROR", "Unexpected SG02 runtime error", 500);
+  }
+}

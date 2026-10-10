@@ -125,6 +125,15 @@ import {
   AIAPI_ROUTE,
   AIAPI_VISIBLE_CONTROLS,
 } from "../domain/aiapi";
+import {
+  SG02_CHAIN,
+  SG02_CONTROL_ACTIONS,
+  SG02_PAGE_UID,
+  SG02_PERMISSION,
+  SG02_PROJECTION,
+  SG02_ROUTE,
+  SG02_VISIBLE_CONTROLS,
+} from "../domain/sg02";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -158,6 +167,8 @@ import type {
   ErpReadModel,
   AiapiFieldValue,
   AiapiReadModel,
+  Sg02FieldValue,
+  Sg02ReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -1083,6 +1094,62 @@ export async function persistRecordAiapiAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_aiapi_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface Sg02FieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasSg02Permission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_sg02_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, SG02_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListSg02Fields(): Promise<Sg02FieldValue[]> {
+  const rows = await getSqlClient().all<Sg02FieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_sg02_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return SG02_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetSg02ReadModel(accountUid: string): Promise<Sg02ReadModel> {
+  const authorized = await persistHasSg02Permission(accountUid);
+  const fields = authorized ? await persistListSg02Fields() : [];
+  return {
+    projectionUid: SG02_PROJECTION,
+    pageUid: SG02_PAGE_UID,
+    route: SG02_ROUTE,
+    permission: SG02_PERMISSION,
+    chainUid: SG02_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownSg02Action(controlUid: string, actionUid: string): boolean {
+  return SG02_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordSg02Action(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_sg02_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

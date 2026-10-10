@@ -10,6 +10,7 @@ import { DEV_PERMISSION, DEV_VISIBLE_CONTROLS } from "../domain/dev";
 import { SOC_PERMISSION, SOC_VISIBLE_CONTROLS } from "../domain/soc";
 import { ERP_PERMISSION, ERP_VISIBLE_CONTROLS } from "../domain/erp";
 import { AIAPI_PERMISSION, AIAPI_VISIBLE_CONTROLS } from "../domain/aiapi";
+import { SG02_PERMISSION, SG02_VISIBLE_CONTROLS } from "../domain/sg02";
 import { STR_PERMISSION, STR_VISIBLE_CONTROLS } from "../domain/str";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
@@ -286,6 +287,22 @@ const DDL = [
     PRIMARY KEY (account_uid, permission_uid)
   )`,
   `CREATE TABLE IF NOT EXISTS ghsn_aiapi_audit_event (
+    event_uid TEXT PRIMARY KEY,
+    account_uid TEXT NOT NULL,
+    control_uid TEXT NOT NULL,
+    action_uid TEXT NOT NULL,
+    occurred_at TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_sg02_field_projection (
+    control_uid TEXT PRIMARY KEY,
+    value_text TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_account_sg02_permission (
+    account_uid TEXT NOT NULL,
+    permission_uid TEXT NOT NULL,
+    PRIMARY KEY (account_uid, permission_uid)
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_sg02_audit_event (
     event_uid TEXT PRIMARY KEY,
     account_uid TEXT NOT NULL,
     control_uid TEXT NOT NULL,
@@ -574,6 +591,21 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
      ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
     ["ACC-DEMO", AIAPI_PERMISSION],
   );
+
+  for (const controlUid of SG02_VISIBLE_CONTROLS) {
+    await client.run(
+      `INSERT INTO ghsn_sg02_field_projection (control_uid, value_text)
+       VALUES (?, ?)
+       ON CONFLICT (control_uid) DO NOTHING`,
+      [controlUid, null],
+    );
+  }
+  await client.run(
+    `INSERT INTO ghsn_account_sg02_permission (account_uid, permission_uid)
+     VALUES (?, ?)
+     ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+    ["ACC-DEMO", SG02_PERMISSION],
+  );
 }
 
 export async function bootstrapDatabase(): Promise<MigrationResult> {
@@ -601,6 +633,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
     "015_soc.sql",
     "016_erp.sql",
     "017_aiapi.sql",
+    "018_sg02.sql",
   ];
   const newlyApplied: string[] = [];
   const alreadyApplied: string[] = [];

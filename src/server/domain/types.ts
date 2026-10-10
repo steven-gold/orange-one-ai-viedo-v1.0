@@ -260,3 +260,18 @@ export interface AiapiReadModel {
   authorized: boolean;
   fields: AiapiFieldValue[];
 }
+
+export interface Sg02FieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface Sg02ReadModel {
+  projectionUid: "Sg02WorkbenchProjection";
+  pageUid: "admin:SG-02";
+  route: "/admin/qa-criteria";
+  permission: "quality.criteria.configure";
+  chainUid: "SG-02-FWC-PAGE-01";
+  authorized: boolean;
+  fields: Sg02FieldValue[];
+}
