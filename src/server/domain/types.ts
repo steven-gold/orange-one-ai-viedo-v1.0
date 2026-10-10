@@ -245,3 +245,18 @@ export interface ErpReadModel {
   authorized: boolean;
   fields: ErpFieldValue[];
 }
+
+export interface AiapiFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface AiapiReadModel {
+  projectionUid: "AiapiWorkbenchProjection";
+  pageUid: "admin:AIAPI-01";
+  route: "/admin/aiapi";
+  permission: "aiapi.provider.read";
+  chainUid: "AIAPI-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: AiapiFieldValue[];
+}

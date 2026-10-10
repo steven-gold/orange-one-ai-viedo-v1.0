@@ -901,3 +901,62 @@ export async function postErpAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface AiapiFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface AiapiReadModel {
+  projectionUid: "AiapiWorkbenchProjection";
+  pageUid: "admin:AIAPI-01";
+  route: "/admin/aiapi";
+  permission: "aiapi.provider.read";
+  chainUid: "AIAPI-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: AiapiFieldValue[];
+}
+
+export class AiapiClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "AiapiClientError";
+  }
+}
+
+export async function fetchAiapiReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<AiapiReadModel> {
+  const response = await fetch("/api/aiapi", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new AiapiClientError("AIAPI_READ_UNAVAILABLE", `aiapi request failed: ${response.status}`);
+  }
+  return (await response.json()) as AiapiReadModel;
+}
+
+export async function postAiapiAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/aiapi/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

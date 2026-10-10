@@ -116,6 +116,15 @@ import {
   ERP_ROUTE,
   ERP_VISIBLE_CONTROLS,
 } from "../domain/erp";
+import {
+  AIAPI_CHAIN,
+  AIAPI_CONTROL_ACTIONS,
+  AIAPI_PAGE_UID,
+  AIAPI_PERMISSION,
+  AIAPI_PROJECTION,
+  AIAPI_ROUTE,
+  AIAPI_VISIBLE_CONTROLS,
+} from "../domain/aiapi";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -147,6 +156,8 @@ import type {
   SocReadModel,
   ErpFieldValue,
   ErpReadModel,
+  AiapiFieldValue,
+  AiapiReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -1016,6 +1027,62 @@ export async function persistRecordErpAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_erp_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface AiapiFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasAiapiPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_aiapi_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, AIAPI_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListAiapiFields(): Promise<AiapiFieldValue[]> {
+  const rows = await getSqlClient().all<AiapiFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_aiapi_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return AIAPI_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetAiapiReadModel(accountUid: string): Promise<AiapiReadModel> {
+  const authorized = await persistHasAiapiPermission(accountUid);
+  const fields = authorized ? await persistListAiapiFields() : [];
+  return {
+    projectionUid: AIAPI_PROJECTION,
+    pageUid: AIAPI_PAGE_UID,
+    route: AIAPI_ROUTE,
+    permission: AIAPI_PERMISSION,
+    chainUid: AIAPI_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownAiapiAction(controlUid: string, actionUid: string): boolean {
+  return AIAPI_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordAiapiAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_aiapi_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
