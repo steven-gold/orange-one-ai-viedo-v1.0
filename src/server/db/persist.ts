@@ -143,6 +143,15 @@ import {
   ADMIN_STR_ROUTE,
   ADMIN_STR_VISIBLE_CONTROLS,
 } from "../domain/adminStr";
+import {
+  KB_CHAIN,
+  KB_CONTROL_ACTIONS,
+  KB_PAGE_UID,
+  KB_PERMISSION,
+  KB_PROJECTION,
+  KB_ROUTE,
+  KB_VISIBLE_CONTROLS,
+} from "../domain/kb";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -180,6 +189,8 @@ import type {
   Sg02ReadModel,
   AdminStrFieldValue,
   AdminStrReadModel,
+  KbFieldValue,
+  KbReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -1217,6 +1228,62 @@ export async function persistRecordAdminStrAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_admin_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface KbFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasKbPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_kb_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, KB_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListKbFields(): Promise<KbFieldValue[]> {
+  const rows = await getSqlClient().all<KbFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_kb_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return KB_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetKbReadModel(accountUid: string): Promise<KbReadModel> {
+  const authorized = await persistHasKbPermission(accountUid);
+  const fields = authorized ? await persistListKbFields() : [];
+  return {
+    projectionUid: KB_PROJECTION,
+    pageUid: KB_PAGE_UID,
+    route: KB_ROUTE,
+    permission: KB_PERMISSION,
+    chainUid: KB_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownKbAction(controlUid: string, actionUid: string): boolean {
+  return KB_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordKbAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_kb_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

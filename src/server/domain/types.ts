@@ -290,3 +290,18 @@ export interface AdminStrReadModel {
   authorized: boolean;
   fields: AdminStrFieldValue[];
 }
+
+export interface KbFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface KbReadModel {
+  projectionUid: "KbWorkbenchProjection";
+  pageUid: "admin:KB-01";
+  route: "/admin/knowledge";
+  permission: "knowledge.read";
+  chainUid: "ADMIN-KB-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: KbFieldValue[];
+}

@@ -1078,3 +1078,62 @@ export async function postAdminStrAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface KbFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface KbReadModel {
+  projectionUid: "KbWorkbenchProjection";
+  pageUid: "admin:KB-01";
+  route: "/admin/knowledge";
+  permission: "knowledge.read";
+  chainUid: "ADMIN-KB-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: KbFieldValue[];
+}
+
+export class KbClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "KbClientError";
+  }
+}
+
+export async function fetchKbReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<KbReadModel> {
+  const response = await fetch("/api/admin-knowledge", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new KbClientError("KB_READ_UNAVAILABLE", `admin knowledge request failed: ${response.status}`);
+  }
+  return (await response.json()) as KbReadModel;
+}
+
+export async function postKbAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/admin-knowledge/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}
