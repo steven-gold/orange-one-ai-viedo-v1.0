@@ -12,12 +12,12 @@
   --soc-ok: #3ddc97;
   --soc-warn: #f5b942;
   --soc-info: #4d8dff;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--soc-text);
   overflow-y: auto;
 }
@@ -80,7 +80,7 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(0, 72%) minmax(280px, 28%);
+  grid-template-columns: minmax(0, 72%) minmax(0, 28%);
   gap: 14px;
   align-items: stretch;
 }

@@ -12,12 +12,12 @@
   --sys-danger: #ff6b7a;
   --sys-ok: #3ddc97;
   --sys-warn: #f5a524;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--sys-text);
   overflow-y: auto;
 }
@@ -52,7 +52,7 @@
 
 .context {
   display: grid;
-  grid-template-columns: 1fr 1.4fr 1.4fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   padding: 10px 12px;
   border: 1px solid var(--sys-border);
@@ -63,9 +63,9 @@
 .ctx {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
-  padding: 4px 6px;
+  padding: 6px 8px;
   border: 0;
   background: transparent;
   color: inherit;
@@ -94,7 +94,7 @@
 
 .cols {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 240px;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr) minmax(0, 240px);
   gap: 14px;
   align-items: stretch;
 }

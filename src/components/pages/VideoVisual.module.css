@@ -10,12 +10,12 @@
   --video-secondary: #aeb7d9;
   --video-danger: #ff6b7a;
   --video-warn: #f3b84b;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 0;
+  padding: 16px;
   color: var(--video-text);
 }
 
@@ -36,10 +36,10 @@
 
 .context {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: stretch;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .context .field {
@@ -150,7 +150,7 @@
 
 .body {
   display: grid;
-  grid-template-columns: minmax(240px, 20%) minmax(0, 1fr) minmax(260px, 20%);
+  grid-template-columns: minmax(0, 20%) minmax(0, 1fr) minmax(0, 20%);
   gap: 12px;
   min-height: 520px;
 }

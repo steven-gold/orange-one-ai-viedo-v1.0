@@ -1,7 +1,7 @@
+import { displayBoundValue } from "./displayValue";
+
 export function displayDashboardValue(value: unknown, loading: boolean): string {
-  if (loading) return "—";
-  if (value === null || value === undefined || value === "") return "—";
-  return String(value);
+  return displayBoundValue(value, loading);
 }
 
 export function isDashboardEmpty(value: unknown, loading: boolean): boolean {

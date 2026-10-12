@@ -1,0 +1,43 @@
+const STATUS_LABEL: Record<string, string> = {
+  created: "已建立",
+  selected: "已選取",
+  validated: "已驗證",
+  confirmed: "已確認",
+  approved: "已核準",
+  locked: "已鎖定",
+  sent: "已送出",
+  queried: "已查詢",
+  open: "已開啟",
+  editing: "編輯中",
+  saved: "已儲存",
+  preview: "預覽",
+  completed: "已完成",
+  running: "執行中",
+  retrying: "重試中",
+  evaluated: "已評估",
+  returned: "已退回",
+  comparing: "比對中",
+  attached: "已附加",
+  recorded: "已記錄",
+  active: "啟用",
+  idle: "待命",
+  ready: "就緒",
+  PROJECT_CORE: "專案核心",
+  TOPIC_PRODUCTION: "專題製作",
+  SINGLE: "單 AI",
+  MULTI: "多 AI",
+  ACPOS_SYSTEM: "系統命名",
+  AI_RESPONSES: "AI 回應",
+  ASSISTANT_SUMMARY: "助理摘要",
+  STORY: "故事",
+  PKG_READY: "套件就緒",
+  "PKG-READY": "套件就緒",
+  REVIEW: "審查中",
+};
+
+export function displayBoundValue(value: unknown, loading: boolean): string {
+  if (loading) return "—";
+  if (value === null || value === undefined || value === "") return "—";
+  const text = String(value);
+  return STATUS_LABEL[text] ?? text;
+}

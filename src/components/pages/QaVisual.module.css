@@ -12,12 +12,12 @@
   --qa-danger: #ff6b7a;
   --qa-warn: #f3b84b;
   --qa-pass: #3ee0a0;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 0;
+  padding: 16px;
   color: var(--qa-text);
 }
 
@@ -38,10 +38,10 @@
 
 .context {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: stretch;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .context .field {
@@ -111,7 +111,7 @@
 
 .body {
   display: grid;
-  grid-template-columns: minmax(220px, 18%) minmax(0, 1fr) minmax(240px, 22%);
+  grid-template-columns: minmax(0, 18%) minmax(0, 1fr) minmax(0, 22%);
   gap: 12px;
   min-height: 0;
 }
@@ -289,7 +289,7 @@
 
 .findingGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
   gap: 12px;
 }
 

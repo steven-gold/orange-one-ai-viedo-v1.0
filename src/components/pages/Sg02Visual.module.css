@@ -11,12 +11,12 @@
   --sg02-danger: #ff6b7a;
   --sg02-ok: #3ddc97;
   --sg02-warn: #f5b942;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--sg02-text);
   overflow-y: auto;
 }
@@ -102,7 +102,7 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(0, 68fr) minmax(300px, 32fr);
+  grid-template-columns: minmax(0, 68fr) minmax(0, 32fr);
   gap: 16px;
   align-items: start;
 }

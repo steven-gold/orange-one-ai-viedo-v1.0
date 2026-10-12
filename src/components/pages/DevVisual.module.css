@@ -11,12 +11,12 @@
   --dev-secondary: #aeb7d9;
   --dev-danger: #ff6b7a;
   --dev-ok: #3ddc97;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--dev-text);
   overflow-y: auto;
 }
@@ -113,14 +113,14 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(0, 72%) minmax(280px, 28%);
+  grid-template-columns: minmax(0, 72%) minmax(0, 28%);
   gap: 14px;
   align-items: stretch;
 }
 
 .split {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
   gap: 14px;
   align-items: stretch;
 }

@@ -10,12 +10,12 @@
   --core-secondary: #aeb7d9;
   --core-danger: #ff6b7a;
   --core-ok: #50d890;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 12px;
-  padding: 0;
+  padding: 16px;
   color: var(--core-text);
   font-size: 13px;
   line-height: 18px;
@@ -34,7 +34,7 @@
 
 .context {
   display: grid;
-  grid-template-columns: minmax(180px, 1.2fr) auto minmax(160px, 1fr) auto auto minmax(180px, 1.1fr) minmax(220px, 1.4fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
   align-items: center;
   min-height: 72px;
@@ -45,7 +45,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
   min-height: 40px;
   padding: 6px 12px;
@@ -75,6 +75,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .btn {
@@ -117,7 +118,7 @@
 
 .body {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(720px, 3fr) minmax(300px, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
   gap: 16px;
   min-height: 0;
 }
@@ -182,7 +183,7 @@
 .thread {
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: 6px;
   padding: 8px 12px;
   text-align: left;
 }

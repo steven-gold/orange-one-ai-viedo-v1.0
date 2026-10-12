@@ -82,6 +82,7 @@ const ACTION_LABELS: Record<string, TranslationKey> = {
 export function KbVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
+  const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
   const [, setFields] = useState<KbFieldValue[]>([]);
@@ -92,7 +93,7 @@ export function KbVisual() {
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    setLoading(true);
+    if (tick === 0) setLoading(true);
     fetchKbReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal)
       .then((model) => {
         if (cancelled) return;
@@ -114,7 +115,7 @@ export function KbVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
 
   const act = useCallback(async (controlUid: string) => {
     const actionUid = KB_CONTROL_ACTIONS[controlUid];
@@ -124,6 +125,7 @@ export function KbVisual() {
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
+    setTick((n) => n + 1);
   }, []);
 
   const disabled = !authorized && !loading;

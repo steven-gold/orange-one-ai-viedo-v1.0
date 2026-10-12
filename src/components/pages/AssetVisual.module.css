@@ -9,12 +9,12 @@
   --asset-muted: #7f88a8;
   --asset-secondary: #aeb7d9;
   --asset-danger: #ff6b7a;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: grid;
   grid-template-rows: auto 1fr auto auto;
   gap: 12px;
-  padding: 0;
+  padding: 16px;
   color: var(--asset-text);
 }
 
@@ -28,7 +28,7 @@
 
 .context {
   display: grid;
-  grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) minmax(160px, 1fr) minmax(120px, 0.8fr) auto auto minmax(140px, 0.9fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
   align-items: end;
 }
@@ -104,7 +104,7 @@
 
 .body {
   display: grid;
-  grid-template-columns: minmax(260px, 20%) minmax(0, 60%) minmax(280px, 20%);
+  grid-template-columns: minmax(0, 20%) minmax(0, 60%) minmax(0, 20%);
   gap: 16px;
   min-height: 0;
 }

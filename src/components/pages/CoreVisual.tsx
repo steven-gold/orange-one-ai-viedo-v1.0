@@ -43,6 +43,7 @@ function Field({
 export function CoreVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
+  const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
   const [pageMode, setPageMode] = useState<"PROJECT_CORE" | "TOPIC_PRODUCTION" | null>(null);
@@ -51,7 +52,7 @@ export function CoreVisual() {
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    setLoading(true);
+    if (tick === 0) setLoading(true);
     fetchCoreReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal)
       .then((model) => {
         if (cancelled) return;
@@ -75,7 +76,7 @@ export function CoreVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
@@ -90,6 +91,7 @@ export function CoreVisual() {
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
+    setTick((n) => n + 1);
   }, []);
 
   const disabled = !authorized && !loading;
@@ -269,10 +271,10 @@ export function CoreVisual() {
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-PROJECT-STATE" hidden={topicMode}>
             <h2 className={styles.title}>{tx("core.project_rail")}</h2>
             <h3>{tx("core.project_state")}</h3>
-            <div className={styles.kv}><span>ProjectVersionRef</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>Story / Chapter / World</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>DNAVersion</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>Core Review</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.project_version_ref")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.story_world")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.dna_version")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(null, loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-CONFIRM" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-CONFIRM")}>{tx("core.confirm_project")}</button>
@@ -284,8 +286,8 @@ export function CoreVisual() {
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-BLUEPRINT-STATE" hidden={topicMode}>
             <h3>{tx("core.blueprint_state")}</h3>
-            <div className={styles.kv}><span>BlueprintVersionRef</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>State</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.blueprint_version_ref")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.state_label")}</span><span>{displayCoreValue(null, loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-CREATE")}>{tx("core.create_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-VALIDATE")}>{tx("core.validate_blueprint")}</button>
@@ -297,17 +299,17 @@ export function CoreVisual() {
             <h2 className={styles.title}>{tx("core.topic_package_title")}</h2>
             <h3>{tx("core.topic_package")}</h3>
             <div className={styles.kv}><span>{tx("core.topic_scope")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-TOPIC-SCOPE"), loading)}</span></div>
-            <div className={styles.kv} data-control-uid="CORE-01-FLD-PACKAGE"><span>Blueprint</span><span>{displayCoreValue(valueOf("CORE-01-FLD-PACKAGE"), loading)}</span></div>
-            <div className={styles.kv}><span>DNA</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv} data-control-uid="CORE-01-FLD-PACKAGE"><span>{tx("core.blueprint_label")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-PACKAGE"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.dna_label")}</span><span>{displayCoreValue(null, loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(null, loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.naming")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-NAMING-AUTHORITY"), loading)}</span></div>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANONICAL-SCRIPT")}>{tx("core.view_canonical")}</button>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-DOWNSTREAM" hidden={!topicMode}>
             <h3>{tx("core.downstream")}</h3>
-            <div className={styles.kv}><span>ASSET</span><button type="button" className={styles.btn} data-control-uid="CORE-01-FLD-DOWNSTREAM-ASSET" disabled={disabled} onClick={() => void act("CORE-01-FLD-DOWNSTREAM-ASSET")}>{displayCoreValue(valueOf("CORE-01-FLD-DOWNSTREAM-ASSET"), loading)}</button></div>
-            <div className={styles.kv}><span>VIDEO</span><button type="button" className={styles.btn} data-control-uid="CORE-01-FLD-DOWNSTREAM-VIDEO" disabled={disabled} onClick={() => void act("CORE-01-FLD-DOWNSTREAM-VIDEO")}>{displayCoreValue(valueOf("CORE-01-FLD-DOWNSTREAM-VIDEO"), loading)}</button></div>
-            <div className={styles.kv}><span>EDIT</span><button type="button" className={styles.btn} data-control-uid="CORE-01-FLD-DOWNSTREAM-EDIT" disabled={disabled} onClick={() => void act("CORE-01-FLD-DOWNSTREAM-EDIT")}>{displayCoreValue(valueOf("CORE-01-FLD-DOWNSTREAM-EDIT"), loading)}</button></div>
+            <div className={styles.kv}><span>{tx("core.downstream_asset")}</span><button type="button" className={styles.btn} data-control-uid="CORE-01-FLD-DOWNSTREAM-ASSET" disabled={disabled} onClick={() => void act("CORE-01-FLD-DOWNSTREAM-ASSET")}>{displayCoreValue(valueOf("CORE-01-FLD-DOWNSTREAM-ASSET"), loading)}</button></div>
+            <div className={styles.kv}><span>{tx("core.downstream_video")}</span><button type="button" className={styles.btn} data-control-uid="CORE-01-FLD-DOWNSTREAM-VIDEO" disabled={disabled} onClick={() => void act("CORE-01-FLD-DOWNSTREAM-VIDEO")}>{displayCoreValue(valueOf("CORE-01-FLD-DOWNSTREAM-VIDEO"), loading)}</button></div>
+            <div className={styles.kv}><span>{tx("core.downstream_edit")}</span><button type="button" className={styles.btn} data-control-uid="CORE-01-FLD-DOWNSTREAM-EDIT" disabled={disabled} onClick={() => void act("CORE-01-FLD-DOWNSTREAM-EDIT")}>{displayCoreValue(valueOf("CORE-01-FLD-DOWNSTREAM-EDIT"), loading)}</button></div>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-VERSION">
             <h3>{tx("core.version_lock")}</h3>

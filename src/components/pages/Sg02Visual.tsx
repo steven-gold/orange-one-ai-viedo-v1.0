@@ -68,6 +68,7 @@ function stateClass(state: (typeof SG02_LIFECYCLE_ROWS)[number]): string {
 export function Sg02Visual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
+  const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
   const [, setFields] = useState<Sg02FieldValue[]>([]);
@@ -78,7 +79,7 @@ export function Sg02Visual() {
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    setLoading(true);
+    if (tick === 0) setLoading(true);
     fetchSg02ReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal)
       .then((model) => {
         if (cancelled) return;
@@ -100,7 +101,7 @@ export function Sg02Visual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
 
   const act = useCallback(async (controlUid: string) => {
     const actionUid = SG02_CONTROL_ACTIONS[controlUid];
@@ -110,6 +111,7 @@ export function Sg02Visual() {
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
+    setTick((n) => n + 1);
   }, []);
 
   const disabled = !authorized && !loading;
@@ -321,7 +323,7 @@ export function Sg02Visual() {
                 </div>
                 <div className={styles.summaryItem}>
                   <span>{tx("sg02.col-state")}</span>
-                  <strong className={styles.stateReview}>REVIEW</strong>
+                  <strong className={styles.stateReview}>{tx("sg02.state-review")}</strong>
                 </div>
                 <div className={styles.summaryItem}>
                   <span>{tx("sg02.field-scope")}</span>

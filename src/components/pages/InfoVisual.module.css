@@ -12,12 +12,12 @@
   --info-danger: #ff6b7a;
   --info-ok: #3ddc97;
   --info-warn: #f5a524;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0;
+  padding: 16px;
   color: var(--info-text);
   overflow-y: auto;
 }
@@ -60,7 +60,7 @@
 
 .context {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: stretch;
   min-height: 56px;
@@ -162,7 +162,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(720px, 3fr) minmax(300px, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
   gap: 16px;
   align-items: stretch;
 }

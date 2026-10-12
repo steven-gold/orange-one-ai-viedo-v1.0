@@ -12,12 +12,12 @@
   --db-danger: #ff6b7a;
   --db-warn: #f3b84b;
   --db-ok: #50d890;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0;
+  gap: 16px;
+  padding: 16px;
   color: var(--db-text);
 }
 
@@ -32,7 +32,7 @@
 .head {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .title {
@@ -96,7 +96,7 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
   min-height: 40px;
   padding: 6px 12px;
@@ -152,7 +152,7 @@
 
 .grid3 {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr) minmax(240px, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
   gap: 12px;
   min-height: 0;
   flex: 1 1 auto;

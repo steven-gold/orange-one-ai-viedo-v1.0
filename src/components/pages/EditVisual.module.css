@@ -10,12 +10,12 @@
   --edit-secondary: #aeb7d9;
   --edit-danger: #ff6b7a;
   --edit-warn: #f3b84b;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 0;
+  padding: 16px;
   color: var(--edit-text);
 }
 
@@ -36,10 +36,10 @@
 
 .source {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: stretch;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .source .field {

@@ -17,6 +17,7 @@ import { STR_PERMISSION, STR_VISIBLE_CONTROLS } from "../domain/str";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import { CANONICAL_NAVIGATION_AUTHORITY } from "../domain/schema";
+import { hashPassword } from "../identity/crypto";
 import { getSqlClient, type SqlClient } from "./client";
 
 export type SeedScope =
@@ -99,11 +100,6 @@ async function alreadyGranted(client: SqlClient, table: string, permission: stri
 }
 
 async function seedIdentity(client: SqlClient): Promise<void> {
-  const rows = await client.all<{ n: number }>(
-    "SELECT count(*)::int AS n FROM ghsn_account_session WHERE session_uid = ? AND account_uid = ?",
-    [DEMO_SESSION, DEMO_ACCOUNT],
-  );
-  if (Number(rows[0]?.n ?? 0) > 0) return;
   const now = new Date().toISOString();
   await insertRows(
     client,
@@ -115,6 +111,25 @@ async function seedIdentity(client: SqlClient): Promise<void> {
       ["sess-limited-001", "ACC-LIMITED", now],
     ],
   );
+  const accounts = await client.all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_runtime_account WHERE account_uid = ?",
+    [DEMO_ACCOUNT],
+  );
+  if (Number(accounts[0]?.n ?? 0) === 0) {
+    const passwordHash = await hashPassword("OrangeOne!demo");
+    await client.run(
+      `INSERT INTO ghsn_runtime_account (account_uid, email, password_hash, status, disabled_at)
+       VALUES (?, ?, ?, 'READY', NULL)
+       ON CONFLICT (account_uid) DO NOTHING`,
+      [DEMO_ACCOUNT, "demo@orange-one.local", passwordHash],
+    );
+    await client.run(
+      `INSERT INTO ghsn_app_user (user_uid, email, display_name, account_uid, disabled_at)
+       VALUES (?, ?, ?, ?, NULL)
+       ON CONFLICT (user_uid) DO NOTHING`,
+      ["USR-DEMO", "demo@orange-one.local", "ACC-DEMO", DEMO_ACCOUNT],
+    );
+  }
 }
 
 async function seedNavigation(client: SqlClient): Promise<void> {

@@ -12,12 +12,12 @@
   --erp-ok: #3ddc97;
   --erp-warn: #f5b942;
   --erp-info: #4d8dff;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--erp-text);
   overflow-y: auto;
 }
@@ -82,7 +82,7 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(0, 72fr) minmax(300px, 28fr);
+  grid-template-columns: minmax(0, 72fr) minmax(0, 28fr);
   gap: 16px;
   align-items: start;
 }

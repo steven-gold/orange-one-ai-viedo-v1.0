@@ -12,12 +12,12 @@
   --iam-danger: #ff6b7a;
   --iam-ok: #3ddc97;
   --iam-warn: #f5a524;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--iam-text);
   overflow-y: auto;
 }
@@ -92,7 +92,7 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(720px, 2fr) minmax(480px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: 16px;
   align-items: stretch;
 }

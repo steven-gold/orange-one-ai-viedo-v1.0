@@ -12,12 +12,12 @@
   --aiapi-ok: #3ddc97;
   --aiapi-warn: #f5b942;
   --aiapi-info: #4d8dff;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--aiapi-text);
   overflow-y: auto;
 }
@@ -82,7 +82,7 @@
 
 .toolbar {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
   gap: 12px;
   align-items: center;
   border: 1px solid var(--aiapi-border);
@@ -108,7 +108,7 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(0, 68fr) minmax(300px, 32fr);
+  grid-template-columns: minmax(0, 68fr) minmax(0, 32fr);
   gap: 16px;
   align-items: start;
 }

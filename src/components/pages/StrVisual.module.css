@@ -10,12 +10,12 @@
   --str-muted: #7f88a8;
   --str-secondary: #aeb7d9;
   --str-danger: #ff6b7a;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0;
+  padding: 16px;
   color: var(--str-text);
   overflow-y: auto;
 }
@@ -38,7 +38,7 @@
 
 .context {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: stretch;
   min-height: 56px;
@@ -120,7 +120,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(720px, 3fr) minmax(320px, 1.12fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1.12fr);
   gap: 16px;
   align-items: start;
 }

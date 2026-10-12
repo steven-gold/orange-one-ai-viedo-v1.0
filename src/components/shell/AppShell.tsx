@@ -221,6 +221,20 @@ export function AppShell({
     }
   }, [accountUid, sessionUid]);
 
+  const goHome = useCallback(() => {
+    const dashboard = frontItems.find((item) => item.route === "/") ?? frontItems[0];
+    if (dashboard) go(dashboard);
+  }, [frontItems, go]);
+
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/v1/identity/session", { method: "DELETE", credentials: "include" });
+    } catch {
+      // Cookie clear still proceeds on the client.
+    }
+    window.location.assign("/login");
+  }, []);
+
   const switchArea = (next: NavigationArea) => {
     const destination = next === "ADMIN" ? adminItems[0] : frontItems[0];
     if (!destination) return;
@@ -236,7 +250,6 @@ export function AppShell({
   const frontTarget = frontItems[0];
   const adminTarget = adminItems[0];
 
-  const quickReason = t("global.header.quick_status_unavailable");
   const activePage = findPageByUid(activeUid) ?? findPageByRoute(route);
 
   return (
@@ -253,13 +266,13 @@ export function AppShell({
         </div>
 
         <div className="header-cluster">
-          <button className="quick-button" type="button" aria-label={quickReason} title={quickReason} aria-disabled="true" disabled>
+          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} onClick={goHome}>
             <HeaderIcon kind="bell"/>
           </button>
-          <button className="quick-button" type="button" aria-label={quickReason} title={quickReason} aria-disabled="true" disabled>
+          <button className="quick-button" type="button" aria-label={t("global.header.todo")} onClick={goHome}>
             <HeaderIcon kind="todo"/>
           </button>
-          <button className="quick-button" type="button" aria-label={quickReason} title={quickReason} aria-disabled="true" disabled>
+          <button className="quick-button" type="button" aria-label={t("global.header.running")} onClick={goHome}>
             <HeaderIcon kind="running"/>
           </button>
 
@@ -345,6 +358,9 @@ export function AppShell({
             {identityBound && accountOpen && (
               <div className="account-popover">
                 <div className="account-popover-link" aria-hidden="true">{accountUid}</div>
+                <button type="button" className="account-popover-link" onClick={() => void logout()}>
+                  {t("global.header.logout")}
+                </button>
               </div>
             )}
           </div>

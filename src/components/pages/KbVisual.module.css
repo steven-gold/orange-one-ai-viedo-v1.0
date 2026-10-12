@@ -11,12 +11,12 @@
   --str-danger: #ff6b7a;
   --str-ok: #3ddc97;
   --str-warn: #f5b942;
-  min-width: 1280px;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 0;
+  padding: 16px;
   color: var(--str-text);
   overflow-y: auto;
 }
@@ -60,6 +60,7 @@
 
 .contextBar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 18px;
   border: 1px solid var(--str-border);
@@ -117,35 +118,35 @@
 
 .cols {
   display: grid;
-  grid-template-columns: minmax(0, 68fr) minmax(300px, 32fr);
+  grid-template-columns: minmax(0, 68fr) minmax(0, 32fr);
   gap: 16px;
   align-items: start;
 }
 
 .colsThree {
   display: grid;
-  grid-template-columns: minmax(0, 24fr) minmax(0, 50fr) minmax(260px, 26fr);
+  grid-template-columns: minmax(0, 24fr) minmax(0, 50fr) minmax(0, 26fr);
   gap: 16px;
   align-items: start;
 }
 
 .colsSearch {
   display: grid;
-  grid-template-columns: minmax(0, 34fr) minmax(0, 44fr) minmax(220px, 22fr);
+  grid-template-columns: minmax(0, 34fr) minmax(0, 44fr) minmax(0, 22fr);
   gap: 16px;
   align-items: start;
 }
 
 .colsExperience {
   display: grid;
-  grid-template-columns: minmax(0, 24fr) minmax(0, 54fr) minmax(220px, 22fr);
+  grid-template-columns: minmax(0, 24fr) minmax(0, 54fr) minmax(0, 22fr);
   gap: 16px;
   align-items: start;
 }
 
 .colsReview {
   display: grid;
-  grid-template-columns: minmax(0, 23fr) minmax(0, 55fr) minmax(220px, 22fr);
+  grid-template-columns: minmax(0, 23fr) minmax(0, 55fr) minmax(0, 22fr);
   gap: 16px;
   align-items: start;
 }
