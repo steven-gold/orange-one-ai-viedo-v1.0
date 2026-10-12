@@ -1,5 +1,5 @@
 import { openSqlClient, type SqlClient } from "./client";
-import { seedCanonicalData } from "./seed";
+import { seedRuntimeIdentity } from "./seed";
 
 const DDL = [
   `CREATE TABLE IF NOT EXISTS ghsn_schema_migration_history (
@@ -387,7 +387,7 @@ async function runBootstrap(): Promise<MigrationResult> {
     const existing = await client.all<{ filename: string }>("SELECT filename FROM ghsn_schema_migration_history");
     const applied = new Set(existing.map((row) => row.filename));
     if (MIGRATION_FILES.every((filename) => applied.has(filename))) {
-      await seedCanonicalData(client);
+      await seedRuntimeIdentity(client);
       return {
         applied: [],
         alreadyApplied: [...MIGRATION_FILES],
@@ -418,7 +418,7 @@ async function runBootstrap(): Promise<MigrationResult> {
     );
     newlyApplied.push(filename);
   }
-  await seedCanonicalData(client);
+  await seedRuntimeIdentity(client);
   const countRows = await client.all<{ n: number }>("SELECT count(*)::int AS n FROM ghsn_schema_migration_history");
   return {
     applied: newlyApplied,

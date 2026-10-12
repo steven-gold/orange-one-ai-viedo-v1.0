@@ -17,10 +17,60 @@ import { STR_PERMISSION, STR_VISIBLE_CONTROLS } from "../domain/str";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import { CANONICAL_NAVIGATION_AUTHORITY } from "../domain/schema";
-import type { SqlClient } from "./client";
+import { getSqlClient, type SqlClient } from "./client";
+
+export type SeedScope =
+  | "identity"
+  | "navigation"
+  | "dashboard"
+  | "core"
+  | "asset"
+  | "video"
+  | "edit"
+  | "qa"
+  | "db"
+  | "str"
+  | "info"
+  | "sys"
+  | "iam"
+  | "dev"
+  | "soc"
+  | "erp"
+  | "aiapi"
+  | "sg02"
+  | "adminStr"
+  | "kb";
 
 const DEMO_SESSION = "sess-demo-001";
 const DEMO_ACCOUNT = "ACC-DEMO";
+const seeded = new Set<SeedScope>();
+
+type PageSeed = {
+  fieldTable: string;
+  permissionTable: string;
+  permission: string;
+  controls: readonly string[];
+};
+
+const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboard">, PageSeed> = {
+  core: { fieldTable: "ghsn_core_field_projection", permissionTable: "ghsn_account_core_permission", permission: CORE_PERMISSION, controls: CORE_VISIBLE_CONTROLS },
+  asset: { fieldTable: "ghsn_asset_field_projection", permissionTable: "ghsn_account_asset_permission", permission: ASSET_PERMISSION, controls: ASSET_VISIBLE_CONTROLS },
+  video: { fieldTable: "ghsn_video_field_projection", permissionTable: "ghsn_account_video_permission", permission: VIDEO_PERMISSION, controls: VIDEO_VISIBLE_CONTROLS },
+  edit: { fieldTable: "ghsn_edit_field_projection", permissionTable: "ghsn_account_edit_permission", permission: EDIT_PERMISSION, controls: EDIT_VISIBLE_CONTROLS },
+  qa: { fieldTable: "ghsn_qa_field_projection", permissionTable: "ghsn_account_qa_permission", permission: QA_PERMISSION, controls: QA_VISIBLE_CONTROLS },
+  db: { fieldTable: "ghsn_db_field_projection", permissionTable: "ghsn_account_db_permission", permission: DB_PERMISSION, controls: DB_VISIBLE_CONTROLS },
+  str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS },
+  info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS },
+  sys: { fieldTable: "ghsn_sys_field_projection", permissionTable: "ghsn_account_sys_permission", permission: SYS_PERMISSION, controls: SYS_VISIBLE_CONTROLS },
+  iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS },
+  dev: { fieldTable: "ghsn_dev_field_projection", permissionTable: "ghsn_account_dev_permission", permission: DEV_PERMISSION, controls: DEV_VISIBLE_CONTROLS },
+  soc: { fieldTable: "ghsn_soc_field_projection", permissionTable: "ghsn_account_soc_permission", permission: SOC_PERMISSION, controls: SOC_VISIBLE_CONTROLS },
+  erp: { fieldTable: "ghsn_erp_field_projection", permissionTable: "ghsn_account_erp_permission", permission: ERP_PERMISSION, controls: ERP_VISIBLE_CONTROLS },
+  aiapi: { fieldTable: "ghsn_aiapi_field_projection", permissionTable: "ghsn_account_aiapi_permission", permission: AIAPI_PERMISSION, controls: AIAPI_VISIBLE_CONTROLS },
+  sg02: { fieldTable: "ghsn_sg02_field_projection", permissionTable: "ghsn_account_sg02_permission", permission: SG02_PERMISSION, controls: SG02_VISIBLE_CONTROLS },
+  adminStr: { fieldTable: "ghsn_admin_str_field_projection", permissionTable: "ghsn_account_admin_str_permission", permission: ADMIN_STR_PERMISSION, controls: ADMIN_STR_VISIBLE_CONTROLS },
+  kb: { fieldTable: "ghsn_kb_field_projection", permissionTable: "ghsn_account_kb_permission", permission: KB_PERMISSION, controls: KB_VISIBLE_CONTROLS },
+};
 
 async function insertRows(
   client: SqlClient,
@@ -40,19 +90,36 @@ async function insertRows(
   }
 }
 
-export async function seedCanonicalData(client: SqlClient): Promise<void> {
-  const seeded = await client.all<{ n: number }>(
+async function alreadyGranted(client: SqlClient, table: string, permission: string): Promise<boolean> {
+  const rows = await client.all<{ n: number }>(
+    `SELECT count(*)::int AS n FROM ${table} WHERE account_uid = ? AND permission_uid = ?`,
+    [DEMO_ACCOUNT, permission],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+async function seedIdentity(client: SqlClient): Promise<void> {
+  const rows = await client.all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_session WHERE session_uid = ? AND account_uid = ?",
     [DEMO_SESSION, DEMO_ACCOUNT],
   );
-  const permitted = await client.all<{ n: number }>(
-    "SELECT count(*)::int AS n FROM ghsn_account_core_permission WHERE account_uid = ? AND permission_uid = ?",
-    [DEMO_ACCOUNT, CORE_PERMISSION],
+  if (Number(rows[0]?.n ?? 0) > 0) return;
+  const now = new Date().toISOString();
+  await insertRows(
+    client,
+    `INSERT INTO ghsn_account_session (session_uid, account_uid, issued_at)`,
+    `ON CONFLICT (session_uid) DO UPDATE SET account_uid = EXCLUDED.account_uid`,
+    3,
+    [
+      [DEMO_SESSION, DEMO_ACCOUNT, now],
+      ["sess-limited-001", "ACC-LIMITED", now],
+    ],
   );
-  if (Number(seeded[0]?.n ?? 0) > 0 && Number(permitted[0]?.n ?? 0) > 0) {
-    return;
-  }
+}
 
+async function seedNavigation(client: SqlClient): Promise<void> {
+  const rows = await client.all<{ n: number }>("SELECT count(*)::int AS n FROM ghsn_navigation_authority");
+  if (Number(rows[0]?.n ?? 0) >= CANONICAL_NAVIGATION_AUTHORITY.items.length) return;
   await insertRows(
     client,
     `INSERT INTO ghsn_navigation_authority (navigation_uid, area, label_key, route, display_order, icon, aria_label_key)`,
@@ -74,7 +141,6 @@ export async function seedCanonicalData(client: SqlClient): Promise<void> {
       item.ariaLabelKey,
     ]),
   );
-
   await insertRows(
     client,
     `INSERT INTO ghsn_account_permission_assignment (account_uid, navigation_uid)`,
@@ -86,19 +152,10 @@ export async function seedCanonicalData(client: SqlClient): Promise<void> {
       ["ACC-LIMITED", "CORE-01"],
     ],
   );
+}
 
-  const now = new Date().toISOString();
-  await insertRows(
-    client,
-    `INSERT INTO ghsn_account_session (session_uid, account_uid, issued_at)`,
-    `ON CONFLICT (session_uid) DO UPDATE SET account_uid = EXCLUDED.account_uid`,
-    3,
-    [
-      [DEMO_SESSION, DEMO_ACCOUNT, now],
-      ["sess-limited-001", "ACC-LIMITED", now],
-    ],
-  );
-
+async function seedDashboard(client: SqlClient): Promise<void> {
+  if (await alreadyGranted(client, "ghsn_account_dashboard_permission", DASHBOARD_PERMISSION)) return;
   await insertRows(
     client,
     `INSERT INTO ghsn_dashboard_section_projection (section_uid, control_uid, label, value_text, detail_text)`,
@@ -106,7 +163,6 @@ export async function seedCanonicalData(client: SqlClient): Promise<void> {
     5,
     DASHBOARD_SECTION_SEEDS.map((section) => [section.sectionUid, section.controlUid, section.label, null, ""]),
   );
-
   await insertRows(
     client,
     `INSERT INTO ghsn_account_dashboard_permission (account_uid, permission_uid)`,
@@ -117,61 +173,35 @@ export async function seedCanonicalData(client: SqlClient): Promise<void> {
       ["ACC-LIMITED", DASHBOARD_PERMISSION],
     ],
   );
+}
 
-  const fieldTables: Array<{ table: string; controls: readonly string[] }> = [
-    { table: "ghsn_core_field_projection", controls: CORE_VISIBLE_CONTROLS },
-    { table: "ghsn_asset_field_projection", controls: ASSET_VISIBLE_CONTROLS },
-    { table: "ghsn_video_field_projection", controls: VIDEO_VISIBLE_CONTROLS },
-    { table: "ghsn_edit_field_projection", controls: EDIT_VISIBLE_CONTROLS },
-    { table: "ghsn_qa_field_projection", controls: QA_VISIBLE_CONTROLS },
-    { table: "ghsn_db_field_projection", controls: DB_VISIBLE_CONTROLS },
-    { table: "ghsn_str_field_projection", controls: STR_VISIBLE_CONTROLS },
-    { table: "ghsn_info_field_projection", controls: INFO_VISIBLE_CONTROLS },
-    { table: "ghsn_sys_field_projection", controls: SYS_VISIBLE_CONTROLS },
-    { table: "ghsn_iam_field_projection", controls: IAM_VISIBLE_CONTROLS },
-    { table: "ghsn_dev_field_projection", controls: DEV_VISIBLE_CONTROLS },
-    { table: "ghsn_soc_field_projection", controls: SOC_VISIBLE_CONTROLS },
-    { table: "ghsn_erp_field_projection", controls: ERP_VISIBLE_CONTROLS },
-    { table: "ghsn_aiapi_field_projection", controls: AIAPI_VISIBLE_CONTROLS },
-    { table: "ghsn_sg02_field_projection", controls: SG02_VISIBLE_CONTROLS },
-    { table: "ghsn_admin_str_field_projection", controls: ADMIN_STR_VISIBLE_CONTROLS },
-    { table: "ghsn_kb_field_projection", controls: KB_VISIBLE_CONTROLS },
-  ];
-  for (const field of fieldTables) {
-    await insertRows(
-      client,
-      `INSERT INTO ${field.table} (control_uid, value_text)`,
-      `ON CONFLICT (control_uid) DO NOTHING`,
-      2,
-      field.controls.map((controlUid) => [controlUid, null]),
-    );
-  }
+async function seedPage(client: SqlClient, page: PageSeed): Promise<void> {
+  if (await alreadyGranted(client, page.permissionTable, page.permission)) return;
+  await insertRows(
+    client,
+    `INSERT INTO ${page.fieldTable} (control_uid, value_text)`,
+    `ON CONFLICT (control_uid) DO NOTHING`,
+    2,
+    page.controls.map((controlUid) => [controlUid, null]),
+  );
+  await client.run(
+    `INSERT INTO ${page.permissionTable} (account_uid, permission_uid)
+     VALUES (?, ?)
+     ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+    [DEMO_ACCOUNT, page.permission],
+  );
+}
 
-  const permissionGrants: Array<{ table: string; permission: string }> = [
-    { table: "ghsn_account_core_permission", permission: CORE_PERMISSION },
-    { table: "ghsn_account_asset_permission", permission: ASSET_PERMISSION },
-    { table: "ghsn_account_video_permission", permission: VIDEO_PERMISSION },
-    { table: "ghsn_account_edit_permission", permission: EDIT_PERMISSION },
-    { table: "ghsn_account_qa_permission", permission: QA_PERMISSION },
-    { table: "ghsn_account_db_permission", permission: DB_PERMISSION },
-    { table: "ghsn_account_str_permission", permission: STR_PERMISSION },
-    { table: "ghsn_account_info_permission", permission: INFO_PERMISSION },
-    { table: "ghsn_account_sys_permission", permission: SYS_PERMISSION },
-    { table: "ghsn_account_iam_permission", permission: IAM_PERMISSION },
-    { table: "ghsn_account_dev_permission", permission: DEV_PERMISSION },
-    { table: "ghsn_account_soc_permission", permission: SOC_PERMISSION },
-    { table: "ghsn_account_erp_permission", permission: ERP_PERMISSION },
-    { table: "ghsn_account_aiapi_permission", permission: AIAPI_PERMISSION },
-    { table: "ghsn_account_sg02_permission", permission: SG02_PERMISSION },
-    { table: "ghsn_account_admin_str_permission", permission: ADMIN_STR_PERMISSION },
-    { table: "ghsn_account_kb_permission", permission: KB_PERMISSION },
-  ];
-  for (const grant of permissionGrants) {
-    await client.run(
-      `INSERT INTO ${grant.table} (account_uid, permission_uid)
-       VALUES (?, ?)
-       ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
-      [DEMO_ACCOUNT, grant.permission],
-    );
-  }
+export async function seedScope(scope: SeedScope, client: SqlClient = getSqlClient()): Promise<void> {
+  if (seeded.has(scope)) return;
+  if (scope === "identity") await seedIdentity(client);
+  else if (scope === "navigation") await seedNavigation(client);
+  else if (scope === "dashboard") await seedDashboard(client);
+  else await seedPage(client, PAGE_SEEDS[scope]);
+  seeded.add(scope);
+}
+
+export async function seedRuntimeIdentity(client: SqlClient): Promise<void> {
+  await seedScope("identity", client);
+  await seedScope("navigation", client);
 }

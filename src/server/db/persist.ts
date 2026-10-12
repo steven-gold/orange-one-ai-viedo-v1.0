@@ -1,3 +1,4 @@
+import { seedScope } from "./seed";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE } from "../domain/dashboard";
 import {
   CORE_CHAIN,
@@ -236,6 +237,7 @@ function toItem(row: AuthorityRow): CanonicalNavigationItem {
 }
 
 export async function persistListItems(): Promise<CanonicalNavigationItem[]> {
+  await seedScope("navigation");
   const rows = await getSqlClient().all<AuthorityRow>(
     "SELECT navigation_uid, area, label_key, route, display_order, icon, aria_label_key FROM ghsn_navigation_authority ORDER BY area, display_order",
   );
@@ -243,6 +245,7 @@ export async function persistListItems(): Promise<CanonicalNavigationItem[]> {
 }
 
 export async function persistGetItem(uid: string): Promise<CanonicalNavigationItem | undefined> {
+  await seedScope("navigation");
   const rows = await getSqlClient().all<AuthorityRow>(
     "SELECT navigation_uid, area, label_key, route, display_order, icon, aria_label_key FROM ghsn_navigation_authority WHERE navigation_uid = ?",
     [uid],
@@ -251,6 +254,7 @@ export async function persistGetItem(uid: string): Promise<CanonicalNavigationIt
 }
 
 export async function persistGetAssignment(accountUid: string): Promise<PermissionAssignment | undefined> {
+  await seedScope("navigation");
   const rows = await getSqlClient().all<AssignmentRow>(
     "SELECT navigation_uid FROM ghsn_account_permission_assignment WHERE account_uid = ?",
     [accountUid],
@@ -272,6 +276,7 @@ export async function persistRecordAuditEvent(event: NavigationEvent): Promise<N
 }
 
 export async function persistFindSession(sessionUid: string): Promise<SessionRow | undefined> {
+  await seedScope("identity");
   const rows = await getSqlClient().all<SessionRow>(
     "SELECT session_uid, account_uid FROM ghsn_account_session WHERE session_uid = ?",
     [sessionUid],
@@ -287,6 +292,7 @@ interface DashboardSectionRow {
 }
 
 export async function persistHasDashboardPermission(accountUid: string): Promise<boolean> {
+  await seedScope("dashboard");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_dashboard_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, DASHBOARD_PERMISSION],
@@ -340,6 +346,7 @@ interface CoreFieldRow {
 }
 
 export async function persistHasCorePermission(accountUid: string): Promise<boolean> {
+  await seedScope("core");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_core_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, CORE_PERMISSION],
@@ -400,6 +407,7 @@ interface AssetFieldRow {
 }
 
 export async function persistHasAssetPermission(accountUid: string): Promise<boolean> {
+  await seedScope("asset");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_asset_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, ASSET_PERMISSION],
@@ -456,6 +464,7 @@ interface VideoFieldRow {
 }
 
 export async function persistHasVideoPermission(accountUid: string): Promise<boolean> {
+  await seedScope("video");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_video_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, VIDEO_PERMISSION],
@@ -512,6 +521,7 @@ interface EditFieldRow {
 }
 
 export async function persistHasEditPermission(accountUid: string): Promise<boolean> {
+  await seedScope("edit");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_edit_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, EDIT_PERMISSION],
@@ -568,6 +578,7 @@ interface QaFieldRow {
 }
 
 export async function persistHasQaPermission(accountUid: string): Promise<boolean> {
+  await seedScope("qa");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_qa_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, QA_PERMISSION],
@@ -624,6 +635,7 @@ interface DbFieldRow {
 }
 
 export async function persistHasDbPermission(accountUid: string): Promise<boolean> {
+  await seedScope("db");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_db_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, DB_PERMISSION],
@@ -680,6 +692,7 @@ interface StrFieldRow {
 }
 
 export async function persistHasStrPermission(accountUid: string): Promise<boolean> {
+  await seedScope("str");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_str_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, STR_PERMISSION],
@@ -736,6 +749,7 @@ interface InfoFieldRow {
 }
 
 export async function persistHasInfoPermission(accountUid: string): Promise<boolean> {
+  await seedScope("info");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_info_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, INFO_PERMISSION],
@@ -792,6 +806,7 @@ interface SysFieldRow {
 }
 
 export async function persistHasSysPermission(accountUid: string): Promise<boolean> {
+  await seedScope("sys");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_sys_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, SYS_PERMISSION],
@@ -848,6 +863,7 @@ interface IamFieldRow {
 }
 
 export async function persistHasIamPermission(accountUid: string): Promise<boolean> {
+  await seedScope("iam");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_iam_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, IAM_PERMISSION],
@@ -904,6 +920,7 @@ interface DevFieldRow {
 }
 
 export async function persistHasDevPermission(accountUid: string): Promise<boolean> {
+  await seedScope("dev");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_dev_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, DEV_PERMISSION],
@@ -960,6 +977,7 @@ interface SocFieldRow {
 }
 
 export async function persistHasSocPermission(accountUid: string): Promise<boolean> {
+  await seedScope("soc");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_soc_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, SOC_PERMISSION],
@@ -1016,6 +1034,7 @@ interface ErpFieldRow {
 }
 
 export async function persistHasErpPermission(accountUid: string): Promise<boolean> {
+  await seedScope("erp");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_erp_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, ERP_PERMISSION],
@@ -1072,6 +1091,7 @@ interface AiapiFieldRow {
 }
 
 export async function persistHasAiapiPermission(accountUid: string): Promise<boolean> {
+  await seedScope("aiapi");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_aiapi_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, AIAPI_PERMISSION],
@@ -1128,6 +1148,7 @@ interface Sg02FieldRow {
 }
 
 export async function persistHasSg02Permission(accountUid: string): Promise<boolean> {
+  await seedScope("sg02");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_sg02_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, SG02_PERMISSION],
@@ -1184,6 +1205,7 @@ interface AdminStrFieldRow {
 }
 
 export async function persistHasAdminStrPermission(accountUid: string): Promise<boolean> {
+  await seedScope("adminStr");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_admin_str_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, ADMIN_STR_PERMISSION],
@@ -1240,6 +1262,7 @@ interface KbFieldRow {
 }
 
 export async function persistHasKbPermission(accountUid: string): Promise<boolean> {
+  await seedScope("kb");
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_kb_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, KB_PERMISSION],
