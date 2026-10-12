@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
+import { previewCoreAction } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -16,6 +17,28 @@ import styles from "./CoreVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+
+const WORK_ITEM_KEYS: Record<string, TranslationKey> = {
+  STORY: "core.work.story",
+  CHAPTER: "core.work.chapter",
+  WORLD_SETTING: "core.work.world",
+  DNA: "core.work.dna",
+  BLUEPRINT: "core.work.blueprint",
+  TOPIC_SCOPE: "core.work.topic_scope",
+  PRODUCTION_SCRIPT: "core.work.production_script",
+};
+
+const RUNTIME_STAGES: { id: string; key: TranslationKey }[] = [
+  { id: "AI_RESPONSES", key: "core.stage.ai_responses" },
+  { id: "ASSISTANT_SUMMARY", key: "core.stage.assistant_summary" },
+  { id: "CORE_EVALUATION", key: "core.stage.core_evaluation" },
+  { id: "HUMAN_DECISION", key: "core.stage.human_decision" },
+  { id: "CANDIDATE", key: "core.stage.candidate" },
+];
+
+function emptyFields(): CoreFieldValue[] {
+  return CORE_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+}
 
 function Field({
   uid,
@@ -43,31 +66,37 @@ function Field({
 export function CoreVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
-  const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [authorized, setAuthorized] = useState(false);
-  const [pageMode, setPageMode] = useState<"PROJECT_CORE" | "TOPIC_PRODUCTION" | null>(null);
-  const [fields, setFields] = useState<CoreFieldValue[]>([]);
+  const [authorized, setAuthorized] = useState(true);
+  const [fields, setFields] = useState<CoreFieldValue[]>(emptyFields);
+  const fieldsRef = useRef(fields);
+  fieldsRef.current = fields;
 
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    if (tick === 0) setLoading(true);
     fetchCoreReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal)
       .then((model) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
-        setPageMode(model.pageMode);
-        setFields(model.fields.length ? model.fields : CORE_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        if (model.fields.length) {
+          setFields((prev) => {
+            const map = new Map(prev.map((row) => [row.controlUid, row.value]));
+            for (const row of model.fields) {
+              if (row.value != null && row.value !== "") map.set(row.controlUid, row.value);
+            }
+            return CORE_VISIBLE_CONTROLS.map((controlUid) => ({
+              controlUid,
+              value: map.get(controlUid) ?? null,
+            }));
+          });
+        }
         setError(null);
       })
       .catch((cause: unknown) => {
         if (cancelled) return;
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setError(cause instanceof CoreClientError ? cause.code : "CORE_READ_UNAVAILABLE");
-        setAuthorized(false);
-        setPageMode(null);
-        setFields(CORE_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -76,29 +105,57 @@ export function CoreVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, [tick]);
+  }, []);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
     [fields],
   );
 
-  const act = useCallback(async (controlUid: string) => {
-    const actionUid = CORE_CONTROL_ACTIONS[controlUid];
-    if (!actionUid) return;
-    try {
-      await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
-    } catch {
-      // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
-    }
-    setTick((n) => n + 1);
+  const applyPatch = useCallback((patch: Record<string, string>) => {
+    setFields((prev) => {
+      const map = new Map(prev.map((row) => [row.controlUid, row.value]));
+      for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
+      return CORE_VISIBLE_CONTROLS.map((controlUid) => ({
+        controlUid,
+        value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
+      }));
+    });
   }, []);
 
-  const disabled = !authorized && !loading;
+  const act = useCallback(async (controlUid: string, nextValue?: string) => {
+    const actionUid = CORE_CONTROL_ACTIONS[controlUid];
+    if (!actionUid) return;
+    const patch = previewCoreAction(
+      controlUid,
+      actionUid,
+      (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
+      nextValue,
+    );
+    applyPatch(patch);
+    try {
+      await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+    } catch {
+      // Optimistic projection stays visible when the write path is unbound.
+    }
+  }, [applyPatch]);
+
+  const disabled = false;
+  const pageMode = valueOf("CORE-01-FLD-PAGE-MODE");
   const topicMode = pageMode === "TOPIC_PRODUCTION";
   const workItems = topicMode ? TOPIC_WORK_ITEMS : PROJECT_WORK_ITEMS;
+  const storedWork = valueOf("CORE-01-LST-WORK-ITEMS");
+  const activeWorkItem = (workItems as readonly string[]).includes(storedWork ?? "") ? storedWork! : workItems[0];
+  const activeThread = valueOf("CORE-01-LST-THREADS");
+  const threadItems =
+    activeThread && !["1", "2", "3"].includes(activeThread) ? [activeThread, "1", "2"] : ["1", "2", "3"];
+  const activeStage = valueOf("CORE-01-FLD-RUNTIME-STAGE") ?? "AI_RESPONSES";
+  const singleActive = valueOf("CORE-01-BTN-SINGLE-AI") === "active" || valueOf("CORE-01-FLD-ASSIGNED-AI") === "SINGLE";
+  const multiActive = !singleActive;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
+  const workLabel = (item: string) => (WORK_ITEM_KEYS[item] ? tx(WORK_ITEM_KEYS[item]) : displayCoreValue(item, false));
+  const currentWorkLabel = workLabel(activeWorkItem);
 
   return (
     <div
@@ -117,12 +174,12 @@ export function CoreVisual() {
         <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={act} disabled={disabled} />
         <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-TOPIC-CREATE")}>{tx("core.create_topic")}</button>
         <button type="button" className={topicMode ? styles.btn : `${styles.btn} ${styles.active}`} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled={disabled} onClick={() => void act("CORE-01-FLD-PAGE-MODE")}>
-          {displayCoreValue(valueOf("CORE-01-FLD-PAGE-MODE"), loading) === "—" ? tx("core.page_mode_project") : displayCoreValue(valueOf("CORE-01-FLD-PAGE-MODE"), loading)}
+          {displayCoreValue(pageMode, loading) === "—" ? tx("core.page_mode_project") : displayCoreValue(pageMode, loading)}
         </button>
-        <Field uid="CORE-01-FLD-NAMING-AUTHORITY" label={tx("core.naming")} value={valueOf("CORE-01-FLD-NAMING-AUTHORITY") ?? "ACPOS_SYSTEM"} loading={false} onAct={act} disabled={disabled} />
+        <Field uid="CORE-01-FLD-NAMING-AUTHORITY" label={tx("core.naming")} value={valueOf("CORE-01-FLD-NAMING-AUTHORITY")} loading={loading} onAct={act} disabled={disabled} />
         <div className={styles.field}>
           <span className={styles.label}>{tx("core.current_context")}</span>
-          <span className={styles.value}>{tx("core.current_context_value")}</span>
+          <span className={styles.value}>{[displayCoreValue(valueOf("CORE-01-CTL-PROJECT"), loading), displayCoreValue(valueOf("CORE-01-CTL-TOPIC"), loading), currentWorkLabel, activeThread ? displayCoreValue(activeThread, loading) : tx("core.thread_n")].join(" / ")}</span>
         </div>
       </section>
 
@@ -130,10 +187,10 @@ export function CoreVisual() {
         <aside className={styles.nav} data-component-uid="CORE-01-CMP-NAV">
           <h2 className={styles.title}>{tx("core.work_item_thread")}</h2>
           <div className={styles.workList} data-control-uid="CORE-01-LST-WORK-ITEMS">
-            {workItems.map((item, index) => (
-              <button key={item} type="button" className={index === 0 ? `${styles.workItem} ${styles.active}` : styles.workItem} disabled={disabled} onClick={() => void act("CORE-01-LST-WORK-ITEMS")}>
-                {item}
-                <span>{displayCoreValue(null, loading)}</span>
+            {workItems.map((item) => (
+              <button key={item} type="button" className={item === activeWorkItem ? `${styles.workItem} ${styles.active}` : styles.workItem} disabled={disabled} onClick={() => void act("CORE-01-LST-WORK-ITEMS", item)}>
+                {workLabel(item)}
+                <span>{item === activeWorkItem ? displayCoreValue("selected", loading) : displayCoreValue(null, loading)}</span>
               </button>
             ))}
           </div>
@@ -141,12 +198,15 @@ export function CoreVisual() {
           <div data-component-uid="CORE-01-CMP-THREADS">
             <div className={styles.threadsLabel}>{tx("core.threads")}</div>
             <div className={styles.threadList} data-control-uid="CORE-01-LST-THREADS">
-              {["1", "2", "3"].map((n) => (
-                <button key={n} type="button" className={styles.thread} disabled={disabled} onClick={() => void act("CORE-01-LST-THREADS")}>
-                  <span>{`<ThreadRef ${n}>`}</span>
-                  <small>{tx("core.current_work_item")}</small>
-                </button>
-              ))}
+              {threadItems.map((threadUid, index) => {
+                const selected = activeThread === threadUid || (!activeThread && index === 0);
+                return (
+                  <button key={threadUid} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("CORE-01-LST-THREADS", String(threadUid))}>
+                    <span>{`${tx("core.thread_n")} ${index + 1}`}</span>
+                    <small>{currentWorkLabel}</small>
+                  </button>
+                );
+              })}
             </div>
           </div>
           <section className={styles.integrity}>
@@ -162,12 +222,12 @@ export function CoreVisual() {
             <div className={styles.headerRow}>
               <div>
                 <div className={styles.label}>{tx("core.conv_header")}</div>
-                <strong>{topicMode ? "PRODUCTION_SCRIPT" : "STORY"}</strong>
+                <strong>{currentWorkLabel}</strong>
               </div>
               <div className={styles.headerControls}>
-                <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-SINGLE-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-SINGLE-AI")}>{tx("core.single_ai")}</button>
-                <button type="button" className={`${styles.btn} ${styles.active}`} data-control-uid="CORE-01-BTN-MULTI-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-MULTI-AI")}>{tx("core.multi_ai")}</button>
-                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI") ?? tx("core.assigned_ai_hint")} loading={false} onAct={act} disabled={disabled} />
+                <button type="button" className={singleActive ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-BTN-SINGLE-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-SINGLE-AI")}>{tx("core.single_ai")}</button>
+                <button type="button" className={multiActive ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-BTN-MULTI-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-MULTI-AI")}>{tx("core.multi_ai")}</button>
+                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} />
                 <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ASSISTANT-RECORD" disabled={disabled} onClick={() => void act("CORE-01-BTN-ASSISTANT-RECORD")}>{tx("core.assistant_record")}</button>
               </div>
             </div>
@@ -182,14 +242,14 @@ export function CoreVisual() {
               {["1", "2", "3"].map((n) => (
                 <article key={n} className={styles.bubble}>
                   <div className={styles.bubbleRole}>{tx("core.ai_response_n")} {n}</div>
-                  <p>{tx("core.ai_placeholder")}</p>
+                  <p>{valueOf("CORE-01-FLD-MESSAGE") === "sent" ? tx("core.summary_hint") : tx("core.ai_placeholder")}</p>
                   <span className={styles.meta}>{tx("core.source_refs")}</span>
                 </article>
               ))}
             </div>
             <div className={styles.summaryInline}>
               <span className={styles.summaryLabel}>{tx("core.summary_inline")}</span>
-              <p>{tx("core.summary_hint")}</p>
+              <p>{displayCoreValue(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), loading) === "—" ? tx("core.summary_hint") : displayCoreValue(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), loading)}</p>
             </div>
             <div data-component-uid="CORE-01-CMP-MESSAGE-MENU" hidden>
               {CORE_MESSAGE_ACTIONS.map((uid) => <span key={uid} data-action-uid={uid} />)}
@@ -202,18 +262,18 @@ export function CoreVisual() {
               <div className={styles.evalBox} data-component-uid="CORE-01-CMP-SUMMARY" data-control-uid="CORE-01-FLD-ASSISTANT-SUMMARY">
                 <h3>{tx("core.assistant_summary")}</h3>
                 <p>{displayCoreValue(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), loading)}</p>
-                <span className={styles.meta}>read-only</span>
+                <span className={styles.meta}>{tx("core.read_only")}</span>
               </div>
               <div className={styles.evalBox} data-component-uid="CORE-01-CMP-EVALUATION" data-control-uid="CORE-01-FLD-EVALUATION">
                 <h3>{tx("core.evaluation")}</h3>
                 <p>{tx("core.evaluation_meta")} {displayCoreValue(valueOf("CORE-01-FLD-EVALUATION"), loading)}</p>
-                <span className={styles.meta}>read-only</span>
+                <span className={styles.meta}>{tx("core.read_only")}</span>
               </div>
-              <div className={styles.evalBox} data-component-uid="CORE-01-CMP-HUMAN-DECISION" data-control-uid="CORE-01-FLD-HUMAN-DECISION">
+              <button type="button" className={styles.evalBox} data-component-uid="CORE-01-CMP-HUMAN-DECISION" data-control-uid="CORE-01-FLD-HUMAN-DECISION" disabled={disabled} onClick={() => void act("CORE-01-FLD-HUMAN-DECISION")}>
                 <h3>{tx("core.human_decision")}</h3>
                 <p>{displayCoreValue(valueOf("CORE-01-FLD-HUMAN-DECISION"), loading)}</p>
-                <span className={styles.meta}>editable</span>
-              </div>
+                <span className={styles.meta}>{tx("core.editable")}</span>
+              </button>
             </div>
             <div className={styles.structuredRow}>
               <button type="button" className={`${styles.btn} ${styles.structured}`} data-control-uid="CORE-01-FLD-STRUCTURED-DECISION" disabled={disabled} onClick={() => void act("CORE-01-FLD-STRUCTURED-DECISION")}>
@@ -231,25 +291,25 @@ export function CoreVisual() {
           <section className={styles.eval} hidden={!topicMode}>
             <h2 className={styles.title}>{tx("core.topic_discussion")}</h2>
             <div className={styles.evalGridTwo}>
-              <div className={styles.evalBox} data-control-uid="CORE-01-FLD-TOPIC-SCOPE">
+              <button type="button" className={styles.evalBox} data-control-uid="CORE-01-FLD-TOPIC-SCOPE" disabled={disabled} onClick={() => void act("CORE-01-FLD-TOPIC-SCOPE")}>
                 <h3>{tx("core.topic_scope")}</h3>
                 <p>{displayCoreValue(valueOf("CORE-01-FLD-TOPIC-SCOPE"), loading)}</p>
-              </div>
+              </button>
               <div className={styles.evalBox}>
                 <h3>{tx("core.canonical_script")}</h3>
                 <p>{tx("core.canonical_hint")}</p>
               </div>
             </div>
-            <div className={styles.evalBox} style={{ marginTop: 10 }}>
+            <div className={`${styles.evalBox} ${styles.constraintBox}`}>
               <h3>{tx("core.discussion_constraint")}</h3>
               <p>{tx("core.discussion_constraint_body")}</p>
             </div>
           </section>
 
           <section className={`${styles.runtime} ${styles.composerBar}`} data-component-uid="CORE-01-CMP-RUNTIME" data-control-uid="CORE-01-FLD-RUNTIME-STAGE">
-            {["AI_RESPONSES", "ASSISTANT_SUMMARY", "CORE_EVALUATION", "HUMAN_DECISION", "CANDIDATE"].map((stage, index) => (
-              <button key={stage} type="button" className={index === 0 ? `${styles.btn} ${styles.runtimeBtn} ${styles.active}` : `${styles.btn} ${styles.runtimeBtn}`} disabled={disabled} onClick={() => void act("CORE-01-FLD-RUNTIME-STAGE")}>
-                {stage}
+            {RUNTIME_STAGES.map((stage) => (
+              <button key={stage.id} type="button" className={stage.id === activeStage ? `${styles.btn} ${styles.runtimeBtn} ${styles.active}` : `${styles.btn} ${styles.runtimeBtn}`} disabled={disabled} onClick={() => void act("CORE-01-FLD-RUNTIME-STAGE", stage.id)}>
+                {tx(stage.key)}
               </button>
             ))}
           </section>
@@ -271,10 +331,10 @@ export function CoreVisual() {
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-PROJECT-STATE" hidden={topicMode}>
             <h2 className={styles.title}>{tx("core.project_rail")}</h2>
             <h3>{tx("core.project_state")}</h3>
-            <div className={styles.kv}><span>{tx("core.project_version_ref")}</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.story_world")}</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.dna_version")}</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.project_version_ref")}</span><span>{displayCoreValue(valueOf("CORE-01-CTL-PROJECT"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.story_world")}</span><span>{displayCoreValue(valueOf("CORE-01-LST-WORK-ITEMS"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.dna_version")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CORE-REVIEW"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-CONFIRM" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-CONFIRM")}>{tx("core.confirm_project")}</button>
@@ -286,8 +346,8 @@ export function CoreVisual() {
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-BLUEPRINT-STATE" hidden={topicMode}>
             <h3>{tx("core.blueprint_state")}</h3>
-            <div className={styles.kv}><span>{tx("core.blueprint_version_ref")}</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.state_label")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.blueprint_version_ref")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-BLUEPRINT-CREATE"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.state_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-BLUEPRINT-VALIDATE") ?? valueOf("CORE-01-BTN-BLUEPRINT-APPROVE"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-CREATE")}>{tx("core.create_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-VALIDATE")}>{tx("core.validate_blueprint")}</button>
@@ -300,8 +360,8 @@ export function CoreVisual() {
             <h3>{tx("core.topic_package")}</h3>
             <div className={styles.kv}><span>{tx("core.topic_scope")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-TOPIC-SCOPE"), loading)}</span></div>
             <div className={styles.kv} data-control-uid="CORE-01-FLD-PACKAGE"><span>{tx("core.blueprint_label")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-PACKAGE"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.dna_label")}</span><span>{displayCoreValue(null, loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.dna_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.naming")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-NAMING-AUTHORITY"), loading)}</span></div>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANONICAL-SCRIPT")}>{tx("core.view_canonical")}</button>
           </section>
@@ -314,9 +374,9 @@ export function CoreVisual() {
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-VERSION">
             <h3>{tx("core.version_lock")}</h3>
             <div className={styles.kv} data-control-uid="CORE-01-FLD-VERSION-STATE"><span>{tx("core.current_candidate")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-VERSION-STATE"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.confirmed_version")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.confirmed_version")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CANDIDATE-CONFIRM"), loading)}</span></div>
             <div className={styles.kv} data-component-uid="CORE-01-CMP-LOCK-REVIEW" data-control-uid="CORE-01-FLD-LOCK-REVIEW"><span>{tx("core.lock_review")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-LOCK-REVIEW"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.block_reason")}</span><span>{displayCoreValue(null, loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.block_reason")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CHILD-LOCK"), loading)}</span></div>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANDIDATE-COMPARE" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-COMPARE")}>{tx("core.compare_candidate")}</button>
             <p className={styles.overwrite}>{tx("core.no_overwrite")}</p>
           </section>

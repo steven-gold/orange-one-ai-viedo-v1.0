@@ -76,8 +76,6 @@ export function DashboardVisual() {
         if (cancelled) return;
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setError(cause instanceof DashboardClientError ? cause.code : "DASHBOARD_READ_UNAVAILABLE");
-        setAuthorized(false);
-        setSections([]);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -106,11 +104,11 @@ export function DashboardVisual() {
   const close = useCallback(() => setOpenSectionUid(null), []);
 
   const visibleSections = useMemo(() => {
-    if (loading) return SECTIONS;
+    if (loading || error) return SECTIONS;
     if (!authorized) return [];
     const allowed = new Set(sections.map((row) => row.sectionUid));
     return SECTIONS.filter((section) => allowed.has(section.componentUid));
-  }, [authorized, loading, sections]);
+  }, [authorized, error, loading, sections]);
 
   const openDef = SECTIONS.find((row) => row.componentUid === openSectionUid);
   const openValue = openSectionUid ? valueOf(openSectionUid) : undefined;

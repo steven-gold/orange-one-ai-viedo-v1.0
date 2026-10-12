@@ -9,9 +9,10 @@ export async function POST(request: Request) {
   const principal = await requireAuth(request);
   if (principal instanceof NextResponse) return principal;
   try {
-    const body = (await request.json()) as { controlUid?: string; actionUid?: string };
+    const body = (await request.json()) as { controlUid?: string; actionUid?: string; nextValue?: string };
     const controlUid = String(body.controlUid ?? "");
     const actionUid = String(body.actionUid ?? "");
+    const nextValue = typeof body.nextValue === "string" ? body.nextValue : undefined;
     if (!knownCoreAction(controlUid, actionUid)) {
       return jsonError("CORE_ACTION_UNAVAILABLE", `Unknown control ${controlUid}`, 404);
     }
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${CORE_PERMISSION} required`, 403);
     }
-    const eventUid = await persistRecordCoreAction(principal.accountUid, controlUid, actionUid);
+    const eventUid = await persistRecordCoreAction(principal.accountUid, controlUid, actionUid, nextValue);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected core runtime error", 500);

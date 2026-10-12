@@ -97,7 +97,7 @@ async function writeField(table: string, controlUid: string, value: string): Pro
   );
 }
 
-async function applyCoreAction(controlUid: string, actionUid: string): Promise<void> {
+async function applyCoreAction(controlUid: string, actionUid: string, nextValue?: string): Promise<void> {
   const table = FIELD_TABLE.core;
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
     const project = stampId("P");
@@ -114,11 +114,14 @@ async function applyCoreAction(controlUid: string, actionUid: string): Promise<v
     await writeField(table, "CORE-01-FLD-PAGE-MODE", "TOPIC_PRODUCTION");
     await writeField(table, "CORE-01-FLD-TOPIC-SCOPE", topic);
     await writeField(table, "CORE-01-FLD-PACKAGE", "PKG-READY");
+    await writeField(table, "CORE-01-LST-WORK-ITEMS", "TOPIC_SCOPE");
     return;
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-PAGE-MODE") {
     const current = await readField(table, "CORE-01-FLD-PAGE-MODE");
-    await writeField(table, "CORE-01-FLD-PAGE-MODE", current === "TOPIC_PRODUCTION" ? "PROJECT_CORE" : "TOPIC_PRODUCTION");
+    const next = current === "TOPIC_PRODUCTION" ? "PROJECT_CORE" : "TOPIC_PRODUCTION";
+    await writeField(table, "CORE-01-FLD-PAGE-MODE", next);
+    await writeField(table, "CORE-01-LST-WORK-ITEMS", next === "TOPIC_PRODUCTION" ? "TOPIC_SCOPE" : "STORY");
     return;
   }
   if (actionUid === "CORE-01-ACT-AI-MODE-SINGLE") {
@@ -140,7 +143,7 @@ async function applyCoreAction(controlUid: string, actionUid: string): Promise<v
   }
   if (actionUid === "CORE-01-ACT-SEND") {
     await writeField(table, "CORE-01-FLD-MESSAGE", "sent");
-    await writeField(table, "CORE-01-FLD-ASSISTANT-SUMMARY", "Response set recorded");
+    await writeField(table, "CORE-01-FLD-ASSISTANT-SUMMARY", "recorded");
     await writeField(table, "CORE-01-FLD-RUNTIME-STAGE", "ASSISTANT_SUMMARY");
     return;
   }
@@ -152,6 +155,7 @@ async function applyCoreAction(controlUid: string, actionUid: string): Promise<v
   if (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT") {
     await writeField(table, "CORE-01-BTN-CANDIDATE-CONFIRM", "confirmed");
     await writeField(table, "CORE-01-FLD-LOCK-REVIEW", "ready");
+    await writeField(table, "CORE-01-FLD-HUMAN-DECISION", "confirmed");
     return;
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-CREATE") {
@@ -159,23 +163,27 @@ async function applyCoreAction(controlUid: string, actionUid: string): Promise<v
     await writeField(table, "CORE-01-FLD-PACKAGE", stampId("BP"));
     return;
   }
+  if (actionUid === "CORE-01-ACT-WORK-ITEM-SELECT") {
+    await writeField(table, "CORE-01-LST-WORK-ITEMS", nextValue ?? "STORY");
+    return;
+  }
+  if (actionUid === "CORE-01-ACT-THREAD-SELECT") {
+    await writeField(table, "CORE-01-LST-THREADS", nextValue ?? "selected");
+    return;
+  }
+  if (controlUid === "CORE-01-FLD-RUNTIME-STAGE" && nextValue) {
+    await writeField(table, "CORE-01-FLD-RUNTIME-STAGE", nextValue);
+    return;
+  }
   await writeField(table, controlUid, statusFromAction(actionUid));
 }
 
-export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: string, actionUid: string): Promise<void> {
+export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: string, actionUid: string, nextValue?: string): Promise<void> {
   if (page === "dashboard") {
-    const now = new Date().toISOString();
-    await getSqlClient().run(
-      `UPDATE ghsn_dashboard_section_projection
-       SET value_text = COALESCE(NULLIF(value_text, ''), '1'),
-           detail_text = ?
-       WHERE section_uid = ? OR control_uid = ?`,
-      [`Opened ${now}`, controlUid, controlUid],
-    );
     return;
   }
   if (page === "core") {
-    await applyCoreAction(controlUid, actionUid);
+    await applyCoreAction(controlUid, actionUid, nextValue);
     return;
   }
   await writeField(FIELD_TABLE[page], controlUid, statusFromAction(actionUid));

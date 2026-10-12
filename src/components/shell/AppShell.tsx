@@ -258,7 +258,7 @@ export function AppShell({
       data-layout-uid="GHS-LAYOUT-ADAPTIVE-COUPLED-SHELL"
       data-vis-step="VIS-00"
       data-sidebar-expanded={expanded ? "true" : "false"}
-      style={{ ["--sidebar-width" as string]: expanded ? "221px" : "64px" }}
+      data-sidebar-overlay={expanded ? "true" : "false"}
     >
       <header className="global-header" aria-label={t("global.shell.header")}>
         <div className={brandStyles.wrapper} aria-label={t("global.brand.name")}>

@@ -393,8 +393,9 @@ export async function persistRecordCoreAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("core", controlUid, actionUid);
+  await applyWorkbenchAction("core", controlUid, actionUid, nextValue);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_core_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

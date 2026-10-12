@@ -43,7 +43,11 @@ export function SectionDrawer({ open, label, value, detail, loading, onClose }: 
         <h2 className={styles.drawerTitle}>{label}</h2>
         <p className={styles.drawerValue}>{displayDashboardValue(value, loading)}</p>
         <p className={styles.drawerDetail}>
-          {loading ? t("global.state.empty_value") : empty ? t("global.state.no_data") : detail || t("global.state.no_data")}
+          {loading
+            ? t("global.state.empty_value")
+            : empty || !detail || detail.startsWith("Opened ")
+              ? t("global.state.no_data")
+              : detail}
         </p>
       </aside>
     </>

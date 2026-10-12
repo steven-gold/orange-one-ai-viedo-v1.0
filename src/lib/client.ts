@@ -182,6 +182,7 @@ export async function postCoreAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  nextValue?: string,
 ): Promise<void> {
   await fetch("/api/core/action", {
     method: "POST",
@@ -190,7 +191,7 @@ export async function postCoreAction(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, nextValue }),
   });
 }
 

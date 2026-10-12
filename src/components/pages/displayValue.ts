@@ -29,15 +29,30 @@ const STATUS_LABEL: Record<string, string> = {
   ACPOS_SYSTEM: "系統命名",
   AI_RESPONSES: "AI 回應",
   ASSISTANT_SUMMARY: "助理摘要",
+  CORE_EVALUATION: "核心評估",
+  HUMAN_DECISION: "人工決策",
+  CANDIDATE: "候選版本",
   STORY: "故事",
+  CHAPTER: "章節",
+  WORLD_SETTING: "世界觀",
+  DNA: "DNA",
+  BLUEPRINT: "藍圖",
+  TOPIC_SCOPE: "專題範圍",
+  PRODUCTION_SCRIPT: "製作腳本",
   PKG_READY: "套件就緒",
   "PKG-READY": "套件就緒",
   REVIEW: "審查中",
+  submit: "已送出",
+  view: "預覽",
+  attach: "已附加",
+  candidate: "已建立",
+  return: "已退回",
 };
 
-export function displayBoundValue(value: unknown, loading: boolean): string {
-  if (loading) return "—";
-  if (value === null || value === undefined || value === "") return "—";
-  const text = String(value);
-  return STATUS_LABEL[text] ?? text;
+export function displayBoundValue(value: unknown, _loading: boolean): string {
+  if (value !== null && value !== undefined && value !== "") {
+    const text = String(value);
+    return STATUS_LABEL[text] ?? text;
+  }
+  return "—";
 }
