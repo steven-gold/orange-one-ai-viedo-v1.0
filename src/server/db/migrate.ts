@@ -343,6 +343,27 @@ const DDL = [
     action_uid TEXT NOT NULL,
     occurred_at TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_runtime_account (
+    account_uid TEXT PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    status TEXT NOT NULL,
+    disabled_at TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_app_user (
+    user_uid TEXT PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    display_name TEXT NOT NULL,
+    account_uid TEXT NOT NULL,
+    disabled_at TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_identity_session (
+    session_uid TEXT PRIMARY KEY,
+    account_uid TEXT NOT NULL,
+    token_hash TEXT NOT NULL UNIQUE,
+    expires_at TEXT NOT NULL,
+    issued_at TEXT NOT NULL
+  )`,
 ];
 
 export interface MigrationResult {
@@ -700,6 +721,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
     "018_sg02.sql",
     "019_admin_str.sql",
     "020_admin_kb.sql",
+    "021_identity_session.sql",
   ];
   const newlyApplied: string[] = [];
   const alreadyApplied: string[] = [];

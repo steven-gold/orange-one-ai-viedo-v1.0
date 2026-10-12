@@ -1,0 +1,181 @@
+authority:
+  id: ACPOS_AI_03_EXECUTION_SCRIPT_AIAPI_RUNTIME_WIRING
+  encoding_schema: ACPOS_AI_03_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-03
+  system_logic_owner: AI Execution / Script Compiler / Tool / AIAPI Runtime
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-03-ACPOS-AI-EXECUTION-SCRIPT-COMPILER-TOOL-AIAPI-RUNTIME-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: ef8abf2079540f2c6a4fab34d093ab83a760ef20
+  source_sha256: b857d9a2f1bd308272907714be2e98a280d6c6cc9a83354a2f2a2a03fad7f65f
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-03-ACPOS-AI-EXECUTION-SCRIPT-COMPILER-TOOL-AIAPI-RUNTIME-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+identity:
+- field: Document UID
+  value: ACPOS-AI-03
+  rule: 本文件唯一設計身份
+- field: Canonical Owner
+  value: AI Execution / Script Compiler / Tool / AIAPI Runtime
+  rule: Shared runtime logic owner
+- field: Primary outcome
+  value: Provider-neutral governed execution
+  rule: 不讓 Domain 直接接 Provider
+- field: Upstream Owner
+  value: ACPOS-AI-01 / ACPOS-AI-02 / Domain canonical contracts
+  rule: 只讀 exact refs / approved intent
+- field: Downstream
+  value: Provider / Tool / Artifact / Domain consumer
+  rule: 回傳 normalized result + lineage
+- field: Out of scope
+  value: CORE/ASSET/VIDEO/EDIT/VOICE/QA/Enterprise/Social/Strategy domain semantics
+  rule: 由 04～09 各自擁有
+- field: Truthful status
+  value: DESIGN ARTIFACT
+  rule: 不宣告 runtime/deploy 已完成
+one_liner: ACPOS-AI-03 只負責把已被允許執行的 canonical meaning 安全、可追蹤、可重試地送進 Tool / Provider Runtime，並把結果帶回；不得重新決定產品意圖。
+source_basis:
+- Source: Current Governance v2.2.16
+  使用方式: 工作方法、Single Authority、Current Truth、Evidence/Resume
+  禁止誤用: 不得把歷史 PASS 當 Current runtime evidence
+- Source: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.2
+  使用方式: InstructionCompiler、NormalizedInstruction、Provider Profile、Adapter、Gateway conversion pipeline
+  禁止誤用: 文件標示 non-executable；不得宣稱 runtime 已跑
+- Source: AIAPI-01～09 外部 AI API 中心 FINAL_LOCKED
+  使用方式: Provider / Capability / Route / Profile / Job / Sandbox / Budget-Incident 的 Current page/operation
+    contract
+  禁止誤用: FILE_SPEC / UI Authority，不等於 Runtime executed
+- Source: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL
+  使用方式: Execution Panel、Execution Job/Step/Log、Provider runtime backbone、system layer boundary
+  禁止誤用: 來源較舊時不得覆寫 Current Governance
+- Source: ACPOS-AI-01
+  使用方式: Context / truth / retrieval / data classification references
+  禁止誤用: REFERENCE, DO NOT COPY
+- Source: ACPOS-AI-02
+  使用方式: Conversation / message / thread / branch / user interaction continuity
+  禁止誤用: REFERENCE, DO NOT COPY
+owner_boundary:
+- 概念: Context truth
+  Owner: ACPOS-AI-01
+  其他系統允許: 提供 exact ContextPackage / data class refs
+  禁止: AIAPI 自建第二 Context Store
+- 概念: Conversation continuity
+  Owner: ACPOS-AI-02
+  其他系統允許: 提供 request / response / abort / retry interaction context
+  禁止: Runtime 自建第二 conversation history
+- 概念: Canonical business intent
+  Owner: Domain / ACPOS-AI-04～09
+  其他系統允許: 提供 exact script/operation/output contract
+  禁止: Provider adapter 改寫業務意圖
+- 概念: Instruction compile
+  Owner: ACPOS-AI-03
+  其他系統允許: 共享服務
+  禁止: 每部門各自 prompt compiler
+- 概念: Provider routing
+  Owner: ACPOS-AI-03
+  其他系統允許: 受控 route request
+  禁止: 前端 provider/model picker 覆寫 route
+- 概念: Provider profile / secret ref
+  Owner: ACPOS-AI-03 / AIAPI governance
+  其他系統允許: configuration / credential reference
+  禁止: 部門程式硬編 secret/vendor key
+- 概念: Execution job / attempt
+  Owner: ACPOS-AI-03
+  其他系統允許: 訂閱/查詢/取消/重試
+  禁止: 每部門自建 job state machine
+- 概念: Tool semantics
+  Owner: Exact Tool Owner
+  其他系統允許: AI03 負責 invocation safety / lineage
+  禁止: AI03 猜 tool permission / schema
+entity_inventory:
+- Entity: ExecutionIntent
+  Canonical responsibility: 受治理執行意圖；指向 source owner/version/hash
+- Entity: CanonicalInstructionRef
+  Canonical responsibility: Domain canonical meaning exact reference
+- Entity: InstructionPackage
+  Canonical responsibility: 編譯輸入封包；含 context/constraints/output contract
+- Entity: NormalizedInstruction
+  Canonical responsibility: Provider-neutral normalized executable instruction
+- Entity: CapabilityRequirement
+  Canonical responsibility: required capability + additional capabilities
+- Entity: RouteRequest
+  Canonical responsibility: Provider-neutral route admission request
+- Entity: ProviderCandidateGroup
+  Canonical responsibility: 有序候選 route group
+- Entity: RouteDecision
+  Canonical responsibility: exact selected profile / reasons / rejected candidates
+- Entity: ProviderModelProfile
+  Canonical responsibility: Provider+Model capability/adapter/profile config
+- Entity: AdapterTemplate
+  Canonical responsibility: prompt/request/response mapping template
+- Entity: CompiledPrompt
+  Canonical responsibility: target-profile-specific prompt artifact + hash
+- Entity: CompiledPayload
+  Canonical responsibility: target adapter request + hash; no secret plaintext persisted
+- Entity: ExecutionJob
+  Canonical responsibility: 穩定作業 identity / target / lifecycle
+- Entity: ExecutionAttempt
+  Canonical responsibility: 每次實際執行或 retry 的不可變 attempt
+- Entity: ToolInvocation
+  Canonical responsibility: 受治理 tool call candidate/request
+- Entity: ToolResult
+  Canonical responsibility: tool execution result / error / evidence
+- Entity: ProviderCallbackReceipt
+  Canonical responsibility: callback identity / verification / replay state
+- Entity: ProviderArtifactRef
+  Canonical responsibility: external/generated artifact reference; immutable lineage
+- Entity: NormalizationResult
+  Canonical responsibility: response parser/validator result
+- Entity: ExecutionError
+  Canonical responsibility: canonical error class + retry eligibility
+- Entity: RetryDecision
+  Canonical responsibility: retry/backoff/replay decision
+- Entity: FallbackDecision
+  Canonical responsibility: cross-provider fallback decision + target profile
+- Entity: CircuitState
+  Canonical responsibility: provider/route circuit condition
+- Entity: QuarantineRecord
+  Canonical responsibility: provider/route quarantine with reason/evidence
+- Entity: CostRecord
+  Canonical responsibility: estimate/actual/currency/source; FINANCE_RAW boundary
+- Entity: ExecutionLineage
+  Canonical responsibility: source→instruction→profile→payload→attempt→result chain
+shared_runtime_ones:
+- ONE InstructionCompiler
+- ONE Capability + Route Policy
+- ONE Provider Profile Registry / Adapter boundary
+- ONE ProviderGateway
+- ONE Execution Job/Attempt lineage
+page_wiring:
+  owner_page: admin:AIAPI-01
+  consumers: all 18 domain pages that request AI/tool execution
+  upstream:
+  - ACPOS-AI-01
+  - ACPOS-AI-02
+  domain_intent_owners: ACPOS-AI-04..09
+  secret_injection: gateway runtime only
+  department_provider_picker: FORBIDDEN
+forbidden:
+- Domain 直接接 Provider
+- 前端 provider/model picker 覆寫 route
+- 部門硬編 secret/vendor key
+- 每部門自建 job state machine / prompt compiler

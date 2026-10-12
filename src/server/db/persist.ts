@@ -1289,3 +1289,70 @@ export async function persistRecordKbAction(
   );
   return eventUid;
 }
+
+export interface RuntimeAccountRow {
+  account_uid: string;
+  email: string;
+  password_hash: string;
+  status: string;
+  disabled_at: string | null;
+}
+
+export interface AppUserRow {
+  user_uid: string;
+  email: string;
+  display_name: string;
+  account_uid: string;
+  disabled_at: string | null;
+}
+
+export interface IdentitySessionRow {
+  session_uid: string;
+  account_uid: string;
+  token_hash: string;
+  expires_at: string;
+  issued_at: string;
+}
+
+export async function persistFindRuntimeAccountByEmail(email: string): Promise<RuntimeAccountRow | undefined> {
+  const rows = await getSqlClient().all<RuntimeAccountRow>(
+    "SELECT account_uid, email, password_hash, status, disabled_at FROM ghsn_runtime_account WHERE lower(email) = lower(?)",
+    [email],
+  );
+  return rows[0];
+}
+
+export async function persistFindAppUserByEmail(email: string): Promise<AppUserRow | undefined> {
+  const rows = await getSqlClient().all<AppUserRow>(
+    "SELECT user_uid, email, display_name, account_uid, disabled_at FROM ghsn_app_user WHERE lower(email) = lower(?)",
+    [email],
+  );
+  return rows[0];
+}
+
+export async function persistCreateIdentitySession(row: IdentitySessionRow): Promise<void> {
+  await getSqlClient().run(
+    `INSERT INTO ghsn_identity_session (session_uid, account_uid, token_hash, expires_at, issued_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [row.session_uid, row.account_uid, row.token_hash, row.expires_at, row.issued_at],
+  );
+  await getSqlClient().run(
+    `INSERT INTO ghsn_account_session (session_uid, account_uid, issued_at)
+     VALUES (?, ?, ?)
+     ON CONFLICT (session_uid) DO UPDATE SET account_uid = EXCLUDED.account_uid, issued_at = EXCLUDED.issued_at`,
+    [row.session_uid, row.account_uid, row.issued_at],
+  );
+}
+
+export async function persistFindIdentitySessionByTokenHash(tokenHash: string): Promise<IdentitySessionRow | undefined> {
+  const rows = await getSqlClient().all<IdentitySessionRow>(
+    "SELECT session_uid, account_uid, token_hash, expires_at, issued_at FROM ghsn_identity_session WHERE token_hash = ?",
+    [tokenHash],
+  );
+  return rows[0];
+}
+
+export async function persistDeleteIdentitySession(sessionUid: string): Promise<void> {
+  await getSqlClient().run("DELETE FROM ghsn_identity_session WHERE session_uid = ?", [sessionUid]);
+  await getSqlClient().run("DELETE FROM ghsn_account_session WHERE session_uid = ?", [sessionUid]);
+}

@@ -1,0 +1,238 @@
+authority:
+  id: ACPOS_AI_04_CORE_BLUEPRINT_CANONICAL_SCRIPT_WIRING
+  encoding_schema: ACPOS_AI_04_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-04
+  system_logic_owner: CORE AI / Blueprint / Canonical Script System
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-04-ACPOS-CORE-AI-BLUEPRINT-CANONICAL-SCRIPT-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: d47a2ed531414742daba323489198bd964fb8a8b
+  source_sha256: eddc09a97e193ddd2f69ae1376642859c0fdd11391424757ab58182f2d09b9cb
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-04-ACPOS-CORE-AI-BLUEPRINT-CANONICAL-SCRIPT-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+one_liner: CORE 的責任是把作品長期 Canon 與本次 Topic 生產契約分層固定，讓下游只消費 exact refs。
+owner_boundary:
+- Concept: Truth / Context
+  Canonical Owner: ACPOS-AI-01
+  CORE consumes/produces: exact Context / evidence refs
+  Forbidden: CORE 自建 Context truth
+- Concept: Conversation
+  Canonical Owner: ACPOS-AI-02
+  CORE consumes/produces: threads/messages/branch decisions
+  Forbidden: CORE 自建 message history
+- Concept: Provider execution
+  Canonical Owner: ACPOS-AI-03
+  CORE consumes/produces: provider-neutral canonical script / structured instruction source
+  Forbidden: CORE 選 Provider/Model 或保存 Provider prompt
+- Concept: Project Canon
+  Canonical Owner: ACPOS-AI-04
+  CORE consumes/produces: Story/Chapter/World/Base DNA/Project Structure Version
+  Forbidden: downstream silent overwrite
+- Concept: Topic Production Contract
+  Canonical Owner: ACPOS-AI-04
+  CORE consumes/produces: Topic Scope/Script/DNA enrichment/Blueprint/Package
+  Forbidden: ASSET 重選 scope/source
+- Concept: Naming
+  Canonical Owner: ACPOS_SYSTEM
+  CORE consumes/produces: read-only Naming Authority ref
+  Forbidden: CORE local filename formula
+- Concept: Lock review
+  Canonical Owner: VersionLockService boundary
+  CORE consumes/produces: request + status/evidence refs
+  Forbidden: AI auto-approval / fabricated reviewer
+entity_inventory:
+- Entity: Project
+  Purpose: 作品長期 identity / lifecycle root
+- Entity: ProjectDraftVersion
+  Purpose: Project 建立/修訂的可編輯版本
+- Entity: ProjectStructureVersion
+  Purpose: Mother-locked long-range canon snapshot
+- Entity: StoryCoreContract
+  Purpose: 14 Story canonical dimensions + lineage
+- Entity: StoryCandidateSet
+  Purpose: immutable alternatives for human decision
+- Entity: StoryVersion
+  Purpose: adopted/merged confirmed Story version
+- Entity: ChapterArchitectureVersion
+  Purpose: append-only chapter architecture
+- Entity: WorldBibleVersion
+  Purpose: append-only World canon / rules
+- Entity: DNABaseVersion
+  Purpose: Project-level base DNA
+- Entity: DNACandidate
+  Purpose: candidate enrichment / resolution input
+- Entity: DNAResolution
+  Purpose: resolved exact DNA refs + evidence
+- Entity: DNALockedVersion
+  Purpose: locked DNA projection / topic-scoped where applicable
+- Entity: ContinuityLedger
+  Purpose: adopted story/chapter/canon/continuity entries
+- Entity: ProjectBlueprintPackage
+  Purpose: Project Structure layer refs/package
+- Entity: Topic
+  Purpose: production-scoped work identity
+- Entity: TopicProductionScope
+  Purpose: approved scope / horizon / boundary
+- Entity: BoundaryCandidate
+  Purpose: candidate cut/start/end + rationale
+- Entity: ContinuityBridgePackage
+  Purpose: exact next-start state and unresolved/payoff refs
+- Entity: HumanCanonicalScriptVersion
+  Purpose: human-readable canonical production meaning
+- Entity: ProductionScriptVersion
+  Purpose: topic-scoped production semantic version
+- Entity: MachineStructuredScriptVersion
+  Purpose: typed projection of exact canonical script
+- Entity: ScriptViewSet
+  Purpose: Asset/Comic/Video/Editing or equivalent governed views
+- Entity: TopicBlueprintCandidate
+  Purpose: integrated production contract candidate
+- Entity: TopicBlueprintVersion
+  Purpose: confirmed/locked topic blueprint version
+- Entity: TopicProductionPackage
+  Purpose: exact handoff bundle + readiness
+- Entity: CandidateVersion
+  Purpose: generic immutable candidate lineage
+- Entity: LockReviewRef
+  Purpose: Mother/Child/DNA lock review status/evidence
+- Entity: ChangeRequest
+  Purpose: authorized change intent
+- Entity: ChangeImpactSet
+  Purpose: affected versions/dependencies/descendants
+- Entity: DownstreamReadiness
+  Purpose: read-only ASSET/VIDEO/EDIT/QA boundary status
+- Entity: ProductionRequirementSet
+  Purpose: topic-scoped production constraints/asset need
+- Entity: AssetManifestRef
+  Purpose: reuse/new asset requirement refs
+- Entity: QualityCriteriaRef
+  Purpose: QA/criteria version references
+- Entity: RightsPolicyRef
+  Purpose: rights/licensing/compliance refs
+entity_operations:
+- Entity: Project
+  Operations: createDraft / validate / confirm / revise
+  Normative meaning: Project lifecycle
+- Entity: Story
+  Operations: createCandidateSet / compare / adoptOrMerge / requestRevision
+  Normative meaning: human decision
+- Entity: Chapter
+  Operations: createChapterArchitectureVersion
+  Normative meaning: append-only
+- Entity: World
+  Operations: createWorldBibleVersion
+  Normative meaning: append-only
+- Entity: DNA
+  Operations: createCandidate / resolve / requestLock
+  Normative meaning: separated candidate→resolve→lock
+- Entity: Project Blueprint
+  Operations: createCandidate / validate / approve / submitCoreReview
+  Normative meaning: Project Core route only
+- Entity: Mother Lock
+  Operations: request / review / approve-or-return
+  Normative meaning: no hidden approval
+- Entity: Topic
+  Operations: createDraft / validate / confirm / version
+  Normative meaning: requires valid Project lineage
+- Entity: Boundary
+  Operations: proposeCandidates / compare / select
+  Normative meaning: narrative + continuity + production-aware
+- Entity: Canonical Script
+  Operations: createVersion / get / compare / revise
+  Normative meaning: provider-neutral
+- Entity: Production Script
+  Operations: derive / validate / version
+  Normative meaning: same canonical meaning
+- Entity: Machine Structured Script
+  Operations: materialize / validate / hash / reproject
+  Normative meaning: projection only
+- Entity: DNA Enrichment
+  Operations: deriveCandidate / resolve / lock topic-scoped details
+  Normative meaning: no silent Base DNA mutation
+- Entity: Topic Blueprint
+  Operations: buildCandidate / crossReview / compare / confirm / childLock
+  Normative meaning: immutable version lineage
+- Entity: Production Package
+  Operations: build / validate / markReady / exportRefs
+  Normative meaning: exact handoff only
+- Entity: Change Request
+  Operations: open / impactScan / authorize / materializeNewVersion
+  Normative meaning: no in-place overwrite
+- Entity: Handoff
+  Operations: verifyReadiness / navigate / persistContext
+  Normative meaning: no downstream execution
+formalization_layers:
+- Layer: Conversation / AI response
+  Editable?: 'Yes'
+  Authority?: 'No'
+  Rule: may propose, analyze, compare; never direct write canonical owner
+- Layer: Working Draft
+  Editable?: 'Yes'
+  Authority?: 'No'
+  Rule: same-context working state; resumable
+- Layer: Human Decision
+  Editable?: recorded
+  Authority?: Decision evidence
+  Rule: explicit adopt/merge/revise/reject intent
+- Layer: Candidate
+  Editable?: 'No'
+  Authority?: Candidate only
+  Rule: immutable source refs + lineage
+- Layer: Compare/Review
+  Editable?: 'No'
+  Authority?: Evaluation evidence
+  Rule: criteria/diff/risk; cannot auto-lock
+- Layer: Confirmed Version
+  Editable?: 'No'
+  Authority?: Yes within entity scope
+  Rule: new version, no overwrite
+- Layer: Lock Review
+  Editable?: 'No'
+  Authority?: Gate boundary
+  Rule: reviewer/evidence/hash required
+- Layer: Locked Version
+  Editable?: 'No'
+  Authority?: Canonical
+  Rule: may be superseded only by authorized new version
+page_wiring:
+  owner_page: CORE-01
+  handoff_to:
+  - ASSET-01
+  - VIDEO-01
+  - EDIT-01
+  - QA-01
+  handoff_objects:
+  - Blueprint
+  - DNA
+  - Canonical Production Script
+  - Topic Production Package
+  upstream:
+  - ACPOS-AI-01
+  - ACPOS-AI-02
+  - ACPOS-AI-03
+  raw_ai_is_not_authority: true
+forbidden:
+- CORE 自建 Context / Conversation / Provider picker
+- downstream silent overwrite Canon
+- AI auto-approval / fabricated reviewer
+- in-place overwrite of locked version

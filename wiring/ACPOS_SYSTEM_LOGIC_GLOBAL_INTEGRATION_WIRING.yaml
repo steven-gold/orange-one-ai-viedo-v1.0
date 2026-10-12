@@ -1,0 +1,716 @@
+authority:
+  id: ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_WIRING
+  encoding_schema: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  surface: SYSTEM
+  surface_uid: SYSTEM-LOGIC
+  aligns_to: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  historical_ledger_embedded: false
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+  source_uid: SRC-ACPOS-SYSTEM-LOGIC-GLOBAL-INTEGRATION-MOTHER-BASIC-DESIGN-OPTIMIZED
+  source_git_blob_sha: d18f010673cc0ddedb64b97ee0945851345f3e01
+  source_sha256: 4709e92a27cc7280561446f8e1f0a33d903df608aada41d07439b99ab110eb75
+  source_role: WHOLE_SITE_INTEGRATION_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-ACPOS-SYSTEM-LOGIC-GLOBAL-INTEGRATION-MOTHER-BASIC-DESIGN-OPTIMIZED/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+purpose: 18 頁、中央大腦、Identity／Permission／Data／AI／Queue／Audit 的單一整合契約。ACPOS 是全站中央協調大腦，不是第 19 個業務頁面。
+positioning: 每個 Domain Page 保留自己的 Business Truth；System Logic 只負責 Context、Version、Handoff、Routing、Experience、Audit
+  與跨頁合法下一步。
+truth_precedence:
+- Current Page Authority：決定各頁 Business / UI 行為
+- Global Shell / Navigation / Visual：決定全站外框、路由目標、視覺 Token
+- System Authority：決定跨頁 Context、Orchestration、AI、Experience、Integration
+- Runtime Contracts：決定 Identity、DB、Queue 等實際技術邊界
+- Implementation / Test / Deployment Evidence：只能證明是否已施工，不反向改寫 Authority
+unknown_rule: 任何無 owner、無 exact version、無 permission、無 registered operation、無 required evidence 的跨頁行為，不得用
+  AI 推測補值；必須 BLOCK + REPORT_AUTHORITY_GAP。
+current_page_universe:
+- Surface: Front
+  Page UID: workspace:WB-01
+  名稱: 儀表板
+  系統角色: 公司級 read projection / summary
+- Surface: Front
+  Page UID: CORE-01
+  名稱: 專案 / 專題
+  系統角色: Project/Topic Core、Blueprint、DNA、Canonical Script
+- Surface: Front
+  Page UID: ASSET-01
+  名稱: 素材
+  系統角色: 素材生成／版本／修正／handoff
+- Surface: Front
+  Page UID: VIDEO-01
+  名稱: 影片
+  系統角色: 影片生成／版本／修正／handoff
+- Surface: Front
+  Page UID: EDIT-01
+  名稱: 剪輯配音
+  系統角色: 整合後製、配音、Render、Output
+- Surface: Front
+  Page UID: QA-01
+  名稱: QA
+  系統角色: Finished Output review / correction / recheck / pass
+- Surface: Front
+  Page UID: admin:DB-01
+  名稱: 資料庫
+  系統角色: 資料模型、Trace、Read/Administration surface
+- Surface: Front
+  Page UID: workspace:STR-01
+  名稱: 戰略中心
+  系統角色: Strategic AI analysis / options / human decision support
+- Surface: Front
+  Page UID: workspace:INFO-01
+  名稱: 最新資訊
+  系統角色: Research / Fact / Evidence / Context Candidate
+- Surface: Admin
+  Page UID: admin:SYS-01
+  名稱: 系統維護
+  系統角色: System truth / change / impact / validation AI
+- Surface: Admin
+  Page UID: admin:IAM-01
+  名稱: 帳戶與權限
+  系統角色: Account Permission Assignment
+- Surface: Admin
+  Page UID: admin:DEV-01
+  名稱: 企業自動開發
+  系統角色: Company discovery / outreach workflow
+- Surface: Admin
+  Page UID: admin:SOC-01
+  名稱: 社群發布
+  系統角色: Platform target / publish plan / result
+- Surface: Admin
+  Page UID: admin:ERP-01
+  名稱: ERP
+  系統角色: Finance read / connector / sync quality
+- Surface: Admin
+  Page UID: admin:AIAPI-01
+  名稱: AI API
+  系統角色: Provider / capability / route / test / operations
+- Surface: Admin
+  Page UID: admin:SG-02
+  名稱: QA 評分項目
+  系統角色: Criteria / Threshold / Gate Policy governance
+- Surface: Admin
+  Page UID: admin:STR-01
+  名稱: 戰略中心後台
+  系統角色: Strategy intelligence / fact / playbook / opportunity / decision governance
+- Surface: Admin
+  Page UID: admin:KB-01
+  名稱: 知識庫
+  系統角色: Knowledge / Experience / Learning / Review
+locked_page_encodings:
+- page_uid: workspace:WB-01
+  surface: FRONT
+  name_zh: 儀表板
+  locked_encoding: ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+- page_uid: CORE-01
+  surface: FRONT
+  name_zh: 專案 / 專題
+  locked_encoding: CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  mutation: FORBIDDEN
+- page_uid: ASSET-01
+  surface: FRONT
+  name_zh: 素材
+  locked_encoding: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  mutation: FORBIDDEN
+- page_uid: VIDEO-01
+  surface: FRONT
+  name_zh: 影片
+  locked_encoding: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  mutation: FORBIDDEN
+- page_uid: EDIT-01
+  surface: FRONT
+  name_zh: 剪輯配音
+  locked_encoding: ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  mutation: FORBIDDEN
+- page_uid: QA-01
+  surface: FRONT
+  name_zh: QA
+  locked_encoding: ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+  mutation: FORBIDDEN
+- page_uid: admin:DB-01
+  surface: FRONT
+  name_zh: 資料庫
+  locked_encoding: ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+- page_uid: workspace:STR-01
+  surface: FRONT
+  name_zh: 戰略中心
+  locked_encoding: ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+  mutation: FORBIDDEN
+- page_uid: workspace:INFO-01
+  surface: FRONT
+  name_zh: 最新資訊
+  locked_encoding: ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+- page_uid: admin:SYS-01
+  surface: ADMIN
+  name_zh: 系統維護
+  locked_encoding: ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 05f15fe2375931e555725b155dc6ddfc2962ddb9
+- page_uid: admin:IAM-01
+  surface: ADMIN
+  name_zh: 帳戶與權限
+  locked_encoding: ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 625d1d490d99c67cfd4bb4f7d80393bccf0ea7e6
+- page_uid: admin:DEV-01
+  surface: ADMIN
+  name_zh: 企業自動開發
+  locked_encoding: ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 2de59469cdd3e9674151476d328512c2b76507aa
+- page_uid: admin:SOC-01
+  surface: ADMIN
+  name_zh: 社群發布
+  locked_encoding: ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 5ad9bd512c45d1ed382377ff983bfc250c793a36
+- page_uid: admin:ERP-01
+  surface: ADMIN
+  name_zh: ERP
+  locked_encoding: ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: def8d440d331e5b8cbbea3d92c96412ca45b002b
+- page_uid: admin:AIAPI-01
+  surface: ADMIN
+  name_zh: AI API
+  locked_encoding: ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: dd9f05e295af57cc833e90d1a12030c8198580c6
+- page_uid: admin:SG-02
+  surface: ADMIN
+  name_zh: QA 評分項目
+  locked_encoding: ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: b59dc571d023fe6a88507abc5b57546011badf11
+- page_uid: admin:STR-01
+  surface: ADMIN
+  name_zh: 戰略中心後台
+  locked_encoding: ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: f9bf9ec7e918d9603f4c7d761e32be85d246ceff
+- page_uid: admin:KB-01
+  surface: ADMIN
+  name_zh: 知識庫
+  locked_encoding: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 09fc183a0ebbabca4cf3591d4e6063b72191755a
+brain_layers:
+- Layer: BRAIN-01
+  Owner Concept: SYSTEM_STATE
+  責任: 全站 exact state/version/relationship projection；不替代 domain record
+- Layer: BRAIN-02
+  Owner Concept: CONTEXT
+  責任: 依 page/operation/account/scope 選出 exact authorized context；建立 ContextPackage / Candidate
+- Layer: BRAIN-03
+  Owner Concept: CONVERSATION
+  責任: CORE / Strategy / System AI 共用 thread/branch/context continuity core
+- Layer: BRAIN-04
+  Owner Concept: MEMORY
+  責任: Conversation / Working / Decision / Version / Operational memory
+- Layer: BRAIN-05
+  Owner Concept: DECISION_GOVERNANCE
+  責任: AI output 保持 candidate/analysis，直到 Human / Governance decision 完成
+- Layer: BRAIN-06
+  Owner Concept: VERSION_LINEAGE
+  責任: exact version/hash/checksum/provenance；禁止 silent overwrite
+- Layer: BRAIN-07
+  Owner Concept: ORCHESTRATION
+  責任: 解析合法下一步、handoff、dependency，不越權執行 domain action
+- Layer: BRAIN-08
+  Owner Concept: AI_EXECUTION
+  責任: Provider-neutral instruction → capability → eligible profile → adapter → provider → normalized result
+- Layer: BRAIN-09
+  Owner Concept: EXPERIENCE
+  責任: 從真實執行/結果/QA/成本/延遲形成 ExperienceRecord
+- Layer: BRAIN-10
+  Owner Concept: EVOLUTION
+  責任: Experience → pattern → LearningCandidate → governed adoption
+- Layer: BRAIN-11
+  Owner Concept: EXTERNAL_DATA_ACQUISITION
+  責任: 共用 crawl/search/fetch/ingest runtime；頁面只提交 domain intent
+- Layer: BRAIN-12
+  Owner Concept: GOVERNANCE_OBSERVABILITY
+  責任: Permission / Policy / Classification / Audit / Error / Health / Truthful State
+core_production_flow:
+- 階段: CORE
+  Owner Page: CORE-01
+  輸入: Project / Topic / Context / Decisions
+  輸出 / 下一步: Blueprint / DNA / Canonical Production Script
+- 階段: ASSET
+  Owner Page: ASSET-01
+  輸入: Exact Blueprint / DNA / Script refs
+  輸出 / 下一步: Asset Versions + evaluation + handoff
+- 階段: VIDEO
+  Owner Page: VIDEO-01
+  輸入: Exact upstream refs + approved assets
+  輸出 / 下一步: Video Versions + evaluation + handoff
+- 階段: EDIT+VOICE
+  Owner Page: EDIT-01
+  輸入: Exact video/audio/script refs
+  輸出 / 下一步: Integrated Edit / Render / Output Version
+- 階段: QA
+  Owner Page: QA-01
+  輸入: Exact finished output + criteria_version_ref
+  輸出 / 下一步: Pass / Finding / Correction Request / Recheck
+production_flow_invariants:
+- 每階段必須消費 exact upstream refs，不用 latest/current/default alias
+- AUTO / MANUAL 只改 progression behavior，不改 Source Truth
+- 任何修改建立新 version，禁止 silent overwrite
+- QA 不自己生成替代媒體；Correction 回到真正的 production owner
+identity_permission_page_gate:
+- 瀏覽器攜帶 acpos_session HttpOnly Cookie
+- Identity Runtime 解析 runtime session → READY account → non-disabled app_users actor
+- Shell 取得 visible_page_uids，只顯示授權 Front/Admin L1
+- 進入 Page 時再執行 exact page / section / action / control / API / field permission + scope + state gate
+- Effectful write 額外要求 expected_version、idempotency、correlation、audit
+- Permission denied = HIDDEN；authorized but state blocked = DISABLED + reason
+ai_provider_routing:
+- 步驟: Context Resolution
+  系統行為: Current user + page operation → authorized scope → exact object/version/decision/source refs →
+    conflict check → fingerprint → ACPOSContextPackage
+- 步驟: Conversation
+  系統行為: CORE / Strategy / System AI 共用 Conversation Core，但各 domain context 彼此隔離；mode switch 不得 silent
+    reset
+- 步驟: Instruction
+  系統行為: Domain 產生 provider-neutral canonical instruction；Provider syntax 不得寫進 department script
+- 步驟: Capability
+  系統行為: 依 operation 確定 required capability；硬性 permission/policy/rights/classification/health 先過 Gate
+- 步驟: Route
+  系統行為: AIAPI-01 Router 從 eligible ProviderModelProfiles 排序；前端不得 override
+- 步驟: Provider Adapter
+  系統行為: 將 canonical instruction 轉 Provider-specific request；credential 只用 Secret Reference
+- 步驟: Result
+  系統行為: Normalize / validate / persist route-job-attempt-result lineage；回到 domain owner 做 evaluation /
+    version / decision
+ai_authority_boundary: Raw AI Output 永遠不是 Canonical Decision、Approved Knowledge 或 Production Truth。正式化需要對應
+  Domain 的 Review / Approve / Adopt Gate。
+shared_acquisition_consumers:
+- Consumer: KB-01
+  允許模式: WEB_CRAWL / WEB_FETCH / SEARCH / RSS / DOCUMENT / RECRAWL
+  Output Target: Knowledge evidence / citation pipeline
+- Consumer: INFO-01
+  允許模式: SEARCH / WEB_FETCH / WEB_CRAWL
+  Output Target: Fact / Evidence / Context Candidate
+- Consumer: admin STR-01
+  允許模式: SEARCH / WEB_CRAWL / WEB_FETCH / RECRAWL
+  Output Target: Strategy source / watchlist / fact / trend
+- Consumer: DEV-01
+  允許模式: SEARCH / CRAWL / FETCH / JSON / CONTINUOUS
+  Output Target: Company discovery evidence → directory
+- Consumer: SOC-01
+  允許模式: SEARCH / FETCH / JSON
+  Output Target: Social target discovery evidence
+shared_acquisition_rule: Shared Acquisition Runtime 統一負責 robots/rights/domain/rate/retry/snapshot/dedupe/normalize/evidence/audit。Page
+  不可建立第二套 crawler，亦不可把 raw crawl result 直接寫成 Canon / Knowledge / Strategy Truth。
+data_queue_version_audit:
+- Layer: PostgreSQL + RLS
+  Hard Rule: Canonical data owner per domain；RLS / permission 不可由前端取代
+- Layer: Queue / Worker / DLQ
+  Hard Rule: Async job 狀態與 retry/failure 由共用 runtime 管理；Frontend 不直接改 Job State
+- Layer: Version / Lineage
+  Hard Rule: 每次 revision 新增版本；Exact base/version/ref 必須保留；Asset/Output 不覆蓋原版本
+- Layer: Integration Event
+  Hard Rule: 只通知跨頁狀態；source domain object 仍是 truth owner
+- Layer: Audit
+  Hard Rule: Effectful operation 必須 correlation + actor + action + target + result / error；不得記錄 raw secret
+- Layer: Evidence
+  Hard Rule: Test/Production Evidence 證明執行結果，不成為產品 Authority
+cross_page_handoff:
+- Producer: CORE-01
+  Handoff Object: Blueprint / Script / DNA refs
+  Consumer: ASSET-01
+  Gate: exact version + lock / approval state
+- Producer: ASSET-01
+  Handoff Object: Asset Version / Handoff
+  Consumer: VIDEO-01
+  Gate: accepted output + required lineage
+- Producer: VIDEO-01
+  Handoff Object: Video Version / Handoff
+  Consumer: EDIT-01
+  Gate: accepted output + required lineage
+- Producer: EDIT-01
+  Handoff Object: Final Output / QA Handoff
+  Consumer: QA-01
+  Gate: render complete + exact output version
+- Producer: QA-01
+  Handoff Object: Correction Request
+  Consumer: Owning production page
+  Gate: target exact source version + finding evidence
+- Producer: INFO/KB/STR Admin
+  Handoff Object: Context Candidate
+  Consumer: Consumer Domain
+  Gate: consumer review / adoption owner
+- Producer: AIAPI-01
+  Handoff Object: Route Decision / Provider Result
+  Consumer: Owning Domain
+  Gate: capability/permission/route lineage + normalized result
+failure_recovery:
+- Failure Class: IDENTITY / AUTH
+  處置: Fail-closed；未授權內容/控制不顯示；不可 client bypass
+- Failure Class: VERSION_CONFLICT
+  處置: 停止 effectful write → reload exact version → review diff → resubmit
+- Failure Class: MISSING AUTHORITY
+  處置: BLOCK + REPORT_AUTHORITY_GAP；不得猜 operation / field / owner
+- Failure Class: PROVIDER / EXTERNAL
+  處置: 保留 pending/failed/degraded 真實狀態；不可 fake success
+- Failure Class: QUEUE / ASYNC
+  處置: 依 registered retry policy；retry 建立/保留獨立 attempt lineage
+- Failure Class: DATA INCOMPLETE
+  處置: 顯示 — / incomplete / stale / masked；不得以 0 或 sample 補值
+- Failure Class: CROSS-STAGE HANDOFF
+  處置: 缺 physical / schema-valid / required-field-complete input 時，阻擋 successor 並 re-enter owning predecessor
+- Failure Class: AUDIT / EVIDENCE
+  處置: 沒有 fresh evidence 不得宣告 runtime / deploy / production complete
+acceptance:
+- Acceptance UID: SYS-ACC-01
+  PASS 條件: 18 個 Current Page 都有唯一 owner / route / permission / integration role。
+- Acceptance UID: SYS-ACC-02
+  PASS 條件: Front 9 + Admin 9；Global Shell adaptive reflow 不遮住 Workspace。
+- Acceptance UID: SYS-ACC-03
+  PASS 條件: Identity → Permission → Page Gate → Operation Gate 順序不可繞過。
+- Acceptance UID: SYS-ACC-04
+  PASS 條件: CORE→ASSET→VIDEO→EDIT→QA exact version handoff 完整。
+- Acceptance UID: SYS-ACC-05
+  PASS 條件: Provider selection 只在 AIAPI-01 / shared router；department picker 不存在。
+- Acceptance UID: SYS-ACC-06
+  PASS 條件: Context / Conversation / AI Output 不會自動變成 Canon / Approved Knowledge。
+- Acceptance UID: SYS-ACC-07
+  PASS 條件: Shared Acquisition 只有一套 runtime；KB/INFO/STR/DEV/SOC 不重複建 crawler。
+- Acceptance UID: SYS-ACC-08
+  PASS 條件: Async lifecycle / retry / failure / audit 保留完整 attempt lineage。
+- Acceptance UID: SYS-ACC-09
+  PASS 條件: No fake data / fake success / missing-as-zero / secret plaintext。
+- Acceptance UID: SYS-ACC-10
+  PASS 條件: Word/Authority 完整 ≠ application/runtime/deployment complete；完成宣告必須另有 fresh evidence。
+verification_evidence_layers:
+- Layer: DESIGN
+  必須證明的事: 頁面、Shell、Navigation、Interaction、State、Error、Recovery 與 acceptance 定義完整；僅代表可施工。
+- Layer: CLIENT
+  必須證明的事: DOM / visual / keyboard / responsive / i18n / disabled reason 與 no-fake-data 行為符合設計。
+- Layer: SERVER
+  必須證明的事: Identity、Permission、Scope、State Guard、Version、Idempotency、Audit 均由 Server 執行，不能只靠前端。
+- Layer: RUNTIME + DB
+  必須證明的事: Canonical owner、migration、RLS、version lineage、transaction / persistence 可重現。
+- Layer: ASYNC + PROVIDER
+  必須證明的事: Queue / Worker / DLQ、Provider route / adapter / callback / retry 保留 exact attempt lineage。
+- Layer: E2E
+  必須證明的事: Browser 跨頁 handoff、negative paths、correction round-trip、shared runtime integration 實際通過。
+- Layer: PRODUCTION
+  必須證明的事: Exact deployed SHA、remote acceptance、Production data/runtime readiness 與 external provider evidence
+    都存在。
+functional_chain_L01_L24:
+- ID: L01
+  Node: Previous Context
+  Required closure: Resolve predecessor state / exact source refs.
+- ID: L02
+  Node: Trigger
+  Required closure: Named control/event that begins the function.
+- ID: L03
+  Node: Input
+  Required closure: Typed user/system inputs and exact refs.
+- ID: L04
+  Node: Validation
+  Required closure: Pre-action validation and fail-closed checks.
+- ID: L05
+  Node: Action
+  Required closure: User/system intent mapped to one governed action.
+- ID: L06
+  Node: Operation
+  Required closure: Canonical operation / command name.
+- ID: L07
+  Node: Payload
+  Required closure: Typed payload fields + constraints.
+- ID: L08
+  Node: Owner
+  Required closure: Canonical owner of the operation.
+- ID: L09
+  Node: Runtime
+  Required closure: Runtime/port/worker/provider binding or explicit IMPLEMENTATION_REQUIRED.
+- ID: L10
+  Node: Authorization
+  Required closure: Permission / role / scope check.
+- ID: L11
+  Node: Mutation_or_Read
+  Required closure: Exact read/mutation boundary.
+- ID: L12
+  Node: State
+  Required closure: Pre/post state transition.
+- ID: L13
+  Node: Output
+  Required closure: Exact output/ref/version produced.
+- ID: L14
+  Node: UI_Effect
+  Required closure: Visible page effect / updated region.
+- ID: L15
+  Node: Post_Action_Validation
+  Required closure: Fresh validation after operation.
+- ID: L16
+  Node: Success_Next_State
+  Required closure: Named successful state.
+- ID: L17
+  Node: Next_Function_or_Page
+  Required closure: Explicit downstream consumer / route.
+- ID: L18
+  Node: Failure
+  Required closure: Canonical failure taxonomy / condition.
+- ID: L19
+  Node: Recovery
+  Required closure: Recovery owner/action.
+- ID: L20
+  Node: Retry
+  Required closure: Retry eligibility / idempotency relationship.
+- ID: L21
+  Node: Cancel
+  Required closure: Cancellation semantics when applicable.
+- ID: L22
+  Node: Resume_Back
+  Required closure: Persisted resume/back behavior.
+- ID: L23
+  Node: Downstream_Readiness
+  Required closure: Consumer-required refs/schema/evidence are present.
+- ID: L24
+  Node: Audit
+  Required closure: Audit event/evidence/correlation refs persisted.
+system_logic_S01_S30:
+- ID: S01
+  System logic concern: Entity Contract
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S02
+  System logic concern: Operation Contract
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S03
+  System logic concern: Input/Payload Schema
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S04
+  System logic concern: Validation Contract
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S05
+  System logic concern: Authorization/Permission
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S06
+  System logic concern: Mutation Contract
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S07
+  System logic concern: Read Contract
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S08
+  System logic concern: State Machine
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S09
+  System logic concern: Transaction Boundary
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S10
+  System logic concern: Idempotency
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S11
+  System logic concern: Concurrency/Race
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S12
+  System logic concern: Consistency
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S13
+  System logic concern: Async/Job Semantics
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S14
+  System logic concern: Queue/Worker
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S15
+  System logic concern: Timeout
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S16
+  System logic concern: Retry
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S17
+  System logic concern: Cancel
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S18
+  System logic concern: Error Taxonomy
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S19
+  System logic concern: Recovery
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S20
+  System logic concern: Resume
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S21
+  System logic concern: Version/Checksum/Exact Ref
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S22
+  System logic concern: Dependency
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S23
+  System logic concern: Provider/External Boundary
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S24
+  System logic concern: Permission/RLS Boundary
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S25
+  System logic concern: Audit/Correlation
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S26
+  System logic concern: Observability
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S27
+  System logic concern: Producer/Consumer Schema
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S28
+  System logic concern: Evidence Contract
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S29
+  System logic concern: Terminal Closure
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+- ID: S30
+  System logic concern: Applicability Disposition
+  Disposition rule: REQUIRED→must bind exact contract/evidence; NOT_APPLICABLE→must state authority-backed
+    reason.
+cross_stage_H01_H12:
+- ID: H01
+  Cross-stage check: Predecessor output exact-ref ready
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H02
+  Cross-stage check: Predecessor state allowed
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H03
+  Cross-stage check: Version/checksum bound
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H04
+  Cross-stage check: Authority/profile/policy refs bound
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H05
+  Cross-stage check: Required evidence present
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H06
+  Cross-stage check: Permission context portable
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H07
+  Cross-stage check: Producer schema matches consumer input
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H08
+  Cross-stage check: Consumer can reject stale/superseded ref
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H09
+  Cross-stage check: Failure routes back to canonical owner
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H10
+  Cross-stage check: Retry/resume preserves lineage
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H11
+  Cross-stage check: Audit correlation continues across boundary
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+- ID: H12
+  Cross-stage check: Successor readiness explicitly PASS/BLOCK
+  Required result: PASS with exact refs/evidence, or BLOCK with owner/recovery; no implicit readiness.
+denominator_rule:
+- Denominator: Functions
+  Rule: Every visible/effectful function + system-triggered function in the page contract.
+- Denominator: Operations
+  Rule: Every operation reachable from those functions, including cancel/retry/recheck/submit/approve.
+- Denominator: System logic
+  Rule: S01–S30 evaluated per applicable operation/domain; absence is not implicit N/A.
+- Denominator: Cross-stage
+  Rule: Every predecessor→successor handoff in the package, not representative examples.
+- Denominator: Completion
+  Rule: Only when all REQUIRED rows close and all N/A rows carry authority reason may Stage-02 functional
+    closure be claimed.
+canonical_time_integration:
+- Integration Rule: Single time truth
+  Normative Requirement: Time-bearing systems exchange exact CanonicalTimePoint rational values + explicit
+    timebase identity; float seconds alone are forbidden as cross-system authority.
+- Integration Rule: Display-unit independence
+  Normative Requirement: Frame, millisecond, subframe and sample are UI/operation projections over the
+    same canonical value; switching projection cannot mutate time.
+- Integration Rule: Source identity
+  Normative Requirement: Frame rate/sample rate/source version are part of the binding needed to interpret
+    a precise position.
+- Integration Rule: Cross-stage handoff
+  Normative Requirement: ASSET/VIDEO/EDIT/VOICE/QA handoffs that carry timing MUST preserve canonical
+    rational values or a lossless equivalent plus timebase metadata.
+- Integration Rule: Video boundary
+  Normative Requirement: Video edits/visual render boundaries remain frame-addressable; audio/dialogue
+    may refine below a frame without creating a video subframe cut.
+- Integration Rule: Audio precision
+  Normative Requirement: Sample-level operations require exact sample-rate authority; millisecond operation
+    is legal as a rational projection and may require deterministic quantization only at a sample-bound
+    commit.
+- Integration Rule: Subtitle precision
+  Normative Requirement: Subtitle cue timing may be millisecond-addressable; export-specific quantization
+    is a target-format concern and must not overwrite canonical edit truth.
+- Integration Rule: LipSync/Dialogue
+  Normative Requirement: Derived sync/binding status references canonical time + source/version fingerprint;
+    derived status cannot become independent timing authority.
+- Integration Rule: Failure propagation
+  Normative Requirement: Unknown/mismatched timebase or source version is an explicit blocker propagated
+    to the consuming stage; no guessed defaults.
+- Integration Rule: Audit evidence
+  Normative Requirement: Precision edits and quantization, when effectful, must be attributable to exact
+    input version, unit, canonical before/after values and deterministic rule.
+historical_execution_evidence:
+  policy: Batch/workflow/Machine JSON/resume-point ledgers are historical execution evidence and are not
+    Current planning/basic-design Authority.
+  embedded_in_this_yaml: false
+  word_tables_excluded:
+  - table_19
+  - table_20
+  - table_21
+  - table_23
+  reason: ACPOS-GLOBAL-INTEGRATION-HISTORY-SEPARATION-V1
+construction_order:
+- 先施工／驗證 Global Shell adaptive reflow
+- 驗證 Login / Identity session 與登入後可見 Navigation
+- 逐頁對接 Page Authority → Control → Action → Permission → API → Runtime → DB / Provider
+- 驗證五大生產鏈 exact-version handoff 與 correction round-trip
+- 驗證 AIAPI router / queue / provider adapter / normalized result lineage
+- 驗證 KB / INFO / Strategy / DEV / SOC 對 shared acquisition 的 domain-specific binding
+- 跑全站 negative tests
+- 最後才做 Production deployment / remote browser / external provider E2E

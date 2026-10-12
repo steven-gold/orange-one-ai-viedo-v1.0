@@ -1,0 +1,227 @@
+authority:
+  id: ACPOS_AI_06_ENTERPRISE_BUSINESS_DEVELOPMENT_WIRING
+  encoding_schema: ACPOS_AI_06_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-06
+  system_logic_owner: Enterprise Business Development AI System
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-06-ACPOS-ENTERPRISE-BUSINESS-DEVELOPMENT-AI-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: 88c92e57efbcb5e6947b3526f7d74f714be29276
+  source_sha256: c10a7d8d218e266513741bd71ae1c3471a461ea15b3b638145dd6e083b199fa4
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-06-ACPOS-ENTERPRISE-BUSINESS-DEVELOPMENT-AI-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+owner_spec:
+- 項目: Owner
+  規範: ACPOS-AI-06 Enterprise Business Development AI System
+- 項目: Primary responsibility
+  規範: Enterprise discovery, company identity, contact evidence, qualification, personalization, outreach
+    campaign, individual delivery, reply/follow-up, CRM outcome, revenue attribution.
+- 項目: Shared dependencies
+  規範: AI-01 Context/Evidence; AI-02 Conversation; AI-03 execution/provider/tool; existing Shared Acquisition/Knowledge
+    source owners; IAM/Compliance/ERP exact owners via binding.
+- 項目: Hard boundary
+  規範: Social Publishing is AI-07. AI-06 may create a governed handoff/request but MUST_NOT recreate social
+    account, target, publishing, metrics or platform runtime.
+- 項目: Runtime claim
+  規範: Word completion MUST_NOT be reported as email connector, DNS authentication, webhook, bounce, complaint,
+    unsubscribe, Production E2E or deployment completion.
+in_out_scope:
+- In Scope: Discovery Topic/Profile, public business signals, company candidates
+  Out of Scope / Other Owner: 'Generic crawling/search engine implementation: shared acquisition/knowledge
+    owner; provider execution: AI-03'
+- In Scope: Company identity resolution, alias/domain/registration matching, merge preview
+  Out of Scope / Other Owner: 'Global context/evidence truth engine: AI-01'
+- In Scope: Contact evidence, verification, eligibility, suppression
+  Out of Scope / Other Owner: Generic IAM/security policy engine and legal advice are not redefined here
+- In Scope: Enterprise Development Profile, fit/intent/timing, message personalization
+  Out of Scope / Other Owner: 'Conversation memory/UI shared core: AI-02'
+- In Scope: Outreach Campaign, recipient preview, approval, schedule, dispatch
+  Out of Scope / Other Owner: 'Social platform publishing/account/target runtime: AI-07'
+- In Scope: Individual email delivery semantics, reply/follow-up/outcome
+  Out of Scope / Other Owner: 'Raw provider adapter/gateway implementation: AI-03'
+- In Scope: CRM opportunity stages, revenue attribution handoff
+  Out of Scope / Other Owner: ERP accounting truth remains ERP owner; AI-06 only binds attribution refs
+owner_boundary:
+- Concept: Context / factual truth
+  Canonical Owner Rule: AI-01 / current evidence owner
+  AI-06 behavior: Reference exact evidence/context; MUST_NOT copy into a second truth store.
+- Concept: Conversation / review dialogue
+  Canonical Owner Rule: AI-02
+  AI-06 behavior: Use shared Conversation Core when conversation is needed.
+- Concept: Provider / tool execution
+  Canonical Owner Rule: AI-03
+  AI-06 behavior: Request governed capability; MUST_NOT call provider directly from domain logic.
+- Concept: Company Master
+  Canonical Owner Rule: Existing enterprise development owner
+  AI-06 behavior: Search, resolve, merge; MUST_NOT create duplicate master.
+- Concept: Contact Point
+  Canonical Owner Rule: Existing contact owner
+  AI-06 behavior: Add/verify with source evidence; never guess.
+- Concept: Campaign / Delivery
+  Canonical Owner Rule: Existing outreach owner
+  AI-06 behavior: Campaign holds recipient_refs; runtime fans out individual deliveries.
+- Concept: Suppression
+  Canonical Owner Rule: Existing global suppression owner
+  AI-06 behavior: Cross-campaign hard gate; no local override.
+- Concept: Social publishing
+  Canonical Owner Rule: AI-07
+  AI-06 behavior: Only handoff; no duplicate platform publishing system.
+lifecycle_layers:
+- Layer: Intent Layer
+  Responsibility: Define Product/Service, target market, industry, region, company type/size, priority,
+    allowed sources, intent threshold.
+  Required Output: DiscoveryProfile / scope
+- Layer: Acquisition Interface
+  Responsibility: Request allowed public acquisition through existing shared source runtime.
+  Required Output: Evidence-backed MarketSignal
+- Layer: Signal & Qualification
+  Responsibility: Normalize, deduplicate, freshness, classify fit/intent/timing.
+  Required Output: OpportunityQualification
+- Layer: Identity Layer
+  Responsibility: Resolve company via registration/jurisdiction/domain/alias and merge preview.
+  Required Output: Canonical Company Master ref
+- Layer: Contact Layer
+  Responsibility: Discover public business contacts; verify source and status.
+  Required Output: Verified ContactPoint + evidence
+- Layer: Personalization Layer
+  Responsibility: Assemble Company Fit + Contact Role + Objective + Product/IP + locale.
+  Required Output: MessageCandidate
+- Layer: Compliance Layer
+  Responsibility: Country/company/contact/source/campaign policy, suppression, DNC, unsubscribe, sender
+    health.
+  Required Output: EligibilityDecision PASS/REVIEW/BLOCK
+- Layer: Campaign Layer
+  Responsibility: Exact recipient_refs + exact message version + sender + schedule + approval.
+  Required Output: Approved Campaign
+- Layer: Delivery Layer
+  Responsibility: Fan-out one recipient per email; retry/idempotency/rate/audit.
+  Required Output: IndividualDelivery records
+- Layer: Response Layer
+  Responsibility: Reply/bounce/complaint/unsubscribe and sequence stop rules.
+  Required Output: ResponseEvent / FollowUp state
+- Layer: CRM/Outcome
+  Responsibility: Human owner, meeting, proposal, negotiation, won/lost, attribution.
+  Required Output: OpportunityOutcome + revenue refs
+- Layer: Experience
+  Responsibility: Approved lessons from outcomes, not automatic self-adoption.
+  Required Output: ExperienceCandidate / learning refs
+entity_inventory:
+- Entity: MarketIntent
+  Purpose: What product/service/opportunity is being sought.
+- Entity: DiscoveryProfile
+  Purpose: Reusable governed search/qualification configuration.
+- Entity: DiscoveryJob
+  Purpose: Single execution of discovery profile.
+- Entity: SourceRef
+  Purpose: Allowed source identity governed elsewhere.
+- Entity: MarketSignal
+  Purpose: Normalized public signal with source, time, freshness.
+- Entity: SignalEvidence
+  Purpose: Exact evidence fragment/url/date supporting a claim.
+- Entity: CompanyCandidate
+  Purpose: Unresolved company candidate from signals.
+- Entity: CompanyIdentity
+  Purpose: Registration/jurisdiction/domain/alias identity set.
+- Entity: CompanyMaster
+  Purpose: Single canonical enterprise record.
+- Entity: CompanyAlias
+  Purpose: Historical/brand/alternate name mapping.
+- Entity: CompanyMergeCandidate
+  Purpose: Potential duplicate identity pair/set.
+- Entity: CompanyMergeDecision
+  Purpose: Preview/confirm/reject merge with evidence.
+- Entity: ContactPoint
+  Purpose: Business email/contact endpoint.
+- Entity: ContactEvidence
+  Purpose: Source proof for contact point.
+- Entity: ContactVerification
+  Purpose: verification_status, verified_at, method, reason.
+- Entity: EnterpriseDevelopmentProfile
+  Purpose: Industry, region, size, positioning, products, target customers, recent activity, potential
+    needs, suitable offer, role, fit, evidence.
+- Entity: OpportunityQualification
+  Purpose: fit/intent/timing/status with reasons.
+- Entity: ComplianceProfile
+  Purpose: Recipient/campaign jurisdiction and policy inputs.
+- Entity: EligibilityDecision
+  Purpose: PASS/REVIEW/BLOCK with reasons.
+- Entity: SuppressionEntry
+  Purpose: Cross-campaign no-contact record.
+- Entity: MessageCandidate
+  Purpose: AI-generated but not yet approved outreach content.
+- Entity: MessageVersion
+  Purpose: Immutable reviewed content version.
+- Entity: PersonalizationContext
+  Purpose: Exact evidence/context used for one recipient.
+- Entity: Campaign
+  Purpose: Batch container for exact recipient_refs and message/sender/schedule refs.
+- Entity: RecipientPreview
+  Purpose: Pre-approval/pre-dispatch resolved recipient denominator.
+- Entity: CampaignApproval
+  Purpose: Human/governed approval distinct from send.
+- Entity: IndividualDelivery
+  Purpose: One recipient, one envelope, one delivery lifecycle.
+- Entity: DeliveryAttempt
+  Purpose: One provider attempt under one delivery.
+- Entity: SenderAccount
+  Purpose: Governed authorized sender identity.
+- Entity: SendPolicy
+  Purpose: timezone/window/rate/cap/cooldown/follow-up constraints.
+- Entity: ReplyEvent
+  Purpose: Inbound response bound to exact delivery/contact/company.
+- Entity: BounceEvent
+  Purpose: Delivery failure classification.
+- Entity: ComplaintEvent
+  Purpose: Complaint/abuse signal.
+- Entity: UnsubscribeEvent
+  Purpose: Immediate opt-out event.
+- Entity: FollowUpPlan
+  Purpose: Finite governed next-contact plan.
+- Entity: Opportunity
+  Purpose: CRM business opportunity.
+- Entity: HumanOwnerAssignment
+  Purpose: Human accountable owner after positive reply or escalation.
+- Entity: MeetingRecord
+  Purpose: Meeting milestone reference.
+- Entity: ProposalRecord
+  Purpose: Proposal milestone reference.
+- Entity: NegotiationRecord
+  Purpose: Negotiation milestone reference.
+- Entity: OpportunityOutcome
+  Purpose: Won/Lost/other terminal outcome.
+- Entity: RevenueAttribution
+  Purpose: ERP/finance ref connecting outcome to revenue/cost/ROI.
+- Entity: AuditEvent
+  Purpose: Immutable effectful/action trace.
+- Entity: ExperienceCandidate
+  Purpose: Outcome-derived candidate lesson pending admission.
+page_wiring:
+  owner_page: admin:DEV-01
+  revenue_attribution_ref_page: admin:ERP-01
+  social_handoff_only_to: ACPOS-AI-07 / admin:SOC-01
+  email_envelope_rule: exactly one To; CC/BCC empty
+  shared_acquisition: true
+forbidden:
+- 第二套 Company DB / Audience DB / BulkSend / crawler / Evidence store / Suppression engine
+- recreate social publishing runtime
+- unlabeled inference as fact

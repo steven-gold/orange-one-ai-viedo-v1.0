@@ -1,0 +1,540 @@
+authority:
+  id: ACPOS_MASTER_INDEX_WIRING
+  encoding_schema: ACPOS_MASTER_INDEX_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  surface: INDEX
+  surface_uid: 00-INDEX
+  package_denominator: 31
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx
+  source_uid: SRC-00-INDEX-ACPOS-MOTHER-COMPLIANT-BASIC-DESIGN-MASTER
+  source_git_blob_sha: 8640a7d759383d2f5aee9bec47ffc364fe8c9e8b
+  source_sha256: bab362ba82086f3a3f2193d1cebf9c98b16fa62f09f234601798c6c591624096
+  source_role: PACKAGE_INDEX_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-00-INDEX-ACPOS-MOTHER-COMPLIANT-BASIC-DESIGN-MASTER/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+purpose: 總目錄：18 Current Pages + Login Entry + System Logic + 9 System Contracts + Global Shell。不混抽，不改已鎖定頁
+  YAML。
+package_identity:
+- Item: GitHub branch
+  Count / State: 0921acpos
+- Item: GitHub live HEAD
+  Count / State: RESOLVE_FRESH_AT_AUDIT_TIME
+- Item: Current pages
+  Count / State: '18'
+- Item: Additional design surfaces
+  Count / State: Login Entry + System Logic = 2
+- Item: Per-page Visual Candidates
+  Count / State: A–H = 8
+- Item: Per-page required Blueprint artifacts
+  Count / State: 27 + hard-prohibition appendix
+- Item: Design freeze
+  Count / State: FALSE / human visual approval pending
+- Item: Repository mutation
+  Count / State: NONE — this delivery is local planning artifact only
+source_processing_order:
+- Order: '1'
+  Source Group: Current Authority Clean / GitHub Current
+  Role: 確立 current page owner / global/system boundaries
+  Conflict Rule: GitHub new Current wins
+- Order: '2'
+  Source Group: 企業開發與自動廣告
+  Role: DEV/SOC 更新需求；必要影響 KB/System
+  Conflict Rule: Authorized design update only
+- Order: '3'
+  Source Group: AI 對話邏輯
+  Role: Shared AI Conversation Core + Multi-AI + Continuity
+  Conflict Rule: No second AI system
+- Order: '4'
+  Source Group: Word 頁面規範
+  Role: 各頁原始概念與細節補充
+  Conflict Rule: Reference only; cannot override Current
+- Order: '5'
+  Source Group: Mother Basic Design
+  Role: 將上述內容編譯成完整設計 artifacts
+  Conflict Rule: Controls depth/trace/freeze; not product authority
+- Order: '6'
+  Source Group: 本輪設計延伸
+  Role: 只補 minimal functional closure
+  Conflict Rule: REVIEW_REQUIRED; not implemented
+required_blueprint_artifacts:
+- '#': '1'
+  Required Artifact: Current Truth / Source Map
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '2'
+  Required Artifact: Requirement / Problem Definition
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '3'
+  Required Artifact: Business Entity Inventory
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '4'
+  Required Artifact: Business Entity Operation Matrix
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '5'
+  Required Artifact: Entity Hierarchy Matrix
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '6'
+  Required Artifact: User Journey Registry
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '7'
+  Required Artifact: Functional Workbench Contract
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '8'
+  Required Artifact: Interaction Topology
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '9'
+  Required Artifact: AI Continuity Contract（適用）
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '10'
+  Required Artifact: Functional Chain
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '11'
+  Required Artifact: Cross-page Flow
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '12'
+  Required Artifact: Page Design
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '13'
+  Required Artifact: Section / Component Registry
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '14'
+  Required Artifact: Control / Field / Action / Gate / Permission Binding
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '15'
+  Required Artifact: State / Transition / Recovery
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '16'
+  Required Artifact: Data Object Binding
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '17'
+  Required Artifact: Function Visual Impact Matrix
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '18'
+  Required Artifact: Visual Anchor Registry
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '19'
+  Required Artifact: Visual Generation Manifest
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '20'
+  Required Artifact: Visual Candidates A–H
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '21'
+  Required Artifact: Code Gap / Construction Delta Matrix
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '22'
+  Required Artifact: Pre-Implementation Guards
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '23'
+  Required Artifact: Implementation Handoff
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '24'
+  Required Artifact: Acceptance Matrix
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '25'
+  Required Artifact: Audit Baseline
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '26'
+  Required Artifact: Definition of Done
+  Hard Rule: Missing => package incomplete / implementation forbidden
+- '#': '27'
+  Required Artifact: Resume / Next Step
+  Hard Rule: Missing => package incomplete / implementation forbidden
+document_index:
+- '#': '1'
+  UID: WB-01
+  Name: 公司首頁／儀表板
+  Surface: HOME
+  Current Owner Basis: authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '2'
+  UID: CORE-01
+  Name: 核心 AI 工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '3'
+  UID: ASSET-01
+  Name: 素材生產工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '4'
+  UID: VIDEO-01
+  Name: 影片生成工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '5'
+  UID: EDIT-01
+  Name: 整合後製剪輯工作台
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '6'
+  UID: QA-01
+  Name: QA 審查工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '7'
+  UID: DB-01
+  Name: 資料庫／資料血緣工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '8'
+  UID: STR-01
+  Name: 戰略中心工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '9'
+  UID: INFO-01
+  Name: 最新資訊工作區
+  Surface: FRONT
+  Current Owner Basis: authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- '#': '10'
+  UID: SYS-01
+  Name: 系統維護／系統生命週期
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '11'
+  UID: IAM-01
+  Name: 帳戶與權限
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '12'
+  UID: DEV-01
+  Name: 企業開發與商機自動化
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Enterprise/Ads update integrated; AI continuity integrated
+  Word Path: ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '13'
+  UID: SOC-01
+  Name: 自動廣告／公開市場商機與社群發布
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Enterprise/Ads update integrated; AI continuity integrated
+  Word Path: ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '14'
+  UID: ERP-01
+  Name: ERP／財務
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '15'
+  UID: AIAPI-01
+  Name: AI API 管理
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '16'
+  UID: SG-02
+  Name: QA 審查項目／品質標準治理
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '17'
+  UID: ADMIN-STR-01
+  Name: 戰略中心後台
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '18'
+  UID: KB-01
+  Name: 知識庫與 Experience 中心
+  Surface: ADMIN
+  Current Owner Basis: authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '19'
+  UID: LOGIN
+  Name: 登入／身份入口
+  Surface: LOGIN
+  Current Owner Basis: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml + production
+    identity runtime
+  Special Merge: Current + page concept reconciliation
+  Word Path: ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx
+- '#': '20'
+  UID: SYSTEM-LOGIC
+  Name: 全站系統邏輯與共享 Runtime/AI Continuity
+  Surface: SYSTEM
+  Current Owner Basis: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  Special Merge: AI continuity integrated
+  Word Path: ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+page_control_denominator_design_only:
+- Page: WB-01
+  Expected Controls: '14'
+  Exact Rows: '14'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: CORE-01
+  Expected Controls: '50'
+  Exact Rows: '50'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: ASSET-01
+  Expected Controls: '85'
+  Exact Rows: '85'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: VIDEO-01
+  Expected Controls: '85'
+  Exact Rows: '85'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: EDIT-01
+  Expected Controls: '160'
+  Exact Rows: '160'
+  Denominator: PASS
+  True Runtime / Governance Status: STALE_DERIVED_VALIDATION_COUNT
+- Page: QA-01
+  Expected Controls: '87'
+  Exact Rows: '87'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: DB-01
+  Expected Controls: '49'
+  Exact Rows: '49'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: STR-01
+  Expected Controls: '57'
+  Exact Rows: '57'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: INFO-01
+  Expected Controls: '66'
+  Exact Rows: '66'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: SYS-01
+  Expected Controls: '12'
+  Exact Rows: '12'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: IAM-01
+  Expected Controls: '14'
+  Exact Rows: '14'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: DEV-01
+  Expected Controls: '22'
+  Exact Rows: '22'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: SOC-01
+  Expected Controls: '67'
+  Exact Rows: '67'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: ERP-01
+  Expected Controls: '42'
+  Exact Rows: '42'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: AIAPI-01
+  Expected Controls: '17'
+  Exact Rows: '17'
+  Denominator: PASS
+  True Runtime / Governance Status: NO_DEFINITION_GAP
+- Page: SG-02
+  Expected Controls: '12'
+  Exact Rows: '12'
+  Denominator: PASS
+  True Runtime / Governance Status: RUNTIME_BINDING_VALIDATION
+- Page: ADMIN-STR-01
+  Expected Controls: '19'
+  Exact Rows: '19'
+  Denominator: PASS
+  True Runtime / Governance Status: RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED;
+    RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; PARTIAL_RUNTIME_MATERIALIZATION
+- Page: KB-01
+  Expected Controls: '27'
+  Exact Rows: '27'
+  Denominator: PASS
+  True Runtime / Governance Status: IMPLEMENTATION_EXECUTION_EVIDENCE
+package_identity_rules:
+- Item: Branch
+  Current rule: 0921acpos
+- Item: Physical package denominator
+  Current rule: '31 DOCX: 1 Index + 9 System Normative + 18 Page Design + Login + System Logic + Global
+    Shell'
+- Item: HEAD identity
+  Current rule: Dynamic. Resolve fresh from GitHub before audit, batch execution, validation and completion
+    declaration; do not hard-code a historical SHA as Current Truth.
+- Item: File applicability
+  Current rule: Every physical DOCX in the package is in denominator unless an explicit Current Authority
+    exclusion exists.
+- Item: Evidence
+  Current rule: Current branch root scan + exact Git blob SHA for each target file + fresh batch validation
+    run.
+- Item: Stale metadata rule
+  Current rule: Any embedded branch/SHA/count that conflicts with the fresh physical scan is historical
+    evidence only, not Current package authority.
+supporting_word_corpus:
+- Document Role: Global Home / Shell / Navigation
+  Current Root Filename: ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+- Document Role: System Contract 01
+  Current Root Filename: 01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx
+- Document Role: System Contract 02
+  Current Root Filename: 02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 03
+  Current Root Filename: 03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 04
+  Current Root Filename: 04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 05
+  Current Root Filename: 05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 06
+  Current Root Filename: 06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 07
+  Current Root Filename: 07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 08
+  Current Root Filename: 08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+- Document Role: System Contract 09
+  Current Root Filename: 09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+locked_page_encodings:
+- page_uid: workspace:WB-01
+  surface: FRONT
+  name_zh: 儀表板
+  locked_encoding: ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+- page_uid: CORE-01
+  surface: FRONT
+  name_zh: 專案 / 專題
+  locked_encoding: CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  mutation: FORBIDDEN
+- page_uid: ASSET-01
+  surface: FRONT
+  name_zh: 素材
+  locked_encoding: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  mutation: FORBIDDEN
+- page_uid: VIDEO-01
+  surface: FRONT
+  name_zh: 影片
+  locked_encoding: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  mutation: FORBIDDEN
+- page_uid: EDIT-01
+  surface: FRONT
+  name_zh: 剪輯配音
+  locked_encoding: ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  mutation: FORBIDDEN
+- page_uid: QA-01
+  surface: FRONT
+  name_zh: QA
+  locked_encoding: ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+  mutation: FORBIDDEN
+- page_uid: admin:DB-01
+  surface: FRONT
+  name_zh: 資料庫
+  locked_encoding: ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+- page_uid: workspace:STR-01
+  surface: FRONT
+  name_zh: 戰略中心
+  locked_encoding: ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+  mutation: FORBIDDEN
+- page_uid: workspace:INFO-01
+  surface: FRONT
+  name_zh: 最新資訊
+  locked_encoding: ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+- page_uid: admin:SYS-01
+  surface: ADMIN
+  name_zh: 系統維護
+  locked_encoding: ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 05f15fe2375931e555725b155dc6ddfc2962ddb9
+- page_uid: admin:IAM-01
+  surface: ADMIN
+  name_zh: 帳戶與權限
+  locked_encoding: ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 625d1d490d99c67cfd4bb4f7d80393bccf0ea7e6
+- page_uid: admin:DEV-01
+  surface: ADMIN
+  name_zh: 企業自動開發
+  locked_encoding: ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 2de59469cdd3e9674151476d328512c2b76507aa
+- page_uid: admin:SOC-01
+  surface: ADMIN
+  name_zh: 社群發布
+  locked_encoding: ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 5ad9bd512c45d1ed382377ff983bfc250c793a36
+- page_uid: admin:ERP-01
+  surface: ADMIN
+  name_zh: ERP
+  locked_encoding: ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: def8d440d331e5b8cbbea3d92c96412ca45b002b
+- page_uid: admin:AIAPI-01
+  surface: ADMIN
+  name_zh: AI API
+  locked_encoding: ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: dd9f05e295af57cc833e90d1a12030c8198580c6
+- page_uid: admin:SG-02
+  surface: ADMIN
+  name_zh: QA 評分項目
+  locked_encoding: ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: b59dc571d023fe6a88507abc5b57546011badf11
+- page_uid: admin:STR-01
+  surface: ADMIN
+  name_zh: 戰略中心後台
+  locked_encoding: ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: f9bf9ec7e918d9603f4c7d761e32be85d246ceff
+- page_uid: admin:KB-01
+  surface: ADMIN
+  name_zh: 知識庫
+  locked_encoding: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  mutation: FORBIDDEN
+  blob: 09fc183a0ebbabca4cf3591d4e6063b72191755a
+remaining_logic_units:
+- LOGIN identity:login
+- SYSTEM-LOGIC
+- ACPOS-AI-01 .. ACPOS-AI-09
+- GLOBAL_HOME_SHELL already closed as homepage Word
+design_freeze: FALSE / human visual approval pending for this index package; 18 pages already STAGE-closed
+  separately
+head_rule: Current HEAD MUST be resolved fresh from GitHub; historical SHA is evidence only.

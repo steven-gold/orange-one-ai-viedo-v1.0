@@ -1,0 +1,635 @@
+authority:
+  id: ACPOS_AI_01_GLOBAL_BRAIN_INFORMATION_LIFECYCLE_WIRING
+  encoding_schema: ACPOS_AI_01_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-01-MBLD-NLC
+  system_logic_owner: ACPOS Global Intelligent Brain & Information Lifecycle
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx
+  source_uid: SRC-01-ACPOS-GLOBAL-INTELLIGENT-BRAIN-INFORMATION-LIFECYCLE-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V4
+  source_git_blob_sha: 350bfd858792b1ecba65459273ff0587c2df0269
+  source_sha256: 351b4dfc83936b56e4b139b431fe36ce850121ece591f7718cfb9ae5d11671e6
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-01-ACPOS-GLOBAL-INTELLIGENT-BRAIN-INFORMATION-LIFECYCLE-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V4/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+identity:
+- field: Document UID
+  value: ACPOS-AI-01-MBLD-NLC
+  rule: ''
+- field: Artifact Revision
+  value: v4 / 2026-09-20
+  rule: ''
+- field: Document Status
+  value: DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED
+  rule: ''
+- field: Repository
+  value: steven-gold/orange-one-ai-viedo-v1.0
+  rule: ''
+- field: Current Branch
+  value: 0921acpos
+  rule: ''
+- field: Live HEAD
+  value: RESOLVE_FRESH_AT_AUDIT_TIME
+  rule: ''
+- field: Current Governance UID
+  value: RESOLVE_FRESH_AT_AUDIT_TIME — Mother Governance 01→04 remains the planning/design authority.
+  rule: ''
+- field: Governance Display Version
+  value: RESOLVE_FRESH_AT_AUDIT_TIME — Mother Governance 01→04 remains the planning/design authority.
+  rule: ''
+- field: System Logic Owner
+  value: ACPOS Global Intelligent Brain & Information Lifecycle
+  rule: ''
+- field: Language
+  value: zh-TW；固定技術名詞保留英文並附中文語義
+  rule: ''
+- field: Runtime Claim
+  value: NONE — 本文件完成不代表 API／DB／Runtime／E2E／Deployment／Production 完成
+  rule: ''
+normative_keywords:
+- 關鍵字: MUST
+  中文語義: 必須
+  執行效果: 缺失即不符合規格；Formal execution 不得自行略過。
+- 關鍵字: MUST_NOT
+  中文語義: 禁止
+  執行效果: 任何實作不得違反。
+- 關鍵字: REQUIRED
+  中文語義: 驗收必要
+  執行效果: 缺失時該項不可 PASS。
+- 關鍵字: BLOCK
+  中文語義: 阻擋
+  執行效果: 停止 effectful execution，保留可診斷狀態。
+- 關鍵字: REVIEW_REQUIRED
+  中文語義: 需授權審查
+  執行效果: AI 可準備候選與證據，不可自行批准。
+- 關鍵字: REQUIRE_EXACT_BINDING
+  中文語義: 施工時需 Current Authority 精確綁定
+  執行效果: 設計不假造 API／DB／Permission UID／Route；沒有合法 binding 時施工 fail-closed。
+- 關鍵字: REFERENCE_ONLY
+  中文語義: 僅引用
+  執行效果: 不得複製成第二套 Authority。
+highest_principle: ONE CONCEPT / ONE OWNER / REFERENCE, DO NOT COPY
+purpose_scope:
+- 項目: Primary Purpose
+  規範: 建立一套全站共用、可追溯、版本確定、權限可控的資訊與 Context 生命週期，使所有 Domain AI／Tool／Workflow 在執行前取得同一種合法 Context，不由各頁自行拼湊。
+- 項目: System Role
+  規範: ACPOS 是全站中央智能協調層，不是單一聊天框、不只是 Provider Router、也不是第二套業務資料庫。
+- 項目: Owner Scope
+  規範: Whole-site State Projection、Context Resolution、Truth Classification、Cross-page Relationship/Impact、Information
+    Retrieval、Knowledge/Experience admission、Conflict、Human Decision Queue、Shared External Acquisition
+    contract、Evolution governance、Audit/Observability。
+- 項目: Out of Scope 02
+  規範: Conversation UI、thread/branch/memory mechanics 的詳細行為由 ACPOS-AI-02 定義；本文件只定其必須遵守的 Context/Truth 邊界。
+- 項目: Out of Scope 03
+  規範: Compiler、Tool Calling、Provider Router、Job orchestration 的詳細 runtime 由 ACPOS-AI-03 定義；本文件只定其 Context、Evidence、Version、Event
+    依賴。
+- 項目: Out of Scope 04–09
+  規範: 各 Domain business behavior 由其 System Logic Owner 定義；本文件不得重複或新增 Domain 功能。
+- 項目: No Second Database
+  規範: ACPOSStateProjection、ContextSnapshot、ExperienceRecord 等是跨頁智能契約；不得複製 Domain canonical business rows
+    形成第二真相。
+source_basis:
+- 來源層: Current Governance v2.2.16
+  本文件可用範圍: 治理順序、ONE AUTHORITY、search-before-create、Design/Implementation/Evidence 分層、Work Unit/Resume、跨階段完整性、禁止假完成。
+  不得做的事: 不得把 product/profile-local Stage state 當本文件產品功能 Authority。
+- 來源層: User-confirmed AI System Logic handoff
+  本文件可用範圍: 九份 Owner 邊界、T0–T7、Context、Brain layers、Experience/Evolution、12 個缺漏能力、01 的硬邏輯補強分母。
+  不得做的事: 不得擴張到使用者沒有授權的新 Business Function。
+- 來源層: System convergence candidate / related design material
+  本文件可用範圍: 既有跨頁概念、11 Brain layers、Context ordering、shared external acquisition、system objects。
+  不得做的事: Candidate ≠ Current Runtime；不得由 candidate 宣稱 API/DB 已存在。
+- 來源層: Current Page/Domain Authority
+  本文件可用範圍: 正式施工時用於 Exact Binding 與 Page-native behavior。
+  不得做的事: 本 Word 不自行創造不存在的 Control、Action、API、DB、Permission UID。
+brain_layers:
+- Layer: BRAIN-01
+  Name: SYSTEM_STATE
+  責任: 全站受治理物件的 owner/state/exact version/relationship/blocker 投影。
+  硬邊界: MUST_NOT 成為第二業務資料庫。
+- Layer: BRAIN-02
+  Name: CONTEXT
+  責任: 為單次 operation 組裝 authorized exact context。
+  硬邊界: Formal execution 必須 freeze snapshot。
+- Layer: BRAIN-03
+  Name: CONVERSATION
+  責任: 共用 conversation/thread/branch/assistant mechanics。
+  硬邊界: 詳細規則由 02；不得 page-local fork。
+- Layer: BRAIN-04
+  Name: MEMORY_EXPERIENCE
+  責任: 記憶、Operational Memory、Validated Experience。
+  硬邊界: Conversation text 本身不是 Experience。
+- Layer: BRAIN-05
+  Name: DECISION_GOVERNANCE
+  責任: 將分析、候選、人工/政策決策、Authority 分層。
+  硬邊界: AI output 不能直接成 Canon。
+- Layer: BRAIN-06
+  Name: VERSION_LINEAGE
+  責任: exact version/hash/provenance/parent-child lineage。
+  硬邊界: latest/current/default alias 不得替代 formal exact ref。
+- Layer: BRAIN-07
+  Name: ORCHESTRATION
+  責任: 合法 next action、cross-page handoff、dependency/impact。
+  硬邊界: 不得越權修改 Domain owner。
+- Layer: BRAIN-08
+  Name: AI_EXECUTION
+  責任: 提供給 03 的 Context/Capability/Policy input contract。
+  硬邊界: 本文件不定 provider payload syntax。
+- Layer: BRAIN-09
+  Name: EVOLUTION
+  責任: Experience → Learning Candidate → Governed Adoption。
+  硬邊界: no self-rule rewrite。
+- Layer: BRAIN-10
+  Name: GOVERNANCE_OBSERVABILITY
+  責任: Permission/Policy/Audit/Correlation/Error/Health。
+  硬邊界: fake success 禁止。
+- Layer: BRAIN-11
+  Name: EXTERNAL_ACQUISITION
+  責任: 共用 crawl/search/fetch/ingestion 輸入契約。
+  硬邊界: Raw external data 不得直接寫 Canon。
+information_lifecycle:
+- Phase: SOURCE
+  輸入: Domain rows / decisions / KB / evidence / external snapshot
+  輸出: Typed source refs
+  阻擋條件: 來源無 owner、無 scope、無 version/snapshot、權限不足。
+- Phase: RESOLVE
+  輸入: Actor + operation + object refs
+  輸出: Resolved scope & authority set
+  阻擋條件: Project/Object ambiguous；cross-project fallback。
+- Phase: RETRIEVE
+  輸入: Resolved need
+  輸出: Candidate source set
+  阻擋條件: Required source missing；rights/classification 不允許。
+- Phase: CONFLICT
+  輸入: Candidate source set
+  輸出: Conflict-free or ConflictRecord
+  阻擋條件: Unresolved REQUIRED conflict。
+- Phase: BUDGET
+  輸入: Required + optional context
+  輸出: Normalized context set
+  阻擋條件: Mandatory context 超過可執行 budget。
+- Phase: FREEZE
+  輸入: Normalized context
+  輸出: ContextSnapshot + fingerprint
+  阻擋條件: Exact refs 不完整；snapshot 無法重現。
+- Phase: EXECUTE
+  輸入: Frozen ContextSnapshot
+  輸出: Raw result / Tool outcome
+  阻擋條件: Stale context、permission、policy、health preflight fail。
+- Phase: CANDIDATE
+  輸入: Raw result
+  輸出: Governed candidate
+  阻擋條件: Validation/normalization fail。
+- Phase: ADOPT
+  輸入: Candidate + evidence
+  輸出: Decision / authoritative version
+  阻擋條件: Reviewer/owner/required evidence 缺失。
+- Phase: OBSERVE
+  輸入: Execution/outcome
+  輸出: Audit + measurements
+  阻擋條件: 不可把未確認 outcome 當成功。
+- Phase: EXPERIENCE
+  輸入: Validated outcome
+  輸出: ExperienceRecord / LearningCandidate
+  阻擋條件: 只有聊天或模擬，沒有真實 outcome。
+entity_inventory:
+- Entity: ACPOSStateProjection
+  Purpose: Whole-site owner/state/version/relationship projection
+  Authority / Boundary: Derived projection；不覆蓋 Domain row
+  Owner Layer: BRAIN-01
+- Entity: ACPOSContextNeed
+  Purpose: 描述 operation 需要哪些 Context 類型與嚴格度
+  Authority / Boundary: Need contract；不是資料內容
+  Owner Layer: BRAIN-02
+- Entity: ACPOSContextCandidate
+  Purpose: 由合法 refs 組成、待 consumer adoption 的 Context 候選
+  Authority / Boundary: Candidate only
+  Owner Layer: BRAIN-02
+- Entity: ACPOSContextSnapshot
+  Purpose: 單次正式執行凍結的 exact context
+  Authority / Boundary: Immutable execution input evidence
+  Owner Layer: BRAIN-02
+- Entity: ACPOSContextFingerprint
+  Purpose: Snapshot canonical digest + identity tuple
+  Authority / Boundary: 用於 stale/compare/replay
+  Owner Layer: BRAIN-02/06
+- Entity: ACPOSConflictRecord
+  Purpose: 同一 claim 或 dependency 的矛盾記錄
+  Authority / Boundary: 不得以 silent overwrite 解決
+  Owner Layer: BRAIN-02/05
+- Entity: ACPOSDecisionReference
+  Purpose: 已確認決策之 exact ref
+  Authority / Boundary: T1；不可由 AI raw output 自建
+  Owner Layer: BRAIN-05
+- Entity: ACPOSIntegrationEvent
+  Purpose: 跨頁事件通知 envelope
+  Authority / Boundary: 通知不是 mutation Authority
+  Owner Layer: BRAIN-07/10
+- Entity: ACPOSImpactSet
+  Purpose: 變更影響的正反向 dependency closure
+  Authority / Boundary: 觸發 REVERIFY_REQUIRED
+  Owner Layer: BRAIN-07
+- Entity: ACPOSExperienceRecord
+  Purpose: 由真實執行/QA/business outcome 形成的經驗
+  Authority / Boundary: T3；immutable evidence-linked
+  Owner Layer: BRAIN-04/09
+- Entity: ACPOSLearningCandidate
+  Purpose: 由多筆 Experience 推導的改善候選
+  Authority / Boundary: 不得 self-adopt
+  Owner Layer: BRAIN-09
+- Entity: AcquisitionIntent
+  Purpose: Domain 對外部資料的需求宣告
+  Authority / Boundary: Domain owns intent；shared runtime owns acquisition
+  Owner Layer: BRAIN-11
+- Entity: RawSourceSnapshot
+  Purpose: 外部來源 immutable snapshot
+  Authority / Boundary: T4 source evidence；不直接成 business truth
+  Owner Layer: BRAIN-11
+- Entity: AcquisitionEvidence
+  Purpose: 來源、時間、rights、hash、citation-ready evidence
+  Authority / Boundary: 支援 adoption/review
+  Owner Layer: BRAIN-11
+- Entity: HumanDecisionQueueItem
+  Purpose: 需要人工/授權判定的 conflict/adoption/change item
+  Authority / Boundary: AI 不可自動代決
+  Owner Layer: BRAIN-05/10
+entity_relationships:
+- From: Domain Object
+  Relation: PROJECTS_TO
+  To: ACPOSStateProjection
+  Cardinality / Rule: 0..1 Current projection per exact Domain object version
+- From: ACPOSContextNeed
+  Relation: SELECTS
+  To: Source Refs
+  Cardinality / Rule: 1..N typed refs；不得靠全文 prompt 模糊拼接
+- From: ACPOSContextCandidate
+  Relation: CONTAINS_REF
+  To: Evidence / Knowledge / Experience refs
+  Cardinality / Rule: 0..N；只引用，不複製 Authority payload
+- From: ACPOSContextSnapshot
+  Relation: FREEZES
+  To: Resolved source refs
+  Cardinality / Rule: 1..N exact refs；formal execution REQUIRED
+- From: ACPOSContextSnapshot
+  Relation: HAS
+  To: ACPOSContextFingerprint
+  Cardinality / Rule: exactly 1
+- From: ACPOSConflictRecord
+  Relation: COMPARES
+  To: 2..N claim refs
+  Cardinality / Rule: 不得只留文字描述而丟失 refs
+- From: ACPOSIntegrationEvent
+  Relation: NOTIFIES
+  To: Consumer(s)
+  Cardinality / Rule: 0..N；consumer 必須自行用 ref 讀 Current owner
+- From: ACPOSImpactSet
+  Relation: TRAVERSES
+  To: Dependency edges
+  Cardinality / Rule: 正向 + 反向 closure；edge type 決定 reverify
+- From: ACPOSExperienceRecord
+  Relation: DERIVED_FROM
+  To: Execution + Outcome + Evidence
+  Cardinality / Rule: 至少 1 true outcome evidence
+- From: ACPOSLearningCandidate
+  Relation: DERIVED_FROM
+  To: ExperienceRecord
+  Cardinality / Rule: 1..N；採用前不是 Authority
+- From: AcquisitionIntent
+  Relation: MATERIALIZES
+  To: RawSourceSnapshot
+  Cardinality / Rule: 0..N immutable snapshots
+- From: RawSourceSnapshot
+  Relation: SUPPORTS
+  To: AcquisitionEvidence
+  Cardinality / Rule: 1..N normalized/citation refs
+entity_operations:
+- Entity: ACPOSStateProjection
+  Operations: PROJECT / REFRESH / INVALIDATE
+  Precondition: Domain exact version exists
+  Output: Projection version, state, owner, relationships
+  Invariant: Derived only
+- Entity: ACPOSContextNeed
+  Operations: DECLARE / VALIDATE
+  Precondition: Actor + operation known
+  Output: Required/optional/forbidden context classes
+  Invariant: No data fetch yet
+- Entity: ACPOSContextCandidate
+  Operations: BUILD / REVIEW / ADOPT / REJECT
+  Precondition: Authorized source refs
+  Output: Candidate state + evidence refs
+  Invariant: Adoption by consumer domain
+- Entity: ACPOSContextSnapshot
+  Operations: FREEZE / VERIFY / REPLAY_REFERENCE
+  Precondition: Resolution complete
+  Output: Immutable snapshot + digest
+  Invariant: No mutation after freeze
+- Entity: ACPOSConflictRecord
+  Operations: CREATE / CLASSIFY / RESOLVE / ESCALATE
+  Precondition: Contradictory claims/refs
+  Output: Disposition + reviewer + refs
+  Invariant: No silent overwrite
+- Entity: ACPOSImpactSet
+  Operations: BUILD / EXPAND / VERIFY
+  Precondition: Change target known
+  Output: Affected owners + reverify set
+  Invariant: Closure requires complete graph
+- Entity: ACPOSIntegrationEvent
+  Operations: EMIT / CONSUME / ACK / RECONCILE
+  Precondition: Source mutation already governed
+  Output: Event delivery evidence
+  Invariant: Event itself cannot mutate source truth
+- Entity: ACPOSExperienceRecord
+  Operations: CREATE / VALIDATE / RETIRE
+  Precondition: Real outcome observed
+  Output: Evidence-linked experience
+  Invariant: Failure retained
+- Entity: ACPOSLearningCandidate
+  Operations: DERIVE / REVIEW / ADOPT / REJECT
+  Precondition: Validated experience input
+  Output: Candidate or governed adoption
+  Invariant: Self-adoption forbidden
+- Entity: AcquisitionIntent
+  Operations: DECLARE / CANCEL
+  Precondition: Domain need + rights scope
+  Output: AcquisitionJob reference
+  Invariant: No page-local crawler
+- Entity: RawSourceSnapshot
+  Operations: CAPTURE / VERIFY / RETAIN / DELETE_GOVERNED
+  Precondition: Acquisition attempt
+  Output: Immutable source snapshot
+  Invariant: Delete subject to retention/ref/legal hold
+- Entity: HumanDecisionQueueItem
+  Operations: ENQUEUE / ASSIGN / DECIDE / EXPIRE_GOVERNED
+  Precondition: Review-required condition
+  Output: Decision ref or unresolved state
+  Invariant: No AI self-approval
+truth_tiers_T0_T7:
+- Tier: T0
+  Canonical Name: CURRENT_OPERATIONAL_TRUTH
+  定義: 目前正式 Domain entity/state/exact version 的可驗證操作事實。
+  Authority Basis: Current owner + exact version
+  正式使用限制: 可作 operational claim Authority。
+- Tier: T1
+  Canonical Name: CONFIRMED_DECISION_TRUTH
+  定義: 已確認 Decision / Approval / Lock / Policy choice。
+  Authority Basis: Governed decision owner
+  正式使用限制: 可作 decision/policy claim Authority；不能改寫實際 T0 outcome。
+- Tier: T2
+  Canonical Name: APPROVED_KNOWLEDGE
+  定義: 經審查正式採用的 Knowledge。
+  Authority Basis: Knowledge owner + approved version
+  正式使用限制: 可作 reference knowledge；若 claim 有更高 Domain owner，僅輔助。
+- Tier: T3
+  Canonical Name: VALIDATED_EXPERIENCE
+  定義: 由真實執行、QA、成本、Business Outcome 形成的經驗。
+  Authority Basis: Experience owner + evidence refs
+  正式使用限制: 可用於 ranking/recommendation；不能穿透 hard gate。
+- Tier: T4
+  Canonical Name: EXTERNAL_EVIDENCE
+  定義: Search/Crawl/API/RSS/Document 的可追溯外部證據。
+  Authority Basis: Raw snapshot + acquisition evidence
+  正式使用限制: 不可直接覆蓋 T0/T1/T2；需 domain adoption。
+- Tier: T5
+  Canonical Name: CONVERSATION_WORKING_CONTEXT
+  定義: 對話、工作筆記、暫存分析。
+  Authority Basis: Conversation/thread context
+  正式使用限制: 僅 working context；不可宣稱為 Canon。
+- Tier: T6
+  Canonical Name: CANDIDATE
+  定義: AI/Human 尚未採用的候選。
+  Authority Basis: Candidate owner/version
+  正式使用限制: 不得作 formal truth。
+- Tier: T7
+  Canonical Name: SEMANTIC_INDEX_RESULT
+  定義: 向量/semantic search 命中的候選索引。
+  Authority Basis: Index pointer
+  正式使用限制: 只負責找候選；正式使用 MUST 回 exact source/version/evidence。
+invariants:
+- ID: INV-001
+  Trigger / Condition: Formal AI/Tool execution starts
+  Normative Rule: ContextSnapshot MUST be FROZEN and fingerprinted.
+  Disposition: 'BLOCK: CONTEXT_NOT_FROZEN'
+- ID: INV-002
+  Trigger / Condition: Operation requires exact object/version
+  Normative Rule: Exact object_ref + exact_version_ref MUST exist.
+  Disposition: 'BLOCK: EXACT_VERSION_UNRESOLVED'
+- ID: INV-003
+  Trigger / Condition: Only latest/current/default alias is available
+  Normative Rule: Alias MUST_NOT satisfy formal exact-version requirement.
+  Disposition: 'BLOCK: ALIAS_NOT_EXACT'
+- ID: INV-004
+  Trigger / Condition: Cross-project source is encountered
+  Normative Rule: MUST verify explicit scope authorization; silent fallback forbidden.
+  Disposition: 'BLOCK: CROSS_PROJECT_SCOPE'
+- ID: INV-005
+  Trigger / Condition: T4 external evidence conflicts with T0/T1/T2 owner claim
+  Normative Rule: MUST create ConflictRecord; external source MUST_NOT overwrite internal authority.
+  Disposition: KEEP owner truth + REVIEW if required
+- ID: INV-006
+  Trigger / Condition: T7 semantic hit selected
+  Normative Rule: MUST dereference exact source/version/evidence before formal use.
+  Disposition: BLOCK if dereference fails
+- ID: INV-007
+  Trigger / Condition: AI raw output exists
+  Normative Rule: MUST remain RAW_AI_OUTPUT/CANDIDATE until governed adoption.
+  Disposition: NO AUTHORITY CREDIT
+- ID: INV-008
+  Trigger / Condition: Context contains restricted data
+  Normative Rule: Provider/tool eligibility MUST verify classification/rights before disclosure.
+  Disposition: 'BLOCK: CLASSIFICATION_POLICY'
+- ID: INV-009
+  Trigger / Condition: Required permission missing
+  Normative Rule: MUST_NOT execute effectful operation.
+  Disposition: 'BLOCK: PERMISSION_DENIED'
+- ID: INV-010
+  Trigger / Condition: Context source is stale for requested freshness
+  Normative Rule: MUST refresh/re-resolve or explicitly block/review.
+  Disposition: NO SILENT REBASE
+- ID: INV-011
+  Trigger / Condition: Context mandatory set exceeds budget
+  Normative Rule: MUST_NOT drop mandatory constraints.
+  Disposition: 'BLOCK: CONTEXT_BUDGET_MANDATORY_OVERFLOW'
+- ID: INV-012
+  Trigger / Condition: Optional context exceeds budget
+  Normative Rule: MUST dedupe → summarize → rank/drop lowest priority in defined order.
+  Disposition: Continue only if mandatory intact
+- ID: INV-013
+  Trigger / Condition: Same claim has unresolved same-tier conflict
+  Normative Rule: MUST create ConflictRecord and deterministic disposition.
+  Disposition: REVIEW/BLOCK by claim class
+- ID: INV-014
+  Trigger / Condition: Two writers target same governed version
+  Normative Rule: MUST use expected_version/pre-write identity.
+  Disposition: STALE_WRITE_BLOCK
+- ID: INV-015
+  Trigger / Condition: Stale write detected
+  Normative Rule: MUST_NOT silent overwrite or silent merge.
+  Disposition: COMPARE/FORK/RETRY with fresh base
+- ID: INV-016
+  Trigger / Condition: Same idempotency key + same payload
+  Normative Rule: MUST return/reconcile prior effect; MUST_NOT duplicate effect.
+  Disposition: IDEMPOTENT_REPLAY
+- ID: INV-017
+  Trigger / Condition: Same idempotency key + different payload
+  Normative Rule: MUST reject.
+  Disposition: 'BLOCK: IDEMPOTENCY_KEY_REUSE_CONFLICT'
+- ID: INV-018
+  Trigger / Condition: External effect response is ambiguous
+  Normative Rule: MUST reconcile provider/external status before retry.
+  Disposition: NO BLIND RETRY
+- ID: INV-019
+  Trigger / Condition: Retryable failure
+  Normative Rule: Retry MUST be bounded and policy-owned.
+  Disposition: No infinite retry
+- ID: INV-020
+  Trigger / Condition: Non-retryable validation/permission failure
+  Normative Rule: MUST_NOT retry automatically.
+  Disposition: BLOCK/RETURN ERROR
+- ID: INV-021
+  Trigger / Condition: Provider/tool health circuit open
+  Normative Rule: New calls MUST follow circuit policy; hard gates still apply.
+  Disposition: FALLBACK only if semantically eligible
+- ID: INV-022
+  Trigger / Condition: Fallback provider selected
+  Normative Rule: Request MUST recompile from canonical meaning.
+  Disposition: MUST_NOT reuse Provider-A compiled prompt blindly
+- ID: INV-023
+  Trigger / Condition: Integration event received twice
+  Normative Rule: Consumer MUST dedupe using event_id/idempotency semantics.
+  Disposition: No duplicate business mutation
+- ID: INV-024
+  Trigger / Condition: Event arrives out of order
+  Normative Rule: Consumer MUST compare aggregate/exact_version/sequence and reconcile.
+  Disposition: No stale rollback
+- ID: INV-025
+  Trigger / Condition: Integration event payload exists
+  Normative Rule: Event MUST be treated as notification/evidence envelope, not source mutation authority.
+  Disposition: Consumer dereferences owner
+- ID: INV-026
+  Trigger / Condition: Domain page needs external acquisition
+  Normative Rule: MUST use shared acquisition runtime contract.
+  Disposition: No page-local second crawler
+- ID: INV-027
+  Trigger / Condition: Raw external payload acquired
+  Normative Rule: MUST persist provenance/snapshot before normalization/adoption.
+  Disposition: No direct Canon write
+- ID: INV-028
+  Trigger / Condition: Experience is created
+  Normative Rule: MUST link real execution/outcome evidence.
+  Disposition: Conversation-only experience forbidden
+- ID: INV-029
+  Trigger / Condition: Execution failed or was wasteful
+  Normative Rule: Failure experience MUST be retained when policy allows.
+  Disposition: Do not learn only from successes
+- ID: INV-030
+  Trigger / Condition: Learning Candidate exists
+  Normative Rule: MUST NOT self-adopt into Authority.
+  Disposition: REVIEW_REQUIRED
+- ID: INV-031
+  Trigger / Condition: Learning recommendation conflicts with hard eligibility gate
+  Normative Rule: Hard gate wins.
+  Disposition: Experience cannot bypass rights/policy/capability
+- ID: INV-032
+  Trigger / Condition: Material change affects dependency descendants
+  Normative Rule: ImpactSet MUST mark affected PASS items REVERIFY_REQUIRED.
+  Disposition: No stale PASS carryover
+- ID: INV-033
+  Trigger / Condition: Source owner is changed/superseded
+  Normative Rule: References MUST migrate atomically or remain blocked.
+  Disposition: No second authority
+- ID: INV-034
+  Trigger / Condition: Deletion requested
+  Normative Rule: Reference/retention/legal-hold checks MUST pass.
+  Disposition: No hard delete of referenced canonical evidence
+- ID: INV-035
+  Trigger / Condition: Audit/Decision/Canonical Version referenced by active lineage
+  Normative Rule: MUST preserve traceability.
+  Disposition: No destructive delete
+- ID: INV-036
+  Trigger / Condition: Current Authority binding is unknown
+  Normative Rule: Document/implementation MUST use REQUIRE_EXACT_BINDING.
+  Disposition: No invented UID/path/table/API
+- ID: INV-037
+  Trigger / Condition: Page already owns business behavior
+  Normative Rule: Global Brain MUST reference, not duplicate/redefine.
+  Disposition: ONE CONCEPT / ONE OWNER
+- ID: INV-038
+  Trigger / Condition: AI wants to change another domain
+  Normative Rule: Cross-domain mutation MUST use governed handoff/adoption.
+  Disposition: No silent cross-domain mutation
+- ID: INV-039
+  Trigger / Condition: Formal result is only preview/test/simulation
+  Normative Rule: MUST NOT be presented as Production outcome.
+  Disposition: Truthful execution state
+- ID: INV-040
+  Trigger / Condition: Tool/run inner step succeeded
+  Normative Rule: MUST_NOT infer outer terminal success.
+  Disposition: Need terminal evidence
+- ID: INV-041
+  Trigger / Condition: ContextSnapshot changes after freeze
+  Normative Rule: Original snapshot remains immutable; new execution requires new snapshot/fingerprint.
+  Disposition: No in-place mutation
+- ID: INV-042
+  Trigger / Condition: Manual correction changes subset
+  Normative Rule: Preserve constraints MUST protect unaffected governed content.
+  Disposition: Exact-scope delta only
+- ID: INV-043
+  Trigger / Condition: Human Decision Queue item unresolved
+  Normative Rule: Dependent effectful action MUST stay blocked when decision is REQUIRED.
+  Disposition: No timeout-as-approval
+- ID: INV-044
+  Trigger / Condition: Evidence is missing/ambiguous
+  Normative Rule: MUST report UNKNOWN/NOT_VERIFIED/BLOCKED as applicable.
+  Disposition: No fake success
+- ID: INV-045
+  Trigger / Condition: Retention duration not formally bound
+  Normative Rule: Effectful implementation MUST NOT invent TTL.
+  Disposition: REQUIRE_EXACT_BINDING
+- ID: INV-046
+  Trigger / Condition: Context fingerprint mismatch on resume/replay
+  Normative Rule: MUST re-resolve context or explicitly branch.
+  Disposition: No silent resume onto changed truth
+- ID: INV-047
+  Trigger / Condition: A source has no classification/rights metadata but may cross trust boundary
+  Normative Rule: MUST classify or block before disclosure.
+  Disposition: 'BLOCK: DATA_POLICY_UNRESOLVED'
+- ID: INV-048
+  Trigger / Condition: Duplicate/semantic duplicate owner discovered
+  Normative Rule: MUST resolve to one canonical owner and references.
+  Disposition: NO SECOND AUTHORITY
+page_wiring:
+  consumes_from_all_18_pages: true
+  does_not_replace_page_authority: true
+  shared_acquisition_consumers:
+  - admin:KB-01
+  - workspace:INFO-01
+  - admin:STR-01
+  - admin:DEV-01
+  - admin:SOC-01
+  conversation_detail_owner: ACPOS-AI-02
+  execution_runtime_owner: ACPOS-AI-03
+  domain_owners: ACPOS-AI-04..09
+forbidden:
+- 第二套業務資料庫
+- page-local Context fork
+- 把 Conversation text 當 Experience
+- AI output 直接成 Canon
+- latest/current/default alias 替代 exact ref
+- Raw external data 直接寫 Canon

@@ -1,0 +1,96 @@
+authority:
+  id: ACPOS_AI_07_SOCIAL_PUBLISHING_WIRING
+  encoding_schema: ACPOS_AI_07_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-07
+  system_logic_owner: Social Publishing AI System
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-07-ACPOS-SOCIAL-PUBLISHING-AI-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: b42f1c49e62f2fac9f5d734f9e58d001d41ef0bb
+  source_sha256: 82e99ba9d0ac21650af7b6d9da8a1500711f50befc6fc987837d0a871d7b6c73
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-07-ACPOS-SOCIAL-PUBLISHING-AI-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+scope:
+- 分類: IN SCOPE
+  內容: Canonical Content、Draft/Candidate/Approval、Platform Variant、Media Binding、Platform Registry read、Target、Account
+    Binding、Policy/Readiness、Schedule、Publish Request/Attempt、ExternalPostRef、Callback、Incident、Metrics/Interaction/Attribution、Experience/Recommendation。
+- 分類: OUT OF SCOPE
+  內容: Email outreach/CRM（AI-06）、策略決策（AI-08）、System Lifecycle/新增平台（AI-09）、Provider routing（AI-03）、CORE
+    Canon（AI-04）、ASSET/VIDEO production ownership（AI-05）。
+- 分類: CURRENT BASELINE
+  內容: V1 Platform Registry 至少含 YouTube / Douyin / Facebook / Instagram 初始 Entry；Entry 存在不代表 Connector/Auth/Health
+    READY。
+- 分類: PROHIBITED
+  內容: 第二套 Platform Registry、PublishingAdapterService、Scheduler、Queue、Analytics Store、page-local LLM endpoint、Provider/Model
+    picker、AI raw output auto-publish、mass comment/tag/cold outreach。
+owner_boundary:
+- 概念: Context / Truth / Experience
+  Canonical Owner: ACPOS-AI-01
+  AI-07 行為: 讀取 exact Context/Truth；不得建立 page-local context store。
+- 概念: Conversation / Memory
+  Canonical Owner: ACPOS-AI-02
+  AI-07 行為: 重用 shared Conversation Core 產生 Draft；不得自建 Social Copy AI Service。
+- 概念: Provider / Tool Runtime
+  Canonical Owner: ACPOS-AI-03
+  AI-07 行為: 提交 provider-neutral instruction；不得直接選 Provider/Model 或直連 SDK。
+- 概念: CORE Canon / Production Package
+  Canonical Owner: ACPOS-AI-04
+  AI-07 行為: 只讀 exact approved/locked refs；不得在社群域改 CORE Canon。
+- 概念: Media Production
+  Canonical Owner: ACPOS-AI-05
+  AI-07 行為: 引用 exact approved asset/release refs；不得建立第二素材庫。
+- 概念: Email / CRM Business Development
+  Canonical Owner: ACPOS-AI-06
+  AI-07 行為: 不擁有 Email、Lead、CRM、Meeting/Proposal 等生命週期。
+- 概念: Social Publishing
+  Canonical Owner: ACPOS-AI-07
+  AI-07 行為: 唯一 owner：Canonical Social Content → Platform Variant → Publish → Post Truth → Metrics。
+- 概念: Strategy
+  Canonical Owner: ACPOS-AI-08
+  AI-07 行為: 可提供 recommendation/context；不得直接觸發 publish。
+- 概念: Platform Onboarding / System Change
+  Canonical Owner: ACPOS-AI-09
+  AI-07 行為: 新平台加入單一 Registry/Adapter；AI-07 不建立第二套。
+page_wiring:
+  owner_page: admin:SOC-01
+  media_refs_from:
+  - ASSET-01
+  - VIDEO-01
+  - EDIT-01
+  - QA-01
+  core_refs_from: CORE-01 / ACPOS-AI-04
+  execution_via: ACPOS-AI-03 / admin:AIAPI-01
+  publish_accepted_vs_posted_confirmed: separated
+  ai_raw_auto_publish: FORBIDDEN
+  initial_platform_registry:
+  - YouTube
+  - Douyin
+  - Facebook
+  - Instagram
+  registry_entry_is_not_connector_ready: true
+forbidden:
+- 第二套 Platform Registry / Scheduler / Queue / Analytics Store
+- page-local LLM endpoint
+- Provider/Model picker
+- mass comment/tag/cold outreach
+- Email/CRM lifecycle (AI-06)

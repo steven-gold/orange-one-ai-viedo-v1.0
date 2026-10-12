@@ -2052,6 +2052,16 @@ const catalog = {
   "kb.drawer-hint": { "zh-TW": "讀取細節進 Drawer；缺值顯示 —，不以假資料代替。", "zh-CN": "读取细节进 Drawer；缺值显示 —，不以假资料代替。", en: "Read detail stays in the drawer; missing values render as em dash." },
   "kb.modal-title": { "zh-TW": "Effectful Form Modal", "zh-CN": "Effectful Form Modal", en: "Effectful Form Modal" },
   "kb.modal-hint": { "zh-TW": "effectful_runtime_ready=false；未註冊寫入維持 fail-closed。raw_secret FORBIDDEN。", "zh-CN": "effectful_runtime_ready=false；未注册写入维持 fail-closed。raw_secret FORBIDDEN。", en: "effectful_runtime_ready=false; unregistered writes stay fail-closed. raw_secret FORBIDDEN." },
+  "login.title": { "zh-TW": "登入", "zh-CN": "登录", en: "Sign in" },
+  "login.email": { "zh-TW": "電子郵件", "zh-CN": "电子邮件", en: "Email" },
+  "login.password": { "zh-TW": "密碼", "zh-CN": "密码", en: "Password" },
+  "login.submit": { "zh-TW": "登入", "zh-CN": "登录", en: "Sign in" },
+  "login.lang.tw": { "zh-TW": "繁中", "zh-CN": "繁中", en: "繁中" },
+  "login.lang.cn": { "zh-TW": "简中", "zh-CN": "简中", en: "简中" },
+  "login.error.credentials": { "zh-TW": "登入資訊不正確", "zh-CN": "登录信息不正确", en: "Sign-in details are incorrect" },
+  "login.error.unbound": { "zh-TW": "系統登入服務暫不可用", "zh-CN": "系统登录服务暂不可用", en: "Sign-in service is temporarily unavailable" },
+  "login.error.unbound_user": { "zh-TW": "帳戶尚未綁定可用使用者", "zh-CN": "账户尚未绑定可用使用者", en: "Account is not bound to an available user" },
+  "login.error.session": { "zh-TW": "Session 建立失敗", "zh-CN": "Session 建立失败", en: "Session could not be created" },
 } as const;
 
 export type TranslationKey = keyof typeof catalog;

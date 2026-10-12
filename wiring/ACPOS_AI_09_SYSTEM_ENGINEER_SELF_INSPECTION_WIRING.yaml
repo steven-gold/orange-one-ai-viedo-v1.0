@@ -1,0 +1,727 @@
+authority:
+  id: ACPOS_AI_09_SYSTEM_ENGINEER_SELF_INSPECTION_WIRING
+  encoding_schema: ACPOS_AI_09_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-09
+  system_logic_owner: AI System Engineer / Self-Inspection / Evolution System
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-09-ACPOS-AI-SYSTEM-ENGINEER-SELF-INSPECTION-EVOLUTION-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: c832e29c3e456abd96b22728f5f6a533595013f4
+  source_sha256: 8a62738464742f6c4f04e94a81ce6494dea3e4678dc6d6d530437121771b7c46
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-09-ACPOS-AI-SYSTEM-ENGINEER-SELF-INSPECTION-EVOLUTION-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+responsible_not_responsible:
+- 分類: Current Truth
+  本文件負責: Session Bootstrap / Registry / Governance / Authority / WU / Resume / Evidence resolution
+  本文件不負責: 替代 Mother Governance 或把 chat memory 當 Current Truth
+- 分類: Inspection
+  本文件負責: System/Functional/Data/Permission/Runtime/Dependency/Consumer trace
+  本文件不負責: 自行發明未存在的產品需求
+- 分類: Finding
+  本文件負責: Finding lifecycle、evidence、severity、reproduction、owner candidate
+  本文件不負責: 直接把 Finding 當產品 Authority
+- 分類: Root Cause
+  本文件負責: 因果鏈、owner resolution、shared-vs-local classification
+  本文件不負責: 用症狀位置代替真正 Owner
+- 分類: Change
+  本文件負責: Change Candidate / Set / exact write-set / impact / rollback plan
+  本文件不負責: 未授權就直接修改 Current Authority 或 Production
+- 分類: Validation
+  本文件負責: Simulation / Replay / targeted / full-line / hidden-defect sweep
+  本文件不負責: 把 inner test success 當 outer terminal / Production success
+- 分類: Execution
+  本文件負責: 只在 pre-existing authorization + exact binding + gate PASS 後執行
+  本文件不負責: 自我核准、跨 Owner 寫入、繞過 permission/gate
+- 分類: Evolution
+  本文件負責: Incident/Experience Candidate → governed adoption
+  本文件不負責: AI 自行改寫自己的 policy / validator / governance
+shared_concept_owners:
+- 共享概念: Global Truth / Context
+  Canonical Owner: ACPOS-AI-01
+  AI-09 規則: 引用 Truth tier / ContextSnapshot / exact version；不複製 Context Engine。
+- 共享概念: Conversation / Memory
+  Canonical Owner: ACPOS-AI-02
+  AI-09 規則: 使用 Shared Conversation Core；Finding discussion 不建立第二套 Thread/Memory。
+- 共享概念: Execution / Tool / Provider
+  Canonical Owner: ACPOS-AI-03
+  AI-09 規則: AI-09 的 effectful tool/provider invocation 必須走共享 Router/Runtime。
+- 共享概念: CORE / Blueprint / Canonical Script
+  Canonical Owner: ACPOS-AI-04
+  AI-09 規則: 只檢查/追蹤/提出 Change Candidate；Canon 修改仍回 CORE Owner。
+- 共享概念: Creative Production
+  Canonical Owner: ACPOS-AI-05
+  AI-09 規則: Finding 可指向 ASSET/VIDEO/EDIT/VOICE/QA owner；不直接修改生產物。
+- 共享概念: Enterprise BD
+  Canonical Owner: ACPOS-AI-06
+  AI-09 規則: 檢查 CRM/Delivery/Compliance chain；不直接發信或更改 suppression。
+- 共享概念: Social Publishing
+  Canonical Owner: ACPOS-AI-07
+  AI-09 規則: 檢查 Publish chain；不直接發文或繞過 platform policy。
+- 共享概念: Strategy
+  Canonical Owner: ACPOS-AI-08
+  AI-09 規則: 可提供 system risk/option evidence；策略正式決策仍由 AI-08 + Human Decision。
+- 共享概念: Governance / Authority
+  Canonical Owner: Mother Governance + Current Registry
+  AI-09 規則: AI-09 只能讀取、驗證、提出 candidate；不得自我成為 Authority。
+architecture_layers:
+- Layer: Bootstrap Resolver
+  責任: 解析 Current repository/branch/HEAD/Governance/Authority/WU/Resume/Evidence
+  輸入: live source + registries
+  輸出: CurrentTruthSnapshot
+- Layer: Scope Resolver
+  責任: 解析 exact scope / included / excluded / dependency / denominator
+  輸入: Authority + Work Unit
+  輸出: InspectionScope
+- Layer: Trace Engine
+  責任: 建構 forward/reverse functional/dependency graph
+  輸入: registries + code/contracts/evidence
+  輸出: FunctionalTraceGraph
+- Layer: Inspection Engine
+  責任: 執行 static/dynamic/semantic/runtime/evidence checks
+  輸入: scope + trace + current state
+  輸出: InspectionObservation
+- Layer: Finding Engine
+  責任: 正規化 Finding、dedupe、severity、reproduction
+  輸入: observations
+  輸出: Finding
+- Layer: Root Cause Engine
+  責任: 定位因果鏈與 Canonical Owner
+  輸入: Finding + trace
+  輸出: RootCauseAnalysis
+- Layer: Impact Engine
+  責任: 計算 reverse dependency / REVERIFY_REQUIRED
+  輸入: change target + graph
+  輸出: ImpactSet
+- Layer: Change Planner
+  責任: 產生 bounded Change Candidate / Set
+  輸入: root cause + owner + impact
+  輸出: ChangeCandidate
+- Layer: Simulation/Validation
+  責任: 在隔離環境測試、回放、驗證
+  輸入: candidate + fixtures
+  輸出: ValidationEvidence
+- Layer: Authorization Boundary
+  責任: 驗證 pre-existing approval / permission / gate
+  輸入: candidate + validation
+  輸出: AuthorizedChangeReceipt
+- Layer: Execution/Verify
+  責任: effectful execution + deployment/production verification
+  輸入: authorized receipt
+  輸出: ExecutionEvidence
+- Layer: Rollback/Resume/Learning
+  責任: 失敗復原、checkpoint、incident experience candidate
+  輸入: execution/evidence
+  輸出: ResumePoint + LearningCandidate
+current_truth_bootstrap:
+- 順序: '1'
+  MUST resolve: Repository + target branch + live HEAD/tree
+  Fail-closed 條件: 無法確認 live identity → BLOCK_CURRENT_TRUTH_UNRESOLVED
+- 順序: '2'
+  MUST resolve: Current Registry / Governance Entry
+  Fail-closed 條件: 僅有聊天摘要或歷史版本 → BLOCK
+- 順序: '3'
+  MUST resolve: Mother Governance 01 → 02 → 03 → 04
+  Fail-closed 條件: 順序不完整或來源不 Current → BLOCK
+- 順序: '4'
+  MUST resolve: Current Canonical Authority / owner registries
+  Fail-closed 條件: owner/UID/path 無法 resolve → BLOCK
+- 順序: '5'
+  MUST resolve: Current Primary Task Layer + Active Work Unit
+  Fail-closed 條件: 無 WU 必須進 WORK_UNIT_RESOLUTION_GATE，不得猜下一步
+- 順序: '6'
+  MUST resolve: Canonical Owner Mapping / candidate owner when WUR
+  Fail-closed 條件: 多 owner 衝突或無證據 → REVIEW_REQUIRED/BLOCK
+- 順序: '7'
+  MUST resolve: Persisted Resume Point / exact next transition
+  Fail-closed 條件: resume 不可由模型記憶推測
+- 順序: '8'
+  MUST resolve: Current Audit / Evidence identity
+  Fail-closed 條件: 舊 revision evidence 不得自動沿用
+- 順序: '9'
+  MUST resolve: Selected Execution Profile + applicability
+  Fail-closed 條件: profile 不得改寫 global policy
+- 順序: '10'
+  MUST resolve: Start conditions / dependencies / DoD / gates
+  Fail-closed 條件: 任一 REQUIRED dependency 缺失 → BLOCK
+- 順序: '11'
+  MUST resolve: Search-before-create existing UID/name/alias/owner/runtime/test/evidence
+  Fail-closed 條件: 第一次搜尋無結果不得直接建立新 owner
+- 順序: '12'
+  MUST resolve: Pre-write exact identity/hash recheck
+  Fail-closed 條件: live HEAD 或 owner 已變 → STALE_CONTEXT / restart
+functional_chain_edges:
+- Edge: Page→Control
+  Required proof: Control identity/visibility/owner
+  禁止: 不存在 visual control 的 system-only operation 不得硬造按鈕
+- Edge: Control/System Trigger→Action
+  Required proof: deterministic trigger binding
+  禁止: UI absence 不得直接誤判 Authority Gap
+- Edge: Action→Gate/Permission
+  Required proof: gate + permission refs
+  禁止: 隱藏按鈕不得當 security
+- Edge: Validation→Payload
+  Required proof: schema/version/required fields
+  禁止: alias fallback 隱藏 schema drift
+- Edge: Payload→API→Runtime
+  Required proof: exact binding + owner + version
+  禁止: 以舊 route 或 mock runtime 冒充 Current
+- Edge: Runtime→DB/Provider
+  Required proof: effect boundary + idempotency + audit
+  禁止: 無 evidence 的外部 effect 不得宣稱成功
+- Edge: Audit→Response→UI Feedback
+  Required proof: correlation + status/error mapping
+  禁止: inner success 不得投影成 terminal success
+inspection_modes:
+- Mode: CURRENT_TRUTH_AUDIT
+  用途: 檢查 Current identity 與引用
+  典型輸入: Registry/Governance/HEAD
+  輸出: truth findings
+- Mode: FUNCTIONAL_CHAIN_AUDIT
+  用途: 端到端 operation trace
+  典型輸入: Page/Action/API/Runtime/DB
+  輸出: missing/broken edges
+- Mode: AUTHORITY_OWNER_AUDIT
+  用途: owner/UID/duplicate/parallel system
+  典型輸入: registries/paths
+  輸出: ownership findings
+- Mode: SCHEMA_CONTRACT_AUDIT
+  用途: producer-consumer schema exactness
+  典型輸入: payload/event/contracts
+  輸出: schema drift findings
+- Mode: PERMISSION_SECURITY_AUDIT
+  用途: gate/permission/RLS/classification
+  典型輸入: permission refs/runtime
+  輸出: security findings
+- Mode: STATE_LIFECYCLE_AUDIT
+  用途: state/transition/guard closure
+  典型輸入: state machines/evidence
+  輸出: illegal transitions
+- Mode: CROSS_STAGE_HANDOFF_AUDIT
+  用途: producer output → successor input readiness
+  典型輸入: handoff ledger/physical artifacts
+  輸出: false-completion findings
+- Mode: RUNTIME_EFFECT_AUDIT
+  用途: effectful execution + idempotency + provider result
+  典型輸入: runtime/evidence
+  輸出: effect findings
+- Mode: DEPLOYMENT_PRODUCTION_AUDIT
+  用途: exact deployed SHA + remote acceptance
+  典型輸入: deploy/runtime evidence
+  輸出: production findings
+- Mode: RESIDUAL_CLEANUP_AUDIT
+  用途: dead/stale/duplicate/temp reference
+  典型輸入: consumer graph/history
+  輸出: cleanup findings
+- Mode: PORTABILITY_AUDIT
+  用途: common policy not product/profile coupled
+  典型輸入: synthetic profiles
+  輸出: portability findings
+- Mode: HIDDEN_DEFECT_SWEEP
+  用途: known fix 後找鄰近/反向缺陷
+  典型輸入: fresh current scope
+  輸出: latent findings
+entity_inventory:
+- Entity: CurrentTruthSnapshot
+  Role: 本輪 Current identity 的凍結快照
+- Entity: InspectionScope
+  Role: included/excluded/remaining/dependency/denominator
+- Entity: FunctionalTraceGraph
+  Role: 功能鏈 + dependency graph
+- Entity: TraceEdge
+  Role: exact producer→consumer / trigger→action edge
+- Entity: InspectionRun
+  Role: 一次可重現檢查
+- Entity: InspectionObservation
+  Role: 原始觀察，不等同 Finding
+- Entity: Finding
+  Role: 可治理問題實體
+- Entity: FindingSignature
+  Role: dedupe/reproduction signature
+- Entity: EvidenceRef
+  Role: 支援 observation/finding 的 evidence
+- Entity: ReproductionCase
+  Role: 可重現缺陷條件
+- Entity: Severity
+  Role: 影響/風險分類
+- Entity: RootCauseAnalysis
+  Role: 因果鏈
+- Entity: CanonicalOwnerResolution
+  Role: 真正 owner/UID/path/revision
+- Entity: ImpactSet
+  Role: 受影響 reverse dependency 集合
+- Entity: ReverifySet
+  Role: 必須重新驗證的 descendants
+- Entity: ChangeCandidate
+  Role: 非權威修正候選
+- Entity: ChangeSet
+  Role: bounded exact write-set
+- Entity: WriteTarget
+  Role: exact owner/path/node/hash
+- Entity: RollbackPlan
+  Role: 逆向復原計畫
+- Entity: SimulationPlan
+  Role: 隔離測試規劃
+- Entity: SimulationRun
+  Role: 隔離執行
+- Entity: ValidationPlan
+  Role: 驗證分母與 gate
+- Entity: ValidationRun
+  Role: fresh validation
+- Entity: ValidationEvidence
+  Role: exact result/evidence
+- Entity: AuthorizationRequest
+  Role: 人工/治理授權請求
+- Entity: AuthorizationReceipt
+  Role: pre-existing authorization proof
+- Entity: ExecutionPlan
+  Role: effectful steps + stop conditions
+- Entity: ExecutionRun
+  Role: 授權後實際施工/變更
+- Entity: ExecutionEvidence
+  Role: 實際 effect evidence
+- Entity: DeploymentCandidate
+  Role: 待部署內容
+- Entity: DeploymentEvidence
+  Role: 部署 identity/result
+- Entity: ProductionAcceptance
+  Role: remote/current Production evidence
+- Entity: RollbackRun
+  Role: 回滾執行
+- Entity: ResumePoint
+  Role: 可恢復斷點
+- Entity: Checkpoint
+  Role: 可重入 execution checkpoint
+- Entity: Incident
+  Role: 實際事故/異常
+- Entity: ContainmentAction
+  Role: 限制 blast radius
+- Entity: LearningCandidate
+  Role: 事件經驗候選
+- Entity: EvolutionCandidate
+  Role: 改善規則/檢查/流程的候選
+- Entity: GovernedAdoption
+  Role: 經批准後的採用紀錄
+- Entity: AuditEvent
+  Role: 不可變稽核事件
+- Entity: SystemHealthSignal
+  Role: runtime/workflow health signal
+- Entity: ProblemRegister
+  Role: Current single problem truth
+- Entity: ResolutionLedger
+  Role: finding→resolution terminal disposition
+entity_operations:
+- Entity: CurrentTruthSnapshot
+  Allowed operations: RESOLVE / FREEZE / INVALIDATE_ON_HEAD_CHANGE
+- Entity: InspectionScope
+  Allowed operations: DERIVE / EXPAND_DEPENDENCY / PERSIST_REMAINING
+- Entity: FunctionalTraceGraph
+  Allowed operations: BUILD / REVERSE / VERIFY_EDGE
+- Entity: InspectionRun
+  Allowed operations: PLAN / EXECUTE / REEXECUTE / TERMINALIZE
+- Entity: Finding
+  Allowed operations: CREATE / DEDUPE / CLASSIFY / REPRODUCE / TERMINALIZE
+- Entity: RootCauseAnalysis
+  Allowed operations: BUILD_CAUSAL_CHAIN / VALIDATE_OWNER
+- Entity: CanonicalOwnerResolution
+  Allowed operations: SEARCH / RESOLVE / BLOCK_ON_AMBIGUITY
+- Entity: ImpactSet
+  Allowed operations: COMPUTE / PROPAGATE / MARK_REVERIFY
+- Entity: ChangeCandidate
+  Allowed operations: DRAFT / COMPARE / REVISE / REQUEST_APPROVAL
+- Entity: ChangeSet
+  Allowed operations: BOUND / HASH / VERIFY_WRITESET
+- Entity: SimulationRun
+  Allowed operations: START / STEP / REPLAY / FAIL_CLOSED
+- Entity: ValidationRun
+  Allowed operations: TARGETED / FULL_LINE / HIDDEN_SWEEP / TERMINAL
+- Entity: AuthorizationRequest
+  Allowed operations: SUBMIT / APPROVE / REJECT / EXPIRE
+- Entity: ExecutionRun
+  Allowed operations: PREFLIGHT / EXECUTE / STOP / RESUME / ABORT
+- Entity: DeploymentEvidence
+  Allowed operations: CAPTURE / VERIFY_EXACT_SHA / REMOTE_ACCEPTANCE
+- Entity: RollbackRun
+  Allowed operations: TRIGGER / EXECUTE / VERIFY
+- Entity: ResumePoint
+  Allowed operations: PERSIST / RECONCILE / ADVANCE
+- Entity: Incident
+  Allowed operations: OPEN / CONTAIN / RCA / CLOSE
+- Entity: LearningCandidate
+  Allowed operations: DRAFT / REVIEW / ADOPT / REJECT
+- Entity: EvolutionCandidate
+  Allowed operations: PROPOSE / SIMULATE / GOVERN / ADOPT
+invariants:
+- '#': '1'
+  Domain: Current Truth
+  Normative rule: 任何 effectful inspection/remediation 前 MUST resolve live repository/branch/HEAD。
+- '#': '2'
+  Domain: Current Truth
+  Normative rule: Chat memory / summary MUST_NOT 成為 Current Truth。
+- '#': '3'
+  Domain: Current Truth
+  Normative rule: Current Governance MUST 由 stable registry/entrypoint 解析。
+- '#': '4'
+  Domain: Current Truth
+  Normative rule: Mother 01→04 MUST 依正式順序讀取。
+- '#': '5'
+  Domain: Current Truth
+  Normative rule: Historical evidence MUST_NOT 自動證明 Current revision。
+- '#': '6'
+  Domain: Current Truth
+  Normative rule: HEAD/tree 變更後既有 CurrentTruthSnapshot MUST invalidated。
+- '#': '7'
+  Domain: Current Truth
+  Normative rule: Current Primary Task Layer MUST 在 Work Unit 前解析。
+- '#': '8'
+  Domain: Current Truth
+  Normative rule: No Active WU 時 MUST 執行 WORK_UNIT_RESOLUTION_GATE。
+- '#': '9'
+  Domain: Current Truth
+  Normative rule: Resume Point MUST 由 persisted state 解析，不得猜。
+- '#': '10'
+  Domain: Current Truth
+  Normative rule: Pre-write identity/hash MUST 在寫入前再次核對。
+- '#': '11'
+  Domain: Current Truth
+  Normative rule: Selected profile MAY bind local steps but MUST_NOT weaken common policy。
+- '#': '12'
+  Domain: Current Truth
+  Normative rule: Current Test State MUST_NOT 成為 normative Authority。
+- '#': '13'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: 任何 Finding 修正前 MUST resolve Canonical Owner。
+- '#': '14'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: 既有 owner 存在時 MUST modify owner，MUST_NOT 建 parallel copy。
+- '#': '15'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: 同一概念 MUST NOT 有兩個 Current owner。
+- '#': '16'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: 第一次搜尋無結果 MUST_NOT 直接 create 新 owner。
+- '#': '17'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Alias/Deprecated name 只能搜尋，不得成第二 authority。
+- '#': '18'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Product/local defect MUST remain at owning layer。
+- '#': '19'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Shared defect only MAY route shared owner with evidence of generalizability。
+- '#': '20'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: System Engineer MUST_NOT 以症狀發生頁當 root owner。
+- '#': '21'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Unresolved owner ambiguity MUST BLOCK effectful remediation。
+- '#': '22'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Registry/index MUST reference full owner, not duplicate full payload。
+- '#': '23'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Duplicate runtime/API/permission/data truth MUST be treated as governance defect。
+- '#': '24'
+  Domain: Ownership / Duplicate Guard
+  Normative rule: Cleanup MUST NOT delete owner merely because filename looks old。
+- '#': '25'
+  Domain: Inspection / Finding
+  Normative rule: Observation MUST NOT automatically become Finding without normalization/evidence。
+- '#': '26'
+  Domain: Inspection / Finding
+  Normative rule: Finding MUST include exact scope, signature, evidence, owner state and reproducibility。
+- '#': '27'
+  Domain: Inspection / Finding
+  Normative rule: Same signature + same Current scope SHOULD dedupe, not multiply problem denominator。
+- '#': '28'
+  Domain: Inspection / Finding
+  Normative rule: Finding classification MUST separate product gap, governance defect, test defect, evidence
+    defect, external blocker。
+- '#': '29'
+  Domain: Inspection / Finding
+  Normative rule: Known issue remediation MUST be followed by hidden-defect sweep。
+- '#': '30'
+  Domain: Inspection / Finding
+  Normative rule: Successful audit with reproducible remediable gap MUST NOT be called closure。
+- '#': '31'
+  Domain: Inspection / Finding
+  Normative rule: No evidence = NOT_VERIFIED, not PASS。
+- '#': '32'
+  Domain: Inspection / Finding
+  Normative rule: Partial validator PASS MUST NOT be terminal run PASS。
+- '#': '33'
+  Domain: Inspection / Finding
+  Normative rule: Timeout/cancelled/skipped/ambiguous MUST NOT become PASS。
+- '#': '34'
+  Domain: Inspection / Finding
+  Normative rule: Finding terminalization MUST record fixed/rejected/duplicate/not-applicable/blocked
+    with evidence。
+- '#': '35'
+  Domain: Inspection / Finding
+  Normative rule: NOT_APPLICABLE MUST require explicit applicability proof。
+- '#': '36'
+  Domain: Inspection / Finding
+  Normative rule: Finding MUST bind current governance/revision/scope identity。
+- '#': '37'
+  Domain: Functional Chain / Schema
+  Normative rule: Every REQUIRED operation MUST have complete trigger→action→gate→permission→validation→payload→runtime→audit→feedback
+    coverage。
+- '#': '38'
+  Domain: Functional Chain / Schema
+  Normative rule: System-only operation MUST use System Trigger and MUST_NOT invent visual Control。
+- '#': '39'
+  Domain: Functional Chain / Schema
+  Normative rule: Missing deterministic binding MUST be materialized at its owner before closure credit。
+- '#': '40'
+  Domain: Functional Chain / Schema
+  Normative rule: Producer/Consumer schema field name/type/version MUST match exactly。
+- '#': '41'
+  Domain: Functional Chain / Schema
+  Normative rule: Alias fallback MUST_NOT hide schema drift。
+- '#': '42'
+  Domain: Functional Chain / Schema
+  Normative rule: Required handoff edge MUST prove physical materialization + parse + required-field completeness
+    + consumer readiness。
+- '#': '43'
+  Domain: Functional Chain / Schema
+  Normative rule: Reference presence alone MUST_NOT satisfy physical input readiness。
+- '#': '44'
+  Domain: Functional Chain / Schema
+  Normative rule: Prior producer PASS MUST_NOT substitute successor consumer admission。
+- '#': '45'
+  Domain: Functional Chain / Schema
+  Normative rule: Required edge omitted from denominator MUST be CROSS_STAGE_HANDOFF_FALSE_COMPLETION。
+- '#': '46'
+  Domain: Functional Chain / Schema
+  Normative rule: Upstream defect discovery MUST invalidate impacted downstream closure credit。
+- '#': '47'
+  Domain: Functional Chain / Schema
+  Normative rule: Functional topology must preserve semantic operation order across visual/implementation
+    layers。
+- '#': '48'
+  Domain: Functional Chain / Schema
+  Normative rule: Response/UI feedback MUST bind actual terminal state, not optimistic inner-step status。
+- '#': '49'
+  Domain: Change / Mutation
+  Normative rule: Change Candidate MUST be non-authoritative until approved and promoted by proper owner。
+- '#': '50'
+  Domain: Change / Mutation
+  Normative rule: AI MUST_NOT modify Current Authority without explicit pre-existing authorization。
+- '#': '51'
+  Domain: Change / Mutation
+  Normative rule: ChangeSet MUST declare exact target UID/path/node/pre-write hash/write-set。
+- '#': '52'
+  Domain: Change / Mutation
+  Normative rule: Zero-match or multi-match mutation target MUST fail closed。
+- '#': '53'
+  Domain: Change / Mutation
+  Normative rule: Structured mutation MUST use bounded structural identity, not raw lexical global uniqueness。
+- '#': '54'
+  Domain: Change / Mutation
+  Normative rule: Unrelated sibling owners MUST remain byte/semantic preserved unless in ImpactSet。
+- '#': '55'
+  Domain: Change / Mutation
+  Normative rule: Change must compute reverse dependency impact before write。
+- '#': '56'
+  Domain: Change / Mutation
+  Normative rule: Affected prior PASS items MUST become REVERIFY_REQUIRED after material change。
+- '#': '57'
+  Domain: Change / Mutation
+  Normative rule: Mid-stage normative mutation MUST follow current mutation-control policy and MUST NOT
+    be silently promoted。
+- '#': '58'
+  Domain: Change / Mutation
+  Normative rule: Temporary test output MUST_NOT become Authority。
+- '#': '59'
+  Domain: Change / Mutation
+  Normative rule: Generated candidate MUST NOT become Current merely because it is newest。
+- '#': '60'
+  Domain: Change / Mutation
+  Normative rule: Change Set MUST include rollback basis before effectful execution。
+- '#': '61'
+  Domain: Simulation / Validation
+  Normative rule: Simulation MUST run in isolated/non-production effect boundary unless explicit test
+    authority allows otherwise。
+- '#': '62'
+  Domain: Simulation / Validation
+  Normative rule: Simulation PASS MUST NOT equal approval。
+- '#': '63'
+  Domain: Simulation / Validation
+  Normative rule: Validation MUST use fresh Current inputs after material remediation。
+- '#': '64'
+  Domain: Simulation / Validation
+  Normative rule: Targeted regression MUST cover known signatures and affected reverse consumers。
+- '#': '65'
+  Domain: Simulation / Validation
+  Normative rule: Full-line gate MUST preserve registered denominator; batching for timeout MUST NOT shrink
+    denominator。
+- '#': '66'
+  Domain: Simulation / Validation
+  Normative rule: Hidden-defect sweep MUST run after known defect fix before closure。
+- '#': '67'
+  Domain: Simulation / Validation
+  Normative rule: Validation Evidence MUST bind exact tested commit/tree/revision/run/result。
+- '#': '68'
+  Domain: Simulation / Validation
+  Normative rule: Inner test PASS MUST NOT become outer terminal PASS。
+- '#': '69'
+  Domain: Simulation / Validation
+  Normative rule: Old run evidence MUST NOT be reused as fresh current evidence。
+- '#': '70'
+  Domain: Simulation / Validation
+  Normative rule: Negative regression MUST include expected-fail cases for safety guards。
+- '#': '71'
+  Domain: Simulation / Validation
+  Normative rule: Mutation test counts only when intended semantic guard detects the target violation。
+- '#': '72'
+  Domain: Simulation / Validation
+  Normative rule: Closure requires persisted post-write reconciliation and exact-head revalidation when
+    policy requires it。
+- '#': '73'
+  Domain: Authorization / Execution
+  Normative rule: AI MUST NOT self-approve AuthorizationRequest。
+- '#': '74'
+  Domain: Authorization / Execution
+  Normative rule: AuthorizationReceipt MUST preexist protected effectful mutation when required。
+- '#': '75'
+  Domain: Authorization / Execution
+  Normative rule: Permission/Gate MUST be evaluated at effect time。
+- '#': '76'
+  Domain: Authorization / Execution
+  Normative rule: Execution MUST stop if live identity diverges from approved target。
+- '#': '77'
+  Domain: Authorization / Execution
+  Normative rule: ExecutionPlan MUST define stop/abort/rollback conditions。
+- '#': '78'
+  Domain: Authorization / Execution
+  Normative rule: Effectful retries MUST be idempotent or create distinct attempt identities。
+- '#': '79'
+  Domain: Authorization / Execution
+  Normative rule: Successful tool call MUST NOT equal business/production success without downstream evidence。
+- '#': '80'
+  Domain: Authorization / Execution
+  Normative rule: System Engineer MUST NOT bypass domain owner to write DB/provider directly。
+- '#': '81'
+  Domain: Authorization / Execution
+  Normative rule: Kill/stop/circuit conditions MUST prevent further effectful operations。
+- '#': '82'
+  Domain: Authorization / Execution
+  Normative rule: Execution evidence MUST capture actual side effect / result identity。
+- '#': '83'
+  Domain: Authorization / Execution
+  Normative rule: Product blocker credit MUST change only with fresh product-owner evidence。
+- '#': '84'
+  Domain: Authorization / Execution
+  Normative rule: Governance/test/harness fixes MUST NOT be reported as product completion。
+- '#': '85'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Deployed artifact MUST bind exact source SHA/build identity。
+- '#': '86'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Deployment success MUST NOT equal Production acceptance。
+- '#': '87'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Production claim requires fresh remote/runtime evidence。
+- '#': '88'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Rollback MUST restore an explicitly known good state and verify it。
+- '#': '89'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Unknown external state MUST block blind retry where duplicate effect is possible。
+- '#': '90'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Resume MUST reconcile Current Governance/HEAD/WU/evidence before continuation。
+- '#': '91'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Checkpoint MUST capture completed effects and pending effects to prevent duplicate execution。
+- '#': '92'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Incident closure MUST include containment, root cause, correction, verification and
+    residual risk。
+- '#': '93'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Incident LearningCandidate MUST NOT auto-adopt into policy。
+- '#': '94'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: EvolutionCandidate MUST be reviewed under same authority/change controls as other changes。
+- '#': '95'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: AI MUST NOT modify its own validator/policy merely to make failing evidence pass。
+- '#': '96'
+  Domain: Deploy / Rollback / Resume / Learning
+  Normative rule: Governed Adoption MUST preserve provenance, approval, version, impact and revalidation
+    evidence。
+page_wiring:
+  owner_page: admin:SYS-01
+  inspects_all_18_pages: true
+  does_not_become_authority: true
+  ai_may:
+  - inspect
+  - classify
+  - propose
+  - simulate
+  - verify
+  ai_must_not:
+  - self-approve
+  - self-promote Current Governance
+  - self-bypass Gate
+  - self-claim Production PASS
+  page_control_crosswalks_in_word: REFERENCE_ONLY to locked page encodings; not re-encoded here
+page_authority_crosswalk_exclusion:
+  word_tables_not_copied:
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  reason: Those annex tables duplicate locked page control registries. Mutation of locked page YAML is
+    FORBIDDEN.
+  use: locked_page_encodings listed in SYSTEM_LOGIC / INDEX wiring
+forbidden:
+- chat memory 當 Current Truth
+- AI 自我批准 Authority
+- inner test success 當 Production PASS
+- 繞過 permission/gate 寫入
+- 複製 Context / Conversation / Provider runtime

@@ -1,0 +1,236 @@
+authority:
+  id: ACPOS_LOGIN_IDENTITY_WIRING
+  encoding_schema: ACPOS_LOGIN_IDENTITY_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  surface: IDENTITY_ENTRY
+  surface_uid: identity:login
+  surface_kind: UNAUTHENTICATED_IDENTITY_ENTRY
+  business_page: false
+  global_shell_on_this_surface: false
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx
+  source_uid: SRC-ACPOS-LOGIN-IDENTITY-ENTRY-MOTHER-BASIC-DESIGN-OPTIMIZED
+  source_git_blob_sha: d1fad32247d9f7417898ca44ad9a8ba895f4c6d6
+  source_sha256: d8fde21a6a68bdb0762c10e6181c5e6ecf09b882e3082d563caf74276e20b972
+  source_role: IDENTITY_SESSION_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-ACPOS-LOGIN-IDENTITY-ENTRY-MOTHER-BASIC-DESIGN-OPTIMIZED/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+purpose: 把未登入入口接到既有 18 頁：建立 Internal Cookie Session 後交給 Global Shell／WB-01，不成為第 19 個業務頁。
+positioning: Login 是未登入入口，不使用登入後 Global Shell 的 Header／Sidebar。成功登入後建立內部 Cookie Session，並導向 / 儀表板。
+page_wiring:
+  entry_route: GET /login
+  form_submit: POST /identity/login
+  session_surface: GET / POST / DELETE /v1/identity/session
+  success_redirect: HTTP 303 → /
+  success_page_uid: workspace:WB-01
+  post_login_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+  post_login_navigation: visible_page_uids from ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
+  identity_runtime_contract: authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+  account_permission_after_admission: admin:IAM-01
+  session_not_in_permission_catalog: true
+identity_transport:
+  type: INTERNAL_COOKIE_SESSION
+  cookie_name: acpos_session
+  http_only: true
+  same_site: Lax
+  path: /
+  max_age_seconds: 43200
+  secure_when: Production / HTTPS
+  token_bytes: 32
+  token_storage: SHA-256 hash only
+  password_kdf: scrypt N=16384 / r=8 / p=1 / keylen=32
+  dummy_hash_on_failure: true
+  runtime_account_status: READY
+  app_users_predicate: disabled_at IS NULL
+  mapping: acpos_runtime.accounts email join app_users
+component_field_registry:
+- UID: LOGIN-CMP-01
+  類型: Section
+  名稱 / 欄位: Hero / Brand
+  規則: 純展示；aria-hidden；不得承載登入必填資訊
+- UID: LOGIN-CMP-02
+  類型: Control
+  名稱 / 欄位: Language Switch
+  規則: zh-TW / zh-CN / en；不改 Business State
+- UID: LOGIN-FLD-01
+  類型: Field
+  名稱 / 欄位: email
+  規則: required；autocomplete=username；Trim；送出後由 Runtime 驗證
+- UID: LOGIN-FLD-02
+  類型: Field
+  名稱 / 欄位: password
+  規則: required；type=password；autocomplete=current-password；禁止回顯
+- UID: LOGIN-CMP-03
+  類型: Message
+  名稱 / 欄位: Error Banner
+  規則: 只顯示合法 reason / 友善映射；role=alert
+- UID: LOGIN-CTL-01
+  類型: Button
+  名稱 / 欄位: 登入
+  規則: 唯一 Effectful 控制；Submit 到 /identity/login
+layout_breakpoints:
+- Breakpoint: Desktop >980px
+  Layout: Left Hero + Right Access
+  規格: Grid 約 1.08fr / minmax(420px,0.92fr)；Hero 可展示 ACPOS 品牌與 CORE→ASSET→VIDEO→EDIT→QA 生產鏈
+- Breakpoint: <=980px
+  Layout: Single Access
+  規格: Hero 隱藏；登入流程與欄位完全相同
+- Breakpoint: <=560px
+  Layout: Compact Access
+  規格: 左右 padding 降至 16px；Card padding 26×22；不得壓縮 Input / Button 到不可操作
+identity_route_spec:
+- 項目: Page UID
+  規格: identity:login
+- 項目: Route
+  規格: GET /login
+- 項目: Form submit
+  規格: POST /identity/login
+- 項目: Session read/write/end
+  規格: GET / POST / DELETE /v1/identity/session
+- 項目: Success redirect
+  規格: HTTP 303 → /
+- 項目: Identity transport
+  規格: Internal Cookie Session
+- 項目: Cookie
+  規格: acpos_session；HttpOnly；SameSite=Lax；Path=/；Max-Age 43200s
+- 項目: Authorization catalog
+  規格: 登入 Session 本身不屬 Account Permission Catalog；進站後各 Page 再做 page/action permission gate
+owner_boundary:
+- Owner / Object: acpos_runtime.accounts
+  責任: 登入憑證與 READY runtime account 狀態
+- Owner / Object: acpos_runtime.sessions
+  責任: Session token hash + account_id + expiry
+- Owner / Object: app_users
+  責任: Canonical human actor；user_id / email / display_name / disabled_at
+- Owner / Object: Identity Runtime
+  責任: Credential verify、session create/read/delete、account→app_users resolve
+- Owner / Object: IAM-01
+  責任: 登入後帳戶與權限管理；不得搬進 Login 頁
+state_error_recovery:
+- State / Code: READY
+  顯示: Email / Password 可輸入；登入可送出
+  Recovery: 正常操作
+- State / Code: SUBMITTING
+  顯示: 固定 Card Geometry；登入按鈕 loading / disabled
+  Recovery: 等待單次結果；避免重複提交
+- State / Code: IDENTITY_CREDENTIALS_REJECTED
+  顯示: 登入資訊不正確
+  Recovery: 保留 email、清空 password、允許重新輸入
+- State / Code: DATABASE_RUNTIME_NOT_BOUND
+  顯示: 系統登入服務暫不可用
+  Recovery: 顯示服務不可用；不得假登入
+- State / Code: APP_USERS_EMAIL_JOIN_NOT_FOUND
+  顯示: 帳戶尚未綁定可用使用者
+  Recovery: 顯示治理型錯誤；需 IAM / Identity owner 修復
+- State / Code: IDENTITY_SESSION_CREATE_FAILED
+  顯示: Session 建立失敗
+  Recovery: 不設 Cookie；允許重新嘗試
+- State / Code: SESSION_ESTABLISHED
+  顯示: 不留在登入頁
+  Recovery: 303 → /
+functional_chain:
+- 使用者開啟 /login
+- Locale Provider 載入目前語言；登入頁不需要 Page Permission
+- 使用者輸入 email + password，送出 POST /identity/login
+- Server 以 email 尋找 READY runtime account；密碼使用 scrypt 驗證
+- 建立 32-byte random session token；資料庫只保存 SHA-256 token hash
+- 以 session 對 runtime account → app_users 做 email join；app_users 必須 disabled_at IS NULL
+- 成功：建立 acpos_session HttpOnly Cookie，303 Redirect /
+- 失敗：回 /login?error=<reason_code>；頁面顯示實際錯誤狀態，不建立 Session
+forbidden_controls:
+- 忘記密碼
+- 註冊帳號
+- SSO
+- Social Login
+- Remember Me
+- Password Reveal
+- IAM 管理
+- Provider
+- 專案
+- 其他業務功能
+- Authorization Bearer
+- 第三方 IdP Header
+- x-correlation-id 當身份
+security_contract:
+- Cookie 必須 HttpOnly；Production / HTTPS 時 Secure；SameSite=Lax
+- Database 永遠只保存 session token 的 SHA-256 hash，不保存 raw token
+- 登入失敗不得回傳 password、password hash、session token、header plaintext 或 secret
+- 不得把 x-correlation-id、Authorization Bearer、第三方 IdP Header 猜成 Current Identity
+- Runtime account 必須 READY，且可映射至 non-disabled app_users；否則 fail-closed
+i18n_a11y:
+  locales:
+  - zh-TW
+  - zh-CN
+  - en
+  untranslated_brands:
+  - ORANGE ONE
+  - ACPOS
+  labels_required: true
+  error_role: alert
+  tab_order:
+  - language
+  - email
+  - password
+  - login
+  hero_aria_hidden: true
+acceptance:
+- Acceptance UID: LOGIN-ACC-01
+  PASS 條件: '`/login` 可獨立顯示，不載入登入後 Header/Sidebar。'
+- Acceptance UID: LOGIN-ACC-02
+  PASS 條件: 只有 email / password / locale / login + error，無未註冊控制。
+- Acceptance UID: LOGIN-ACC-03
+  PASS 條件: 成功建立 HttpOnly `acpos_session` 並 303 → `/`。
+- Acceptance UID: LOGIN-ACC-04
+  PASS 條件: 失敗不建立 Session，顯示實際 reason_code 映射。
+- Acceptance UID: LOGIN-ACC-05
+  PASS 條件: READY account + non-disabled app_users mapping 才能成為登入 actor。
+- Acceptance UID: LOGIN-ACC-06
+  PASS 條件: Raw password / token / secret 不進 UI、log、audit 或 DB plaintext。
+- Acceptance UID: LOGIN-ACC-07
+  PASS 條件: 980px 以下 Hero 隱藏但 Login Flow 不變。
+- Acceptance UID: LOGIN-ACC-08
+  PASS 條件: 三語、Keyboard、Focus、Error Alert 均可操作。
+- Acceptance UID: LOGIN-ACC-09
+  PASS 條件: 登入完成只建立 Identity；Page Permission 仍由進站後各頁 Gate 判定。
+- Acceptance UID: LOGIN-ACC-10
+  PASS 條件: Login Design 完成不等於 Production Identity Runtime 已重新施工／驗收。
+design_dependency:
+- Design Item / 設計項目: Upstream Design Dependency
+  Canonical Planning Design Contract / 正式規劃設計契約: ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx
+    owns Account / Identity / Permission design truth referenced by Login.
+- Design Item / 設計項目: Downstream Design Dependency
+  Canonical Planning Design Contract / 正式規劃設計契約: ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+    owns the authenticated Home/Shell/Navigation entry after successful identity admission.
+- Design Item / 設計項目: Shared-owner Boundary
+  Canonical Planning Design Contract / 正式規劃設計契約: Login does not duplicate IAM permission models or Home
+    navigation registry. It only owns the identity-entry surface and its local states.
+- Design Item / 設計項目: Success Handoff
+  Canonical Planning Design Contract / 正式規劃設計契約: Successful identity admission hands the authenticated
+    context to the current Home/Shell entry defined by Global Navigation.
+- Design Item / 設計項目: Failure / Resume
+  Canonical Planning Design Contract / 正式規劃設計契約: Authentication/identity failure remains on the Login
+    surface with explicit error/recovery state; no unauthorized downstream navigation.
+- Design Item / 設計項目: Dependency Change Impact
+  Canonical Planning Design Contract / 正式規劃設計契約: IAM identity/permission contract or Home entry/navigation
+    changes require Login design reference revalidation before design freeze.
+wired_existing_pages:
+- workspace:WB-01
+- admin:IAM-01

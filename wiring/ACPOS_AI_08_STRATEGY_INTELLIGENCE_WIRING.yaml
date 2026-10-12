@@ -1,0 +1,90 @@
+authority:
+  id: ACPOS_AI_08_STRATEGY_INTELLIGENCE_WIRING
+  encoding_schema: ACPOS_AI_08_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-08
+  system_logic_owner: Strategy Intelligence / Multi-AI Decision System
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-08-ACPOS-STRATEGY-INTELLIGENCE-MULTIAI-DECISION-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: f5ec7e0594940b787e6da401573110319a2b2874
+  source_sha256: e4814e8c8dd81f2f56c9a9fd7db847662647b859401914a2ca1ab6797d83e1dc
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-08-ACPOS-STRATEGY-INTELLIGENCE-MULTIAI-DECISION-SYSTEM-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+identity:
+- Document Identity: Document UID
+  Value: ACPOS-AI-08
+- Document Identity: Status
+  Value: DESIGN_CONTENT_COMPLETE
+- Document Identity: Approval
+  Value: FORMAL_APPROVAL_NOT_SELF_GRANTED
+- Document Identity: Runtime Claim
+  Value: RUNTIME_NOT_PROVEN_BY_DOCUMENT
+- Document Identity: Current Governance Basis
+  Value: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING / display v2.2.16
+- Document Identity: Bootstrap Branch / HEAD
+  Value: rebuild-v2.1.1 / 61648a2db043047f5907515442e7279d15b8033d
+- Document Identity: Design Date
+  Value: '2026-09-21'
+- Document Identity: Primary Product Anchor
+  Value: workspace:STR-01 / Strategic Center Workspace
+normative_definition:
+- Dimension: Business Goal
+  Normative Definition: 以真實 Fact/Evidence、內部狀態、資源/成本/風險、歷史 Experience 為基礎，產生可比較、可審查、可回饋的策略選項。
+- Dimension: Primary User
+  Normative Definition: 管理層、策略分析者、授權決策者。
+- Dimension: Primary Object
+  Normative Definition: Strategy Topic / Strategic Question / Strategy Candidate / Decision Candidate。
+- Dimension: Human Boundary
+  Normative Definition: AI 分析與建議；人類作正式決策；Owner Module 作 effectful execution。
+- Dimension: Version Boundary
+  Normative Definition: Strategy Output / Candidate / Scenario / Decision Brief / Memory append-only；revision
+    產生新版本。
+- Dimension: Truth Boundary
+  Normative Definition: Fact、Inference、Assumption、Risk/Opportunity、Recommendation、Decision 必須分層，不得互相偷升格。
+scope:
+- Type: IN SCOPE
+  Included / Excluded: Strategic Context、Fact Pack、Question/Constraint、Analysis、Forecast/Pattern、Risk/Opportunity、Option、Resource
+    Impact、Scenario、Multi-AI Same-Baseline、Cross-Review、Consensus/Disagreement、Decision Candidate、Human
+    Review、Decision Ledger、Expected-vs-Actual、Strategic Experience Candidate。
+- Type: OUT OF SCOPE
+  Included / Excluded: Shared Conversation persistence、Provider routing、ERP booking/approval、Workflow
+    command、Production action、Email/Social publish、Authority mutation、system deployment。
+- Type: REFERENCES
+  Included / Excluded: AI-01 Global Brain / Context；AI-02 Conversation & Multi-AI Core；AI-03 Execution
+    Router；AI-06/07 business outcomes；AI-09 System Lifecycle。
+- Type: NO SECOND SYSTEM
+  Included / Excluded: 不得建立 Strategy 專屬的第二套 Conversation Engine、Context Engine、Provider Router、Fact Store、Experience
+    Engine、Workflow Engine 或 Approval Engine。
+page_wiring:
+  workspace_page: workspace:STR-01
+  admin_page: admin:STR-01
+  conversation_core: ACPOS-AI-02
+  context_truth: ACPOS-AI-01
+  execution_router: ACPOS-AI-03
+  effectful_finance_workflow_production: remain on original owners
+  ai_recommendation_is_not_company_decision: true
+  human_decision_required_for_decision_ledger: true
+forbidden:
+- 第二套 Conversation Engine / Context Engine / Provider Router / Fact Store / Experience Engine / Workflow
+  Engine / Approval Engine
+- Strategy 直接觸發 publish / email / production action / authority mutation

@@ -1,0 +1,186 @@
+authority:
+  id: ACPOS_AI_05_CREATIVE_PRODUCTION_CHAIN_WIRING
+  encoding_schema: ACPOS_AI_05_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-05
+  system_logic_owner: Creative Production AI ASSET / VIDEO / EDIT / VOICE / QA
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-05-ACPOS-CREATIVE-PRODUCTION-AI-ASSET-VIDEO-EDIT-VOICE-QA-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: bd0b9d435872479af4e8acbb46d898d164edde8c
+  source_sha256: 81ddb7b678e0dcfafcd4a6f530591aa84871841fe3df584f8359ff2e1bae9a29
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-05-ACPOS-CREATIVE-PRODUCTION-AI-ASSET-VIDEO-EDIT-VOICE-QA-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+scope:
+- Area: ASSET
+  IN SCOPE: asset production/reuse/correction/evaluation/version/handoff
+  OUT OF SCOPE: redefine Project Canon; free provider choice
+- Area: VIDEO
+  IN SCOPE: scene/shot production, local correction, evaluation, handoff
+  OUT OF SCOPE: reselect upstream canonical refs; rewrite Blueprint
+- Area: EDIT
+  IN SCOPE: timeline/track/clip/overlay/integration/finalize
+  OUT OF SCOPE: change Project Canon or Topic scope silently
+- Area: VOICE
+  IN SCOPE: voice generation/voice correction/pronunciation/alignment/version
+  OUT OF SCOPE: replace Voice identity without governed change
+- Area: QA
+  IN SCOPE: scorecard/finding/correction request/recheck/gate/release candidate
+  OUT OF SCOPE: edit upstream output directly; publish directly
+- Area: Shared
+  IN SCOPE: Layered Composition, exact version lineage, provenance, rights/policy, correction loop
+  OUT OF SCOPE: own AI03 routing/compiler; own AI01 Context; own AI02 Conversation; own AI04 Canon
+owner_boundary:
+- Concern: Context / Truth / Experience
+  Canonical Owner: ACPOS-AI-01
+  AI05 rule: consume exact context; do not create second truth engine
+- Concern: Conversation / Memory
+  Canonical Owner: ACPOS-AI-02
+  AI05 rule: reuse shared Conversation Core; department UI is extension only
+- Concern: Compiler / Provider / Tool Runtime
+  Canonical Owner: ACPOS-AI-03
+  AI05 rule: request capability; no provider picker in production workspace
+- Concern: Project / Topic / Blueprint / Script / DNA
+  Canonical Owner: ACPOS-AI-04
+  AI05 rule: read exact canonical refs; production cannot silently rewrite them
+- Concern: Creative production output
+  Canonical Owner: ACPOS-AI-05
+  AI05 rule: owns versioned ASSET/VIDEO/EDIT/VOICE outputs and QA production review lifecycle
+- Concern: Release/Publish
+  Canonical Owner: separate release/publishing owner
+  AI05 rule: QA may create candidate only; no direct publish
+chain_invariant: Consume exact upstream refs; AUTO/MANUAL changes orchestration only, never canonical
+  source truth. Confirmed work creates a new version.
+layers:
+- Layer: Admission
+  Responsibility: validate exact Project/Topic/Task/ProductionPackage + rights/policy + readiness
+- Layer: Planning
+  Responsibility: derive department work items from exact package without semantic invention
+- Layer: Composition
+  Responsibility: materialize layers/shots/tracks/clips/segments and bindings
+- Layer: Execution
+  Responsibility: AI03 capability/tool calls or deterministic edit operations
+- Layer: Evaluation
+  Responsibility: score/evidence/finding against exact criteria/version
+- Layer: Correction
+  Responsibility: bounded delta + preserve constraints + new attempt/version
+- Layer: Confirmation
+  Responsibility: human/system gate confirms working output; never overwrites history
+- Layer: Handoff
+  Responsibility: exact version/checksum/provenance/rights/criteria readiness to successor
+- Layer: QA
+  Responsibility: review exact finished output; correction request or pass
+- Layer: Feedback
+  Responsibility: experience signals to AI01; no direct rule self-adoption
+entity_inventory:
+- Entity: ProductionWorkItem
+  Canonical role: department-scoped work derived from exact CORE package
+- Entity: SourceBinding
+  Canonical role: exact upstream UID/version/hash/provenance
+- Entity: ProductionInputSet
+  Canonical role: resolved immutable inputs for one work attempt
+- Entity: AssetVersion
+  Canonical role: versioned still/image/audio/reference asset output
+- Entity: LayerVersion
+  Canonical role: versioned visual/audio composition layer
+- Entity: PatchVersion
+  Canonical role: bounded delta result against exact source
+- Entity: SceneSpec
+  Canonical role: scene-level governed production spec
+- Entity: ShotSpec
+  Canonical role: shot-level camera/action/continuity spec
+- Entity: VideoOutputVersion
+  Canonical role: versioned generated/edited video output
+- Entity: CompositionDocument
+  Canonical role: logical composition tree for visual/audio/timeline content
+- Entity: CompositionVersion
+  Canonical role: immutable snapshot of composition graph
+- Entity: LayerNode
+  Canonical role: visual/object/effect layer identity
+- Entity: Track
+  Canonical role: timeline track identity
+- Entity: Clip
+  Canonical role: timeline clip bound to exact media version
+- Entity: TimeRange
+  Canonical role: bounded temporal scope
+- Entity: SpatialRegion
+  Canonical role: bounded spatial region / mask / bbox
+- Entity: VoiceIdentityRef
+  Canonical role: governed speaker/voice identity reference
+- Entity: VoiceSegmentVersion
+  Canonical role: versioned generated/edited spoken audio segment
+- Entity: MusicCueVersion
+  Canonical role: music segment/version binding
+- Entity: SFXCueVersion
+  Canonical role: sound effect segment/version binding
+- Entity: SubtitleCueVersion
+  Canonical role: subtitle text/timing/version binding
+- Entity: LipSyncBinding
+  Canonical role: voice-to-visual alignment version
+- Entity: RenderManifest
+  Canonical role: exact composition inputs + output settings
+- Entity: EvaluationResult
+  Canonical role: machine/human evaluation against criteria
+- Entity: QAScorecard
+  Canonical role: criterion-level QA result
+- Entity: Finding
+  Canonical role: specific defect with evidence/owner/severity
+- Entity: CorrectionRequest
+  Canonical role: request to original owner with exact source + required delta
+- Entity: DeltaRequest
+  Canonical role: requested semantic/visual/audio change
+- Entity: PreserveConstraintSet
+  Canonical role: unaffected content that MUST remain equivalent
+- Entity: ChangeSet
+  Canonical role: authorized bounded mutation set
+- Entity: HandoffManifest
+  Canonical role: exact successor-consumable package
+- Entity: ProvenanceRecord
+  Canonical role: input→attempt→output lineage
+- Entity: RightsBinding
+  Canonical role: rights/license/usage restriction binding
+- Entity: PolicyBinding
+  Canonical role: content/safety/platform/quality policy binding
+- Entity: ReleaseCandidate
+  Canonical role: QA-passed candidate; not published truth
+page_wiring:
+  chain:
+  - page_uid: CORE-01
+    role: upstream Production Package owner via AI-04
+  - page_uid: ASSET-01
+    role: asset production / version / correction / handoff
+  - page_uid: VIDEO-01
+    role: video production / version / correction / handoff
+  - page_uid: EDIT-01
+    role: integrated post-production / voice / render / output
+  - page_uid: QA-01
+    role: finished output review / finding / correction / recheck / pass
+  - page_uid: admin:SG-02
+    role: criteria / threshold / gate policy consumed, not owned by production pages
+  correction_returns_to_owning_production_page: true
+  qa_does_not_generate_replacement_media: true
+forbidden:
+- redefine Project Canon
+- free provider choice in production workspace
+- reselect upstream canonical refs
+- QA edit upstream output directly
+- QA publish directly

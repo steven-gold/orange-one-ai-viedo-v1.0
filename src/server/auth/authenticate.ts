@@ -1,4 +1,6 @@
 import { persistFindSession } from "../db/persist";
+import { readIdentitySession } from "../identity/login";
+import { parseSessionCookie } from "../identity/sessionCookie";
 
 export interface AuthenticatedPrincipal {
   accountUid: string;
@@ -9,6 +11,13 @@ export interface AuthenticatedPrincipal {
 const SESSION_PATTERN = /^sess-[a-z0-9-]{6,}$/i;
 
 export async function authenticate(headers: Headers): Promise<AuthenticatedPrincipal> {
+  const cookieToken = parseSessionCookie(headers.get("cookie"));
+  if (cookieToken) {
+    const identity = await readIdentitySession(cookieToken);
+    if (identity) {
+      return { accountUid: identity.account_uid, sessionUid: identity.session_uid, authenticated: true };
+    }
+  }
   const session = headers.get("x-session-uid") ?? "";
   const accountUid = headers.get("x-account-uid") ?? "";
   if (!SESSION_PATTERN.test(session) || accountUid.length === 0) {

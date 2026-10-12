@@ -1,0 +1,191 @@
+authority:
+  id: ACPOS_AI_02_CONVERSATION_MEMORY_MULTIAI_WIRING
+  encoding_schema: ACPOS_AI_02_LOGIC_WIRING_V1
+  encoding_family: ACPOS_SYSTEM_LOGIC_WIRING_V1
+  status: WORD_ALIGNED_WIRING_CANDIDATE
+  current_only: true
+  not_a_page: true
+  creates_new_page: false
+  locked_page_yaml_mutation: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  runtime_claim: NONE
+  missing_value_display: —
+  real_data_only: true
+  document_uid: ACPOS-AI-02-MBLD-NLC
+  system_logic_owner: AI Conversation / Memory / Multi-AI / Assistant
+serialization_contract:
+  yaml_profile: YAML_1_2_SAFE_SUBSET
+  encoding: UTF-8
+  line_ending: LF
+  anchors_aliases: FORBIDDEN
+  implicit_custom_tags: FORBIDDEN
+  null_literal: 'null'
+source:
+  word_filename: 02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_path: 00_SOURCE_INTAKE/RAW_SOURCE/02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  source_uid: SRC-02-ACPOS-AI-CONVERSATION-MEMORY-MULTIAI-ASSISTANT-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0
+  source_git_blob_sha: 999b4945287fa581fb1a7a35ce8243616c00ebc0
+  source_sha256: 61fb762181ccf99a53c92ca5592a9c16dc800fc89e8e6a9e58559d1297f6f152
+  source_role: SYSTEM_LOGIC_CONTRACT_WIRING_INPUT
+  canonical_source_projection: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-02-ACPOS-AI-CONVERSATION-MEMORY-MULTIAI-ASSISTANT-MOTHER-BASIC-LOGIC-DESIGN-NORMATIVE-CONTRACT-V1-0/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+  page_encoding_mutation: FORBIDDEN
+identity:
+- field: Document UID
+  value: ACPOS-AI-02-MBLD-NLC
+  rule: ''
+- field: Artifact Revision
+  value: v1.0 / 2026-09-20
+  rule: ''
+- field: Document Status
+  value: DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED
+  rule: ''
+- field: System Logic Owner
+  value: AI Conversation / Memory / Multi-AI / Assistant
+  rule: ''
+- field: Referenced Upstream Owner
+  value: ACPOS-AI-01 Global Intelligent Brain & Information Lifecycle
+  rule: ''
+- field: Referenced Downstream Runtime Owner
+  value: ACPOS-AI-03 AI Execution / Script Compiler / Tool / AIAPI Runtime
+  rule: ''
+- field: Current Governance UID
+  value: RESOLVE_FRESH_AT_AUDIT_TIME — Mother Governance 01→04 remains the planning/design authority.
+  rule: ''
+- field: Current Governance Display Version
+  value: v2.2.16
+  rule: ''
+- field: Verified Repository Branch
+  value: rebuild-v2.1.1
+  rule: ''
+- field: Verified HEAD SHA
+  value: 5a6b72864dd8957118d0232f00358c49d0eb36c4
+  rule: ''
+- field: Product Runtime Claim
+  value: NONE — this Word is design authority candidate, not proof of implementation
+  rule: ''
+normative_keywords:
+- 關鍵字: MUST
+  中文語義: 必須
+  執行效果: 缺失即不符合本文件。
+- 關鍵字: MUST_NOT
+  中文語義: 禁止
+  執行效果: 任何實作不得違反。
+- 關鍵字: REQUIRED
+  中文語義: 驗收必要
+  執行效果: 缺失不得 PASS。
+- 關鍵字: BLOCK
+  中文語義: 阻擋
+  執行效果: 不得以 fallback、猜測或 UI workaround 繞過。
+- 關鍵字: REVERIFY_REQUIRED
+  中文語義: 需要重驗
+  執行效果: 上游 Context/Decision/Version 改變後，相關對話產物不得沿用舊通過狀態。
+- 關鍵字: REQUIRE_EXACT_BINDING
+  中文語義: 等待精確綁定
+  執行效果: 本設計需要正式 UID/Schema/Runtime owner，但 Current Authority 尚未在本文件中合法解析；不得猜。
+- 關鍵字: REFERENCE_ONLY
+  中文語義: 只引用
+  執行效果: 本文件依賴另一 System Logic Owner；不得複製成第二 Authority。
+highest_principle: ONE SHARED CONVERSATION CORE / ONE MESSAGE IDENTITY / ONE REFERENCE GRAPH / ONE RESUME
+  SEMANTICS / ONE ASSISTANT ROLE
+purpose_scope:
+- 項目: Primary Purpose
+  規範: 建立全站共用、可追溯、可分支、可恢復、可索引、可多 AI 討論、可由 Assistant 紀錄的 Conversation substrate，使對話不是孤立文字，而是可綁 Project/Topic/Task/Decision/Version/Context
+    的工作狀態。
+- 項目: System Role
+  規範: Conversation Core 管理 conversation identity、message lineage、reference graph、branch/resume、participant
+    aliases、assistant records、conversation-local memory projection；不取代 Domain Authority、Global Context
+    Truth 或 AI Runtime Router。
+- 項目: Included
+  規範: Conversation、Thread、Branch、Message、AI Response Ref、Assistant Record、Multi-AI Session、Cross-AI Relation、Context
+    Snapshot Ref、Context Fingerprint、Resume Pointer、Conversation Memory Projection、Attachment Ref、Parser、Events、Audit、Errors。
+- 項目: Excluded
+  規範: Provider/model route selection、Tool execution、Script compilation、Domain business decisions、Project/Topic
+    Canon mutation、Experience global admission、external data retrieval engine、runtime queue/DLQ、Production
+    deploy。
+- 項目: User Experience Principle
+  規範: Conversation-first：對話與其控制必須同一工作區；不可把 AI 輸入欄與對話歷史拆成兩個互不連續的頁面/流程。
+- 項目: Core Inheritance
+  規範: ACPOS-AI-01 owns truth/context/impact/experience governance；ACPOS-AI-03 owns provider/runtime execution；ACPOS-AI-02
+    references both and owns conversation semantics only.
+source_basis:
+- 來源層: Current Governance v2.2.16
+  本文件採用內容: ONE AUTHORITY、search-before-create、Current vs Evidence 分離、Work Unit/Resume、跨階段 consumer readiness、禁止假完成。
+  禁止誤用: 不得把 Stage-local state 當 Conversation business authority。
+- 來源層: ACPOS-AI-01 v4
+  本文件採用內容: T0–T7、Context Package、Context Snapshot/Fingerprint、Truth/Conflict、Retention owner、Experience/Learning
+    owner。
+  禁止誤用: 本文件只引用，不重新建立第二套 Context/Truth/Experience 規則。
+- 來源層: AI Conversation Intelligence Architecture Update
+  本文件採用內容: 唯一 AI Conversation Core、Assistant=紀錄整理引擎、Conversation Continuity、Decision Memory、Context Resolver
+    邊界、Extension 模式。
+  禁止誤用: 不得把舊設計敘述當成 Runtime 已存在證據。
+- 來源層: STR Conversation-First FINAL LOCKED design
+  本文件採用內容: '#AI/#AST/#CONV/#BR、Single/Multi 索引、Cross-AI、Assistant secretary、Branch、@/# parser、chronology、message
+    relations。'
+  禁止誤用: STR-specific layout/market functions不升格為全站 shared business authority。
+- 來源層: Current construction master / historical domain specs
+  本文件採用內容: conversation_id/thread_id、branch operation、shared conversation usages、legacy exact names作為搜尋與
+    reconcile 線索。
+  禁止誤用: 歷史/舊版 master 不可壓過 Current Governance；exact binding 仍需 Current-admissible owner。
+layers:
+- Layer: L1 Surface Integration
+  Owner / Responsibility: Domain page/workspace renders the shared conversation surface.
+  Hard Boundary: MUST_NOT fork core message/reference/branch logic.
+- Layer: L2 Conversation Identity
+  Owner / Responsibility: Conversation/Thread/Branch lifecycle, lineage and scope.
+  Hard Boundary: Identity is ACPOS-owned, not Provider-owned.
+- Layer: L3 Message Graph
+  Owner / Responsibility: Immutable message identity, sequence, reply/reference/review edges.
+  Hard Boundary: Timeline and relation graph are separate projections.
+- Layer: L4 Coordination
+  Owner / Responsibility: Single AI, Multi-AI session aliases, Cross-AI relation metadata.
+  Hard Boundary: Aliases ≠ provider/model/role authority.
+- Layer: L5 Assistant
+  Owner / Responsibility: Meeting secretary/record engine.
+  Hard Boundary: MUST_NOT act as independent analyst or third AI mode.
+- Layer: L6 Continuity
+  Owner / Responsibility: Context snapshot ref/fingerprint, resume pointer, stale detection.
+  Hard Boundary: Actual Context truth owned by ACPOS-AI-01.
+- Layer: L7 Runtime Bridge
+  Owner / Responsibility: Dispatch intent, execution job ref, provider brand result.
+  Hard Boundary: Execution/routing owned by ACPOS-AI-03.
+entity_inventory:
+- 概念: Truth / Context / Impact / Experience
+  唯一 Owner: ACPOS-AI-01
+  ACPOS-AI-02 角色: REFERENCE_ONLY；只保存 exact refs/fingerprints needed for continuity.
+- 概念: Conversation / Thread / Branch / Message / Reference Graph
+  唯一 Owner: ACPOS-AI-02
+  ACPOS-AI-02 角色: CANONICAL OWNER。
+- 概念: Single/Multi AI conversation semantics
+  唯一 Owner: ACPOS-AI-02
+  ACPOS-AI-02 角色: CANONICAL OWNER。
+- 概念: AI Assistant meeting secretary
+  唯一 Owner: ACPOS-AI-02
+  ACPOS-AI-02 角色: CANONICAL OWNER。
+- 概念: Provider Router / Tool / Job / Retry engine
+  唯一 Owner: ACPOS-AI-03
+  ACPOS-AI-02 角色: REFERENCE_ONLY；只接 execution/job/result refs。
+- 概念: Project/Topic/Blueprint/DNA/Canonical Script
+  唯一 Owner: ACPOS-AI-04
+  ACPOS-AI-02 角色: Conversation 只引用。
+- 概念: ASSET/VIDEO/EDIT/VOICE/QA business operations
+  唯一 Owner: ACPOS-AI-05
+  ACPOS-AI-02 角色: Conversation 只提供 shared interaction substrate。
+- 概念: Enterprise/Social/Strategy/System Engineer domain logic
+  唯一 Owner: ACPOS-AI-06/07/08/09
+  ACPOS-AI-02 角色: 各自 Extension；不得建立第二套 Conversation Core。
+page_wiring:
+  shared_conversation_surfaces:
+  - CORE-01
+  - workspace:STR-01
+  - admin:SYS-01
+  upstream: ACPOS-AI-01
+  downstream_runtime: ACPOS-AI-03
+  domain_extension_only: true
+  no_second_chat_core: true
+forbidden:
+- 第二套聊天核心
+- 用 browser tab / URL / provider chat ID 當 conversation identity
+- 模糊搜尋替代 failed reference resolution
+- Assistant 當獨立分析 AI
