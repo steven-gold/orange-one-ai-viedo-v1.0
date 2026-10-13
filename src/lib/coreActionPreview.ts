@@ -209,10 +209,61 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-CREATE") {
-    const blueprint = namedValue(nextValue, "新藍圖");
+    const blueprint = namedValue(nextValue, current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖");
     return {
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": blueprint,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-BLUEPRINT-VALIDATE") {
+    const blueprint = namedValue(nextValue, current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖");
+    return {
+      "CORE-01-BTN-BLUEPRINT-VALIDATE": "validated",
+      "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
+      "CORE-01-FLD-PACKAGE": current("CORE-01-FLD-PACKAGE") || blueprint,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-BLUEPRINT-APPROVE") {
+    const blueprint = namedValue(nextValue, current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖");
+    return {
+      "CORE-01-BTN-BLUEPRINT-APPROVE": "approved",
+      "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
+      "CORE-01-FLD-PACKAGE": blueprint,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-DNA-LOCK-REQUEST") {
+    const project = namedValue(undefined, current("CORE-01-CTL-PROJECT") || "專案");
+    const dna = namedValue(nextValue, current("CORE-01-BTN-DNA-LOCK") || `${project} DNA`);
+    return { "CORE-01-BTN-DNA-LOCK": dna };
+  }
+  if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
+    const blueprint = namedValue(undefined, current("CORE-01-BTN-BLUEPRINT-CREATE") || current("CORE-01-FLD-PACKAGE") || "新藍圖");
+    return {
+      "CORE-01-BTN-CHILD-LOCK": blueprint,
+      "CORE-01-FLD-LOCK-REVIEW": "locked",
+      "CORE-01-FLD-PACKAGE": blueprint,
+      "CORE-01-BTN-BLUEPRINT-CREATE": current("CORE-01-BTN-BLUEPRINT-CREATE") || blueprint,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
+    const topic = namedValue(undefined, current("CORE-01-CTL-TOPIC") || current("CORE-01-FLD-TOPIC-SCOPE") || "專題");
+    const script = namedValue(nextValue, current("CORE-01-BTN-CANONICAL-SCRIPT") || `${topic} 腳本`);
+    return {
+      "CORE-01-BTN-CANONICAL-SCRIPT": script,
+      "CORE-01-FLD-PACKAGE": current("CORE-01-FLD-PACKAGE") || script,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT") {
+    return {
+      "CORE-01-BTN-CORE-REVIEW": "sent",
+      "CORE-01-FLD-LOCK-REVIEW": current("CORE-01-FLD-LOCK-REVIEW") || "ready",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
+    const project = namedValue(undefined, current("CORE-01-CTL-PROJECT") || "專案");
+    return {
+      "CORE-01-BTN-PROJECT-LOCK": project,
+      "CORE-01-FLD-LOCK-REVIEW": "locked",
     };
   }
   if (actionUid === "CORE-01-ACT-ATTACHMENT") {
@@ -227,7 +278,8 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid.startsWith("CORE-01-FLD-DOWNSTREAM")) {
-    return { [controlUid]: namedValue(nextValue, current(controlUid) || "ready") };
+    const existing = usableName(current(controlUid) ?? undefined);
+    return existing ? { [controlUid]: existing } : {};
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-VERSION-STATE") {
     return {

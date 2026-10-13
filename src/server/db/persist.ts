@@ -477,9 +477,14 @@ function overlayCoreNames(fields: AssetFieldValue[], coreFields: CoreFieldValue[
   const topics = namedList(core.get("CORE-01-BTN-TOPIC-CREATE"), core.get("CORE-01-CTL-TOPIC"));
   const project = namedCoreValue(core.get("CORE-01-CTL-PROJECT")) || projects[0] || "";
   const topic = namedCoreValue(core.get("CORE-01-CTL-TOPIC")) || topics[0] || "";
-  const blueprint = namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE"));
+  const blueprint =
+    namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE")) ||
+    namedCoreValue(core.get("CORE-01-FLD-PACKAGE")) ||
+    namedCoreValue(core.get("CORE-01-BTN-CHILD-LOCK"));
   const dna = namedCoreValue(core.get("CORE-01-BTN-DNA-LOCK"));
   const script = namedCoreValue(core.get("CORE-01-BTN-CANONICAL-SCRIPT"));
+  const naming = namedCoreValue(core.get("CORE-01-FLD-NAMING-AUTHORITY")) || "ACPOS_SYSTEM";
+  const task = [project, topic].filter(Boolean).join(" / ");
   return fields.map((row) => {
     if (row.controlUid === "ASSET-01-CTL-PROJECT") {
       const current = namedCoreValue(row.value);
@@ -489,9 +494,11 @@ function overlayCoreNames(fields: AssetFieldValue[], coreFields: CoreFieldValue[
       const current = namedCoreValue(row.value);
       return { ...row, value: current && topics.includes(current) ? current : topic || null };
     }
-    if (row.controlUid === "ASSET-01-FLD-BLUEPRINT" && !namedCoreValue(row.value) && blueprint) return { ...row, value: blueprint };
-    if (row.controlUid === "ASSET-01-FLD-DNA" && !namedCoreValue(row.value) && dna) return { ...row, value: dna };
-    if (row.controlUid === "ASSET-01-FLD-SCRIPT" && !namedCoreValue(row.value) && script) return { ...row, value: script };
+    if (row.controlUid === "ASSET-01-FLD-TASK" && !namedCoreValue(row.value) && task) return { ...row, value: task };
+    if (row.controlUid === "ASSET-01-FLD-BLUEPRINT") return { ...row, value: blueprint || namedCoreValue(row.value) || null };
+    if (row.controlUid === "ASSET-01-FLD-DNA") return { ...row, value: dna || namedCoreValue(row.value) || null };
+    if (row.controlUid === "ASSET-01-FLD-SCRIPT") return { ...row, value: script || namedCoreValue(row.value) || null };
+    if (row.controlUid === "ASSET-01-FLD-NAMING-AUTHORITY") return { ...row, value: naming };
     return row;
   });
 }
@@ -560,9 +567,64 @@ export async function persistListVideoFields(): Promise<VideoFieldValue[]> {
   }));
 }
 
+function overlayUpstreamOntoVideo(
+  fields: VideoFieldValue[],
+  coreFields: CoreFieldValue[],
+  assetFields: AssetFieldValue[],
+): VideoFieldValue[] {
+  const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
+  const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
+  const project = namedCoreValue(core.get("CORE-01-CTL-PROJECT")) || namedCoreValue(asset.get("ASSET-01-CTL-PROJECT"));
+  const topic = namedCoreValue(core.get("CORE-01-CTL-TOPIC")) || namedCoreValue(asset.get("ASSET-01-CTL-TOPIC"));
+  const blueprint =
+    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-BLUEPRINT")) ||
+    namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE")) ||
+    namedCoreValue(core.get("CORE-01-FLD-PACKAGE")) ||
+    namedCoreValue(asset.get("ASSET-01-FLD-BLUEPRINT"));
+  const dna =
+    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-DNA")) ||
+    namedCoreValue(core.get("CORE-01-BTN-DNA-LOCK")) ||
+    namedCoreValue(asset.get("ASSET-01-FLD-DNA"));
+  const script =
+    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-SCRIPT-HASH")) ||
+    namedCoreValue(core.get("CORE-01-BTN-CANONICAL-SCRIPT")) ||
+    namedCoreValue(asset.get("ASSET-01-FLD-SCRIPT"));
+  const assets =
+    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-ASSET-VERSION")) ||
+    namedCoreValue(asset.get("ASSET-01-FLD-MANIFEST")) ||
+    namedCoreValue(core.get("CORE-01-FLD-DOWNSTREAM-ASSET"));
+  const filename =
+    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME")) ||
+    namedCoreValue(asset.get("ASSET-01-FLD-CANONICAL-FILENAME"));
+  const checksum = namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-CHECKSUM")) || namedCoreValue(asset.get("ASSET-01-FLD-CHECKSUM"));
+  const rights = namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-RIGHTS")) || namedCoreValue(asset.get("ASSET-01-FLD-RIGHTS"));
+  const task = [project, topic].filter(Boolean).join(" / ");
+  return fields.map((row) => {
+    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: project || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: topic || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-TASK" && !namedCoreValue(row.value) && task) return { ...row, value: task };
+    if (row.controlUid === "VIDEO-01-FLD-BLUEPRINT-REF") return { ...row, value: blueprint || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: dna || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: script || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-ASSET-REFS") return { ...row, value: assets || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-FILENAME-CHECKSUM") {
+      const bound = [filename, checksum].filter(Boolean).join(" / ");
+      return { ...row, value: bound || namedCoreValue(row.value) || null };
+    }
+    if (row.controlUid === "VIDEO-01-FLD-RIGHTS") return { ...row, value: rights || namedCoreValue(row.value) || null };
+    return row;
+  });
+}
+
 export async function persistGetVideoReadModel(accountUid: string): Promise<VideoReadModel> {
   const authorized = await persistHasVideoPermission(accountUid);
-  const fields = authorized ? await persistListVideoFields() : [];
+  const fields = authorized
+    ? overlayUpstreamOntoVideo(
+        await persistListVideoFields(),
+        await persistListCoreFields().catch(() => [] as CoreFieldValue[]),
+        await persistListAssetFields().catch(() => [] as AssetFieldValue[]),
+      )
+    : [];
   return {
     projectionUid: VIDEO_PROJECTION,
     pageUid: VIDEO_PAGE_UID,

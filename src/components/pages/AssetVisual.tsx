@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
-import { namedList } from "@/lib/coreActionPreview";
+import { namedList, namedValue } from "@/lib/coreActionPreview";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
 import { displayAssetValue } from "./assetFormat";
 import {
@@ -90,6 +90,23 @@ export function AssetVisual() {
             const boundTopic = map.get("ASSET-01-CTL-TOPIC");
             if (!boundProject || !projects.includes(boundProject)) map.set("ASSET-01-CTL-PROJECT", projects[0] ?? null);
             if (!boundTopic || !topics.includes(boundTopic)) map.set("ASSET-01-CTL-TOPIC", topics[0] ?? null);
+            const blueprint =
+              namedValue(coreValue("CORE-01-BTN-BLUEPRINT-CREATE") ?? undefined, "") ||
+              namedValue(coreValue("CORE-01-FLD-PACKAGE") ?? undefined, "") ||
+              namedValue(coreValue("CORE-01-BTN-CHILD-LOCK") ?? undefined, "");
+            const dna = namedValue(coreValue("CORE-01-BTN-DNA-LOCK") ?? undefined, "");
+            const script = namedValue(coreValue("CORE-01-BTN-CANONICAL-SCRIPT") ?? undefined, "");
+            if (blueprint) map.set("ASSET-01-FLD-BLUEPRINT", blueprint);
+            if (dna) map.set("ASSET-01-FLD-DNA", dna);
+            if (script) map.set("ASSET-01-FLD-SCRIPT", script);
+            map.set(
+              "ASSET-01-FLD-NAMING-AUTHORITY",
+              namedValue(coreValue("CORE-01-FLD-NAMING-AUTHORITY") ?? undefined, "") || "ACPOS_SYSTEM",
+            );
+            if (!map.get("ASSET-01-FLD-TASK")) {
+              const task = [projects[0], topics[0]].filter(Boolean).join(" / ");
+              if (task) map.set("ASSET-01-FLD-TASK", task);
+            }
             return ASSET_VISIBLE_CONTROLS.map((controlUid) => ({
               controlUid,
               value: map.get(controlUid) ?? null,

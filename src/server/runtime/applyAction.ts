@@ -129,6 +129,13 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
   }
   if (page === "asset") {
     await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue);
+    if (actionUid === "ASSET-01-ACT-HANDOFF") {
+      const version =
+        (await readField(FIELD_TABLE.asset, "ASSET-01-FLD-HANDOFF-ASSET-VERSION")) ||
+        (await readField(FIELD_TABLE.asset, "ASSET-01-FLD-OUTPUT-ID")) ||
+        (await readField(FIELD_TABLE.asset, "ASSET-01-FLD-MANIFEST"));
+      if (version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-ASSET", version);
+    }
     return;
   }
   await writeField(FIELD_TABLE[page], controlUid, statusFromAction(actionUid));

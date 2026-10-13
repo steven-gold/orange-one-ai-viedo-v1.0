@@ -38,7 +38,7 @@ export function previewAssetAction(
   current: (uid: string) => string | null,
   nextValue?: string,
 ): Record<string, string> {
-  const project = keepName(undefined, current("ASSET-01-CTL-PROJECT"), "未命名專案");
+  const project = named(current("ASSET-01-CTL-PROJECT"));
   const topic = named(current("ASSET-01-CTL-TOPIC"));
   const assets = usableList(current("ASSET-01-LST-ASSET"));
 
@@ -61,7 +61,7 @@ export function previewAssetAction(
       "ASSET-01-FLD-TASK": keepName(undefined, current("ASSET-01-FLD-TASK"), "素材生產"),
       "ASSET-01-FLD-TASK-STATUS": "running",
       "ASSET-01-FLD-STAGE": "running",
-      "ASSET-01-CTL-PROJECT": project,
+      ...(project ? { "ASSET-01-CTL-PROJECT": project } : {}),
       "ASSET-01-LST-ASSET": JSON.stringify(list),
       "ASSET-01-FLD-MANIFEST": selected,
       "ASSET-01-FLD-JOB": "running",
@@ -120,10 +120,12 @@ export function previewAssetAction(
     };
   }
   if (actionUid === "ASSET-01-ACT-BLUEPRINT-VIEW") {
-    return { "ASSET-01-FLD-BLUEPRINT": keepName(nextValue, current("ASSET-01-FLD-BLUEPRINT"), "藍圖") };
+    const blueprint = named(current("ASSET-01-FLD-BLUEPRINT"));
+    return blueprint ? { "ASSET-01-FLD-BLUEPRINT": blueprint } : {};
   }
   if (actionUid === "ASSET-01-ACT-SCRIPT-VIEW") {
-    return { "ASSET-01-FLD-SCRIPT": keepName(nextValue, current("ASSET-01-FLD-SCRIPT"), "素材腳本") };
+    const script = named(current("ASSET-01-FLD-SCRIPT"));
+    return script ? { "ASSET-01-FLD-SCRIPT": script } : {};
   }
   if (actionUid === "ASSET-01-ACT-CORRECTION-OPEN") {
     return {
@@ -253,16 +255,18 @@ export function previewAssetAction(
     return {
       "ASSET-01-BTN-HANDOFF": "sent",
       "ASSET-01-FLD-HANDOFF-ASSET-VERSION": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || project),
-      "ASSET-01-FLD-HANDOFF-BLUEPRINT": keepName(undefined, current("ASSET-01-FLD-BLUEPRINT"), "藍圖"),
-      "ASSET-01-FLD-HANDOFF-DNA": keepName(undefined, current("ASSET-01-FLD-DNA"), "DNA"),
-      "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME": keepName(undefined, current("ASSET-01-FLD-CANONICAL-FILENAME"), `${project}.png`),
-      "ASSET-01-FLD-HANDOFF-CHECKSUM": keepName(undefined, current("ASSET-01-FLD-CHECKSUM"), "已核對"),
-      "ASSET-01-FLD-HANDOFF-SCORECARD": keepName(undefined, current("ASSET-01-FLD-OVERALL"), "通過"),
-      "ASSET-01-FLD-HANDOFF-RIGHTS": keepName(undefined, current("ASSET-01-FLD-RIGHTS"), "已授權"),
+      ...(named(current("ASSET-01-FLD-BLUEPRINT")) ? { "ASSET-01-FLD-HANDOFF-BLUEPRINT": named(current("ASSET-01-FLD-BLUEPRINT")) } : {}),
+      ...(named(current("ASSET-01-FLD-DNA")) ? { "ASSET-01-FLD-HANDOFF-DNA": named(current("ASSET-01-FLD-DNA")) } : {}),
+      ...(named(current("ASSET-01-FLD-CANONICAL-FILENAME")) || project
+        ? { "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME": keepName(undefined, current("ASSET-01-FLD-CANONICAL-FILENAME"), project ? `${project}.png` : "") }
+        : {}),
+      ...(named(current("ASSET-01-FLD-CHECKSUM")) ? { "ASSET-01-FLD-HANDOFF-CHECKSUM": named(current("ASSET-01-FLD-CHECKSUM")) } : {}),
+      ...(named(current("ASSET-01-FLD-OVERALL")) ? { "ASSET-01-FLD-HANDOFF-SCORECARD": named(current("ASSET-01-FLD-OVERALL")) } : {}),
+      ...(named(current("ASSET-01-FLD-RIGHTS")) ? { "ASSET-01-FLD-HANDOFF-RIGHTS": named(current("ASSET-01-FLD-RIGHTS")) } : {}),
       "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS": keepName(undefined, current("ASSET-01-FLD-MANIFEST"), assets.join("、")),
-      "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": keepName(undefined, current("ASSET-01-BTN-LAYER-DOC-CREATE"), "圖層合成"),
-      "ASSET-01-FLD-HANDOFF-SCRIPT-HASH": keepName(undefined, current("ASSET-01-FLD-SCRIPT"), "腳本"),
-      "ASSET-01-FLD-HANDOFF-CONTRACT-HASH": keepName(undefined, current("ASSET-01-FLD-INPUT-FINGERPRINT"), "契約"),
+      ...(named(current("ASSET-01-BTN-LAYER-DOC-CREATE")) ? { "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": named(current("ASSET-01-BTN-LAYER-DOC-CREATE")) } : {}),
+      ...(named(current("ASSET-01-FLD-SCRIPT")) ? { "ASSET-01-FLD-HANDOFF-SCRIPT-HASH": named(current("ASSET-01-FLD-SCRIPT")) } : {}),
+      ...(named(current("ASSET-01-FLD-INPUT-FINGERPRINT")) ? { "ASSET-01-FLD-HANDOFF-CONTRACT-HASH": named(current("ASSET-01-FLD-INPUT-FINGERPRINT")) } : {}),
     };
   }
   if (actionUid === "ASSET-01-ACT-BINDING-VIEW") {
@@ -272,16 +276,13 @@ export function previewAssetAction(
       "ASSET-01-FLD-TASK": "素材生產",
       "ASSET-01-FLD-TASK-STATUS": "待命",
       "ASSET-01-FLD-STAGE": "待命",
-      "ASSET-01-FLD-BLUEPRINT": "藍圖",
-      "ASSET-01-FLD-SCRIPT": "素材腳本",
-      "ASSET-01-FLD-DNA": "DNA",
-      "ASSET-01-FLD-MANIFEST": assets[0] || "素材 1",
+      "ASSET-01-FLD-MANIFEST": assets[0] || "",
       "ASSET-01-FLD-NAMING-AUTHORITY": "ACPOS_SYSTEM",
-      "ASSET-01-FLD-CANONICAL-FILENAME": `${project}.png`,
-      "ASSET-01-FLD-RIGHTS": "已授權",
-      "ASSET-01-FLD-INSTRUCTION": "已核準指令",
+      "ASSET-01-FLD-CANONICAL-FILENAME": project ? `${project}.png` : "",
     };
-    return { [controlUid]: keepName(nextValue, current(controlUid), fallbacks[controlUid] || topic || project) };
+    const fallback = fallbacks[controlUid] || "";
+    if (!fallback) return existing ? { [controlUid]: existing } : {};
+    return { [controlUid]: keepName(nextValue, current(controlUid), fallback) };
   }
   const existing = current(controlUid);
   if (!nextValue && named(existing)) return { [controlUid]: existing as string };
