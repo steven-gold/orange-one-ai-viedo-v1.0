@@ -1,4 +1,5 @@
 import { previewAssetAction } from "@/lib/assetActionPreview";
+import { resolveAssetInbound } from "@/lib/assetInbound";
 import { previewCoreAction } from "@/lib/coreActionPreview";
 import { getSqlClient } from "../db/client";
 
@@ -107,12 +108,14 @@ async function applyProjectedAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
+  seed?: Record<string, string>,
 ): Promise<void> {
   const cache = new Map<string, string | null>();
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     `SELECT control_uid, value_text FROM ${table}`,
   );
   for (const row of rows) cache.set(row.control_uid, row.value_text === "" ? null : row.value_text);
+  for (const [uid, value] of Object.entries(seed ?? {})) cache.set(uid, value);
   const patch = preview(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
   for (const [uid, value] of Object.entries(patch)) {
     await writeField(table, uid, value);
@@ -128,13 +131,29 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
     return;
   }
   if (page === "asset") {
-    await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue);
+    const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_core_field_projection",
+    );
+    const coreByUid = new Map(
+      coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const inbound = resolveAssetInbound((uid) => coreByUid.get(uid) ?? null);
+    const seed: Record<string, string> = inbound.ready
+      ? {
+          "ASSET-01-CTL-PROJECT": inbound.project,
+          "ASSET-01-CTL-TOPIC": inbound.topic,
+          "ASSET-01-FLD-TASK": inbound.task,
+          "ASSET-01-FLD-BLUEPRINT": inbound.blueprint,
+          "ASSET-01-FLD-DNA": inbound.dna,
+          "ASSET-01-FLD-SCRIPT": inbound.script,
+          "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
+        }
+      : {};
+    await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
-      const version =
-        (await readField(FIELD_TABLE.asset, "ASSET-01-FLD-HANDOFF-ASSET-VERSION")) ||
-        (await readField(FIELD_TABLE.asset, "ASSET-01-FLD-OUTPUT-ID")) ||
-        (await readField(FIELD_TABLE.asset, "ASSET-01-FLD-MANIFEST"));
-      if (version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-ASSET", version);
+      const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
+      const version = await readField(FIELD_TABLE.asset, "ASSET-01-FLD-HANDOFF-ASSET-VERSION");
+      if (locked === "locked" && version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-ASSET", version);
     }
     return;
   }

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
-import { namedList, namedValue } from "@/lib/coreActionPreview";
+import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
 import { displayAssetValue } from "./assetFormat";
 import {
@@ -21,7 +21,19 @@ import styles from "./AssetVisual.module.css";
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
 
-type NameDialogKind = "bind-project" | "bind-topic" | "asset" | "layer" | "layer-doc" | "patch" | "properties" | "mask";
+type NameDialogKind = "asset" | "layer" | "layer-doc" | "patch" | "properties" | "mask";
+
+const EMPTY_INBOUND: AssetInbound = {
+  ready: false,
+  project: "",
+  topic: "",
+  task: "",
+  blueprint: "",
+  childLock: "",
+  dna: "",
+  script: "",
+  naming: "",
+};
 
 function emptyFields(): AssetFieldValue[] {
   return ASSET_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
@@ -34,6 +46,7 @@ function Field({
   loading,
   onAct,
   disabled,
+  readonly = false,
 }: {
   uid: string;
   label: string;
@@ -41,7 +54,16 @@ function Field({
   loading: boolean;
   onAct: (uid: string) => void;
   disabled: boolean;
+  readonly?: boolean;
 }) {
+  if (readonly) {
+    return (
+      <div className={styles.field} data-control-uid={uid}>
+        <span className={styles.label}>{label}</span>
+        <span className={styles.value}>{displayAssetValue(value, loading)}</span>
+      </div>
+    );
+  }
   return (
     <button type="button" className={styles.field} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
       <span className={styles.label}>{label}</span>
@@ -60,8 +82,7 @@ export function AssetVisual() {
   const [dialogName, setDialogName] = useState("");
   const [searchDraft, setSearchDraft] = useState("");
   const [correctionDraft, setCorrectionDraft] = useState("");
-  const [coreProjects, setCoreProjects] = useState<string[]>([]);
-  const [coreTopics, setCoreTopics] = useState<string[]>([]);
+  const [inbound, setInbound] = useState<AssetInbound>(EMPTY_INBOUND);
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
 
@@ -75,44 +96,27 @@ export function AssetVisual() {
       .then(([model, core]) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
-        const coreValue = (uid: string) => core?.fields.find((row) => row.controlUid === uid)?.value ?? null;
-        const projects = namedList(coreValue("CORE-01-BTN-PROJECT-CREATE"), coreValue("CORE-01-CTL-PROJECT"));
-        const topics = namedList(coreValue("CORE-01-BTN-TOPIC-CREATE"), coreValue("CORE-01-CTL-TOPIC"));
-        setCoreProjects(projects);
-        setCoreTopics(topics);
-        if (model.fields.length) {
-          setFields((prev) => {
-            const map = new Map(prev.map((row) => [row.controlUid, row.value]));
-            for (const row of model.fields) {
-              if (row.value != null && row.value !== "") map.set(row.controlUid, row.value);
-            }
-            const boundProject = map.get("ASSET-01-CTL-PROJECT");
-            const boundTopic = map.get("ASSET-01-CTL-TOPIC");
-            if (!boundProject || !projects.includes(boundProject)) map.set("ASSET-01-CTL-PROJECT", projects[0] ?? null);
-            if (!boundTopic || !topics.includes(boundTopic)) map.set("ASSET-01-CTL-TOPIC", topics[0] ?? null);
-            const blueprint =
-              namedValue(coreValue("CORE-01-BTN-BLUEPRINT-CREATE") ?? undefined, "") ||
-              namedValue(coreValue("CORE-01-FLD-PACKAGE") ?? undefined, "") ||
-              namedValue(coreValue("CORE-01-BTN-CHILD-LOCK") ?? undefined, "");
-            const dna = namedValue(coreValue("CORE-01-BTN-DNA-LOCK") ?? undefined, "");
-            const script = namedValue(coreValue("CORE-01-BTN-CANONICAL-SCRIPT") ?? undefined, "");
-            if (blueprint) map.set("ASSET-01-FLD-BLUEPRINT", blueprint);
-            if (dna) map.set("ASSET-01-FLD-DNA", dna);
-            if (script) map.set("ASSET-01-FLD-SCRIPT", script);
-            map.set(
-              "ASSET-01-FLD-NAMING-AUTHORITY",
-              namedValue(coreValue("CORE-01-FLD-NAMING-AUTHORITY") ?? undefined, "") || "ACPOS_SYSTEM",
-            );
-            if (!map.get("ASSET-01-FLD-TASK")) {
-              const task = [projects[0], topics[0]].filter(Boolean).join(" / ");
-              if (task) map.set("ASSET-01-FLD-TASK", task);
-            }
-            return ASSET_VISIBLE_CONTROLS.map((controlUid) => ({
-              controlUid,
-              value: map.get(controlUid) ?? null,
-            }));
-          });
+        const resolved = resolveAssetInbound((uid) => core?.fields.find((row) => row.controlUid === uid)?.value ?? null);
+        setInbound(resolved);
+        const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
+        if (resolved.ready) {
+          for (const row of model.fields) {
+            if (row.value != null && row.value !== "") map.set(row.controlUid, row.value);
+          }
+          map.set("ASSET-01-CTL-PROJECT", resolved.project);
+          map.set("ASSET-01-CTL-TOPIC", resolved.topic);
+          map.set("ASSET-01-FLD-TASK", resolved.task);
+          map.set("ASSET-01-FLD-BLUEPRINT", resolved.blueprint);
+          map.set("ASSET-01-FLD-DNA", resolved.dna);
+          map.set("ASSET-01-FLD-SCRIPT", resolved.script);
+          map.set("ASSET-01-FLD-NAMING-AUTHORITY", resolved.naming);
         }
+        setFields(
+          ASSET_VISIBLE_CONTROLS.map((controlUid) => ({
+            controlUid,
+            value: map.get(controlUid) ?? null,
+          })),
+        );
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -154,6 +158,7 @@ export function AssetVisual() {
       (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
       nextValue,
     );
+    if (!Object.keys(patch).length) return;
     applyPatch(patch);
     try {
       await postAssetAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
@@ -170,18 +175,6 @@ export function AssetVisual() {
   const confirmNameDialog = useCallback(() => {
     if (!dialog) return;
     const name = dialogName.trim();
-    if (dialog === "bind-project") {
-      if (name && coreProjects.includes(name)) void act("ASSET-01-CTL-PROJECT", name);
-      setDialog(null);
-      setDialogName("");
-      return;
-    }
-    if (dialog === "bind-topic") {
-      if (name && coreTopics.includes(name)) void act("ASSET-01-CTL-TOPIC", name);
-      setDialog(null);
-      setDialogName("");
-      return;
-    }
     if (dialog === "asset") void act("ASSET-01-LST-ASSET", name || undefined);
     if (dialog === "layer") void act("ASSET-01-BTN-LAYER-ADD", name || undefined);
     if (dialog === "layer-doc") void act("ASSET-01-BTN-LAYER-DOC-CREATE", name || undefined);
@@ -190,7 +183,7 @@ export function AssetVisual() {
     if (dialog === "mask") void act("ASSET-01-CTL-LAYER-MASK", name || undefined);
     setDialog(null);
     setDialogName("");
-  }, [act, coreProjects, coreTopics, dialog, dialogName]);
+  }, [act, dialog, dialogName]);
 
   const submitSearch = useCallback(() => {
     const query = searchDraft.trim();
@@ -202,7 +195,11 @@ export function AssetVisual() {
     void act("ASSET-01-BTN-CORRECTION-OPEN", text || undefined);
   }, [act, correctionDraft]);
 
-  const disabled = false;
+  const inboundReady = inbound.ready;
+  const evaluated = valueOf("ASSET-01-BTN-EVALUATE") === "evaluated";
+  const confirmed = valueOf("ASSET-01-BTN-CONFIRM") === "confirmed";
+  const locked = valueOf("ASSET-01-BTN-LOCK") === "locked";
+  const disabled = !inboundReady;
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const modeValue = valueOf("ASSET-01-CTL-MODE");
@@ -223,26 +220,20 @@ export function AssetVisual() {
   const compareMode = valueOf("ASSET-01-LST-COMPARE-VERSIONS");
   const previewLabel = selectedAsset && selectedAsset !== "created" ? selectedAsset : tx("asset.preview_unbound");
   const layers = usableList(valueOf("ASSET-01-BTN-LAYER-ADD"));
-  const bindChoices = dialog === "bind-project" ? coreProjects : dialog === "bind-topic" ? coreTopics : [];
-  const bindEmptyKey: TranslationKey = dialog === "bind-topic" ? "asset.bind_empty_topic" : "asset.bind_empty_project";
   const dialogTitleKey: TranslationKey =
-    dialog === "bind-topic"
-      ? "asset.dialog_rename_topic"
-      : dialog === "bind-project"
-        ? "asset.dialog_rename_project"
-        : dialog === "asset"
-          ? "asset.dialog_asset"
-          : dialog === "layer"
-            ? "asset.dialog_layer"
-            : dialog === "layer-doc"
-              ? "asset.dialog_layer_doc"
-              : dialog === "patch"
-                ? "asset.dialog_patch"
-                : dialog === "properties"
-                  ? "asset.dialog_properties"
-                  : dialog === "mask"
-                    ? "asset.dialog_mask"
-                    : "asset.dialog_asset";
+    dialog === "asset"
+      ? "asset.dialog_asset"
+      : dialog === "layer"
+        ? "asset.dialog_layer"
+        : dialog === "layer-doc"
+          ? "asset.dialog_layer_doc"
+          : dialog === "patch"
+            ? "asset.dialog_patch"
+            : dialog === "properties"
+              ? "asset.dialog_properties"
+              : dialog === "mask"
+                ? "asset.dialog_mask"
+                : "asset.dialog_asset";
   const dialogDefault =
     dialog === "asset"
       ? tx("asset.default_asset")
@@ -269,17 +260,20 @@ export function AssetVisual() {
       aria-label={tx("asset.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("asset.error")}</div> : null}
+      {!loading && !error && authorized && !inboundReady ? (
+        <div className={styles.error} role="alert">{tx("asset.inbound_blocked")}</div>
+      ) : null}
 
       <section className={styles.context} data-component-uid="ASSET-01-CMP-CONTEXT">
-        <Field uid="ASSET-01-CTL-PROJECT" label={tx("asset.project")} value={valueOf("ASSET-01-CTL-PROJECT")} loading={loading} onAct={() => openNameDialog("bind-project", valueOf("ASSET-01-CTL-PROJECT") ?? "")} disabled={disabled} />
-        <Field uid="ASSET-01-CTL-TOPIC" label={tx("asset.topic")} value={valueOf("ASSET-01-CTL-TOPIC")} loading={loading} onAct={() => openNameDialog("bind-topic", valueOf("ASSET-01-CTL-TOPIC") ?? "")} disabled={disabled} />
-        <Field uid="ASSET-01-FLD-TASK" label={tx("asset.task")} value={valueOf("ASSET-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="ASSET-01-FLD-TASK-STATUS" label={tx("asset.task_status")} value={valueOf("ASSET-01-FLD-TASK-STATUS")} loading={loading} onAct={act} disabled={disabled} />
+        <Field uid="ASSET-01-CTL-PROJECT" label={tx("asset.project")} value={valueOf("ASSET-01-CTL-PROJECT")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="ASSET-01-CTL-TOPIC" label={tx("asset.topic")} value={valueOf("ASSET-01-CTL-TOPIC")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="ASSET-01-FLD-TASK" label={tx("asset.task")} value={valueOf("ASSET-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="ASSET-01-FLD-TASK-STATUS" label={tx("asset.task_status")} value={valueOf("ASSET-01-FLD-TASK-STATUS")} loading={loading} onAct={act} disabled={disabled} readonly />
         <button type="button" className={styles.btn} data-control-uid="ASSET-01-CTL-MODE" disabled={disabled} onClick={() => void act("ASSET-01-CTL-MODE")}>
-          {tx("asset.mode")} {modeLabel === tx("asset.mode") ? displayAssetValue(modeValue, loading) : modeLabel}
+          {modeLabel === tx("asset.mode") ? `${tx("asset.mode")} ${displayAssetValue(modeValue, loading)}` : modeLabel}
         </button>
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-EXECUTE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-EXECUTE")}>{tx("asset.execute")}</button>
-        <Field uid="ASSET-01-FLD-STAGE" label={tx("asset.stage")} value={valueOf("ASSET-01-FLD-STAGE")} loading={loading} onAct={act} disabled={disabled} />
+        <Field uid="ASSET-01-FLD-STAGE" label={tx("asset.stage")} value={valueOf("ASSET-01-FLD-STAGE")} loading={loading} onAct={act} disabled={disabled} readonly />
       </section>
 
       <div className={styles.body}>
@@ -340,7 +334,7 @@ export function AssetVisual() {
             <h3 className={styles.sub}>{tx("asset.reuse_first")}</h3>
             <div className={styles.reuse}>
               {ASSET_REUSE_FIELDS.map(([uid, key]) => (
-                <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} />
+                <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
               ))}
             </div>
           </section>
@@ -375,11 +369,9 @@ export function AssetVisual() {
           <section data-component-uid="ASSET-01-CMP-BINDING">
             <h2 className={styles.title}>{tx("asset.binding")}</h2>
             {ASSET_BINDING_FIELDS.map(([uid, key]) => (
-              <div key={uid} className={styles.kv}>
+              <div key={uid} className={styles.kv} data-control-uid={uid}>
                 <span>{tx(key)}</span>
-                <button type="button" className={styles.btn} data-control-uid={uid} disabled={disabled} onClick={() => void act(uid)}>
-                  {displayAssetValue(valueOf(uid), loading)}
-                </button>
+                <span className={styles.value}>{displayAssetValue(valueOf(uid), loading)}</span>
               </div>
             ))}
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-BLUEPRINT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-BLUEPRINT")}>{tx("asset.view_blueprint")}</button>
@@ -391,14 +383,12 @@ export function AssetVisual() {
           <section data-component-uid="ASSET-01-CMP-SCORE">
             <h3 className={styles.sub}>{tx("asset.scorecard")}</h3>
             {ASSET_SCORE_FIELDS.map(([uid, key]) => (
-              <div key={uid} className={styles.kv}>
+              <div key={uid} className={styles.kv} data-control-uid={uid}>
                 <span>{tx(key)}</span>
-                <button type="button" className={styles.btn} data-control-uid={uid} disabled={disabled} onClick={() => void act(uid)}>
-                  {displayAssetValue(valueOf(uid), loading)}
-                </button>
+                <span className={styles.value}>{displayAssetValue(valueOf(uid), loading)}</span>
               </div>
             ))}
-            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-EVALUATE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-EVALUATE")}>{tx("asset.evaluate")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-EVALUATE" disabled={disabled || !selectedAsset} onClick={() => void act("ASSET-01-BTN-EVALUATE")}>{tx("asset.evaluate")}</button>
           </section>
           <section data-component-uid="ASSET-01-CMP-VERSION">
             <h3 className={styles.sub}>{tx("asset.version")}</h3>
@@ -410,9 +400,9 @@ export function AssetVisual() {
           <section data-component-uid="ASSET-01-CMP-DECISION">
             <h3 className={styles.sub}>{tx("asset.decision")}</h3>
             <div className={styles.decisionRow}>
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-CONFIRM" disabled={disabled} onClick={() => void act("ASSET-01-BTN-CONFIRM")}>{tx("asset.confirm")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-CONFIRM" disabled={disabled || !evaluated} onClick={() => void act("ASSET-01-BTN-CONFIRM")}>{tx("asset.confirm")}</button>
               <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-MODIFY" disabled={disabled} onClick={submitCorrection}>{tx("asset.modify")}</button>
-              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LOCK" disabled={disabled} onClick={() => void act("ASSET-01-BTN-LOCK")}>{tx("asset.lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LOCK" disabled={disabled || !confirmed} onClick={() => void act("ASSET-01-BTN-LOCK")}>{tx("asset.lock")}</button>
             </div>
           </section>
         </aside>
@@ -480,11 +470,9 @@ export function AssetVisual() {
         <section className={styles.block} data-component-uid="ASSET-01-CMP-RUNTIME">
           <h3 className={styles.sub}>{tx("asset.runtime")}</h3>
           {ASSET_RUNTIME_FIELDS.map(([uid, key]) => (
-            <div key={uid} className={styles.kv}>
+            <div key={uid} className={styles.kv} data-control-uid={uid}>
               <span>{tx(key)}</span>
-              <button type="button" className={styles.btn} data-control-uid={uid} disabled={disabled} onClick={() => void act(uid)}>
-                {displayAssetValue(valueOf(uid), loading)}
-              </button>
+              <span className={styles.value}>{displayAssetValue(valueOf(uid), loading)}</span>
             </div>
           ))}
           <div className={styles.railActions}>
@@ -496,9 +484,9 @@ export function AssetVisual() {
           <h3 className={styles.sub}>{tx("asset.handoff")}</h3>
           <div className={styles.handoff}>
             {ASSET_HANDOFF_FIELDS.map(([uid, key]) => (
-              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} />
+              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
             ))}
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-HANDOFF" disabled={disabled} onClick={() => void act("ASSET-01-BTN-HANDOFF")}>{tx("asset.handoff_video")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-HANDOFF" disabled={disabled || !locked} onClick={() => void act("ASSET-01-BTN-HANDOFF")}>{tx("asset.handoff_video")}</button>
           </div>
         </section>
       </div>
@@ -513,43 +501,18 @@ export function AssetVisual() {
             }}
           >
             <h2>{tx(dialogTitleKey)}</h2>
-            {dialog === "bind-project" || dialog === "bind-topic" ? (
-              bindChoices.length ? (
-                <div className={styles.list}>
-                  {bindChoices.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      className={`${styles.item} ${item === dialogName ? styles.itemActive : ""}`}
-                      onClick={() => {
-                        void act(dialog === "bind-project" ? "ASSET-01-CTL-PROJECT" : "ASSET-01-CTL-TOPIC", item);
-                        setDialog(null);
-                        setDialogName("");
-                      }}
-                    >
-                      <span>{item}</span>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className={styles.note}>{tx(bindEmptyKey)}</p>
-              )
-            ) : (
-              <label>
-                <span className={styles.label}>{tx("asset.name_placeholder")}</span>
-                <input
-                  autoFocus
-                  value={dialogName}
-                  placeholder={dialogDefault}
-                  onChange={(event) => setDialogName(event.target.value)}
-                />
-              </label>
-            )}
+            <label>
+              <span className={styles.label}>{tx("asset.name_placeholder")}</span>
+              <input
+                autoFocus
+                value={dialogName}
+                placeholder={dialogDefault}
+                onChange={(event) => setDialogName(event.target.value)}
+              />
+            </label>
             <div className={styles.dialogActions}>
               <button type="button" className={styles.btn} onClick={() => setDialog(null)}>{tx("asset.dialog_cancel")}</button>
-              {dialog === "bind-project" || dialog === "bind-topic" ? null : (
-                <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>{tx("asset.dialog_confirm")}</button>
-              )}
+              <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>{tx("asset.dialog_confirm")}</button>
             </div>
           </form>
         </div>

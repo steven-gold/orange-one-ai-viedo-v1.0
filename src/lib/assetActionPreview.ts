@@ -32,6 +32,16 @@ function nextZoom(actionUid: string, current: string | null): string {
   return "100%";
 }
 
+function inboundReady(current: (uid: string) => string | null): boolean {
+  return Boolean(
+    named(current("ASSET-01-CTL-PROJECT")) &&
+      named(current("ASSET-01-CTL-TOPIC")) &&
+      named(current("ASSET-01-FLD-BLUEPRINT")) &&
+      named(current("ASSET-01-FLD-DNA")) &&
+      named(current("ASSET-01-FLD-SCRIPT")),
+  );
+}
+
 export function previewAssetAction(
   controlUid: string,
   actionUid: string,
@@ -41,40 +51,83 @@ export function previewAssetAction(
   const project = named(current("ASSET-01-CTL-PROJECT"));
   const topic = named(current("ASSET-01-CTL-TOPIC"));
   const assets = usableList(current("ASSET-01-LST-ASSET"));
+  const ready = inboundReady(current);
+  const gated = new Set([
+    "ASSET-01-ACT-FLOW-START",
+    "ASSET-01-ACT-ASSET-SEARCH",
+    "ASSET-01-ACT-ASSET-FILTER",
+    "ASSET-01-ACT-ASSET-SELECT",
+    "ASSET-01-ACT-COMPARE-SINGLE",
+    "ASSET-01-ACT-COMPARE-AB",
+    "ASSET-01-ACT-COMPARE-ABC",
+    "ASSET-01-ACT-ZOOM-IN",
+    "ASSET-01-ACT-ZOOM-OUT",
+    "ASSET-01-ACT-FIT",
+    "ASSET-01-ACT-REFERENCE-TOGGLE",
+    "ASSET-01-ACT-RESULT-VIEW",
+    "ASSET-01-ACT-CORRECTION-OPEN",
+    "ASSET-01-ACT-CORRECTION-GENERATE",
+    "ASSET-01-ACT-CORRECTION-APPROVE",
+    "ASSET-01-ACT-CORRECTION-EXECUTE",
+    "ASSET-01-ACT-LAYER-DOC-CREATE",
+    "ASSET-01-ACT-LAYER-DOC-UPDATE",
+    "ASSET-01-ACT-LAYER-ADD",
+    "ASSET-01-ACT-LAYER-DELETE",
+    "ASSET-01-ACT-LAYER-DUPLICATE",
+    "ASSET-01-ACT-LAYER-REORDER",
+    "ASSET-01-ACT-LAYER-PROPERTIES",
+    "ASSET-01-ACT-LAYER-MASK",
+    "ASSET-01-ACT-PATCH-CREATE",
+    "ASSET-01-ACT-PATCH-PREVIEW",
+    "ASSET-01-ACT-PATCH-ACCEPT",
+    "ASSET-01-ACT-PATCH-REJECT",
+    "ASSET-01-ACT-PATCH-REVISE",
+    "ASSET-01-ACT-RUNTIME-VIEW",
+    "ASSET-01-ACT-TASK-RETRY",
+    "ASSET-01-ACT-EVALUATE",
+    "ASSET-01-ACT-CANDIDATE-CONFIRM",
+    "ASSET-01-ACT-VERSION-HISTORY",
+    "ASSET-01-ACT-RESTORE-AS-NEW",
+    "ASSET-01-ACT-VERSION-LOCK",
+    "ASSET-01-ACT-HANDOFF",
+  ]);
+  if (!ready && gated.has(actionUid)) return {};
 
   if (actionUid === "ASSET-01-ACT-PROJECT-SELECT") {
-    const bound = named(nextValue);
-    return bound ? { "ASSET-01-CTL-PROJECT": bound } : {};
+    return project ? { "ASSET-01-CTL-PROJECT": project } : {};
   }
   if (actionUid === "ASSET-01-ACT-TOPIC-SELECT") {
-    const bound = named(nextValue);
-    return bound ? { "ASSET-01-CTL-TOPIC": bound } : {};
+    return topic ? { "ASSET-01-CTL-TOPIC": topic } : {};
   }
   if (actionUid === "ASSET-01-ACT-MODE-SET") {
+    if (!ready) return {};
     return { "ASSET-01-CTL-MODE": toggleMode(current("ASSET-01-CTL-MODE")) };
   }
   if (actionUid === "ASSET-01-ACT-FLOW-START") {
-    const list = assets.length ? assets : [keepName(nextValue, current("ASSET-01-LST-ASSET"), "素材 1")];
-    const selected = list[list.length - 1];
+    if (!ready) return {};
+    const selected = named(current("ASSET-01-FLD-MANIFEST")) || assets[assets.length - 1] || "";
     return {
       "ASSET-01-BTN-EXECUTE": "running",
-      "ASSET-01-FLD-TASK": keepName(undefined, current("ASSET-01-FLD-TASK"), "素材生產"),
+      "ASSET-01-FLD-TASK": named(current("ASSET-01-FLD-TASK")) || `${project} / ${topic}`,
       "ASSET-01-FLD-TASK-STATUS": "running",
       "ASSET-01-FLD-STAGE": "running",
-      ...(project ? { "ASSET-01-CTL-PROJECT": project } : {}),
-      "ASSET-01-LST-ASSET": JSON.stringify(list),
-      "ASSET-01-FLD-MANIFEST": selected,
+      "ASSET-01-CTL-PROJECT": project,
+      "ASSET-01-CTL-TOPIC": topic,
+      ...(selected ? { "ASSET-01-FLD-MANIFEST": selected } : {}),
       "ASSET-01-FLD-JOB": "running",
       "ASSET-01-FLD-ROUTE": "ready",
     };
   }
   if (actionUid === "ASSET-01-ACT-ASSET-SEARCH") {
+    if (!ready) return {};
     return { "ASSET-01-FLD-SEARCH": keepName(nextValue, current("ASSET-01-FLD-SEARCH"), "搜尋") };
   }
   if (actionUid === "ASSET-01-ACT-ASSET-FILTER") {
+    if (!ready) return {};
     return { "ASSET-01-CTL-FILTER": nextFilter(current("ASSET-01-CTL-FILTER")) };
   }
   if (actionUid === "ASSET-01-ACT-ASSET-SELECT") {
+    if (!ready) return {};
     const title = keepName(nextValue, current("ASSET-01-FLD-MANIFEST"), `素材 ${assets.length + 1}`);
     const nextList = assets.includes(title) ? assets : [...assets, title];
     return {
@@ -220,6 +273,7 @@ export function previewAssetAction(
     };
   }
   if (actionUid === "ASSET-01-ACT-EVALUATE") {
+    if (!ready || !(named(current("ASSET-01-FLD-MANIFEST")) || current("ASSET-01-BTN-EXECUTE") === "running")) return {};
     return {
       "ASSET-01-BTN-EVALUATE": "evaluated",
       "ASSET-01-FLD-OVERALL": keepName(undefined, current("ASSET-01-FLD-OVERALL"), "通過"),
@@ -228,6 +282,7 @@ export function previewAssetAction(
     };
   }
   if (actionUid === "ASSET-01-ACT-CANDIDATE-CONFIRM") {
+    if (current("ASSET-01-BTN-EVALUATE") !== "evaluated") return {};
     return {
       "ASSET-01-BTN-CONFIRM": "confirmed",
       "ASSET-01-FLD-OUTPUT-ID": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已確認版本"),
@@ -246,12 +301,14 @@ export function previewAssetAction(
     };
   }
   if (actionUid === "ASSET-01-ACT-VERSION-LOCK") {
+    if (current("ASSET-01-BTN-CONFIRM") !== "confirmed") return {};
     return {
       "ASSET-01-BTN-LOCK": "locked",
       "ASSET-01-FLD-HANDOFF-ASSET-VERSION": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已鎖定版本"),
     };
   }
   if (actionUid === "ASSET-01-ACT-HANDOFF") {
+    if (current("ASSET-01-BTN-LOCK") !== "locked") return {};
     return {
       "ASSET-01-BTN-HANDOFF": "sent",
       "ASSET-01-FLD-HANDOFF-ASSET-VERSION": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || project),
@@ -272,17 +329,14 @@ export function previewAssetAction(
   if (actionUid === "ASSET-01-ACT-BINDING-VIEW") {
     const existing = named(current(controlUid));
     if (existing) return { [controlUid]: existing };
+    if (!ready) return {};
     const fallbacks: Record<string, string> = {
-      "ASSET-01-FLD-TASK": "素材生產",
-      "ASSET-01-FLD-TASK-STATUS": "待命",
-      "ASSET-01-FLD-STAGE": "待命",
+      "ASSET-01-FLD-TASK": `${project} / ${topic}`,
+      "ASSET-01-FLD-NAMING-AUTHORITY": named(current("ASSET-01-FLD-NAMING-AUTHORITY")) || "ACPOS_SYSTEM",
       "ASSET-01-FLD-MANIFEST": assets[0] || "",
-      "ASSET-01-FLD-NAMING-AUTHORITY": "ACPOS_SYSTEM",
-      "ASSET-01-FLD-CANONICAL-FILENAME": project ? `${project}.png` : "",
     };
     const fallback = fallbacks[controlUid] || "";
-    if (!fallback) return existing ? { [controlUid]: existing } : {};
-    return { [controlUid]: keepName(nextValue, current(controlUid), fallback) };
+    return fallback ? { [controlUid]: fallback } : {};
   }
   const existing = current(controlUid);
   if (!nextValue && named(existing)) return { [controlUid]: existing as string };

@@ -247,6 +247,11 @@ const catalog = {
   "core.stage.candidate": { "zh-TW": "候選版本", "zh-CN": "候选版本", en: "Candidate" },
   "asset.title": { "zh-TW": "素材生產工作區", "zh-CN": "素材生产工作区", en: "Asset Production Workspace" },
   "asset.error": { "zh-TW": "素材工作台讀取失敗", "zh-CN": "素材工作台读取失败", en: "Asset workbench read failed" },
+  "asset.inbound_blocked": {
+    "zh-TW": "須先在專案／專題確認專案，並鎖定藍圖、子項、DNA 與正規腳本後，才能執行素材生產。",
+    "zh-CN": "须先在项目／专题确认项目，并锁定蓝图、子项、DNA 与正规脚本后，才能执行素材生产。",
+    en: "Confirm the project on Project / Topic and lock Blueprint, Child Lock, DNA, and Canonical Script before asset production.",
+  },
   "asset.project": { "zh-TW": "專案", "zh-CN": "项目", en: "Project" },
   "asset.topic": { "zh-TW": "專題", "zh-CN": "专题", en: "Topic" },
   "asset.task": { "zh-TW": "生產任務", "zh-CN": "生产任务", en: "Production Task" },
