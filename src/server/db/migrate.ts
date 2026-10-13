@@ -379,6 +379,25 @@ const MIGRATION_FILES = [
   "019_admin_str.sql",
   "020_admin_kb.sql",
   "021_identity_session.sql",
+  "022_reset_core_drafts.sql",
+];
+
+const RESET_CORE_DRAFTS = [
+  "UPDATE ghsn_core_field_projection SET value_text = NULL",
+  `UPDATE ghsn_asset_field_projection SET value_text = NULL WHERE control_uid IN (
+    'ASSET-01-CTL-PROJECT','ASSET-01-CTL-TOPIC','ASSET-01-FLD-TASK','ASSET-01-FLD-TASK-STATUS',
+    'ASSET-01-FLD-BLUEPRINT','ASSET-01-FLD-SCRIPT','ASSET-01-FLD-DNA','ASSET-01-FLD-MANIFEST',
+    'ASSET-01-FLD-CANONICAL-FILENAME','ASSET-01-FLD-NAMING-AUTHORITY',
+    'ASSET-01-FLD-HANDOFF-ASSET-VERSION','ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE','ASSET-01-FLD-HANDOFF-BLUEPRINT',
+    'ASSET-01-FLD-HANDOFF-SCRIPT-HASH','ASSET-01-FLD-HANDOFF-DNA','ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS',
+    'ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME','ASSET-01-FLD-HANDOFF-CHECKSUM','ASSET-01-FLD-HANDOFF-SCORECARD',
+    'ASSET-01-FLD-HANDOFF-RIGHTS','ASSET-01-FLD-HANDOFF-CONTRACT-HASH'
+  )`,
+  `UPDATE ghsn_video_field_projection SET value_text = NULL WHERE control_uid IN (
+    'VIDEO-01-FLD-PROJECT','VIDEO-01-FLD-TOPIC','VIDEO-01-FLD-TASK','VIDEO-01-FLD-BLUEPRINT-REF',
+    'VIDEO-01-FLD-DNA-REFS','VIDEO-01-FLD-SCRIPT-SECTION','VIDEO-01-FLD-ASSET-REFS'
+  )`,
+  "UPDATE ghsn_dashboard_section_projection SET value_text = NULL, detail_text = ''",
 ];
 
 async function runBootstrap(): Promise<MigrationResult> {
@@ -409,6 +428,11 @@ async function runBootstrap(): Promise<MigrationResult> {
     if (applied.has(filename)) {
       alreadyApplied.push(filename);
       continue;
+    }
+    if (filename === "022_reset_core_drafts.sql") {
+      for (const statement of RESET_CORE_DRAFTS) {
+        await client.exec(statement);
+      }
     }
     await client.run(
       `INSERT INTO ghsn_schema_migration_history (filename, applied_at, checksum)

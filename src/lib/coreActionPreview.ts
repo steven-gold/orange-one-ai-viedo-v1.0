@@ -36,8 +36,17 @@ export function exactName(value: string | null | undefined): string {
   return usableName(value ?? undefined);
 }
 
+function projectValidated(current: (uid: string) => string | null): boolean {
+  return current("CORE-01-BTN-PROJECT-VALIDATE") === "validated" && Boolean(exactName(current("CORE-01-CTL-PROJECT")));
+}
+
 function projectConfirmed(current: (uid: string) => string | null): boolean {
-  return current("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" && Boolean(exactName(current("CORE-01-CTL-PROJECT")));
+  const project = exactName(current("CORE-01-CTL-PROJECT"));
+  if (!project) return false;
+  return (
+    current("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" ||
+    current("CORE-01-BTN-PROJECT-LOCK") === project
+  );
 }
 
 export function namedValue(nextValue: string | undefined, fallback: string): string {
@@ -117,10 +126,15 @@ export function previewCoreAction(
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
       "CORE-01-BTN-PROJECT-CONFIRM": "",
       "CORE-01-BTN-PROJECT-VALIDATE": "",
+      "CORE-01-CTL-TOPIC": "",
+      "CORE-01-BTN-TOPIC-CREATE": "[]",
+      "CORE-01-FLD-TOPIC-SCOPE": "",
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
-    if (!projectConfirmed(current)) return {};
+    if (!projectConfirmed(current)) {
+      return { "CORE-01-FLD-RUNTIME-STAGE": "TOPIC_LINEAGE_BLOCKED" };
+    }
     const topic = namedValue(nextValue, "新專題");
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
     const nextList = list.includes(topic) ? list : [...list, topic];
@@ -223,8 +237,17 @@ export function previewCoreAction(
     return project ? { "CORE-01-BTN-PROJECT-VALIDATE": "validated" } : {};
   }
   if (actionUid === "CORE-01-ACT-PROJECT-CONFIRM") {
+    if (!projectValidated(current)) return {};
     const project = exactName(current("CORE-01-CTL-PROJECT"));
-    return project ? { "CORE-01-BTN-PROJECT-CONFIRM": "confirmed" } : {};
+    return project
+      ? {
+          "CORE-01-BTN-PROJECT-CONFIRM": "confirmed",
+          "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
+          ...(current("CORE-01-FLD-RUNTIME-STAGE") === "TOPIC_LINEAGE_BLOCKED"
+            ? { "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES" }
+            : {}),
+        }
+      : {};
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-CREATE") {
     const candidate = namedValue(nextValue, "候選版本");

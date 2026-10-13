@@ -95,6 +95,11 @@ const catalog = {
   "core.create_project": { "zh-TW": "建立專案", "zh-CN": "建立项目", en: "Create Project" },
   "core.topic": { "zh-TW": "專題", "zh-CN": "专题", en: "Topic" },
   "core.create_topic": { "zh-TW": "建立專題", "zh-CN": "建立专题", en: "Create Topic" },
+  "core.topic_requires_confirmed_project": {
+    "zh-TW": "須先驗證並確認專案，才能建立專題。",
+    "zh-CN": "须先验证并确认项目，才能建立专题。",
+    en: "Validate and confirm the project before creating a topic.",
+  },
   "core.dialog_project": { "zh-TW": "建立專案", "zh-CN": "建立项目", en: "Create project" },
   "core.dialog_topic": { "zh-TW": "建立專題", "zh-CN": "建立专题", en: "Create topic" },
   "core.dialog_thread": { "zh-TW": "新增對話", "zh-CN": "新增对话", en: "New thread" },

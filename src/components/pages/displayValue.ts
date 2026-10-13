@@ -41,6 +41,7 @@ const STATUS_LABEL: Record<string, string> = {
   PRODUCTION_SCRIPT: "製作腳本",
   PKG_READY: "套件就緒",
   "PKG-READY": "套件就緒",
+  TOPIC_LINEAGE_BLOCKED: "須先確認專案才能建立專題",
   REVIEW: "審查中",
   submit: "已送出",
   view: "預覽",

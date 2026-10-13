@@ -380,9 +380,13 @@ export async function persistListCoreFields(): Promise<CoreFieldValue[]> {
 export async function persistGetCoreReadModel(accountUid: string): Promise<CoreReadModel> {
   const authorized = await persistHasCorePermission(accountUid);
   const fields = authorized ? await persistListCoreFields() : [];
-  const pageModeRow = fields.find((row) => row.controlUid === "CORE-01-FLD-PAGE-MODE");
-  const pageMode =
-    pageModeRow?.value === "TOPIC_PRODUCTION" || pageModeRow?.value === "PROJECT_CORE" ? pageModeRow.value : null;
+  const byUid = new Map(fields.map((row) => [row.controlUid, row.value]));
+  const project = namedCoreValue(byUid.get("CORE-01-CTL-PROJECT"));
+  const topic = namedCoreValue(byUid.get("CORE-01-CTL-TOPIC"));
+  const confirmed =
+    byUid.get("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" ||
+    byUid.get("CORE-01-BTN-PROJECT-LOCK") === project;
+  const pageMode = project && confirmed && topic ? "TOPIC_PRODUCTION" : project ? "PROJECT_CORE" : null;
   return {
     projectionUid: CORE_PROJECTION,
     pageUid: CORE_PAGE_UID,
