@@ -225,6 +225,7 @@ const catalog = {
   "sg02.state-review": { "zh-TW": "審查中", "zh-CN": "审查中", en: "Review" },
   "core.assigned_ai_hint": { "zh-TW": "由 Shared Router 解析", "zh-CN": "由 Shared Router 解析", en: "由 Shared Router 解析" },
   "core.page_mode_project": { "zh-TW": "專案核心", "zh-CN": "项目核心", en: "Project Core" },
+  "core.page_mode_topic": { "zh-TW": "專題製作", "zh-CN": "专题制作", en: "Topic Production" },
   "core.read_only": { "zh-TW": "唯讀", "zh-CN": "只读", en: "Read-only" },
   "core.editable": { "zh-TW": "可編輯", "zh-CN": "可编辑", en: "Editable" },
   "core.work.story": { "zh-TW": "故事", "zh-CN": "故事", en: "Story" },

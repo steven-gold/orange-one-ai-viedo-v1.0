@@ -22,12 +22,22 @@ const STATUS_TOKENS = new Set([
   "active",
   "idle",
   "ready",
+  "PKG-READY",
+  "PKG_READY",
 ]);
 
 function usableName(value: string | undefined): string {
   const name = value?.trim();
   if (!name || STATUS_TOKENS.has(name)) return "";
   return name.slice(0, 80);
+}
+
+export function exactName(value: string | null | undefined): string {
+  return usableName(value ?? undefined);
+}
+
+function projectConfirmed(current: (uid: string) => string | null): boolean {
+  return current("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" && Boolean(exactName(current("CORE-01-CTL-PROJECT")));
 }
 
 export function namedValue(nextValue: string | undefined, fallback: string): string {
@@ -105,22 +115,33 @@ export function previewCoreAction(
       "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES",
       "CORE-01-LST-WORK-ITEMS": "STORY",
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+      "CORE-01-BTN-PROJECT-CONFIRM": "",
+      "CORE-01-BTN-PROJECT-VALIDATE": "",
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
+    if (!projectConfirmed(current)) return {};
     const topic = namedValue(nextValue, "新專題");
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
     const nextList = list.includes(topic) ? list : [...list, topic];
+    const pkg = exactName(current("CORE-01-FLD-PACKAGE")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
     return {
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
-      "CORE-01-FLD-PACKAGE": "PKG-READY",
+      ...(pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {}),
       "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-PAGE-MODE") {
+    const topic = exactName(current("CORE-01-CTL-TOPIC"));
+    if (!topic || !projectConfirmed(current)) {
+      return {
+        "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
+        "CORE-01-LST-WORK-ITEMS": "STORY",
+      };
+    }
     const mode = current("CORE-01-FLD-PAGE-MODE");
     const next = mode === "TOPIC_PRODUCTION" ? "PROJECT_CORE" : "TOPIC_PRODUCTION";
     return {
@@ -143,20 +164,23 @@ export function previewCoreAction(
     return { "CORE-01-FLD-NAMING-AUTHORITY": current("CORE-01-FLD-NAMING-AUTHORITY") || "ACPOS_SYSTEM" };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-CTL-TOPIC") {
+    if (!projectConfirmed(current)) return {};
     const previous = current("CORE-01-CTL-TOPIC");
     const topic = namedValue(nextValue, previous || "新專題");
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), previous).map((item) => (item === previous ? topic : item));
     const nextList = list.includes(topic) ? list : [...list, topic];
     return {
       "CORE-01-CTL-TOPIC": topic,
+      "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
+      "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-TOPIC-SCOPE") {
-    return {
-      "CORE-01-FLD-TOPIC-SCOPE": namedValue(nextValue, current("CORE-01-CTL-TOPIC") || current("CORE-01-FLD-TOPIC-SCOPE") || "新專題"),
-    };
+    if (!projectConfirmed(current)) return {};
+    const topic = exactName(nextValue) || exactName(current("CORE-01-CTL-TOPIC")) || exactName(current("CORE-01-FLD-TOPIC-SCOPE"));
+    return topic ? { "CORE-01-FLD-TOPIC-SCOPE": topic } : {};
   }
   if (actionUid === "CORE-01-ACT-AI-MODE-SINGLE") {
     return {
@@ -194,6 +218,14 @@ export function previewCoreAction(
       "CORE-01-BTN-SEND": "sent",
     };
   }
+  if (actionUid === "CORE-01-ACT-PROJECT-VALIDATE") {
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    return project ? { "CORE-01-BTN-PROJECT-VALIDATE": "validated" } : {};
+  }
+  if (actionUid === "CORE-01-ACT-PROJECT-CONFIRM") {
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    return project ? { "CORE-01-BTN-PROJECT-CONFIRM": "confirmed" } : {};
+  }
   if (actionUid === "CORE-01-ACT-CANDIDATE-CREATE") {
     const candidate = namedValue(nextValue, "候選版本");
     return {
@@ -216,15 +248,18 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-VALIDATE") {
-    const blueprint = namedValue(nextValue, current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖");
+    const blueprint = exactName(nextValue) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+    if (!blueprint) return {};
+    const pkg = exactName(current("CORE-01-FLD-PACKAGE")) || blueprint;
     return {
       "CORE-01-BTN-BLUEPRINT-VALIDATE": "validated",
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
-      "CORE-01-FLD-PACKAGE": current("CORE-01-FLD-PACKAGE") || blueprint,
+      "CORE-01-FLD-PACKAGE": pkg,
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-APPROVE") {
-    const blueprint = namedValue(nextValue, current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖");
+    const blueprint = exactName(nextValue) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+    if (!blueprint) return {};
     return {
       "CORE-01-BTN-BLUEPRINT-APPROVE": "approved",
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
@@ -232,25 +267,28 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-DNA-LOCK-REQUEST") {
-    const project = namedValue(undefined, current("CORE-01-CTL-PROJECT") || "專案");
-    const dna = namedValue(nextValue, current("CORE-01-BTN-DNA-LOCK") || `${project} DNA`);
-    return { "CORE-01-BTN-DNA-LOCK": dna };
+    const dna = exactName(nextValue) || exactName(current("CORE-01-BTN-DNA-LOCK"));
+    if (dna) return { "CORE-01-BTN-DNA-LOCK": dna };
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    return project ? { "CORE-01-BTN-DNA-LOCK": "locked" } : {};
   }
   if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
-    const blueprint = namedValue(undefined, current("CORE-01-BTN-BLUEPRINT-CREATE") || current("CORE-01-FLD-PACKAGE") || "新藍圖");
+    const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+    if (!blueprint) return {};
     return {
       "CORE-01-BTN-CHILD-LOCK": blueprint,
       "CORE-01-FLD-LOCK-REVIEW": "locked",
       "CORE-01-FLD-PACKAGE": blueprint,
-      "CORE-01-BTN-BLUEPRINT-CREATE": current("CORE-01-BTN-BLUEPRINT-CREATE") || blueprint,
+      "CORE-01-BTN-BLUEPRINT-CREATE": exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || blueprint,
     };
   }
   if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
-    const topic = namedValue(undefined, current("CORE-01-CTL-TOPIC") || current("CORE-01-FLD-TOPIC-SCOPE") || "專題");
-    const script = namedValue(nextValue, current("CORE-01-BTN-CANONICAL-SCRIPT") || `${topic} 腳本`);
+    const script = exactName(nextValue) || exactName(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    if (!script) return {};
+    const pkg = exactName(current("CORE-01-FLD-PACKAGE"));
     return {
       "CORE-01-BTN-CANONICAL-SCRIPT": script,
-      "CORE-01-FLD-PACKAGE": current("CORE-01-FLD-PACKAGE") || script,
+      ...(pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {}),
     };
   }
   if (actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT") {
@@ -260,7 +298,8 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
-    const project = namedValue(undefined, current("CORE-01-CTL-PROJECT") || "專案");
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    if (!project) return {};
     return {
       "CORE-01-BTN-PROJECT-LOCK": project,
       "CORE-01-FLD-LOCK-REVIEW": "locked",
@@ -273,9 +312,8 @@ export function previewCoreAction(
     return { "CORE-01-BTN-REFERENCE": namedValue(nextValue, current("CORE-01-BTN-REFERENCE") || "已引用") };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-PACKAGE") {
-    return {
-      "CORE-01-FLD-PACKAGE": namedValue(nextValue, current("CORE-01-FLD-PACKAGE") || current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖"),
-    };
+    const pkg = exactName(nextValue) || exactName(current("CORE-01-FLD-PACKAGE")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+    return pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {};
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid.startsWith("CORE-01-FLD-DOWNSTREAM")) {
     const existing = usableName(current(controlUid) ?? undefined);

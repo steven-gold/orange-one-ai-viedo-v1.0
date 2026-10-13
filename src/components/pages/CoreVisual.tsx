@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
-import { parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
+import { exactName, parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -140,6 +140,7 @@ export function CoreVisual() {
       (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
       nextValue,
     );
+    if (!Object.keys(patch).length) return;
     applyPatch(patch);
     try {
       await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
@@ -156,12 +157,19 @@ export function CoreVisual() {
   const confirmNameDialog = useCallback(() => {
     if (!dialog) return;
     const name = dialogName.trim();
+    const confirmed =
+      fieldsRef.current.find((row) => row.controlUid === "CORE-01-BTN-PROJECT-CONFIRM")?.value === "confirmed" &&
+      Boolean(exactName(fieldsRef.current.find((row) => row.controlUid === "CORE-01-CTL-PROJECT")?.value));
     if (dialog === "project") void act("CORE-01-BTN-PROJECT-CREATE", name || undefined);
-    if (dialog === "topic") void act("CORE-01-BTN-TOPIC-CREATE", name || undefined);
+    if (dialog === "topic") {
+      if (confirmed) void act("CORE-01-BTN-TOPIC-CREATE", name || undefined);
+    }
     if (dialog === "thread") void act("CORE-01-BTN-NEW-THREAD", name || undefined);
     if (dialog === "blueprint") void act("CORE-01-BTN-BLUEPRINT-CREATE", name || undefined);
     if (dialog === "rename-project") void act("CORE-01-CTL-PROJECT", name || undefined);
-    if (dialog === "rename-topic") void act("CORE-01-CTL-TOPIC", name || undefined);
+    if (dialog === "rename-topic") {
+      if (confirmed) void act("CORE-01-CTL-TOPIC", name || undefined);
+    }
     setDialog(null);
     setDialogName("");
   }, [act, dialog, dialogName]);
@@ -185,7 +193,12 @@ export function CoreVisual() {
   const disabled = false;
   const tx = (key: TranslationKey) => t(key);
   const pageMode = valueOf("CORE-01-FLD-PAGE-MODE");
-  const topicMode = pageMode === "TOPIC_PRODUCTION";
+  const projectName = exactName(valueOf("CORE-01-CTL-PROJECT"));
+  const topicName = exactName(valueOf("CORE-01-CTL-TOPIC"));
+  const projectIsConfirmed = valueOf("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" && Boolean(projectName);
+  const blueprintName = exactName(valueOf("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(valueOf("CORE-01-FLD-PACKAGE"));
+  const scriptName = exactName(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
+  const topicMode = pageMode === "TOPIC_PRODUCTION" && projectIsConfirmed && Boolean(topicName);
   const workItems = topicMode ? TOPIC_WORK_ITEMS : PROJECT_WORK_ITEMS;
   const storedWork = valueOf("CORE-01-LST-WORK-ITEMS");
   const activeWorkItem = (workItems as readonly string[]).includes(storedWork ?? "") ? storedWork! : workItems[0];
@@ -243,10 +256,10 @@ export function CoreVisual() {
       <section className={styles.context} data-component-uid="CORE-01-CMP-CONTEXT">
         <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={() => openNameDialog("rename-project", valueOf("CORE-01-CTL-PROJECT") ?? "")} disabled={disabled} />
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-PROJECT-CREATE" disabled={disabled} onClick={() => openNameDialog("project")}>{tx("core.create_project")}</button>
-        <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={() => openNameDialog("rename-topic", valueOf("CORE-01-CTL-TOPIC") ?? "")} disabled={disabled} />
-        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => openNameDialog("topic")}>{tx("core.create_topic")}</button>
-        <button type="button" className={topicMode ? styles.btn : `${styles.btn} ${styles.active}`} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled={disabled} onClick={() => void act("CORE-01-FLD-PAGE-MODE")}>
-          {displayCoreValue(pageMode, loading) === "—" ? tx("core.page_mode_project") : displayCoreValue(pageMode, loading)}
+        <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={() => openNameDialog("rename-topic", valueOf("CORE-01-CTL-TOPIC") ?? "")} disabled={disabled || !projectIsConfirmed} />
+        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled || !projectIsConfirmed} onClick={() => openNameDialog("topic")}>{tx("core.create_topic")}</button>
+        <button type="button" className={topicMode ? styles.btn : `${styles.btn} ${styles.active}`} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled={disabled || !projectIsConfirmed || !topicName} onClick={() => void act("CORE-01-FLD-PAGE-MODE")}>
+          {topicMode ? tx("core.page_mode_topic") : tx("core.page_mode_project")}
         </button>
         <Field uid="CORE-01-FLD-NAMING-AUTHORITY" label={tx("core.naming")} value={valueOf("CORE-01-FLD-NAMING-AUTHORITY")} loading={loading} onAct={act} disabled={disabled} />
         <div className={styles.field}>
@@ -418,12 +431,12 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.dna_version")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CORE-REVIEW"), loading)}</span></div>
             <div className={styles.railActions}>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-CONFIRM" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-CONFIRM")}>{tx("core.confirm_project")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-STORY-CANDIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-STORY-CANDIDATE")}>{tx("core.story_candidate")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-DNA-LOCK" disabled={disabled} onClick={() => void act("CORE-01-BTN-DNA-LOCK")}>{tx("core.dna_lock")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CORE-REVIEW" disabled={disabled} onClick={() => void act("CORE-01-BTN-CORE-REVIEW")}>{tx("core.core_review")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-LOCK" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-LOCK")}>{tx("core.project_lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-CONFIRM" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-CONFIRM")}>{tx("core.confirm_project")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-STORY-CANDIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-STORY-CANDIDATE")}>{tx("core.story_candidate")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-DNA-LOCK" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-DNA-LOCK")}>{tx("core.dna_lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CORE-REVIEW" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-CORE-REVIEW")}>{tx("core.core_review")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-LOCK" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-LOCK")}>{tx("core.project_lock")}</button>
             </div>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-BLUEPRINT-STATE" hidden={topicMode}>
@@ -432,9 +445,9 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.state_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-BLUEPRINT-VALIDATE") ?? valueOf("CORE-01-BTN-BLUEPRINT-APPROVE"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-CREATE" disabled={disabled} onClick={() => openNameDialog("blueprint")}>{tx("core.create_blueprint")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-VALIDATE")}>{tx("core.validate_blueprint")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-APPROVE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-APPROVE")}>{tx("core.approve_blueprint")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHILD-LOCK" disabled={disabled} onClick={() => void act("CORE-01-BTN-CHILD-LOCK")}>{tx("core.child_lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-VALIDATE" disabled={disabled || !blueprintName} onClick={() => void act("CORE-01-BTN-BLUEPRINT-VALIDATE")}>{tx("core.validate_blueprint")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-APPROVE" disabled={disabled || !blueprintName} onClick={() => void act("CORE-01-BTN-BLUEPRINT-APPROVE")}>{tx("core.approve_blueprint")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHILD-LOCK" disabled={disabled || !blueprintName} onClick={() => void act("CORE-01-BTN-CHILD-LOCK")}>{tx("core.child_lock")}</button>
             </div>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-TOPIC-PACKAGE" hidden={!topicMode}>
@@ -445,7 +458,7 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.dna_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.naming")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-NAMING-AUTHORITY"), loading)}</span></div>
-            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANONICAL-SCRIPT")}>{tx("core.view_canonical")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled || !scriptName} onClick={() => void act("CORE-01-BTN-CANONICAL-SCRIPT")}>{tx("core.view_canonical")}</button>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-DOWNSTREAM" hidden={!topicMode}>
             <h3>{tx("core.downstream")}</h3>
