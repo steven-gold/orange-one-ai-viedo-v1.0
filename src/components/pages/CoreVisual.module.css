@@ -469,6 +469,71 @@ button.evalBox {
 
 .btnWide { grid-column: 1 / -1; }
 
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.threadEmpty {
+  margin: 0;
+  color: var(--core-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.dialogScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  display: grid;
+  place-items: center;
+  background: rgba(6, 8, 20, 0.72);
+}
+
+.dialog {
+  width: min(420px, calc(100% - 32px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--core-border);
+  border-radius: 14px;
+  background: var(--core-surface);
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 700;
+}
+
+.dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dialog input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--core-border);
+  border-radius: 10px;
+  background: var(--core-input);
+  color: var(--core-text);
+  font: inherit;
+  outline: none;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 @container core (max-width: 1180px) {
   .body {
     grid-template-columns: minmax(200px, 0.9fr) minmax(0, 2.2fr) minmax(220px, 0.9fr);

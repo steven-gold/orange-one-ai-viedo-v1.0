@@ -1,3 +1,4 @@
+import { previewCoreAction } from "@/lib/coreActionPreview";
 import { getSqlClient } from "../db/client";
 
 export type WorkbenchPage =
@@ -39,15 +40,6 @@ const FIELD_TABLE: Record<Exclude<WorkbenchPage, "dashboard">, string> = {
   adminStr: "ghsn_admin_str_field_projection",
   kb: "ghsn_kb_field_projection",
 };
-
-function stampId(prefix: string): string {
-  const now = new Date();
-  const y = now.getUTCFullYear();
-  const m = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const d = String(now.getUTCDate()).padStart(2, "0");
-  const t = String(now.getUTCHours()).padStart(2, "0") + String(now.getUTCMinutes()).padStart(2, "0");
-  return `${prefix}-${y}${m}${d}-${t}`;
-}
 
 function statusFromAction(actionUid: string): string {
   const token = actionUid.split("-").pop() ?? actionUid;
@@ -99,83 +91,26 @@ async function writeField(table: string, controlUid: string, value: string): Pro
 
 async function applyCoreAction(controlUid: string, actionUid: string, nextValue?: string): Promise<void> {
   const table = FIELD_TABLE.core;
-  if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
-    const project = stampId("P");
-    await writeField(table, "CORE-01-CTL-PROJECT", project);
-    await writeField(table, "CORE-01-FLD-PAGE-MODE", "PROJECT_CORE");
-    await writeField(table, "CORE-01-FLD-NAMING-AUTHORITY", "ACPOS_SYSTEM");
-    await writeField(table, "CORE-01-FLD-RUNTIME-STAGE", "AI_RESPONSES");
-    await writeField(table, "CORE-01-LST-WORK-ITEMS", "STORY");
-    return;
+  const needed = [
+    "CORE-01-CTL-PROJECT",
+    "CORE-01-CTL-TOPIC",
+    "CORE-01-FLD-PAGE-MODE",
+    "CORE-01-FLD-TOPIC-SCOPE",
+    "CORE-01-FLD-NAMING-AUTHORITY",
+    "CORE-01-LST-WORK-ITEMS",
+    "CORE-01-LST-THREADS",
+    "CORE-01-BTN-NEW-THREAD",
+  ];
+  const cache = new Map<string, string | null>();
+  await Promise.all(
+    needed.map(async (uid) => {
+      cache.set(uid, await readField(table, uid));
+    }),
+  );
+  const patch = previewCoreAction(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
+  for (const [uid, value] of Object.entries(patch)) {
+    await writeField(table, uid, value);
   }
-  if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
-    const topic = stampId("T");
-    await writeField(table, "CORE-01-CTL-TOPIC", topic);
-    await writeField(table, "CORE-01-FLD-PAGE-MODE", "TOPIC_PRODUCTION");
-    await writeField(table, "CORE-01-FLD-TOPIC-SCOPE", topic);
-    await writeField(table, "CORE-01-FLD-PACKAGE", "PKG-READY");
-    await writeField(table, "CORE-01-LST-WORK-ITEMS", "TOPIC_SCOPE");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-PAGE-MODE") {
-    const current = await readField(table, "CORE-01-FLD-PAGE-MODE");
-    const next = current === "TOPIC_PRODUCTION" ? "PROJECT_CORE" : "TOPIC_PRODUCTION";
-    await writeField(table, "CORE-01-FLD-PAGE-MODE", next);
-    await writeField(table, "CORE-01-LST-WORK-ITEMS", next === "TOPIC_PRODUCTION" ? "TOPIC_SCOPE" : "STORY");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-AI-MODE-SINGLE") {
-    await writeField(table, "CORE-01-BTN-SINGLE-AI", "active");
-    await writeField(table, "CORE-01-BTN-MULTI-AI", "idle");
-    await writeField(table, "CORE-01-FLD-ASSIGNED-AI", "SINGLE");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-AI-MODE-MULTI") {
-    await writeField(table, "CORE-01-BTN-MULTI-AI", "active");
-    await writeField(table, "CORE-01-BTN-SINGLE-AI", "idle");
-    await writeField(table, "CORE-01-FLD-ASSIGNED-AI", "MULTI");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-THREAD-CREATE") {
-    await writeField(table, "CORE-01-LST-THREADS", stampId("TH"));
-    await writeField(table, "CORE-01-BTN-NEW-THREAD", "created");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-SEND") {
-    await writeField(table, "CORE-01-FLD-MESSAGE", "sent");
-    await writeField(table, "CORE-01-FLD-ASSISTANT-SUMMARY", "recorded");
-    await writeField(table, "CORE-01-FLD-RUNTIME-STAGE", "ASSISTANT_SUMMARY");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-CANDIDATE-CREATE") {
-    await writeField(table, "CORE-01-FLD-VERSION-STATE", stampId("CAND"));
-    await writeField(table, "CORE-01-BTN-CANDIDATE-CREATE", "created");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT") {
-    await writeField(table, "CORE-01-BTN-CANDIDATE-CONFIRM", "confirmed");
-    await writeField(table, "CORE-01-FLD-LOCK-REVIEW", "ready");
-    await writeField(table, "CORE-01-FLD-HUMAN-DECISION", "confirmed");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-BLUEPRINT-CREATE") {
-    await writeField(table, "CORE-01-BTN-BLUEPRINT-CREATE", stampId("BP"));
-    await writeField(table, "CORE-01-FLD-PACKAGE", stampId("BP"));
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-WORK-ITEM-SELECT") {
-    await writeField(table, "CORE-01-LST-WORK-ITEMS", nextValue ?? "STORY");
-    return;
-  }
-  if (actionUid === "CORE-01-ACT-THREAD-SELECT") {
-    await writeField(table, "CORE-01-LST-THREADS", nextValue ?? "selected");
-    return;
-  }
-  if (controlUid === "CORE-01-FLD-RUNTIME-STAGE" && nextValue) {
-    await writeField(table, "CORE-01-FLD-RUNTIME-STAGE", nextValue);
-    return;
-  }
-  await writeField(table, controlUid, statusFromAction(actionUid));
 }
 
 export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: string, actionUid: string, nextValue?: string): Promise<void> {

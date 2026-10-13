@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
-import { previewCoreAction } from "@/lib/coreActionPreview";
+import { parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -17,6 +17,8 @@ import styles from "./CoreVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+
+type NameDialogKind = "project" | "topic" | "thread" | "blueprint" | "rename-project" | "rename-topic";
 
 const WORK_ITEM_KEYS: Record<string, TranslationKey> = {
   STORY: "core.work.story",
@@ -69,7 +71,12 @@ export function CoreVisual() {
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(true);
   const [fields, setFields] = useState<CoreFieldValue[]>(emptyFields);
+  const [dialog, setDialog] = useState<NameDialogKind | null>(null);
+  const [dialogName, setDialogName] = useState("");
+  const [draftMessage, setDraftMessage] = useState("");
   const fieldsRef = useRef(fields);
+  const attachRef = useRef<HTMLInputElement>(null);
+  const referenceRef = useRef<HTMLInputElement>(null);
   fieldsRef.current = fields;
 
   useEffect(() => {
@@ -140,20 +147,76 @@ export function CoreVisual() {
     }
   }, [applyPatch]);
 
+  const openNameDialog = useCallback((kind: NameDialogKind, preset = "") => {
+    setDialogName(preset);
+    setDialog(kind);
+  }, []);
+
+  const confirmNameDialog = useCallback(() => {
+    if (!dialog) return;
+    const name = dialogName.trim();
+    if (dialog === "project") void act("CORE-01-BTN-PROJECT-CREATE", name || undefined);
+    if (dialog === "topic") void act("CORE-01-BTN-TOPIC-CREATE", name || undefined);
+    if (dialog === "thread") void act("CORE-01-BTN-NEW-THREAD", name || undefined);
+    if (dialog === "blueprint") void act("CORE-01-BTN-BLUEPRINT-CREATE", name || undefined);
+    if (dialog === "rename-project") void act("CORE-01-CTL-PROJECT", name || undefined);
+    if (dialog === "rename-topic") void act("CORE-01-CTL-TOPIC", name || undefined);
+    setDialog(null);
+    setDialogName("");
+  }, [act, dialog, dialogName]);
+
+  const pickFile = useCallback((kind: "attachment" | "reference", file: File | null) => {
+    if (!file) return;
+    void act(kind === "attachment" ? "CORE-01-BTN-ATTACHMENT" : "CORE-01-BTN-REFERENCE", file.name);
+  }, [act]);
+
+  const sendMessage = useCallback(() => {
+    const text = draftMessage.trim();
+    void act("CORE-01-BTN-SEND", text || undefined);
+    setDraftMessage("");
+  }, [act, draftMessage]);
+
   const disabled = false;
+  const tx = (key: TranslationKey) => t(key);
   const pageMode = valueOf("CORE-01-FLD-PAGE-MODE");
   const topicMode = pageMode === "TOPIC_PRODUCTION";
   const workItems = topicMode ? TOPIC_WORK_ITEMS : PROJECT_WORK_ITEMS;
   const storedWork = valueOf("CORE-01-LST-WORK-ITEMS");
   const activeWorkItem = (workItems as readonly string[]).includes(storedWork ?? "") ? storedWork! : workItems[0];
-  const activeThread = valueOf("CORE-01-LST-THREADS");
+  const storedThreads = parseThreadList(valueOf("CORE-01-BTN-NEW-THREAD"));
+  const storedActiveThread = valueOf("CORE-01-LST-THREADS");
   const threadItems =
-    activeThread && !["1", "2", "3"].includes(activeThread) ? [activeThread, "1", "2"] : ["1", "2", "3"];
+    storedActiveThread && !storedThreads.includes(storedActiveThread) && !["created", "selected"].includes(storedActiveThread)
+      ? [...storedThreads, storedActiveThread]
+      : storedThreads;
+  const activeThread = storedActiveThread && !["created", "selected"].includes(storedActiveThread) ? storedActiveThread : threadItems[0] ?? null;
+  const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
+  const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
+  const sentMessage = valueOf("CORE-01-FLD-MESSAGE");
+  const dialogTitleKey: TranslationKey =
+    dialog === "rename-topic"
+      ? "core.dialog_rename_topic"
+      : dialog === "topic"
+        ? "core.dialog_topic"
+        : dialog === "thread"
+          ? "core.dialog_thread"
+          : dialog === "blueprint"
+            ? "core.dialog_blueprint"
+            : dialog === "rename-project"
+              ? "core.dialog_rename_project"
+              : "core.dialog_project";
+  const dialogDefault =
+    dialog === "topic" || dialog === "rename-topic"
+      ? tx("core.default_topic")
+      : dialog === "thread"
+        ? tx("core.default_thread")
+        : dialog === "blueprint"
+          ? tx("core.default_blueprint")
+          : tx("core.default_project");
   const activeStage = valueOf("CORE-01-FLD-RUNTIME-STAGE") ?? "AI_RESPONSES";
   const singleActive = valueOf("CORE-01-BTN-SINGLE-AI") === "active" || valueOf("CORE-01-FLD-ASSIGNED-AI") === "SINGLE";
   const multiActive = !singleActive;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
-  const tx = (key: TranslationKey) => t(key);
   const workLabel = (item: string) => (WORK_ITEM_KEYS[item] ? tx(WORK_ITEM_KEYS[item]) : displayCoreValue(item, false));
   const currentWorkLabel = workLabel(activeWorkItem);
 
@@ -169,10 +232,10 @@ export function CoreVisual() {
       {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
 
       <section className={styles.context} data-component-uid="CORE-01-CMP-CONTEXT">
-        <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={act} disabled={disabled} />
-        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-PROJECT-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-CREATE")}>{tx("core.create_project")}</button>
-        <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={act} disabled={disabled} />
-        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-TOPIC-CREATE")}>{tx("core.create_topic")}</button>
+        <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={() => openNameDialog("rename-project", valueOf("CORE-01-CTL-PROJECT") ?? "")} disabled={disabled} />
+        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-PROJECT-CREATE" disabled={disabled} onClick={() => openNameDialog("project")}>{tx("core.create_project")}</button>
+        <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={() => openNameDialog("rename-topic", valueOf("CORE-01-CTL-TOPIC") ?? "")} disabled={disabled} />
+        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => openNameDialog("topic")}>{tx("core.create_topic")}</button>
         <button type="button" className={topicMode ? styles.btn : `${styles.btn} ${styles.active}`} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled={disabled} onClick={() => void act("CORE-01-FLD-PAGE-MODE")}>
           {displayCoreValue(pageMode, loading) === "—" ? tx("core.page_mode_project") : displayCoreValue(pageMode, loading)}
         </button>
@@ -194,15 +257,16 @@ export function CoreVisual() {
               </button>
             ))}
           </div>
-          <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-NEW-THREAD" disabled={disabled} onClick={() => void act("CORE-01-BTN-NEW-THREAD")}>{tx("core.new_thread")}</button>
+          <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-NEW-THREAD" disabled={disabled} onClick={() => openNameDialog("thread")}>{tx("core.new_thread")}</button>
           <div data-component-uid="CORE-01-CMP-THREADS">
             <div className={styles.threadsLabel}>{tx("core.threads")}</div>
             <div className={styles.threadList} data-control-uid="CORE-01-LST-THREADS">
-              {threadItems.map((threadUid, index) => {
-                const selected = activeThread === threadUid || (!activeThread && index === 0);
+              {threadItems.length === 0 ? <p className={styles.threadEmpty}>{tx("core.no_threads")}</p> : null}
+              {threadItems.map((threadUid) => {
+                const selected = activeThread === threadUid;
                 return (
-                  <button key={threadUid} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("CORE-01-LST-THREADS", String(threadUid))}>
-                    <span>{`${tx("core.thread_n")} ${index + 1}`}</span>
+                  <button key={threadUid} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("CORE-01-LST-THREADS", threadUid)}>
+                    <span>{threadUid}</span>
                     <small>{currentWorkLabel}</small>
                   </button>
                 );
@@ -242,7 +306,7 @@ export function CoreVisual() {
               {["1", "2", "3"].map((n) => (
                 <article key={n} className={styles.bubble}>
                   <div className={styles.bubbleRole}>{tx("core.ai_response_n")} {n}</div>
-                  <p>{valueOf("CORE-01-FLD-MESSAGE") === "sent" ? tx("core.summary_hint") : tx("core.ai_placeholder")}</p>
+                  <p>{sentMessage && sentMessage !== "sent" ? sentMessage : sentMessage === "sent" ? tx("core.summary_hint") : tx("core.ai_placeholder")}</p>
                   <span className={styles.meta}>{tx("core.source_refs")}</span>
                 </article>
               ))}
@@ -316,13 +380,15 @@ export function CoreVisual() {
 
           <section className={styles.composerBar} data-component-uid="CORE-01-CMP-COMPOSER">
             <div className={styles.composer}>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => void act("CORE-01-BTN-ATTACHMENT")}>{tx("core.attachment")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => void act("CORE-01-BTN-REFERENCE")}>{tx("core.reference")}</button>
+              <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => pickFile("attachment", event.target.files?.[0] ?? null)} />
+              <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => pickFile("reference", event.target.files?.[0] ?? null)} />
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{attachedFile && attachedFile !== "attached" ? attachedFile : tx("core.attachment")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{referenceFile && referenceFile !== "attached" ? referenceFile : tx("core.reference")}</button>
               <label className={styles.composerInput}>
                 <span className={styles.srOnly}>{tx("core.message")}</span>
-                <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} defaultValue="" />
+                <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }} />
               </label>
-              <button type="button" className={`${styles.btn} ${styles.btnSend}`} data-control-uid="CORE-01-BTN-SEND" disabled={disabled} onClick={() => void act("CORE-01-BTN-SEND")}>{tx("core.send")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnSend}`} data-control-uid="CORE-01-BTN-SEND" disabled={disabled} onClick={sendMessage}>{tx("core.send")}</button>
             </div>
           </section>
         </main>
@@ -349,7 +415,7 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.blueprint_version_ref")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-BLUEPRINT-CREATE"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.state_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-BLUEPRINT-VALIDATE") ?? valueOf("CORE-01-BTN-BLUEPRINT-APPROVE"), loading)}</span></div>
             <div className={styles.railActions}>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-CREATE")}>{tx("core.create_blueprint")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-CREATE" disabled={disabled} onClick={() => openNameDialog("blueprint")}>{tx("core.create_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-VALIDATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-VALIDATE")}>{tx("core.validate_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-APPROVE" disabled={disabled} onClick={() => void act("CORE-01-BTN-BLUEPRINT-APPROVE")}>{tx("core.approve_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHILD-LOCK" disabled={disabled} onClick={() => void act("CORE-01-BTN-CHILD-LOCK")}>{tx("core.child_lock")}</button>
@@ -382,6 +448,33 @@ export function CoreVisual() {
           </section>
         </aside>
       </div>
+      {dialog ? (
+        <div className={styles.dialogScrim} role="presentation" onClick={() => setDialog(null)}>
+          <form
+            className={styles.dialog}
+            onClick={(event) => event.stopPropagation()}
+            onSubmit={(event) => {
+              event.preventDefault();
+              confirmNameDialog();
+            }}
+          >
+            <h2>{tx(dialogTitleKey)}</h2>
+            <label>
+              <span className={styles.label}>{tx("core.name_placeholder")}</span>
+              <input
+                autoFocus
+                value={dialogName}
+                placeholder={dialogDefault}
+                onChange={(event) => setDialogName(event.target.value)}
+              />
+            </label>
+            <div className={styles.dialogActions}>
+              <button type="button" className={styles.btn} onClick={() => setDialog(null)}>{tx("core.cancel")}</button>
+              <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>{tx("core.confirm")}</button>
+            </div>
+          </form>
+        </div>
+      ) : null}
     </div>
   );
 }

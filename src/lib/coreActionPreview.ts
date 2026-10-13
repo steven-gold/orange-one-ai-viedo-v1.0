@@ -1,10 +1,17 @@
-function stampId(prefix: string): string {
-  const now = new Date();
-  const y = now.getUTCFullYear();
-  const m = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const d = String(now.getUTCDate()).padStart(2, "0");
-  const t = String(now.getUTCHours()).padStart(2, "0") + String(now.getUTCMinutes()).padStart(2, "0");
-  return `${prefix}-${y}${m}${d}-${t}`;
+export function namedValue(nextValue: string | undefined, fallback: string): string {
+  const name = nextValue?.trim();
+  return name && name.length > 0 ? name.slice(0, 80) : fallback;
+}
+
+export function parseThreadList(raw: string | null): string[] {
+  if (!raw || raw === "created") return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+  } catch {
+    return [raw];
+  }
+  return [raw];
 }
 
 export function statusFromAction(actionUid: string): string {
@@ -49,7 +56,7 @@ export function previewCoreAction(
   nextValue?: string,
 ): Record<string, string> {
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
-    const project = stampId("P");
+    const project = namedValue(nextValue, "新專案");
     return {
       "CORE-01-CTL-PROJECT": project,
       "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
@@ -60,7 +67,7 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
-    const topic = stampId("T");
+    const topic = namedValue(nextValue, "新專題");
     return {
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
@@ -80,7 +87,7 @@ export function previewCoreAction(
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-CTL-PROJECT") {
     return {
-      "CORE-01-CTL-PROJECT": current("CORE-01-CTL-PROJECT") || stampId("P"),
+      "CORE-01-CTL-PROJECT": namedValue(nextValue, current("CORE-01-CTL-PROJECT") || "新專案"),
       "CORE-01-FLD-PAGE-MODE": current("CORE-01-FLD-PAGE-MODE") || "PROJECT_CORE",
     };
   }
@@ -88,11 +95,12 @@ export function previewCoreAction(
     return { "CORE-01-FLD-NAMING-AUTHORITY": current("CORE-01-FLD-NAMING-AUTHORITY") || "ACPOS_SYSTEM" };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-CTL-TOPIC") {
-    return { "CORE-01-CTL-TOPIC": current("CORE-01-CTL-TOPIC") || stampId("T") };
+    const topic = namedValue(nextValue, current("CORE-01-CTL-TOPIC") || "新專題");
+    return { "CORE-01-CTL-TOPIC": topic, "CORE-01-FLD-TOPIC-SCOPE": topic };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-TOPIC-SCOPE") {
     return {
-      "CORE-01-FLD-TOPIC-SCOPE": current("CORE-01-CTL-TOPIC") || current("CORE-01-FLD-TOPIC-SCOPE") || stampId("T"),
+      "CORE-01-FLD-TOPIC-SCOPE": namedValue(nextValue, current("CORE-01-CTL-TOPIC") || current("CORE-01-FLD-TOPIC-SCOPE") || "新專題"),
     };
   }
   if (actionUid === "CORE-01-ACT-AI-MODE-SINGLE") {
@@ -110,22 +118,25 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-THREAD-CREATE") {
-    const thread = stampId("TH");
+    const list = parseThreadList(current("CORE-01-BTN-NEW-THREAD"));
+    const title = namedValue(nextValue, `對話 ${list.length + 1}`);
+    const nextList = [...list, title];
     return {
-      "CORE-01-LST-THREADS": thread,
-      "CORE-01-BTN-NEW-THREAD": "created",
+      "CORE-01-LST-THREADS": title,
+      "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextList),
     };
   }
   if (actionUid === "CORE-01-ACT-SEND") {
+    const message = namedValue(nextValue, "已送出");
     return {
-      "CORE-01-FLD-MESSAGE": "sent",
+      "CORE-01-FLD-MESSAGE": message,
       "CORE-01-FLD-ASSISTANT-SUMMARY": "recorded",
       "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
       "CORE-01-BTN-SEND": "sent",
     };
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-CREATE") {
-    const candidate = stampId("CAND");
+    const candidate = namedValue(nextValue, "候選版本");
     return {
       "CORE-01-FLD-VERSION-STATE": candidate,
       "CORE-01-BTN-CANDIDATE-CREATE": "created",
@@ -139,11 +150,17 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-CREATE") {
-    const blueprint = stampId("BP");
+    const blueprint = namedValue(nextValue, "新藍圖");
     return {
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": blueprint,
     };
+  }
+  if (actionUid === "CORE-01-ACT-ATTACHMENT") {
+    return { "CORE-01-BTN-ATTACHMENT": namedValue(nextValue, "已附加") };
+  }
+  if (actionUid === "CORE-01-ACT-REFERENCE-ATTACH") {
+    return { "CORE-01-BTN-REFERENCE": namedValue(nextValue, "參考資料") };
   }
   if (actionUid === "CORE-01-ACT-WORK-ITEM-SELECT") {
     return { "CORE-01-LST-WORK-ITEMS": nextValue ?? current("CORE-01-LST-WORK-ITEMS") ?? "STORY" };
