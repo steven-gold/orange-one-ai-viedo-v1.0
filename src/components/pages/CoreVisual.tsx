@@ -380,8 +380,8 @@ export function CoreVisual() {
 
           <section className={styles.composerBar} data-component-uid="CORE-01-CMP-COMPOSER">
             <div className={styles.composer}>
-              <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => pickFile("attachment", event.target.files?.[0] ?? null)} />
-              <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => pickFile("reference", event.target.files?.[0] ?? null)} />
+              <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("attachment", event.target.files?.[0] ?? null); event.target.value = ""; }} />
+              <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("reference", event.target.files?.[0] ?? null); event.target.value = ""; }} />
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{attachedFile && attachedFile !== "attached" ? attachedFile : tx("core.attachment")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{referenceFile && referenceFile !== "attached" ? referenceFile : tx("core.reference")}</button>
               <label className={styles.composerInput}>

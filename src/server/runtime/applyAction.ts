@@ -97,22 +97,11 @@ async function writeField(table: string, controlUid: string, value: string): Pro
 
 async function applyCoreAction(controlUid: string, actionUid: string, nextValue?: string): Promise<void> {
   const table = FIELD_TABLE.core;
-  const needed = [
-    "CORE-01-CTL-PROJECT",
-    "CORE-01-CTL-TOPIC",
-    "CORE-01-FLD-PAGE-MODE",
-    "CORE-01-FLD-TOPIC-SCOPE",
-    "CORE-01-FLD-NAMING-AUTHORITY",
-    "CORE-01-LST-WORK-ITEMS",
-    "CORE-01-LST-THREADS",
-    "CORE-01-BTN-NEW-THREAD",
-  ];
   const cache = new Map<string, string | null>();
-  await Promise.all(
-    needed.map(async (uid) => {
-      cache.set(uid, await readField(table, uid));
-    }),
+  const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+    `SELECT control_uid, value_text FROM ${table}`,
   );
+  for (const row of rows) cache.set(row.control_uid, row.value_text === "" ? null : row.value_text);
   const patch = previewCoreAction(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
   for (const [uid, value] of Object.entries(patch)) {
     await writeField(table, uid, value);

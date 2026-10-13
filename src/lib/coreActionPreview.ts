@@ -1,6 +1,37 @@
+const STATUS_TOKENS = new Set([
+  "created",
+  "selected",
+  "validated",
+  "confirmed",
+  "approved",
+  "locked",
+  "sent",
+  "queried",
+  "open",
+  "editing",
+  "saved",
+  "preview",
+  "completed",
+  "running",
+  "retrying",
+  "evaluated",
+  "returned",
+  "comparing",
+  "attached",
+  "recorded",
+  "active",
+  "idle",
+  "ready",
+]);
+
+function usableName(value: string | undefined): string {
+  const name = value?.trim();
+  if (!name || STATUS_TOKENS.has(name)) return "";
+  return name.slice(0, 80);
+}
+
 export function namedValue(nextValue: string | undefined, fallback: string): string {
-  const name = nextValue?.trim();
-  return name && name.length > 0 ? name.slice(0, 80) : fallback;
+  return usableName(nextValue) || usableName(fallback) || fallback.slice(0, 80);
 }
 
 export function parseThreadList(raw: string | null): string[] {
@@ -128,7 +159,7 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-SEND") {
-    const message = namedValue(nextValue, "已送出");
+    const message = namedValue(nextValue, current("CORE-01-FLD-MESSAGE") || "已送出");
     return {
       "CORE-01-FLD-MESSAGE": message,
       "CORE-01-FLD-ASSISTANT-SUMMARY": "recorded",
@@ -158,10 +189,26 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-ATTACHMENT") {
-    return { "CORE-01-BTN-ATTACHMENT": namedValue(nextValue, "已附加") };
+    return { "CORE-01-BTN-ATTACHMENT": namedValue(nextValue, current("CORE-01-BTN-ATTACHMENT") || "已附加") };
   }
   if (actionUid === "CORE-01-ACT-REFERENCE-ATTACH") {
-    return { "CORE-01-BTN-REFERENCE": namedValue(nextValue, "參考資料") };
+    return { "CORE-01-BTN-REFERENCE": namedValue(nextValue, current("CORE-01-BTN-REFERENCE") || "參考資料") };
+  }
+  if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-PACKAGE") {
+    return {
+      "CORE-01-FLD-PACKAGE": namedValue(nextValue, current("CORE-01-FLD-PACKAGE") || current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖"),
+    };
+  }
+  if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid.startsWith("CORE-01-FLD-DOWNSTREAM")) {
+    return { [controlUid]: namedValue(nextValue, current(controlUid) || "ready") };
+  }
+  if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-VERSION-STATE") {
+    return {
+      "CORE-01-FLD-VERSION-STATE": namedValue(nextValue, current("CORE-01-FLD-VERSION-STATE") || "候選版本"),
+    };
+  }
+  if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-LOCK-REVIEW") {
+    return { "CORE-01-FLD-LOCK-REVIEW": namedValue(nextValue, current("CORE-01-FLD-LOCK-REVIEW") || "ready") };
   }
   if (actionUid === "CORE-01-ACT-WORK-ITEM-SELECT") {
     return { "CORE-01-LST-WORK-ITEMS": nextValue ?? current("CORE-01-LST-WORK-ITEMS") ?? "STORY" };
@@ -169,8 +216,12 @@ export function previewCoreAction(
   if (actionUid === "CORE-01-ACT-THREAD-SELECT") {
     return { "CORE-01-LST-THREADS": nextValue ?? current("CORE-01-LST-THREADS") ?? "selected" };
   }
-  if (controlUid === "CORE-01-FLD-RUNTIME-STAGE" && nextValue) {
-    return { "CORE-01-FLD-RUNTIME-STAGE": nextValue };
+  if (controlUid === "CORE-01-FLD-RUNTIME-STAGE") {
+    return { "CORE-01-FLD-RUNTIME-STAGE": nextValue || current("CORE-01-FLD-RUNTIME-STAGE") || "AI_RESPONSES" };
   }
-  return { [controlUid]: statusFromAction(actionUid) };
+  const existing = current(controlUid);
+  if (!nextValue && existing && !STATUS_TOKENS.has(existing) && actionUid.includes("-SELECT")) {
+    return { [controlUid]: existing };
+  }
+  return { [controlUid]: nextValue ?? statusFromAction(actionUid) };
 }
