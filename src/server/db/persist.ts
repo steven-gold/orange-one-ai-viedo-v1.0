@@ -439,9 +439,62 @@ export async function persistListAssetFields(): Promise<AssetFieldValue[]> {
   }));
 }
 
+function namedCoreValue(value: string | null | undefined): string {
+  const text = value?.trim() ?? "";
+  if (!text) return "";
+  const status = new Set([
+    "created",
+    "selected",
+    "validated",
+    "confirmed",
+    "approved",
+    "locked",
+    "sent",
+    "queried",
+    "open",
+    "editing",
+    "saved",
+    "preview",
+    "completed",
+    "running",
+    "retrying",
+    "evaluated",
+    "returned",
+    "comparing",
+    "attached",
+    "recorded",
+    "active",
+    "idle",
+    "ready",
+  ]);
+  return status.has(text) ? "" : text;
+}
+
+function overlayCoreNames(fields: AssetFieldValue[], coreFields: CoreFieldValue[]): AssetFieldValue[] {
+  const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
+  const project = namedCoreValue(core.get("CORE-01-CTL-PROJECT"));
+  const topic = namedCoreValue(core.get("CORE-01-CTL-TOPIC"));
+  const blueprint = namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE"));
+  const dna = namedCoreValue(core.get("CORE-01-BTN-DNA-LOCK"));
+  const script = namedCoreValue(core.get("CORE-01-BTN-CANONICAL-SCRIPT"));
+  return fields.map((row) => {
+    if (row.controlUid === "ASSET-01-CTL-PROJECT" && !namedCoreValue(row.value) && project) return { ...row, value: project };
+    if (row.controlUid === "ASSET-01-CTL-TOPIC" && !namedCoreValue(row.value) && topic) return { ...row, value: topic };
+    if (row.controlUid === "ASSET-01-FLD-BLUEPRINT" && !namedCoreValue(row.value) && blueprint) return { ...row, value: blueprint };
+    if (row.controlUid === "ASSET-01-FLD-DNA" && !namedCoreValue(row.value) && dna) return { ...row, value: dna };
+    if (row.controlUid === "ASSET-01-FLD-SCRIPT" && !namedCoreValue(row.value) && script) return { ...row, value: script };
+    return row;
+  });
+}
+
 export async function persistGetAssetReadModel(accountUid: string): Promise<AssetReadModel> {
   const authorized = await persistHasAssetPermission(accountUid);
-  const fields = authorized ? await persistListAssetFields() : [];
+  const fields = authorized
+    ? overlayCoreNames(
+        await persistListAssetFields(),
+        await persistListCoreFields().catch(() => [] as CoreFieldValue[]),
+      )
+    : [];
   return {
     projectionUid: ASSET_PROJECTION,
     pageUid: ASSET_PAGE_UID,
@@ -461,8 +514,9 @@ export async function persistRecordAssetAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("asset", controlUid, actionUid);
+  await applyWorkbenchAction("asset", controlUid, actionUid, nextValue);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_asset_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

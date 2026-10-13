@@ -1,3 +1,4 @@
+import { previewAssetAction } from "@/lib/assetActionPreview";
 import { previewCoreAction } from "@/lib/coreActionPreview";
 import { getSqlClient } from "../db/client";
 
@@ -95,14 +96,24 @@ async function writeField(table: string, controlUid: string, value: string): Pro
   );
 }
 
-async function applyCoreAction(controlUid: string, actionUid: string, nextValue?: string): Promise<void> {
-  const table = FIELD_TABLE.core;
+async function applyProjectedAction(
+  table: string,
+  preview: (
+    controlUid: string,
+    actionUid: string,
+    current: (uid: string) => string | null,
+    nextValue?: string,
+  ) => Record<string, string>,
+  controlUid: string,
+  actionUid: string,
+  nextValue?: string,
+): Promise<void> {
   const cache = new Map<string, string | null>();
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     `SELECT control_uid, value_text FROM ${table}`,
   );
   for (const row of rows) cache.set(row.control_uid, row.value_text === "" ? null : row.value_text);
-  const patch = previewCoreAction(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
+  const patch = preview(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
   for (const [uid, value] of Object.entries(patch)) {
     await writeField(table, uid, value);
   }
@@ -113,7 +124,11 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
     return;
   }
   if (page === "core") {
-    await applyCoreAction(controlUid, actionUid, nextValue);
+    await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
+    return;
+  }
+  if (page === "asset") {
+    await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue);
     return;
   }
   await writeField(FIELD_TABLE[page], controlUid, statusFromAction(actionUid));

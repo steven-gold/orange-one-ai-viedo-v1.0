@@ -47,6 +47,13 @@ const STATUS_LABEL: Record<string, string> = {
   attach: "已附加",
   candidate: "已建立",
   return: "已退回",
+  AUTO: "自動",
+  MANUAL: "手動",
+  ALL: "全部",
+  REQUIRED: "必備",
+  REUSE: "可重用",
+  MISSING: "缺件",
+  DEFERRED: "延後",
 };
 
 export function displayBoundValue(value: unknown, _loading: boolean): string {
