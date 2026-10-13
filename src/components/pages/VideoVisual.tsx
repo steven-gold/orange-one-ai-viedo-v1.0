@@ -1,9 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { VideoClientError, fetchVideoReadModel, postVideoAction, type VideoFieldValue } from "@/lib/client";
+import {
+  VideoClientError,
+  fetchAssetReadModel,
+  fetchCoreReadModel,
+  fetchVideoReadModel,
+  postVideoAction,
+  type VideoFieldValue,
+} from "@/lib/client";
+import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
+import { previewVideoAction } from "@/lib/videoActionPreview";
 import { displayVideoValue } from "./videoFormat";
 import {
   VIDEO_CONTROL_ACTIONS,
@@ -31,6 +40,27 @@ const SCORE_IDS: Record<string, TranslationKey> = {
   "VIDEO-01-FLD-SCORE-RIGHTS": "video.score_id_rights",
 };
 
+const EMPTY_INBOUND: VideoInbound = {
+  ready: false,
+  project: "",
+  topic: "",
+  task: "",
+  blueprint: "",
+  childLock: "",
+  dna: "",
+  script: "",
+  assetVersion: "",
+  filename: "",
+  checksum: "",
+  instruction: "",
+  rights: "",
+  naming: "",
+};
+
+function emptyFields(): VideoFieldValue[] {
+  return VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+}
+
 function Field({
   uid,
   label,
@@ -38,6 +68,7 @@ function Field({
   loading,
   onAct,
   disabled,
+  readonly = false,
 }: {
   uid: string;
   label: string;
@@ -45,7 +76,16 @@ function Field({
   loading: boolean;
   onAct: (uid: string) => void;
   disabled: boolean;
+  readonly?: boolean;
 }) {
+  if (readonly) {
+    return (
+      <div className={styles.field} data-control-uid={uid}>
+        <span className={styles.label}>{label}</span>
+        <span className={styles.value}>{displayVideoValue(value, loading)}</span>
+      </div>
+    );
+  }
   return (
     <button type="button" className={styles.field} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
       <span className={styles.label}>{label}</span>
@@ -57,21 +97,52 @@ function Field({
 export function VideoVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
-  const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [authorized, setAuthorized] = useState(false);
-  const [fields, setFields] = useState<VideoFieldValue[]>([]);
+  const [authorized, setAuthorized] = useState(true);
+  const [fields, setFields] = useState<VideoFieldValue[]>(emptyFields);
+  const [inbound, setInbound] = useState<VideoInbound>(EMPTY_INBOUND);
   const [compareOn, setCompareOn] = useState(false);
+  const fieldsRef = useRef(fields);
+  fieldsRef.current = fields;
 
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    if (tick === 0) setLoading(true);
-    fetchVideoReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal)
-      .then((model) => {
+    Promise.all([
+      fetchVideoReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal),
+      fetchCoreReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal).catch(() => null),
+      fetchAssetReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal).catch(() => null),
+    ])
+      .then(([model, core, asset]) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
-        setFields(model.fields.length ? model.fields : VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        const resolved = resolveVideoInbound(
+          (uid) => core?.fields.find((row) => row.controlUid === uid)?.value ?? null,
+          (uid) => asset?.fields.find((row) => row.controlUid === uid)?.value ?? null,
+        );
+        setInbound(resolved);
+        const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
+        if (resolved.ready) {
+          for (const row of model.fields) {
+            if (row.value != null && row.value !== "") map.set(row.controlUid, row.value);
+          }
+          map.set("VIDEO-01-FLD-PROJECT", resolved.project);
+          map.set("VIDEO-01-FLD-TOPIC", resolved.topic);
+          map.set("VIDEO-01-FLD-TASK", resolved.task);
+          map.set("VIDEO-01-FLD-BLUEPRINT-REF", resolved.blueprint);
+          map.set("VIDEO-01-FLD-DNA-REFS", resolved.dna);
+          map.set("VIDEO-01-FLD-SCRIPT-SECTION", resolved.script);
+          map.set("VIDEO-01-FLD-ASSET-REFS", resolved.assetVersion);
+          map.set("VIDEO-01-FLD-FILENAME-CHECKSUM", [resolved.filename, resolved.checksum].filter(Boolean).join(" / "));
+          map.set("VIDEO-01-FLD-RIGHTS", resolved.rights);
+          map.set("VIDEO-01-FLD-INSTRUCTION", resolved.instruction);
+        }
+        setFields(
+          VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({
+            controlUid,
+            value: map.get(controlUid) ?? null,
+          })),
+        );
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -79,7 +150,8 @@ export function VideoVisual() {
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setError(cause instanceof VideoClientError ? cause.code : "VIDEO_READ_UNAVAILABLE");
         setAuthorized(false);
-        setFields(VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        setInbound(EMPTY_INBOUND);
+        setFields(emptyFields());
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -88,28 +160,57 @@ export function VideoVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, [tick]);
+  }, []);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
     [fields],
   );
 
-  const act = useCallback(async (controlUid: string) => {
-    const actionUid = VIDEO_CONTROL_ACTIONS[controlUid];
-    if (!actionUid) return;
-    try {
-      await postVideoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
-    } catch {
-      // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
-    }
-    setTick((n) => n + 1);
+  const applyPatch = useCallback((patch: Record<string, string>) => {
+    setFields((prev) => {
+      const map = new Map(prev.map((row) => [row.controlUid, row.value]));
+      for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
+      return VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({
+        controlUid,
+        value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
+      }));
+    });
   }, []);
 
-  const disabled = !authorized && !loading;
-  const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
+  const act = useCallback(
+    async (controlUid: string, nextValue?: string) => {
+      const actionUid = VIDEO_CONTROL_ACTIONS[controlUid];
+      if (!actionUid) return;
+      const patch = previewVideoAction(
+        controlUid,
+        actionUid,
+        (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
+        nextValue,
+      );
+      if (!Object.keys(patch).length) return;
+      applyPatch(patch);
+      try {
+        await postVideoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+      } catch {
+        // Optimistic projection stays visible when the write path is unbound.
+      }
+    },
+    [applyPatch],
+  );
+
+  const inboundReady = inbound.ready;
+  const evaluated = valueOf("VIDEO-01-BTN-EVALUATE") === "evaluated";
+  const confirmed = valueOf("VIDEO-01-BTN-CONFIRM") === "confirmed";
+  const locked = valueOf("VIDEO-01-BTN-LOCK") === "locked";
+  const disabled = !inboundReady;
   const tx = (key: TranslationKey) => t(key);
+  const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const dash = displayVideoValue(null, loading);
+  const modeValue = valueOf("VIDEO-01-CTL-MODE");
+  const modeLabel =
+    modeValue === "MANUAL" ? tx("video.mode_manual") : modeValue === "AUTO" ? tx("video.mode_auto") : displayVideoValue(modeValue, loading);
+  const compareActive = compareOn || valueOf("VIDEO-01-CTL-COMPARE") === "active";
 
   return (
     <div
@@ -121,16 +222,18 @@ export function VideoVisual() {
       aria-label={tx("video.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("video.error")}</div> : null}
+      {!loading && !error && authorized && !inboundReady ? (
+        <div className={styles.error} role="alert">{tx("video.inbound_blocked")}</div>
+      ) : null}
 
       <section className={`${styles.panel} ${styles.context}`} data-component-uid="VIDEO-01-CMP-CONTEXT">
-        <Field uid="VIDEO-01-FLD-PROJECT" label={tx("video.project")} value={valueOf("VIDEO-01-FLD-PROJECT")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="VIDEO-01-FLD-TOPIC" label={tx("video.topic")} value={valueOf("VIDEO-01-FLD-TOPIC")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="VIDEO-01-FLD-TASK" label={tx("video.task")} value={valueOf("VIDEO-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="VIDEO-01-FLD-STATUS" label={tx("video.status")} value={valueOf("VIDEO-01-FLD-STATUS")} loading={loading} onAct={act} disabled={disabled} />
-        <div className={styles.modePair} data-control-uid="VIDEO-01-CTL-MODE">
-          <button type="button" className={`${styles.btn} ${styles.active}`} disabled={disabled} onClick={() => void act("VIDEO-01-CTL-MODE")}>{tx("video.auto")}</button>
-          <button type="button" className={styles.btn} disabled={disabled} onClick={() => void act("VIDEO-01-CTL-MODE")}>{tx("video.manual")}</button>
-        </div>
+        <Field uid="VIDEO-01-FLD-PROJECT" label={tx("video.project")} value={valueOf("VIDEO-01-FLD-PROJECT")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="VIDEO-01-FLD-TOPIC" label={tx("video.topic")} value={valueOf("VIDEO-01-FLD-TOPIC")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="VIDEO-01-FLD-TASK" label={tx("video.task")} value={valueOf("VIDEO-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="VIDEO-01-FLD-STATUS" label={tx("video.status")} value={valueOf("VIDEO-01-FLD-STATUS")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <button type="button" className={styles.btn} data-control-uid="VIDEO-01-CTL-MODE" disabled={disabled} onClick={() => void act("VIDEO-01-CTL-MODE")}>
+          {tx("video.mode")} {modeLabel}
+        </button>
         <div className={styles.stageChip}>
           <span className={styles.label}>{tx("video.current_stage")}</span>
           <span className={styles.value}>{tx("video.stage_generate")}</span>
@@ -167,20 +270,20 @@ export function VideoVisual() {
             </div>
           </section>
           <section data-component-uid="VIDEO-01-CMP-BLUEPRINT-BIND">
-            <Field uid="VIDEO-01-FLD-BLUEPRINT-REF" label={tx("video.blueprint_ref")} value={valueOf("VIDEO-01-FLD-BLUEPRINT-REF")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="VIDEO-01-FLD-BLUEPRINT-REF" label={tx("video.blueprint_ref")} value={valueOf("VIDEO-01-FLD-BLUEPRINT-REF")} loading={loading} onAct={act} disabled={disabled} readonly />
           </section>
           <section data-component-uid="VIDEO-01-CMP-SCRIPT-BIND">
-            <Field uid="VIDEO-01-FLD-SCRIPT-SECTION" label={tx("video.script_section")} value={valueOf("VIDEO-01-FLD-SCRIPT-SECTION")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="VIDEO-01-FLD-SCRIPT-SECTION" label={tx("video.script_section")} value={valueOf("VIDEO-01-FLD-SCRIPT-SECTION")} loading={loading} onAct={act} disabled={disabled} readonly />
           </section>
           <section data-component-uid="VIDEO-01-CMP-DNA-BIND">
-            <Field uid="VIDEO-01-FLD-DNA-REFS" label={tx("video.dna_refs")} value={valueOf("VIDEO-01-FLD-DNA-REFS")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="VIDEO-01-FLD-DNA-REFS" label={tx("video.dna_refs")} value={valueOf("VIDEO-01-FLD-DNA-REFS")} loading={loading} onAct={act} disabled={disabled} readonly />
           </section>
           <section data-component-uid="VIDEO-01-CMP-ASSET-BIND">
-            <Field uid="VIDEO-01-FLD-ASSET-REFS" label={tx("video.asset_refs")} value={valueOf("VIDEO-01-FLD-ASSET-REFS")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-FILENAME-CHECKSUM" label={tx("video.filename_checksum")} value={valueOf("VIDEO-01-FLD-FILENAME-CHECKSUM")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-INSTRUCTION" label={tx("video.instruction")} value={valueOf("VIDEO-01-FLD-INSTRUCTION")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-RIGHTS" label={tx("video.rights")} value={valueOf("VIDEO-01-FLD-RIGHTS")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-INPUT-FINGERPRINT" label={tx("video.input_fingerprint")} value={valueOf("VIDEO-01-FLD-INPUT-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="VIDEO-01-FLD-ASSET-REFS" label={tx("video.asset_refs")} value={valueOf("VIDEO-01-FLD-ASSET-REFS")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-FILENAME-CHECKSUM" label={tx("video.filename_checksum")} value={valueOf("VIDEO-01-FLD-FILENAME-CHECKSUM")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-INSTRUCTION" label={tx("video.instruction")} value={valueOf("VIDEO-01-FLD-INSTRUCTION")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-RIGHTS" label={tx("video.rights")} value={valueOf("VIDEO-01-FLD-RIGHTS")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-INPUT-FINGERPRINT" label={tx("video.input_fingerprint")} value={valueOf("VIDEO-01-FLD-INPUT-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readonly />
           </section>
         </aside>
 
@@ -190,7 +293,7 @@ export function VideoVisual() {
               <h2 className={styles.title}>{tx("video.preview")}</h2>
               <button
                 type="button"
-                className={compareOn ? styles.btn : `${styles.btn} ${styles.active}`}
+                className={compareActive ? styles.btn : `${styles.btn} ${styles.active}`}
                 data-control-uid="VIDEO-01-CTL-VERSION-A"
                 disabled={disabled}
                 onClick={() => { setCompareOn(false); void act("VIDEO-01-CTL-VERSION-A"); }}
@@ -199,7 +302,7 @@ export function VideoVisual() {
               </button>
               <button
                 type="button"
-                className={compareOn ? `${styles.btn} ${styles.active}` : styles.btn}
+                className={compareActive ? `${styles.btn} ${styles.active}` : styles.btn}
                 data-control-uid="VIDEO-01-CTL-COMPARE"
                 disabled={disabled}
                 onClick={() => { setCompareOn(true); void act("VIDEO-01-CTL-COMPARE"); }}
@@ -207,14 +310,14 @@ export function VideoVisual() {
                 {tx("video.compare_toggle")}
               </button>
             </div>
-            {compareOn ? (
+            {compareActive ? (
               <div className={styles.compareGrid}>
                 <div className={styles.comparePane}>
-                  <p className={styles.previewTitle}>A · Current</p>
+                  <p className={styles.previewTitle}>{tx("video.version_a")}</p>
                   <span>{tx("video.exact_output_ref")} {dash}</span>
                 </div>
                 <button type="button" className={styles.comparePane} data-control-uid="VIDEO-01-CTL-VERSION-B" disabled={disabled} onClick={() => void act("VIDEO-01-CTL-VERSION-B")}>
-                  <p className={styles.previewTitle}>B · Candidate</p>
+                  <p className={styles.previewTitle}>{tx("video.version_b")}</p>
                   <span>{tx("video.exact_output_ref")} {dash}</span>
                 </button>
               </div>
@@ -226,33 +329,33 @@ export function VideoVisual() {
             )}
             <div className={styles.toolbar}>
               <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-PLAY" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-PLAY")}>{tx("video.play")}</button>
-              <Field uid="VIDEO-01-FLD-TIMECODE" label={tx("video.timecode")} value={valueOf("VIDEO-01-FLD-TIMECODE")} loading={loading} onAct={act} disabled={disabled} />
+              <Field uid="VIDEO-01-FLD-TIMECODE" label={tx("video.timecode")} value={valueOf("VIDEO-01-FLD-TIMECODE")} loading={loading} onAct={act} disabled={disabled} readonly />
               <input className={styles.seek} type="range" min="0" max="100" defaultValue="0" data-control-uid="VIDEO-01-CTL-SEEK" disabled={disabled} onChange={() => void act("VIDEO-01-CTL-SEEK")} />
               <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-VOLUME" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-VOLUME")}>{tx("video.volume")}</button>
               <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-FULLSCREEN" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-FULLSCREEN")}>{tx("video.fullscreen")}</button>
             </div>
-            {compareOn ? <p className={styles.note}>{tx("video.compare_note")}</p> : null}
+            {compareActive ? <p className={styles.note}>{tx("video.compare_note")}</p> : null}
           </section>
         </main>
 
         <aside className={`${styles.panel} ${styles.right}`}>
           <section data-component-uid="VIDEO-01-CMP-VERSION">
             <h2 className={styles.title}>{tx("video.version")}</h2>
-            <Field uid="VIDEO-01-FLD-CURRENT-VERSION" label={tx("video.current_version")} value={valueOf("VIDEO-01-FLD-CURRENT-VERSION")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-CANDIDATE-VERSION" label={tx("video.candidate_version")} value={valueOf("VIDEO-01-FLD-CANDIDATE-VERSION")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="VIDEO-01-FLD-CURRENT-VERSION" label={tx("video.current_version")} value={valueOf("VIDEO-01-FLD-CURRENT-VERSION")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-CANDIDATE-VERSION" label={tx("video.candidate_version")} value={valueOf("VIDEO-01-FLD-CANDIDATE-VERSION")} loading={loading} onAct={act} disabled={disabled} readonly />
           </section>
           <section data-component-uid="VIDEO-01-CMP-SCORE">
-            <Field uid="VIDEO-01-FLD-CRITERIA-VERSION" label={tx("video.criteria_version")} value={valueOf("VIDEO-01-FLD-CRITERIA-VERSION")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-OVERALL-SCORE" label={tx("video.overall_score")} value={valueOf("VIDEO-01-FLD-OVERALL-SCORE")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="VIDEO-01-FLD-ISSUE-SUMMARY" label={tx("video.issue_summary")} value={valueOf("VIDEO-01-FLD-ISSUE-SUMMARY")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="VIDEO-01-FLD-CRITERIA-VERSION" label={tx("video.criteria_version")} value={valueOf("VIDEO-01-FLD-CRITERIA-VERSION")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-OVERALL-SCORE" label={tx("video.overall_score")} value={valueOf("VIDEO-01-FLD-OVERALL-SCORE")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="VIDEO-01-FLD-ISSUE-SUMMARY" label={tx("video.issue_summary")} value={valueOf("VIDEO-01-FLD-ISSUE-SUMMARY")} loading={loading} onAct={act} disabled={disabled} readonly />
             <button type="button" className={styles.statusBadge} data-control-uid="VIDEO-01-BTN-SCORE-DETAIL" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-SCORE-DETAIL")}>{tx("video.score_detail")}</button>
           </section>
           <section data-component-uid="VIDEO-01-CMP-DECISION">
             <div className={styles.decisionGrid}>
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-CONFIRM" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-CONFIRM")}>{tx("video.confirm")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-CONFIRM" disabled={disabled || !evaluated} onClick={() => void act("VIDEO-01-BTN-CONFIRM")}>{tx("video.confirm")}</button>
               <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-MODIFY" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-MODIFY")}>{tx("video.modify")}</button>
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-LOCK" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-LOCK")}>{tx("video.lock")}</button>
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-HANDOFF" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-HANDOFF")}>{tx("video.handoff_edit")}</button>
+              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-LOCK" disabled={disabled || !confirmed} onClick={() => void act("VIDEO-01-BTN-LOCK")}>{tx("video.lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-HANDOFF" disabled={disabled || !locked} onClick={() => void act("VIDEO-01-BTN-HANDOFF")}>{tx("video.handoff_edit")}</button>
             </div>
           </section>
         </aside>
@@ -262,7 +365,7 @@ export function VideoVisual() {
         <h3 className={styles.sub}>{tx("video.runtime")}</h3>
         <div className={styles.runtimeRow}>
           {VIDEO_RUNTIME_FIELDS.map(([uid, key]) => (
-            <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} />
+            <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
           ))}
         </div>
         <div className={styles.runtimeActions}>
@@ -276,7 +379,7 @@ export function VideoVisual() {
           <h3 className={styles.sub}>{tx("video.correction_scope")}</h3>
           <div className={styles.scopeRow}>
             {VIDEO_SCOPE_FIELDS.map(([uid, key]) => (
-              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} />
+              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
             ))}
             <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-CONTEXT-BUILD" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-CONTEXT-BUILD")}>{tx("video.context_build")}</button>
           </div>
@@ -304,14 +407,14 @@ export function VideoVisual() {
           <h3 className={styles.sub}>{tx("video.evaluation")}</h3>
           <div className={styles.scoreGrid}>
             {VIDEO_SCORE_FIELDS.map(([uid, key]) => (
-              <button key={uid} type="button" className={styles.scoreCard} data-control-uid={uid} disabled={disabled} onClick={() => void act(uid)}>
+              <div key={uid} className={styles.scoreCard} data-control-uid={uid}>
                 <strong>{tx(key)}</strong>
                 <span className={styles.scoreId}>{tx(SCORE_IDS[uid])}</span>
-                <span className={styles.scoreMeta}>{tx("video.score")}: {displayVideoValue(valueOf(uid), loading)} · {tx("video.evidence_short")}: {dash}</span>
+                <span className={styles.scoreMeta}>{tx("video.score")}：{displayVideoValue(valueOf(uid), loading)} · {tx("video.evidence_short")}：{dash}</span>
                 <span className={uid === "VIDEO-01-FLD-SCORE-RIGHTS" ? `${styles.scoreMeta} ${styles.warn}` : styles.scoreMeta}>
-                  {uid === "VIDEO-01-FLD-SCORE-RIGHTS" ? tx("video.rights_hard") : `${tx("video.hard_block")}: ${dash}`}
+                  {uid === "VIDEO-01-FLD-SCORE-RIGHTS" ? tx("video.rights_hard") : `${tx("video.hard_block")}：${dash}`}
                 </span>
-              </button>
+              </div>
             ))}
           </div>
           <div className={styles.evalActions}>
@@ -333,7 +436,7 @@ export function VideoVisual() {
           <h3 className={styles.sub}>{tx("video.manifest")}</h3>
           <div className={styles.manifestGrid}>
             {VIDEO_MANIFEST_FIELDS.map(([uid, key]) => (
-              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} />
+              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
             ))}
           </div>
           <div className={styles.crossBody}>
@@ -348,7 +451,7 @@ export function VideoVisual() {
           <h3 className={styles.sub}>{tx("video.page_status")}</h3>
           <div className={styles.statusGrid}>
             {VIDEO_STATUS_FIELDS.map(([uid, key]) => (
-              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} />
+              <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
             ))}
           </div>
         </section>

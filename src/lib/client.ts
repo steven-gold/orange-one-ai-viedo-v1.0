@@ -302,6 +302,7 @@ export async function postVideoAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  nextValue?: string,
 ): Promise<void> {
   await fetch("/api/video/action", {
     method: "POST",
@@ -310,7 +311,7 @@ export async function postVideoAction(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, nextValue }),
   });
 }
 

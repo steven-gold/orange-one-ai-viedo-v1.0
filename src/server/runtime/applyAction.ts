@@ -1,6 +1,8 @@
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { previewCoreAction } from "@/lib/coreActionPreview";
+import { resolveVideoInbound } from "@/lib/videoInbound";
+import { previewVideoAction } from "@/lib/videoActionPreview";
 import { getSqlClient } from "../db/client";
 
 export type WorkbenchPage =
@@ -154,6 +156,40 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
       const version = await readField(FIELD_TABLE.asset, "ASSET-01-FLD-HANDOFF-ASSET-VERSION");
       if (locked === "locked" && version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-ASSET", version);
+    }
+    return;
+  }
+  if (page === "video") {
+    const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_core_field_projection",
+    );
+    const coreByUid = new Map(
+      coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const assetRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_asset_field_projection",
+    );
+    const assetByUid = new Map(
+      assetRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const inbound = resolveVideoInbound((uid) => coreByUid.get(uid) ?? null, (uid) => assetByUid.get(uid) ?? null);
+    const seed: Record<string, string> = {
+      "VIDEO-01-FLD-PROJECT": inbound.project,
+      "VIDEO-01-FLD-TOPIC": inbound.topic,
+      "VIDEO-01-FLD-TASK": inbound.task,
+      "VIDEO-01-FLD-BLUEPRINT-REF": inbound.blueprint,
+      "VIDEO-01-FLD-DNA-REFS": inbound.dna,
+      "VIDEO-01-FLD-SCRIPT-SECTION": inbound.script,
+      "VIDEO-01-FLD-ASSET-REFS": inbound.assetVersion,
+      "VIDEO-01-FLD-FILENAME-CHECKSUM": [inbound.filename, inbound.checksum].filter(Boolean).join(" / "),
+      "VIDEO-01-FLD-RIGHTS": inbound.rights,
+      "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
+    };
+    await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "VIDEO-01-ACT-HANDOFF") {
+      const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");
+      const contract = await readField(FIELD_TABLE.video, "VIDEO-01-FLD-HANDOFF-CONTRACT");
+      if (locked === "locked" && contract) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-VIDEO", contract);
     }
     return;
   }

@@ -1,6 +1,7 @@
 import { seedScope } from "./seed";
 import { applyWorkbenchAction } from "../runtime/applyAction";
 import { resolveAssetInbound } from "@/lib/assetInbound";
+import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
@@ -544,45 +545,20 @@ function overlayUpstreamOntoVideo(
 ): VideoFieldValue[] {
   const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
   const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
-  const inbound = resolveAssetInbound((uid) => core.get(uid) ?? null);
-  const project = inbound.ready ? inbound.project : "";
-  const topic = inbound.ready ? inbound.topic : "";
-  const blueprint =
-    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-BLUEPRINT")) ||
-    namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE")) ||
-    namedCoreValue(core.get("CORE-01-FLD-PACKAGE")) ||
-    namedCoreValue(asset.get("ASSET-01-FLD-BLUEPRINT"));
-  const dna =
-    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-DNA")) ||
-    namedCoreValue(core.get("CORE-01-BTN-DNA-LOCK")) ||
-    namedCoreValue(asset.get("ASSET-01-FLD-DNA"));
-  const script =
-    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-SCRIPT-HASH")) ||
-    namedCoreValue(core.get("CORE-01-BTN-CANONICAL-SCRIPT")) ||
-    namedCoreValue(asset.get("ASSET-01-FLD-SCRIPT"));
-  const assets =
-    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-ASSET-VERSION")) ||
-    namedCoreValue(asset.get("ASSET-01-FLD-MANIFEST")) ||
-    namedCoreValue(core.get("CORE-01-FLD-DOWNSTREAM-ASSET"));
-  const filename =
-    namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME")) ||
-    namedCoreValue(asset.get("ASSET-01-FLD-CANONICAL-FILENAME"));
-  const checksum = namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-CHECKSUM")) || namedCoreValue(asset.get("ASSET-01-FLD-CHECKSUM"));
-  const rights = namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-RIGHTS")) || namedCoreValue(asset.get("ASSET-01-FLD-RIGHTS"));
-  const task = inbound.ready ? [project, topic].filter(Boolean).join(" / ") : "";
+  const inbound = resolveVideoInbound((uid) => core.get(uid) ?? null, (uid) => asset.get(uid) ?? null);
+  const bound = [inbound.filename, inbound.checksum].filter(Boolean).join(" / ");
   return fields.map((row) => {
-    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: inbound.ready ? project : null };
-    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: inbound.ready ? topic : null };
-    if (row.controlUid === "VIDEO-01-FLD-TASK") return { ...row, value: inbound.ready ? task || namedCoreValue(row.value) || null : null };
-    if (row.controlUid === "VIDEO-01-FLD-BLUEPRINT-REF") return { ...row, value: blueprint || namedCoreValue(row.value) || null };
-    if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: dna || namedCoreValue(row.value) || null };
-    if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: script || namedCoreValue(row.value) || null };
-    if (row.controlUid === "VIDEO-01-FLD-ASSET-REFS") return { ...row, value: assets || namedCoreValue(row.value) || null };
-    if (row.controlUid === "VIDEO-01-FLD-FILENAME-CHECKSUM") {
-      const bound = [filename, checksum].filter(Boolean).join(" / ");
-      return { ...row, value: bound || namedCoreValue(row.value) || null };
-    }
-    if (row.controlUid === "VIDEO-01-FLD-RIGHTS") return { ...row, value: rights || namedCoreValue(row.value) || null };
+    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project : null };
+    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic : null };
+    if (row.controlUid === "VIDEO-01-FLD-TASK") return { ...row, value: inbound.ready ? inbound.task : null };
+    if (row.controlUid === "VIDEO-01-FLD-STATUS") return { ...row, value: inbound.ready ? row.value : null };
+    if (row.controlUid === "VIDEO-01-FLD-BLUEPRINT-REF") return { ...row, value: inbound.ready ? inbound.blueprint : null };
+    if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: inbound.ready ? inbound.dna : null };
+    if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script : null };
+    if (row.controlUid === "VIDEO-01-FLD-ASSET-REFS") return { ...row, value: inbound.ready ? inbound.assetVersion : null };
+    if (row.controlUid === "VIDEO-01-FLD-FILENAME-CHECKSUM") return { ...row, value: inbound.ready ? bound || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-RIGHTS") return { ...row, value: inbound.ready ? inbound.rights || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-INSTRUCTION") return { ...row, value: inbound.ready ? inbound.instruction || null : null };
     return row;
   });
 }
@@ -615,8 +591,9 @@ export async function persistRecordVideoAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("video", controlUid, actionUid);
+  await applyWorkbenchAction("video", controlUid, actionUid, nextValue);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_video_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
