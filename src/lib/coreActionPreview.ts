@@ -189,10 +189,10 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-ATTACHMENT") {
-    return { "CORE-01-BTN-ATTACHMENT": namedValue(nextValue, current("CORE-01-BTN-ATTACHMENT") || "已附加") };
+    return { "CORE-01-BTN-ATTACHMENT": namedValue(nextValue, current("CORE-01-BTN-ATTACHMENT") || "已上傳") };
   }
   if (actionUid === "CORE-01-ACT-REFERENCE-ATTACH") {
-    return { "CORE-01-BTN-REFERENCE": namedValue(nextValue, current("CORE-01-BTN-REFERENCE") || "參考資料") };
+    return { "CORE-01-BTN-REFERENCE": namedValue(nextValue, current("CORE-01-BTN-REFERENCE") || "已引用") };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-PACKAGE") {
     return {

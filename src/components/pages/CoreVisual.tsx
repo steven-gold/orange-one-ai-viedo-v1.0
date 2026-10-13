@@ -193,6 +193,11 @@ export function CoreVisual() {
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
   const sentMessage = valueOf("CORE-01-FLD-MESSAGE");
+  const fileStatus = new Set(["attached", "created", "selected", "已附加", "已上傳", "參考資料", "已引用", "Attached", "Reference"]);
+  const composerFileLabel = (stored: string | null, idleKey: TranslationKey, doneKey: TranslationKey) => {
+    if (!stored || fileStatus.has(stored)) return tx(idleKey);
+    return `${tx(doneKey)} ${stored}`;
+  };
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -382,8 +387,8 @@ export function CoreVisual() {
             <div className={styles.composer}>
               <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("attachment", event.target.files?.[0] ?? null); event.target.value = ""; }} />
               <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("reference", event.target.files?.[0] ?? null); event.target.value = ""; }} />
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{attachedFile && attachedFile !== "attached" ? attachedFile : tx("core.attachment")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{referenceFile && referenceFile !== "attached" ? referenceFile : tx("core.reference")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{composerFileLabel(attachedFile, "core.attachment", "core.attached_file")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{composerFileLabel(referenceFile, "core.reference", "core.reference_file")}</button>
               <label className={styles.composerInput}>
                 <span className={styles.srOnly}>{tx("core.message")}</span>
                 <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }} />
