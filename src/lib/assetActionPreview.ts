@@ -43,10 +43,12 @@ export function previewAssetAction(
   const assets = usableList(current("ASSET-01-LST-ASSET"));
 
   if (actionUid === "ASSET-01-ACT-PROJECT-SELECT") {
-    return { "ASSET-01-CTL-PROJECT": keepName(nextValue, current("ASSET-01-CTL-PROJECT"), "未命名專案") };
+    const bound = named(nextValue);
+    return bound ? { "ASSET-01-CTL-PROJECT": bound } : {};
   }
   if (actionUid === "ASSET-01-ACT-TOPIC-SELECT") {
-    return { "ASSET-01-CTL-TOPIC": keepName(nextValue, current("ASSET-01-CTL-TOPIC"), "未命名專題") };
+    const bound = named(nextValue);
+    return bound ? { "ASSET-01-CTL-TOPIC": bound } : {};
   }
   if (actionUid === "ASSET-01-ACT-MODE-SET") {
     return { "ASSET-01-CTL-MODE": toggleMode(current("ASSET-01-CTL-MODE")) };

@@ -1,4 +1,4 @@
-import { parseThreadList } from "./coreActionPreview";
+import { namedList, parseThreadList } from "./coreActionPreview";
 import { DASHBOARD_SECTION_SEEDS } from "@/server/domain/dashboard";
 import type { DashboardSectionValue } from "@/server/domain/types";
 
@@ -63,12 +63,14 @@ function locked(current: (uid: string) => string | null): boolean {
 export function projectDashboardFromCore(current: (uid: string) => string | null): DashboardSectionValue[] {
   const project = named(current("CORE-01-CTL-PROJECT"));
   const topic = named(current("CORE-01-CTL-TOPIC"));
+  const projects = namedList(current("CORE-01-BTN-PROJECT-CREATE"), project);
+  const topics = namedList(current("CORE-01-BTN-TOPIC-CREATE"), topic);
   const threads = parseThreadList(current("CORE-01-BTN-NEW-THREAD"));
   const review = current("CORE-01-BTN-CORE-REVIEW");
   const work = current("CORE-01-LST-WORK-ITEMS");
   const pkg = named(current("CORE-01-FLD-PACKAGE"));
   const candidate = named(current("CORE-01-FLD-VERSION-STATE"));
-  const names = [project, topic].filter(Boolean);
+  const names = [...projects, ...topics];
   const total = names.length;
   const completed = total > 0 && locked(current) ? 1 : 0;
   const running = Math.max(total - completed, 0);

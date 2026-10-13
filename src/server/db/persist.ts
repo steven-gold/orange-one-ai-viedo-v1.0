@@ -1,5 +1,6 @@
 import { seedScope } from "./seed";
 import { applyWorkbenchAction } from "../runtime/applyAction";
+import { namedList } from "@/lib/coreActionPreview";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
@@ -472,14 +473,22 @@ function namedCoreValue(value: string | null | undefined): string {
 
 function overlayCoreNames(fields: AssetFieldValue[], coreFields: CoreFieldValue[]): AssetFieldValue[] {
   const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
-  const project = namedCoreValue(core.get("CORE-01-CTL-PROJECT"));
-  const topic = namedCoreValue(core.get("CORE-01-CTL-TOPIC"));
+  const projects = namedList(core.get("CORE-01-BTN-PROJECT-CREATE"), core.get("CORE-01-CTL-PROJECT"));
+  const topics = namedList(core.get("CORE-01-BTN-TOPIC-CREATE"), core.get("CORE-01-CTL-TOPIC"));
+  const project = namedCoreValue(core.get("CORE-01-CTL-PROJECT")) || projects[0] || "";
+  const topic = namedCoreValue(core.get("CORE-01-CTL-TOPIC")) || topics[0] || "";
   const blueprint = namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE"));
   const dna = namedCoreValue(core.get("CORE-01-BTN-DNA-LOCK"));
   const script = namedCoreValue(core.get("CORE-01-BTN-CANONICAL-SCRIPT"));
   return fields.map((row) => {
-    if (row.controlUid === "ASSET-01-CTL-PROJECT" && !namedCoreValue(row.value) && project) return { ...row, value: project };
-    if (row.controlUid === "ASSET-01-CTL-TOPIC" && !namedCoreValue(row.value) && topic) return { ...row, value: topic };
+    if (row.controlUid === "ASSET-01-CTL-PROJECT") {
+      const current = namedCoreValue(row.value);
+      return { ...row, value: current && projects.includes(current) ? current : project || null };
+    }
+    if (row.controlUid === "ASSET-01-CTL-TOPIC") {
+      const current = namedCoreValue(row.value);
+      return { ...row, value: current && topics.includes(current) ? current : topic || null };
+    }
     if (row.controlUid === "ASSET-01-FLD-BLUEPRINT" && !namedCoreValue(row.value) && blueprint) return { ...row, value: blueprint };
     if (row.controlUid === "ASSET-01-FLD-DNA" && !namedCoreValue(row.value) && dna) return { ...row, value: dna };
     if (row.controlUid === "ASSET-01-FLD-SCRIPT" && !namedCoreValue(row.value) && script) return { ...row, value: script };

@@ -34,6 +34,13 @@ export function namedValue(nextValue: string | undefined, fallback: string): str
   return usableName(nextValue) || usableName(fallback) || fallback.slice(0, 80);
 }
 
+export function namedList(raw: string | null | undefined, extra?: string | null): string[] {
+  const items = parseThreadList(raw ?? null).filter((item) => Boolean(usableName(item)));
+  const extraName = usableName(extra ?? undefined);
+  if (extraName && !items.includes(extraName)) return [...items, extraName];
+  return items;
+}
+
 export function parseThreadList(raw: string | null): string[] {
   if (!raw || raw === "created") return [];
   try {
@@ -89,24 +96,28 @@ export function previewCoreAction(
 ): Record<string, string> {
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
     const project = namedValue(nextValue, "新專案");
+    const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
+    const nextList = list.includes(project) ? list : [...list, project];
     return {
       "CORE-01-CTL-PROJECT": project,
       "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
       "CORE-01-FLD-NAMING-AUTHORITY": "ACPOS_SYSTEM",
       "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES",
       "CORE-01-LST-WORK-ITEMS": "STORY",
-      "CORE-01-BTN-PROJECT-CREATE": "created",
+      "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
     const topic = namedValue(nextValue, "新專題");
+    const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
+    const nextList = list.includes(topic) ? list : [...list, topic];
     return {
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
       "CORE-01-FLD-PACKAGE": "PKG-READY",
       "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
-      "CORE-01-BTN-TOPIC-CREATE": "created",
+      "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-PAGE-MODE") {
@@ -118,17 +129,29 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-CTL-PROJECT") {
+    const previous = current("CORE-01-CTL-PROJECT");
+    const project = namedValue(nextValue, previous || "新專案");
+    const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), previous).map((item) => (item === previous ? project : item));
+    const nextList = list.includes(project) ? list : [...list, project];
     return {
-      "CORE-01-CTL-PROJECT": namedValue(nextValue, current("CORE-01-CTL-PROJECT") || "新專案"),
+      "CORE-01-CTL-PROJECT": project,
       "CORE-01-FLD-PAGE-MODE": current("CORE-01-FLD-PAGE-MODE") || "PROJECT_CORE",
+      "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-NAMING-AUTHORITY") {
     return { "CORE-01-FLD-NAMING-AUTHORITY": current("CORE-01-FLD-NAMING-AUTHORITY") || "ACPOS_SYSTEM" };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-CTL-TOPIC") {
-    const topic = namedValue(nextValue, current("CORE-01-CTL-TOPIC") || "新專題");
-    return { "CORE-01-CTL-TOPIC": topic, "CORE-01-FLD-TOPIC-SCOPE": topic };
+    const previous = current("CORE-01-CTL-TOPIC");
+    const topic = namedValue(nextValue, previous || "新專題");
+    const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), previous).map((item) => (item === previous ? topic : item));
+    const nextList = list.includes(topic) ? list : [...list, topic];
+    return {
+      "CORE-01-CTL-TOPIC": topic,
+      "CORE-01-FLD-TOPIC-SCOPE": topic,
+      "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
+    };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-TOPIC-SCOPE") {
     return {
