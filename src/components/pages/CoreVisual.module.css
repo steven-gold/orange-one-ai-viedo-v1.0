@@ -293,6 +293,10 @@
   margin-top: 10px;
 }
 
+.messageGridSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .bubble {
   display: flex;
   flex-direction: column;
@@ -426,6 +430,13 @@ button.evalBox {
 .composerInput { flex: 1; min-width: 160px; min-height: 40px; }
 .composerInput input { font-size: 13px; line-height: 18px; }
 .btnSend { min-width: 88px; }
+.composerFiles {
+  margin: 8px 0 0;
+  color: var(--core-secondary);
+  font-size: 12px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+}
 
 .rail { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .railBlock {

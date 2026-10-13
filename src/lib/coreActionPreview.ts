@@ -160,9 +160,13 @@ export function previewCoreAction(
   }
   if (actionUid === "CORE-01-ACT-SEND") {
     const message = namedValue(nextValue, current("CORE-01-FLD-MESSAGE") || "已送出");
+    const attachment = usableName(current("CORE-01-BTN-ATTACHMENT") ?? undefined);
+    const reference = usableName(current("CORE-01-BTN-REFERENCE") ?? undefined);
+    const files = [attachment, reference].filter(Boolean);
+    const summary = files.length ? `${message} · ${files.join("、")}` : message;
     return {
-      "CORE-01-FLD-MESSAGE": message,
-      "CORE-01-FLD-ASSISTANT-SUMMARY": "recorded",
+      "CORE-01-FLD-MESSAGE": summary,
+      "CORE-01-FLD-ASSISTANT-SUMMARY": summary,
       "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
       "CORE-01-BTN-SEND": "sent",
     };

@@ -17,6 +17,7 @@ import styles from "./CoreVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+const FILE_STATUS = new Set(["attached", "created", "selected", "已附加", "已上傳", "參考資料", "已引用", "Attached", "Reference"]);
 
 type NameDialogKind = "project" | "topic" | "thread" | "blueprint" | "rename-project" | "rename-topic";
 
@@ -172,7 +173,12 @@ export function CoreVisual() {
 
   const sendMessage = useCallback(() => {
     const text = draftMessage.trim();
-    void act("CORE-01-BTN-SEND", text || undefined);
+    const attachment = fieldsRef.current.find((row) => row.controlUid === "CORE-01-BTN-ATTACHMENT")?.value;
+    const reference = fieldsRef.current.find((row) => row.controlUid === "CORE-01-BTN-REFERENCE")?.value;
+    const files = [attachment, reference].filter((name): name is string => typeof name === "string" && name.length > 0 && !FILE_STATUS.has(name));
+    const payload = [text, ...files].filter(Boolean).join(" · ");
+    if (!payload) return;
+    void act("CORE-01-BTN-SEND", payload);
     setDraftMessage("");
   }, [act, draftMessage]);
 
@@ -193,11 +199,9 @@ export function CoreVisual() {
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
   const sentMessage = valueOf("CORE-01-FLD-MESSAGE");
-  const fileStatus = new Set(["attached", "created", "selected", "已附加", "已上傳", "參考資料", "已引用", "Attached", "Reference"]);
-  const composerFileLabel = (stored: string | null, idleKey: TranslationKey, doneKey: TranslationKey) => {
-    if (!stored || fileStatus.has(stored)) return tx(idleKey);
-    return `${tx(doneKey)} ${stored}`;
-  };
+  const pickedFileName = (stored: string | null) => (stored && !FILE_STATUS.has(stored) ? stored : "");
+  const attachedName = pickedFileName(attachedFile);
+  const referenceName = pickedFileName(referenceFile);
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -307,10 +311,10 @@ export function CoreVisual() {
               <h2 className={styles.title}>{tx("core.messages")}</h2>
               <span>{tx("core.right_click_only")}</span>
             </div>
-            <div className={styles.messageGrid}>
-              {["1", "2", "3"].map((n) => (
+            <div className={`${styles.messageGrid} ${singleActive ? styles.messageGridSingle : ""}`}>
+              {(singleActive ? ["1"] : ["1", "2", "3"]).map((n) => (
                 <article key={n} className={styles.bubble}>
-                  <div className={styles.bubbleRole}>{tx("core.ai_response_n")} {n}</div>
+                  <div className={styles.bubbleRole}>{singleActive ? tx("core.ai_response_n") : `${tx("core.ai_response_n")} ${n}`}</div>
                   <p>{sentMessage && sentMessage !== "sent" ? sentMessage : sentMessage === "sent" ? tx("core.summary_hint") : tx("core.ai_placeholder")}</p>
                   <span className={styles.meta}>{tx("core.source_refs")}</span>
                 </article>
@@ -387,14 +391,21 @@ export function CoreVisual() {
             <div className={styles.composer}>
               <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("attachment", event.target.files?.[0] ?? null); event.target.value = ""; }} />
               <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("reference", event.target.files?.[0] ?? null); event.target.value = ""; }} />
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{composerFileLabel(attachedFile, "core.attachment", "core.attached_file")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{composerFileLabel(referenceFile, "core.reference", "core.reference_file")}</button>
+              <button type="button" className={`${styles.btn} ${attachedName ? styles.active : ""}`} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{tx("core.attachment")}</button>
+              <button type="button" className={`${styles.btn} ${referenceName ? styles.active : ""}`} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{tx("core.reference")}</button>
               <label className={styles.composerInput}>
                 <span className={styles.srOnly}>{tx("core.message")}</span>
                 <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }} />
               </label>
               <button type="button" className={`${styles.btn} ${styles.btnSend}`} data-control-uid="CORE-01-BTN-SEND" disabled={disabled} onClick={sendMessage}>{tx("core.send")}</button>
             </div>
+            {attachedName || referenceName ? (
+              <p className={styles.composerFiles}>
+                {attachedName ? `${tx("core.attached_file")} ${attachedName}` : null}
+                {attachedName && referenceName ? " · " : null}
+                {referenceName ? `${tx("core.reference_file")} ${referenceName}` : null}
+              </p>
+            ) : null}
           </section>
         </main>
 
