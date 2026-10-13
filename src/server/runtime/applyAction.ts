@@ -64,9 +64,15 @@ function statusFromAction(actionUid: string): string {
     COMPARE: "comparing",
     ATTACHMENT: "attached",
     RECORD: "recorded",
+    VIEW: "preview",
+    ATTACH: "attached",
+    SUBMIT: "sent",
+    RETURN: "returned",
+    CANDIDATE: "created",
   };
+  const tokens = new Set(actionUid.split("-"));
   for (const [key, value] of Object.entries(map)) {
-    if (actionUid.includes(key)) return value;
+    if (tokens.has(key)) return value;
   }
   return token.toLowerCase();
 }

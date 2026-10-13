@@ -43,8 +43,9 @@ export function statusFromAction(actionUid: string): string {
     RETURN: "returned",
     CANDIDATE: "created",
   };
+  const tokens = new Set(actionUid.split("-"));
   for (const [key, value] of Object.entries(map)) {
-    if (actionUid.includes(key)) return value;
+    if (tokens.has(key)) return value;
   }
   return token.toLowerCase();
 }
