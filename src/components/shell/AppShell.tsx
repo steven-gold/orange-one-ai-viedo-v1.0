@@ -6,6 +6,7 @@ import { canonicalNavigationItems, type NavigationArea, type ResolvedNavigationI
 import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { WorkspacePage } from "@/components/pages/WorkspacePage";
+import { DASHBOARD_HEADER_PEEK, type DashboardPeekKey } from "@/components/pages/dashboardSections";
 import { findPageByRoute, findPageByUid } from "@/components/pages/pageRegistry";
 import brandStyles from "./BrandLogo.module.css";
 import languageStyles from "./LanguageSelector.module.css";
@@ -226,6 +227,13 @@ export function AppShell({
     if (dashboard) go(dashboard);
   }, [frontItems, go]);
 
+  const peekDashboard = useCallback((kind: DashboardPeekKey) => {
+    const peek = DASHBOARD_HEADER_PEEK[kind];
+    window.sessionStorage.setItem("acpos.dashboard.peek", JSON.stringify(peek));
+    window.dispatchEvent(new CustomEvent("acpos:dashboard-peek", { detail: peek }));
+    goHome();
+  }, [goHome]);
+
   const logout = useCallback(async () => {
     try {
       await fetch("/v1/identity/session", { method: "DELETE", credentials: "include" });
@@ -266,13 +274,13 @@ export function AppShell({
         </div>
 
         <div className="header-cluster">
-          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} onClick={goHome}>
+          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} onClick={() => peekDashboard("notifications")}>
             <HeaderIcon kind="bell"/>
           </button>
-          <button className="quick-button" type="button" aria-label={t("global.header.todo")} onClick={goHome}>
+          <button className="quick-button" type="button" aria-label={t("global.header.todo")} onClick={() => peekDashboard("todo")}>
             <HeaderIcon kind="todo"/>
           </button>
-          <button className="quick-button" type="button" aria-label={t("global.header.running")} onClick={goHome}>
+          <button className="quick-button" type="button" aria-label={t("global.header.running")} onClick={() => peekDashboard("running")}>
             <HeaderIcon kind="running"/>
           </button>
 
@@ -302,7 +310,6 @@ export function AppShell({
                     }}
                   >
                     <span>{LOCALE_LABELS[option]}</span>
-                    <span className={languageStyles.code}>{option}</span>
                   </button>
                 ))}
               </div>
@@ -346,7 +353,7 @@ export function AppShell({
             {identityBound ? (
               <button className="account-button" type="button" aria-label={t("global.header.account")} onClick={() => setAccountOpen((open) => !open)} aria-expanded={accountOpen}>
                 <span className="avatar-placeholder" aria-hidden="true"/>
-                <span className="account-label">{accountUid}</span>
+                <span className="account-label">{t("global.header.account_demo")}</span>
                 <span className="caret" aria-hidden="true">⌄</span>
               </button>
             ) : (
@@ -357,7 +364,7 @@ export function AppShell({
             )}
             {identityBound && accountOpen && (
               <div className="account-popover">
-                <div className="account-popover-link" aria-hidden="true">{accountUid}</div>
+                <div className="account-popover-link" aria-hidden="true">{t("global.header.account_demo")}</div>
                 <button type="button" className="account-popover-link" onClick={() => void logout()}>
                   {t("global.header.logout")}
                 </button>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import {
   DashboardClientError,
@@ -9,48 +8,14 @@ import {
   openDashboardSection,
   type DashboardSectionValue,
 } from "@/lib/client";
-import { displayDashboardValue, isDashboardEmpty } from "./dashboardFormat";
+import { displayDashboardDetail, displayDashboardValue, isDashboardEmpty } from "./dashboardFormat";
+import { DASHBOARD_SECTIONS } from "./dashboardSections";
 import { SectionDrawer } from "./SectionDrawer";
 import styles from "./DashboardVisual.module.css";
 
-type SectionKind =
-  | "kpi"
-  | "kpi-progress"
-  | "project"
-  | "company-progress"
-  | "production"
-  | "notifications"
-  | "information"
-  | "recent";
-
-type DashboardSection = {
-  order: number;
-  sectionId: string;
-  componentUid: string;
-  titleKey: TranslationKey;
-  controlId: string;
-  kind: SectionKind;
-};
-
-const SECTIONS: readonly DashboardSection[] = [
-  { order: 1, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT", componentUid: "WB-01-CMP-KPI-PROJECT-COUNT", titleKey: "wb01.section.company_project_count", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN", kind: "kpi" },
-  { order: 2, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT", componentUid: "WB-01-CMP-KPI-RUNNING", titleKey: "wb01.section.company_running_project_count", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN", kind: "kpi" },
-  { order: 3, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT", componentUid: "WB-01-CMP-KPI-PENDING-ACTION", titleKey: "wb01.section.company_pending_action_count", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN", kind: "kpi" },
-  { order: 4, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT", componentUid: "WB-01-CMP-KPI-PENDING-REVIEW", titleKey: "wb01.section.company_pending_review_count", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN", kind: "kpi" },
-  { order: 5, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT", componentUid: "WB-01-CMP-KPI-COMPLETED", titleKey: "wb01.section.company_completed_project_count", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN", kind: "kpi" },
-  { order: 6, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS", componentUid: "WB-01-CMP-KPI-AVERAGE-PROGRESS", titleKey: "wb01.section.company_average_progress", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN", kind: "kpi-progress" },
-  { order: 7, sectionId: "SEC-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW", componentUid: "WB-01-CMP-PROJECT-PROGRESS", titleKey: "wb01.section.project_progress_overview", controlId: "CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN", kind: "project" },
-  { order: 8, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY", componentUid: "WB-01-CMP-COMPANY-PROGRESS", titleKey: "wb01.section.company_progress_summary", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN", kind: "company-progress" },
-  { order: 9, sectionId: "SEC-WORKSPACE-WB-01-PRODUCTION-SUMMARY", componentUid: "WB-01-CMP-PRODUCTION-SUMMARY", titleKey: "wb01.section.production_summary", controlId: "CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN", kind: "production" },
-  { order: 10, sectionId: "SEC-WORKSPACE-WB-01-NOTIFICATIONS", componentUid: "WB-01-CMP-NOTIFICATIONS", titleKey: "wb01.section.notifications", controlId: "CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN", kind: "notifications" },
-  { order: 11, sectionId: "SEC-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS", componentUid: "WB-01-CMP-ANNOUNCEMENTS", titleKey: "wb01.section.company_announcements", controlId: "CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN", kind: "information" },
-  { order: 12, sectionId: "SEC-WORKSPACE-WB-01-INDUSTRY-NEWS", componentUid: "WB-01-CMP-INDUSTRY-NEWS", titleKey: "wb01.section.industry_news", controlId: "CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN", kind: "information" },
-  { order: 13, sectionId: "SEC-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY", componentUid: "WB-01-CMP-SYSTEM-STATUS", titleKey: "wb01.section.system_status_summary", controlId: "CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN", kind: "information" },
-  { order: 14, sectionId: "SEC-WORKSPACE-WB-01-RECENT-COMPLETIONS", componentUid: "WB-01-CMP-RECENT-COMPLETIONS", titleKey: "wb01.section.recent_completions", controlId: "CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN", kind: "recent" },
-];
-
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+const PEEK_KEY = "acpos.dashboard.peek";
 
 export function DashboardVisual() {
   const { t } = useI18n();
@@ -103,14 +68,38 @@ export function DashboardVisual() {
 
   const close = useCallback(() => setOpenSectionUid(null), []);
 
+  useEffect(() => {
+    const consumePeek = (componentUid?: string, controlId?: string) => {
+      window.sessionStorage.removeItem(PEEK_KEY);
+      if (!componentUid || !controlId) return;
+      void open(componentUid, controlId);
+    };
+    const stored = window.sessionStorage.getItem(PEEK_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as { componentUid?: string; controlId?: string };
+        consumePeek(parsed.componentUid, parsed.controlId);
+      } catch {
+        window.sessionStorage.removeItem(PEEK_KEY);
+      }
+    }
+    const onPeek = (event: Event) => {
+      const detail = (event as CustomEvent<{ componentUid?: string; controlId?: string }>).detail;
+      consumePeek(detail?.componentUid, detail?.controlId);
+    };
+    window.addEventListener("acpos:dashboard-peek", onPeek);
+    return () => window.removeEventListener("acpos:dashboard-peek", onPeek);
+  }, [open]);
+
   const visibleSections = useMemo(() => {
-    if (loading || error) return SECTIONS;
-    if (!authorized) return [];
+    if (loading || error) return DASHBOARD_SECTIONS;
+    if (!authorized) return DASHBOARD_SECTIONS;
     const allowed = new Set(sections.map((row) => row.sectionUid));
-    return SECTIONS.filter((section) => allowed.has(section.componentUid));
+    if (allowed.size === 0) return DASHBOARD_SECTIONS;
+    return DASHBOARD_SECTIONS.filter((section) => allowed.has(section.componentUid));
   }, [authorized, error, loading, sections]);
 
-  const openDef = SECTIONS.find((row) => row.componentUid === openSectionUid);
+  const openDef = DASHBOARD_SECTIONS.find((row) => row.componentUid === openSectionUid);
   const openValue = openSectionUid ? valueOf(openSectionUid) : undefined;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
 
@@ -134,6 +123,7 @@ export function DashboardVisual() {
           const value = row?.value ?? null;
           const empty = isDashboardEmpty(value, loading);
           const cardState = loading ? "LOADING" : empty ? "EMPTY" : "READY";
+          const detail = displayDashboardDetail(row?.detail ?? "", loading);
           return (
             <section
               key={section.sectionId}
@@ -159,6 +149,7 @@ export function DashboardVisual() {
                 <div className={empty || loading ? styles.emptyState : styles.valueState}>
                   {loading ? t("global.state.empty_value") : empty ? t("global.state.no_data") : displayDashboardValue(value, loading)}
                 </div>
+                {empty || loading || !detail ? null : <p className={styles.cardDetail}>{detail}</p>}
               </div>
             </section>
           );

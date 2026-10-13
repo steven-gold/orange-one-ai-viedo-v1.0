@@ -26,18 +26,18 @@
   overflow: hidden;
 }
 
-.kpiCard { grid-column: span 2; height: 136px; }
+.kpiCard { grid-column: span 2; min-height: 136px; height: auto; }
 .project, .production { grid-column: span 8; }
-.project { height: 320px; }
-.production { height: 280px; }
+.project { min-height: 280px; height: auto; }
+.production { min-height: 240px; height: auto; }
 .company-progress, .notifications { grid-column: span 4; }
-.company-progress { height: 320px; }
-.notifications { height: 280px; }
-.information { grid-column: span 4; height: 240px; }
-.recent { grid-column: span 12; height: 220px; }
+.company-progress { min-height: 280px; height: auto; }
+.notifications { min-height: 240px; height: auto; }
+.information { grid-column: span 4; min-height: 200px; height: auto; }
+.recent { grid-column: span 12; min-height: 180px; height: auto; }
 
 .cardHeader {
-  height: 40px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -85,14 +85,13 @@
 }
 
 .cardBody {
-  height: calc(100% - 52px);
+  min-height: 64px;
   margin-top: 12px;
-  min-height: 0;
   overflow: auto;
 }
 
 .emptyState {
-  height: 100%;
+  min-height: 48px;
   display: grid;
   place-items: center;
   text-align: center;
@@ -102,7 +101,7 @@
 }
 
 .valueState {
-  height: 100%;
+  min-height: 48px;
   display: grid;
   place-items: center;
   text-align: center;
@@ -110,6 +109,16 @@
   font-size: 28px;
   font-weight: 600;
   line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.cardDetail {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .errorBanner {
@@ -136,7 +145,7 @@
   top: 58px;
   right: 0;
   bottom: 0;
-  width: 520px;
+  width: min(520px, 100%);
   background: var(--surface-l2);
   border-left: 1px solid var(--border-normal);
   padding: 20px;
@@ -170,6 +179,7 @@
   font-size: 28px;
   font-weight: 600;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .drawerDetail {
@@ -177,8 +187,13 @@
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 @container dashboard (max-width: 1345px) {
   .kpiCard { grid-column: span 4; }
+}
+
+@media (max-width: 1360px) {
+  .project, .production { grid-column: span 12; }
 }

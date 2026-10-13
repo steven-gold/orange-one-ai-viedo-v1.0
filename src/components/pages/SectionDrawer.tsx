@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { displayDashboardValue, isDashboardEmpty } from "./dashboardFormat";
+import { displayDashboardDetail, displayDashboardValue } from "./dashboardFormat";
 import styles from "./DashboardVisual.module.css";
 
 export interface SectionDrawerProps {
@@ -27,7 +27,6 @@ export function SectionDrawer({ open, label, value, detail, loading, onClose }: 
   }, [open, onClose]);
 
   if (!open) return null;
-  const empty = isDashboardEmpty(value, loading);
   return (
     <>
       <button
@@ -44,10 +43,8 @@ export function SectionDrawer({ open, label, value, detail, loading, onClose }: 
         <p className={styles.drawerValue}>{displayDashboardValue(value, loading)}</p>
         <p className={styles.drawerDetail}>
           {loading
-            ? t("global.state.empty_value")
-            : empty || !detail || detail.startsWith("Opened ")
-              ? t("global.state.no_data")
-              : detail}
+            ? t("global.state.loading")
+            : displayDashboardDetail(detail, loading) || t("global.state.no_data")}
         </p>
       </aside>
     </>

@@ -1,6 +1,7 @@
 import { seedScope } from "./seed";
 import { applyWorkbenchAction } from "../runtime/applyAction";
-import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE } from "../domain/dashboard";
+import { projectDashboardFromCore } from "@/lib/dashboardProjection";
+import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
   CORE_CHAIN,
   CORE_CONTROL_ACTIONS,
@@ -302,15 +303,23 @@ export async function persistHasDashboardPermission(accountUid: string): Promise
 }
 
 export async function persistListDashboardSections(): Promise<DashboardSectionValue[]> {
+  await seedScope("core");
+  const fields = await persistListCoreFields();
+  const byUid = new Map(fields.map((row) => [row.controlUid, row.value]));
+  const live = projectDashboardFromCore((uid) => byUid.get(uid) ?? null);
+  if (live.length > 0) return live;
   const rows = await getSqlClient().all<DashboardSectionRow>(
     "SELECT section_uid, control_uid, value_text, detail_text FROM ghsn_dashboard_section_projection",
   );
-  return rows.map((row) => ({
-    sectionUid: row.section_uid,
-    controlUid: row.control_uid,
-    value: row.value_text === "" ? null : row.value_text,
-    detail: row.detail_text,
-  }));
+  return DASHBOARD_SECTION_SEEDS.map((seed) => {
+    const row = rows.find((item) => item.section_uid === seed.sectionUid);
+    return {
+      sectionUid: seed.sectionUid,
+      controlUid: seed.controlUid,
+      value: row?.value_text === "" ? null : (row?.value_text ?? null),
+      detail: row?.detail_text ?? "",
+    };
+  });
 }
 
 export async function persistGetDashboardReadModel(accountUid: string): Promise<DashboardReadModel> {

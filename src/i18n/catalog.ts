@@ -25,6 +25,7 @@ const catalog = {
   "global.header.running": { "zh-TW": "執行中", "zh-CN": "执行中", en: "Running" },
   "global.header.language": { "zh-TW": "語言", "zh-CN": "语言", en: "Language" },
   "global.header.account": { "zh-TW": "帳戶", "zh-CN": "账户", en: "Account" },
+  "global.header.account_demo": { "zh-TW": "示範帳戶", "zh-CN": "示范账户", en: "Demo account" },
   "global.header.admin": { "zh-TW": "後台", "zh-CN": "后台", en: "Admin" },
   "global.header.frontend": { "zh-TW": "前台", "zh-CN": "前台", en: "Frontend" },
   "global.header.login": { "zh-TW": "登入", "zh-CN": "登录", en: "Login" },
