@@ -1,6 +1,7 @@
 import { seedScope } from "./seed";
 import { applyWorkbenchAction } from "../runtime/applyAction";
 import { resolveAssetInbound } from "@/lib/assetInbound";
+import { exactName, namedList } from "@/lib/coreActionPreview";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
@@ -371,10 +372,16 @@ export async function persistListCoreFields(): Promise<CoreFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_core_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return CORE_VISIBLE_CONTROLS.map((controlUid) => ({
-    controlUid,
-    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
-  }));
+  return CORE_VISIBLE_CONTROLS.map((controlUid) => {
+    const raw = byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null;
+    if (controlUid === "CORE-01-CTL-TOPIC" || controlUid === "CORE-01-FLD-TOPIC-SCOPE") {
+      return { controlUid, value: exactName(raw) || null };
+    }
+    if (controlUid === "CORE-01-BTN-TOPIC-CREATE") {
+      return { controlUid, value: JSON.stringify(namedList(raw)) };
+    }
+    return { controlUid, value: raw };
+  });
 }
 
 export async function persistGetCoreReadModel(accountUid: string): Promise<CoreReadModel> {
@@ -445,34 +452,7 @@ export async function persistListAssetFields(): Promise<AssetFieldValue[]> {
 }
 
 function namedCoreValue(value: string | null | undefined): string {
-  const text = value?.trim() ?? "";
-  if (!text) return "";
-  const status = new Set([
-    "created",
-    "selected",
-    "validated",
-    "confirmed",
-    "approved",
-    "locked",
-    "sent",
-    "queried",
-    "open",
-    "editing",
-    "saved",
-    "preview",
-    "completed",
-    "running",
-    "retrying",
-    "evaluated",
-    "returned",
-    "comparing",
-    "attached",
-    "recorded",
-    "active",
-    "idle",
-    "ready",
-  ]);
-  return status.has(text) ? "" : text;
+  return exactName(value);
 }
 
 function overlayCoreNames(fields: AssetFieldValue[], coreFields: CoreFieldValue[]): AssetFieldValue[] {
@@ -564,8 +544,9 @@ function overlayUpstreamOntoVideo(
 ): VideoFieldValue[] {
   const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
   const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
-  const project = namedCoreValue(core.get("CORE-01-CTL-PROJECT")) || namedCoreValue(asset.get("ASSET-01-CTL-PROJECT"));
-  const topic = namedCoreValue(core.get("CORE-01-CTL-TOPIC")) || namedCoreValue(asset.get("ASSET-01-CTL-TOPIC"));
+  const inbound = resolveAssetInbound((uid) => core.get(uid) ?? null);
+  const project = inbound.ready ? inbound.project : "";
+  const topic = inbound.ready ? inbound.topic : "";
   const blueprint =
     namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-BLUEPRINT")) ||
     namedCoreValue(core.get("CORE-01-BTN-BLUEPRINT-CREATE")) ||
@@ -588,11 +569,11 @@ function overlayUpstreamOntoVideo(
     namedCoreValue(asset.get("ASSET-01-FLD-CANONICAL-FILENAME"));
   const checksum = namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-CHECKSUM")) || namedCoreValue(asset.get("ASSET-01-FLD-CHECKSUM"));
   const rights = namedCoreValue(asset.get("ASSET-01-FLD-HANDOFF-RIGHTS")) || namedCoreValue(asset.get("ASSET-01-FLD-RIGHTS"));
-  const task = [project, topic].filter(Boolean).join(" / ");
+  const task = inbound.ready ? [project, topic].filter(Boolean).join(" / ") : "";
   return fields.map((row) => {
-    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: project || namedCoreValue(row.value) || null };
-    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: topic || namedCoreValue(row.value) || null };
-    if (row.controlUid === "VIDEO-01-FLD-TASK" && !namedCoreValue(row.value) && task) return { ...row, value: task };
+    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: inbound.ready ? project : null };
+    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: inbound.ready ? topic : null };
+    if (row.controlUid === "VIDEO-01-FLD-TASK") return { ...row, value: inbound.ready ? task || namedCoreValue(row.value) || null : null };
     if (row.controlUid === "VIDEO-01-FLD-BLUEPRINT-REF") return { ...row, value: blueprint || namedCoreValue(row.value) || null };
     if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: dna || namedCoreValue(row.value) || null };
     if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: script || namedCoreValue(row.value) || null };

@@ -162,13 +162,15 @@ export function CoreVisual() {
       Boolean(exactName(fieldsRef.current.find((row) => row.controlUid === "CORE-01-CTL-PROJECT")?.value));
     if (dialog === "project") void act("CORE-01-BTN-PROJECT-CREATE", name || undefined);
     if (dialog === "topic") {
-      if (confirmed) void act("CORE-01-BTN-TOPIC-CREATE", name || undefined);
+      const topic = exactName(name);
+      if (confirmed && topic) void act("CORE-01-BTN-TOPIC-CREATE", topic);
     }
     if (dialog === "thread") void act("CORE-01-BTN-NEW-THREAD", name || undefined);
     if (dialog === "blueprint") void act("CORE-01-BTN-BLUEPRINT-CREATE", name || undefined);
     if (dialog === "rename-project") void act("CORE-01-CTL-PROJECT", name || undefined);
     if (dialog === "rename-topic") {
-      if (confirmed) void act("CORE-01-CTL-TOPIC", name || undefined);
+      const topic = exactName(name);
+      if (confirmed && topic) void act("CORE-01-CTL-TOPIC", topic);
     }
     setDialog(null);
     setDialogName("");
@@ -504,7 +506,11 @@ export function CoreVisual() {
             </label>
             <div className={styles.dialogActions}>
               <button type="button" className={styles.btn} onClick={() => setDialog(null)}>{tx("core.cancel")}</button>
-              <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>{tx("core.confirm")}</button>
+              <button
+                type="submit"
+                className={`${styles.btn} ${styles.btnPrimary}`}
+                disabled={(dialog === "topic" || dialog === "rename-topic") && !exactName(dialogName)}
+              >{tx("core.confirm")}</button>
             </div>
           </form>
         </div>

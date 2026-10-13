@@ -1,3 +1,10 @@
+const PLACEHOLDER_NAMES = new Set([
+  "新專題",
+  "未命名專題",
+  "New topic",
+  "Untitled topic",
+]);
+
 const STATUS_TOKENS = new Set([
   "created",
   "selected",
@@ -28,8 +35,13 @@ const STATUS_TOKENS = new Set([
 
 function usableName(value: string | undefined): string {
   const name = value?.trim();
-  if (!name || STATUS_TOKENS.has(name)) return "";
+  if (!name || STATUS_TOKENS.has(name) || PLACEHOLDER_NAMES.has(name)) return "";
   return name.slice(0, 80);
+}
+
+export function isPlaceholderName(value: string | null | undefined): boolean {
+  const name = value?.trim() ?? "";
+  return PLACEHOLDER_NAMES.has(name);
 }
 
 export function exactName(value: string | null | undefined): string {
@@ -135,7 +147,8 @@ export function previewCoreAction(
     if (!projectConfirmed(current)) {
       return { "CORE-01-FLD-RUNTIME-STAGE": "TOPIC_LINEAGE_BLOCKED" };
     }
-    const topic = namedValue(nextValue, "新專題");
+    const topic = exactName(nextValue);
+    if (!topic) return {};
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
     const nextList = list.includes(topic) ? list : [...list, topic];
     const pkg = exactName(current("CORE-01-FLD-PACKAGE")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
@@ -180,7 +193,8 @@ export function previewCoreAction(
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-CTL-TOPIC") {
     if (!projectConfirmed(current)) return {};
     const previous = current("CORE-01-CTL-TOPIC");
-    const topic = namedValue(nextValue, previous || "新專題");
+    const topic = exactName(nextValue) || exactName(previous);
+    if (!topic) return {};
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), previous).map((item) => (item === previous ? topic : item));
     const nextList = list.includes(topic) ? list : [...list, topic];
     return {

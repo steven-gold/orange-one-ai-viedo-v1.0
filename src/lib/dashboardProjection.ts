@@ -1,4 +1,4 @@
-import { namedList, parseThreadList } from "./coreActionPreview";
+import { exactName, namedList, parseThreadList } from "./coreActionPreview";
 import { DASHBOARD_SECTION_SEEDS } from "@/server/domain/dashboard";
 import type { DashboardSectionValue } from "@/server/domain/types";
 
@@ -49,7 +49,7 @@ const STATUS_OR_MODE = new Set([
 ]);
 
 function named(value: string | null | undefined): string {
-  const text = value?.trim() ?? "";
+  const text = exactName(value);
   if (!text || STATUS_OR_MODE.has(text)) return "";
   return text;
 }

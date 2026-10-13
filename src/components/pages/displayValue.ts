@@ -57,9 +57,12 @@ const STATUS_LABEL: Record<string, string> = {
   DEFERRED: "延後",
 };
 
+import { isPlaceholderName } from "@/lib/coreActionPreview";
+
 export function displayBoundValue(value: unknown, _loading: boolean): string {
   if (value !== null && value !== undefined && value !== "") {
     const text = String(value);
+    if (isPlaceholderName(text)) return "—";
     return STATUS_LABEL[text] ?? text;
   }
   return "—";
