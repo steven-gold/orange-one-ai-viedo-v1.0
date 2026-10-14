@@ -14,6 +14,7 @@ import {
   TOPIC_WORK_ITEMS,
 } from "./coreControls";
 import styles from "./CoreVisual.module.css";
+import { IconButton } from "@/components/ui/IconButton";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
@@ -318,10 +319,10 @@ export function CoreVisual() {
                 <strong>{currentWorkLabel}</strong>
               </div>
               <div className={styles.headerControls}>
-                <button type="button" className={singleActive ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-BTN-SINGLE-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-SINGLE-AI")}>{tx("core.single_ai")}</button>
-                <button type="button" className={multiActive ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-BTN-MULTI-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-MULTI-AI")}>{tx("core.multi_ai")}</button>
+                <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />
+                <IconButton uid="CORE-01-BTN-MULTI-AI" label={tx("core.multi_ai")} icon="multi-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
                 <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} />
-                <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ASSISTANT-RECORD" disabled={disabled} onClick={() => void act("CORE-01-BTN-ASSISTANT-RECORD")}>{tx("core.assistant_record")}</button>
+                <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
               </div>
             </div>
           </section>
@@ -411,13 +412,13 @@ export function CoreVisual() {
             <div className={styles.composer}>
               <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("attachment", event.target.files?.[0] ?? null); event.target.value = ""; }} />
               <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("reference", event.target.files?.[0] ?? null); event.target.value = ""; }} />
-              <button type="button" className={`${styles.btn} ${attachedName ? styles.active : ""}`} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => attachRef.current?.click()}>{tx("core.attachment")}</button>
-              <button type="button" className={`${styles.btn} ${referenceName ? styles.active : ""}`} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => referenceRef.current?.click()}>{tx("core.reference")}</button>
+              <IconButton uid="CORE-01-BTN-ATTACHMENT" label={tx("core.attachment")} icon="attachment" onAct={() => attachRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, attachedName ? styles.active : ""].filter(Boolean).join(" ")} />
+              <IconButton uid="CORE-01-BTN-REFERENCE" label={tx("core.reference")} icon="reference" onAct={() => referenceRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, referenceName ? styles.active : ""].filter(Boolean).join(" ")} />
               <label className={styles.composerInput}>
                 <span className={styles.srOnly}>{tx("core.message")}</span>
                 <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }} />
               </label>
-              <button type="button" className={`${styles.btn} ${styles.btnSend}`} data-control-uid="CORE-01-BTN-SEND" disabled={disabled} onClick={sendMessage}>{tx("core.send")}</button>
+              <IconButton uid="CORE-01-BTN-SEND" label={tx("core.send")} icon="send" onAct={() => sendMessage()} disabled={disabled} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>
             {attachedName || referenceName ? (
               <p className={styles.composerFiles}>

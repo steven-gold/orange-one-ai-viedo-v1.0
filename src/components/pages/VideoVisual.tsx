@@ -14,6 +14,8 @@ import {
 import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { displayVideoValue } from "./videoFormat";
+import { Icon } from "@/components/ui/Icon";
+import { IconButton } from "@/components/ui/IconButton";
 import {
   VIDEO_CONTROL_ACTIONS,
   VIDEO_MANIFEST_FIELDS,
@@ -293,21 +295,25 @@ export function VideoVisual() {
               <h2 className={styles.title}>{tx("video.preview")}</h2>
               <button
                 type="button"
-                className={compareActive ? styles.btn : `${styles.btn} ${styles.active}`}
+                className={[styles.btn, compareActive ? "" : styles.active, styles.iconBtn].filter(Boolean).join(" ")}
                 data-control-uid="VIDEO-01-CTL-VERSION-A"
+                data-tip={tx("video.single")}
+                aria-label={tx("video.single")}
                 disabled={disabled}
                 onClick={() => { setCompareOn(false); void act("VIDEO-01-CTL-VERSION-A"); }}
               >
-                {tx("video.single")}
+                <Icon name="single" />
               </button>
               <button
                 type="button"
-                className={compareActive ? `${styles.btn} ${styles.active}` : styles.btn}
+                className={[styles.btn, compareActive ? styles.active : "", styles.iconBtn].filter(Boolean).join(" ")}
                 data-control-uid="VIDEO-01-CTL-COMPARE"
+                data-tip={tx("video.compare_toggle")}
+                aria-label={tx("video.compare_toggle")}
                 disabled={disabled}
                 onClick={() => { setCompareOn(true); void act("VIDEO-01-CTL-COMPARE"); }}
               >
-                {tx("video.compare_toggle")}
+                <Icon name="compare" />
               </button>
             </div>
             {compareActive ? (
@@ -328,11 +334,11 @@ export function VideoVisual() {
               </div>
             )}
             <div className={styles.toolbar}>
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-PLAY" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-PLAY")}>{tx("video.play")}</button>
+              <IconButton uid="VIDEO-01-BTN-PLAY" label={tx("video.play")} icon="play" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
               <Field uid="VIDEO-01-FLD-TIMECODE" label={tx("video.timecode")} value={valueOf("VIDEO-01-FLD-TIMECODE")} loading={loading} onAct={act} disabled={disabled} readonly />
               <input className={styles.seek} type="range" min="0" max="100" defaultValue="0" data-control-uid="VIDEO-01-CTL-SEEK" disabled={disabled} onChange={() => void act("VIDEO-01-CTL-SEEK")} />
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-VOLUME" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-VOLUME")}>{tx("video.volume")}</button>
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-FULLSCREEN" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-FULLSCREEN")}>{tx("video.fullscreen")}</button>
+              <IconButton uid="VIDEO-01-BTN-VOLUME" label={tx("video.volume")} icon="volume" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+              <IconButton uid="VIDEO-01-BTN-FULLSCREEN" label={tx("video.fullscreen")} icon="fullscreen" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
             </div>
             {compareActive ? <p className={styles.note}>{tx("video.compare_note")}</p> : null}
           </section>
@@ -399,7 +405,7 @@ export function VideoVisual() {
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION")}>{tx("video.correction_generate")}</button>
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>
             <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXEC-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-EXEC-CORRECTION")}>{tx("video.correction_execute")}</button>
-            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-COMPARE-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-COMPARE-CORRECTION")}>{tx("video.correction_compare")}</button>
+            <IconButton uid="VIDEO-01-BTN-COMPARE-CORRECTION" label={tx("video.correction_compare")} icon="compare" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
           </div>
         </section>
 

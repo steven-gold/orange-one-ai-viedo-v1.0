@@ -17,6 +17,7 @@ import {
   ASSET_VISIBLE_CONTROLS,
 } from "./assetControls";
 import styles from "./AssetVisual.module.css";
+import { IconButton } from "@/components/ui/IconButton";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
@@ -301,7 +302,7 @@ export function AssetVisual() {
               <button type="button" className={styles.btn} data-control-uid="ASSET-01-CTL-FILTER" disabled={disabled} onClick={() => void act("ASSET-01-CTL-FILTER")}>
                 {tx("asset.filter")} {filterLabel}
               </button>
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-LST-ASSET" disabled={disabled} onClick={() => openNameDialog("asset")}>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} disabled={disabled} onClick={() => openNameDialog("asset")}>
                 {tx("asset.add_asset")}
               </button>
             </div>
@@ -344,12 +345,12 @@ export function AssetVisual() {
           <section data-component-uid="ASSET-01-CMP-COMPARE">
             <h2 className={styles.title}>{tx("asset.preview_compare")}</h2>
             <div className={styles.toolbar}>
-              <button type="button" className={`${styles.btn} ${valueOf("ASSET-01-BTN-SINGLE") === "active" || !compareMode || compareMode === "單張" ? styles.active : ""}`} data-control-uid="ASSET-01-BTN-SINGLE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-SINGLE")}>{tx("asset.single")}</button>
-              <button type="button" className={`${styles.btn} ${valueOf("ASSET-01-BTN-AB") === "active" ? styles.active : ""}`} data-control-uid="ASSET-01-BTN-AB" disabled={disabled} onClick={() => void act("ASSET-01-BTN-AB")}>{tx("asset.ab")}</button>
-              <button type="button" className={`${styles.btn} ${valueOf("ASSET-01-BTN-ABC") === "active" ? styles.active : ""}`} data-control-uid="ASSET-01-BTN-ABC" disabled={disabled} onClick={() => void act("ASSET-01-BTN-ABC")}>{tx("asset.abc")}</button>
-              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-ZOOM-OUT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-ZOOM-OUT")}>{tx("asset.zoom_out")}</button>
-              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-ZOOM-IN" disabled={disabled} onClick={() => void act("ASSET-01-BTN-ZOOM-IN")}>{tx("asset.zoom_in")}</button>
-              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-FIT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-FIT")}>{tx("asset.fit")} {zoomLabel === "—" ? "" : zoomLabel}</button>
+              <IconButton uid="ASSET-01-BTN-SINGLE" label={tx("asset.single")} icon="single" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, valueOf("ASSET-01-BTN-SINGLE") === "active" || !compareMode || compareMode === "單張" ? styles.active : ""].filter(Boolean).join(" ")} />
+              <IconButton uid="ASSET-01-BTN-AB" label={tx("asset.ab")} icon="compare" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, valueOf("ASSET-01-BTN-AB") === "active" ? styles.active : ""].filter(Boolean).join(" ")} />
+              <IconButton uid="ASSET-01-BTN-ABC" label={tx("asset.abc")} icon="compare" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, valueOf("ASSET-01-BTN-ABC") === "active" ? styles.active : ""].filter(Boolean).join(" ")} />
+              <IconButton uid="ASSET-01-BTN-ZOOM-OUT" label={tx("asset.zoom_out")} icon="zoom-out" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+              <IconButton uid="ASSET-01-BTN-ZOOM-IN" label={tx("asset.zoom_in")} icon="zoom-in" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+              <IconButton uid="ASSET-01-BTN-FIT" label={`${tx("asset.fit")} ${zoomLabel === "—" ? "" : zoomLabel}`.trim()} icon="fit" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
               <button type="button" className={`${styles.btn} ${valueOf("ASSET-01-BTN-REFERENCE") === "attached" ? styles.active : ""}`} data-control-uid="ASSET-01-BTN-REFERENCE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-REFERENCE")}>{tx("asset.reference")}</button>
             </div>
           </section>

@@ -14,6 +14,7 @@ import { resolveEditInbound, type EditInbound } from "@/lib/editInbound";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { displayEditValue } from "./editFormat";
 import { EDIT_CONTROL_ACTIONS, EDIT_VISIBLE_CONTROLS } from "./editControls";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import styles from "./EditVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -92,14 +93,14 @@ function Btn({
   onAct,
   disabled,
   primary = false,
-  icon = false,
+  icon,
 }: {
   uid: string;
   label: string;
   onAct: (uid: string) => void;
   disabled: boolean;
   primary?: boolean;
-  icon?: boolean;
+  icon?: IconName;
 }) {
   const className = [
     styles.btn,
@@ -107,8 +108,16 @@ function Btn({
     icon ? styles.iconBtn : "",
   ].filter(Boolean).join(" ");
   return (
-    <button type="button" className={className} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
-      {label}
+    <button
+      type="button"
+      className={className}
+      data-control-uid={uid}
+      data-tip={icon ? label : undefined}
+      aria-label={icon ? label : undefined}
+      disabled={disabled}
+      onClick={() => onAct(uid)}
+    >
+      {icon ? <Icon name={icon} /> : label}
     </button>
   );
 }
@@ -246,10 +255,10 @@ export function EditVisual() {
           <Btn uid="EDIT-01-CTL-EXECUTION-MODE" label={modeLabel} onAct={act} disabled={disabled} primary />
         </div>
         <Btn uid="EDIT-01-BTN-FLOW-START" label={tx("edit.btn-flow-start")} onAct={act} disabled={disabled} primary />
-        <Btn uid="EDIT-01-BTN-BLUEPRINT-VIEW" label={tx("edit.btn-blueprint-view")} onAct={act} disabled={disabled} />
-        <Btn uid="EDIT-01-BTN-PACKAGE-VIEW" label={tx("edit.btn-package-view")} onAct={act} disabled={disabled} />
-        <Btn uid="EDIT-01-BTN-RETURN-BLUEPRINT" label={tx("edit.btn-return-blueprint")} onAct={act} disabled={disabled} />
-        <Btn uid="EDIT-01-BTN-MANIFEST-VIEW" label={tx("edit.btn-manifest-view")} onAct={act} disabled={disabled} />
+        <Btn uid="EDIT-01-BTN-BLUEPRINT-VIEW" label={tx("edit.btn-blueprint-view")} onAct={act} disabled={disabled} icon="blueprint" />
+        <Btn uid="EDIT-01-BTN-PACKAGE-VIEW" label={tx("edit.btn-package-view")} onAct={act} disabled={disabled} icon="package" />
+        <Btn uid="EDIT-01-BTN-RETURN-BLUEPRINT" label={tx("edit.btn-return-blueprint")} onAct={act} disabled={disabled} icon="back" />
+        <Btn uid="EDIT-01-BTN-MANIFEST-VIEW" label={tx("edit.btn-manifest-view")} onAct={act} disabled={disabled} icon="manifest" />
       </section>
 
       <div className={styles.body}>
@@ -274,8 +283,10 @@ export function EditVisual() {
                 <span>{v("EDIT-01-LST-MEDIA") ? tx("edit.session_media") : dash}</span>
               </button>
             </div>
-            <Btn uid="EDIT-01-BTN-ADD-MEDIA" label={tx("edit.btn-add-media")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-UPLOAD-SPEC" label={tx("edit.btn-upload-spec")} onAct={act} disabled={disabled} />
+            <div className={styles.toolbar}>
+              <Btn uid="EDIT-01-BTN-ADD-MEDIA" label={tx("edit.btn-add-media")} onAct={act} disabled={disabled} icon="upload" />
+              <Btn uid="EDIT-01-BTN-UPLOAD-SPEC" label={tx("edit.btn-upload-spec")} onAct={act} disabled={disabled} icon="upload" />
+            </div>
             <div className={styles.list} data-control-uid="EDIT-01-LST-IMPORT-QUEUE">
               <div className={styles.item}>
                 <span>{v("EDIT-01-LST-IMPORT-QUEUE") || tx("edit.unbound_queue")}</span>
@@ -296,55 +307,55 @@ export function EditVisual() {
               <span>{tx("edit.exact_source_ref")} {dash}</span>
             </div>
             <div className={styles.transport} data-component-uid="EDIT-01-CMP-TRANSPORT">
-              <Btn uid="EDIT-01-BTN-PLAY" label={tx("edit.btn-play")} onAct={act} disabled={disabled} icon />
-              <Btn uid="EDIT-01-BTN-PAUSE" label={tx("edit.btn-pause")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-PREV-FRAME" label={tx("edit.btn-prev-frame")} onAct={act} disabled={disabled} icon />
-              <Btn uid="EDIT-01-BTN-NEXT-FRAME" label={tx("edit.btn-next-frame")} onAct={act} disabled={disabled} icon />
+              <Btn uid="EDIT-01-BTN-PLAY" label={tx("edit.btn-play")} onAct={act} disabled={disabled} icon="play" />
+              <Btn uid="EDIT-01-BTN-PAUSE" label={tx("edit.btn-pause")} onAct={act} disabled={disabled} icon="pause" />
+              <Btn uid="EDIT-01-BTN-PREV-FRAME" label={tx("edit.btn-prev-frame")} onAct={act} disabled={disabled} icon="prev" />
+              <Btn uid="EDIT-01-BTN-NEXT-FRAME" label={tx("edit.btn-next-frame")} onAct={act} disabled={disabled} icon="next" />
               <div className={styles.timecode}>
                 <Field uid="EDIT-01-FLD-TIMECODE" label={tx("edit.fld-timecode")} value={v("EDIT-01-FLD-TIMECODE")} loading={loading} onAct={act} disabled={disabled} />
               </div>
-              <Btn uid="EDIT-01-CTL-PLAYBACK-RATE" label={tx("edit.ctl-playback-rate")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-LOOP" label={tx("edit.loop")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-MUTE" label={tx("edit.mute")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-FULLSCREEN" label={tx("edit.btn-fullscreen")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-VOLUME" label={tx("edit.ctl-volume")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-AUDIO-MONITOR" label={tx("edit.ctl-audio-monitor")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-SUBTITLE-TOGGLE" label={tx("edit.ctl-subtitle-toggle")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-SET-IN" label={tx("edit.set_in")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-SET-OUT" label={tx("edit.set_out")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-CLEAR-RANGE" label={tx("edit.btn-clear-range")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-IN-OUT" label={tx("edit.ctl-in-out")} onAct={act} disabled={disabled} />
+              <Btn uid="EDIT-01-CTL-PLAYBACK-RATE" label={tx("edit.ctl-playback-rate")} onAct={act} disabled={disabled} icon="rate" />
+              <Btn uid="EDIT-01-CTL-LOOP" label={tx("edit.loop")} onAct={act} disabled={disabled} icon="loop" />
+              <Btn uid="EDIT-01-BTN-MUTE" label={tx("edit.mute")} onAct={act} disabled={disabled} icon="mute" />
+              <Btn uid="EDIT-01-BTN-FULLSCREEN" label={tx("edit.btn-fullscreen")} onAct={act} disabled={disabled} icon="fullscreen" />
+              <Btn uid="EDIT-01-CTL-VOLUME" label={tx("edit.ctl-volume")} onAct={act} disabled={disabled} icon="volume" />
+              <Btn uid="EDIT-01-CTL-AUDIO-MONITOR" label={tx("edit.ctl-audio-monitor")} onAct={act} disabled={disabled} icon="audition" />
+              <Btn uid="EDIT-01-CTL-SUBTITLE-TOGGLE" label={tx("edit.ctl-subtitle-toggle")} onAct={act} disabled={disabled} icon="subtitle" />
+              <Btn uid="EDIT-01-BTN-SET-IN" label={tx("edit.set_in")} onAct={act} disabled={disabled} icon="set-in" />
+              <Btn uid="EDIT-01-BTN-SET-OUT" label={tx("edit.set_out")} onAct={act} disabled={disabled} icon="set-out" />
+              <Btn uid="EDIT-01-BTN-CLEAR-RANGE" label={tx("edit.btn-clear-range")} onAct={act} disabled={disabled} icon="clear" />
+              <Btn uid="EDIT-01-CTL-IN-OUT" label={tx("edit.ctl-in-out")} onAct={act} disabled={disabled} icon="range" />
             </div>
           </section>
 
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-MANUAL-TOOLS">
             <div className={styles.toolbar}>
-              <Btn uid="EDIT-01-BTN-UNDO" label={tx("edit.btn-undo")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-REDO" label={tx("edit.btn-redo")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-TOOL-SELECT" label={tx("edit.tool-select")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-TOOL-RAZOR" label={tx("edit.tool-razor")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-SPLIT" label={tx("edit.btn-split")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-TRIM-START" label={tx("edit.btn-trim-start")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-TRIM-END" label={tx("edit.btn-trim-end")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-MOVE" label={tx("edit.btn-move")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-REORDER" label={tx("edit.btn-reorder")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-DELETE" label={tx("edit.btn-delete")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-DUPLICATE" label={tx("edit.btn-duplicate")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-TRANSITION" label={tx("edit.ctl-transition")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-SPEED" label={tx("edit.ctl-speed")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-REPLACE" label={tx("edit.btn-replace")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-CLIP-VOLUME" label={tx("edit.ctl-clip-volume")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-FADE" label={tx("edit.ctl-fade")} onAct={act} disabled={disabled} />
+              <Btn uid="EDIT-01-BTN-UNDO" label={tx("edit.btn-undo")} onAct={act} disabled={disabled} icon="undo" />
+              <Btn uid="EDIT-01-BTN-REDO" label={tx("edit.btn-redo")} onAct={act} disabled={disabled} icon="redo" />
+              <Btn uid="EDIT-01-TOOL-SELECT" label={tx("edit.tool-select")} onAct={act} disabled={disabled} icon="select" />
+              <Btn uid="EDIT-01-TOOL-RAZOR" label={tx("edit.tool-razor")} onAct={act} disabled={disabled} icon="razor" />
+              <Btn uid="EDIT-01-BTN-SPLIT" label={tx("edit.btn-split")} onAct={act} disabled={disabled} icon="split" />
+              <Btn uid="EDIT-01-BTN-TRIM-START" label={tx("edit.btn-trim-start")} onAct={act} disabled={disabled} icon="trim-start" />
+              <Btn uid="EDIT-01-BTN-TRIM-END" label={tx("edit.btn-trim-end")} onAct={act} disabled={disabled} icon="trim-end" />
+              <Btn uid="EDIT-01-BTN-MOVE" label={tx("edit.btn-move")} onAct={act} disabled={disabled} icon="move" />
+              <Btn uid="EDIT-01-BTN-REORDER" label={tx("edit.btn-reorder")} onAct={act} disabled={disabled} icon="reorder" />
+              <Btn uid="EDIT-01-BTN-DELETE" label={tx("edit.btn-delete")} onAct={act} disabled={disabled} icon="delete" />
+              <Btn uid="EDIT-01-BTN-DUPLICATE" label={tx("edit.btn-duplicate")} onAct={act} disabled={disabled} icon="duplicate" />
+              <Btn uid="EDIT-01-CTL-TRANSITION" label={tx("edit.ctl-transition")} onAct={act} disabled={disabled} icon="transition" />
+              <Btn uid="EDIT-01-CTL-SPEED" label={tx("edit.ctl-speed")} onAct={act} disabled={disabled} icon="speed" />
+              <Btn uid="EDIT-01-BTN-REPLACE" label={tx("edit.btn-replace")} onAct={act} disabled={disabled} icon="replace" />
+              <Btn uid="EDIT-01-CTL-CLIP-VOLUME" label={tx("edit.ctl-clip-volume")} onAct={act} disabled={disabled} icon="clip-volume" />
+              <Btn uid="EDIT-01-CTL-FADE" label={tx("edit.ctl-fade")} onAct={act} disabled={disabled} icon="fade" />
             </div>
           </section>
 
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-MINI-TIMELINE">
             <div className={styles.toolbar}>
-              <Btn uid="EDIT-01-BTN-MARKER" label={tx("edit.btn-marker")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-CTL-SNAP" label={tx("edit.ctl-snap")} onAct={act} disabled={disabled} primary />
-              <Btn uid="EDIT-01-BTN-ZOOM-OUT" label={tx("edit.btn-zoom-out")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-ZOOM-IN" label={tx("edit.btn-zoom-in")} onAct={act} disabled={disabled} />
-              <Btn uid="EDIT-01-BTN-ZOOM-FIT" label={tx("edit.btn-zoom-fit")} onAct={act} disabled={disabled} />
+              <Btn uid="EDIT-01-BTN-MARKER" label={tx("edit.btn-marker")} onAct={act} disabled={disabled} icon="marker" />
+              <Btn uid="EDIT-01-CTL-SNAP" label={tx("edit.ctl-snap")} onAct={act} disabled={disabled} primary icon="snap" />
+              <Btn uid="EDIT-01-BTN-ZOOM-OUT" label={tx("edit.btn-zoom-out")} onAct={act} disabled={disabled} icon="zoom-out" />
+              <Btn uid="EDIT-01-BTN-ZOOM-IN" label={tx("edit.btn-zoom-in")} onAct={act} disabled={disabled} icon="zoom-in" />
+              <Btn uid="EDIT-01-BTN-ZOOM-FIT" label={tx("edit.btn-zoom-fit")} onAct={act} disabled={disabled} icon="fit" />
               <span className={styles.note}>{tx("edit.playhead_note")}</span>
             </div>
             <button type="button" className={styles.rail} data-control-uid="EDIT-01-CTL-MINI-TIMELINE" disabled={disabled} onClick={() => void act("EDIT-01-CTL-MINI-TIMELINE")}>{dash}</button>
@@ -377,10 +388,10 @@ export function EditVisual() {
               <button type="button" className={styles.drop} data-control-uid="EDIT-01-CTL-DROP-TIMELINE" disabled={disabled} onClick={() => void act("EDIT-01-CTL-DROP-TIMELINE")}>{tx("edit.ctl-drop-timeline")} {dash}</button>
               <button type="button" className={styles.playheadCtrl} data-control-uid="EDIT-01-CTL-PLAYHEAD" disabled={disabled} onClick={() => void act("EDIT-01-CTL-PLAYHEAD")} aria-label={tx("edit.ctl-playhead")} />
               <div className={styles.toolbar}>
-                <Btn uid="EDIT-01-CTL-TRACK-LOCK" label={tx("edit.ctl-track-lock")} onAct={act} disabled={disabled} />
-                <Btn uid="EDIT-01-CTL-TRACK-MUTE" label={tx("edit.ctl-track-mute")} onAct={act} disabled={disabled} />
-                <Btn uid="EDIT-01-CTL-TRACK-SOLO" label={tx("edit.ctl-track-solo")} onAct={act} disabled={disabled} />
-                <Btn uid="EDIT-01-CTL-TRACK-VISIBLE" label={tx("edit.ctl-track-visible")} onAct={act} disabled={disabled} />
+                <Btn uid="EDIT-01-CTL-TRACK-LOCK" label={tx("edit.ctl-track-lock")} onAct={act} disabled={disabled} icon="lock" />
+                <Btn uid="EDIT-01-CTL-TRACK-MUTE" label={tx("edit.ctl-track-mute")} onAct={act} disabled={disabled} icon="mute" />
+                <Btn uid="EDIT-01-CTL-TRACK-SOLO" label={tx("edit.ctl-track-solo")} onAct={act} disabled={disabled} icon="solo" />
+                <Btn uid="EDIT-01-CTL-TRACK-VISIBLE" label={tx("edit.ctl-track-visible")} onAct={act} disabled={disabled} icon="visible" />
               </div>
             </div>
           </section>
@@ -412,7 +423,7 @@ export function EditVisual() {
             <Btn uid="EDIT-01-BTN-CORR-GENERATE" label={tx("edit.btn-corr-generate")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-CORR-APPROVE" label={tx("edit.btn-corr-approve")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-CORR-EXECUTE" label={tx("edit.btn-corr-execute")} onAct={act} disabled={disabled} primary />
-            <Btn uid="EDIT-01-BTN-API-COMPARE" label={tx("edit.btn-api-compare")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-API-COMPARE" label={tx("edit.btn-api-compare")} onAct={act} disabled={disabled} icon="compare" />
             <Btn uid="EDIT-01-BTN-API-APPLY" label={tx("edit.btn-api-apply")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-API-DISCARD" label={tx("edit.btn-api-discard")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-API-CANCEL" label={tx("edit.btn-api-cancel")} onAct={act} disabled={disabled} />
@@ -463,7 +474,7 @@ export function EditVisual() {
             <Btn uid="EDIT-01-BTN-VERSION-SAVE" label={tx("edit.btn-version-save")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-VERSION-RESTORE" label={tx("edit.btn-version-restore")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-VERSION-LOCK" label={tx("edit.btn-version-lock")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-VERSION-COMPARE" label={tx("edit.diff")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-VERSION-COMPARE" label={tx("edit.diff")} onAct={act} disabled={disabled} icon="compare" />
           </div>
         </section>
 
@@ -504,8 +515,8 @@ export function EditVisual() {
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-VOICE-GENERATE" label={tx("edit.btn-voice-generate")} onAct={act} disabled={disabled} primary />
-            <Btn uid="EDIT-01-BTN-VOICE-PREVIEW" label={tx("edit.btn-voice-preview")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-VOICE-COMPARE" label={tx("edit.btn-voice-compare")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-VOICE-PREVIEW" label={tx("edit.btn-voice-preview")} onAct={act} disabled={disabled} icon="audition" />
+            <Btn uid="EDIT-01-BTN-VOICE-COMPARE" label={tx("edit.btn-voice-compare")} onAct={act} disabled={disabled} icon="compare" />
             <Btn uid="EDIT-01-BTN-VOICE-APPLY" label={tx("edit.btn-voice-apply")} onAct={act} disabled={disabled} primary />
           </div>
         </section>
@@ -515,9 +526,9 @@ export function EditVisual() {
           <Btn uid="EDIT-01-CTL-MASTER-LEVEL" label={tx("edit.ctl-master-level")} onAct={act} disabled={disabled} />
           <Btn uid="EDIT-01-CTL-TRACK-LEVEL" label={tx("edit.ctl-track-level")} onAct={act} disabled={disabled} />
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-MUSIC-ADD" label={tx("edit.btn-music-add")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-SFX-ADD" label={tx("edit.btn-sfx-add")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-MIX-PREVIEW" label={tx("edit.btn-mix-preview")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-MUSIC-ADD" label={tx("edit.btn-music-add")} onAct={act} disabled={disabled} icon="upload" />
+            <Btn uid="EDIT-01-BTN-SFX-ADD" label={tx("edit.btn-sfx-add")} onAct={act} disabled={disabled} icon="upload" />
+            <Btn uid="EDIT-01-BTN-MIX-PREVIEW" label={tx("edit.btn-mix-preview")} onAct={act} disabled={disabled} icon="audition" />
             <Btn uid="EDIT-01-BTN-MIX-EXECUTE" label={tx("edit.btn-mix-execute")} onAct={act} disabled={disabled} primary />
           </div>
         </section>
@@ -526,7 +537,7 @@ export function EditVisual() {
           <h3 className={styles.sub}>{tx("edit.lipsync")}</h3>
           <Field uid="EDIT-01-FLD-LIPSYNC-TARGET" label={tx("edit.fld-lipsync-target")} value={v("EDIT-01-FLD-LIPSYNC-TARGET")} loading={loading} onAct={act} disabled={disabled} />
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-LIPSYNC-PREVIEW" label={tx("edit.btn-lipsync-preview")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-LIPSYNC-PREVIEW" label={tx("edit.btn-lipsync-preview")} onAct={act} disabled={disabled} icon="audition" />
             <Btn uid="EDIT-01-BTN-LIPSYNC-EXECUTE" label={tx("edit.btn-lipsync-execute")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-LIPSYNC-MARK" label={tx("edit.btn-lipsync-mark")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-LIPSYNC-RETRY" label={tx("edit.btn-lipsync-retry")} onAct={act} disabled={disabled} />
