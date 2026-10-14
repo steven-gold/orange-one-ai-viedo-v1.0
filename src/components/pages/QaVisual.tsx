@@ -6,6 +6,7 @@ import { useI18n } from "@/i18n/LocaleProvider";
 import { QaClientError, fetchQaReadModel, postQaAction, type QaFieldValue } from "@/lib/client";
 import { displayQaValue } from "./qaFormat";
 import { QA_CONTROL_ACTIONS, QA_VISIBLE_CONTROLS } from "./qaControls";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import styles from "./QaVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -69,14 +70,14 @@ function Btn({
   onAct,
   disabled,
   primary = false,
-  icon = false,
+  icon,
 }: {
   uid: string;
   label: string;
   onAct: (uid: string) => void;
   disabled: boolean;
   primary?: boolean;
-  icon?: boolean;
+  icon?: IconName;
 }) {
   const className = [
     styles.btn,
@@ -84,8 +85,16 @@ function Btn({
     icon ? styles.iconBtn : "",
   ].filter(Boolean).join(" ");
   return (
-    <button type="button" className={className} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
-      {label}
+    <button
+      type="button"
+      className={className}
+      data-control-uid={uid}
+      data-tip={icon ? label : undefined}
+      aria-label={icon ? label : undefined}
+      disabled={disabled}
+      onClick={() => onAct(uid)}
+    >
+      {icon ? <Icon name={icon} /> : label}
     </button>
   );
 }
@@ -316,19 +325,19 @@ export function QaVisual() {
 
   const transport = (
     <div className={styles.transport} data-component-uid="QA-01-CMP-EVIDENCE-CAPTURE">
-      <Btn uid="QA-01-BTN-PREV-FRAME" label="◀" onAct={act} disabled={disabled} icon />
-      <Btn uid="QA-01-BTN-NEXT-FRAME" label="▶" onAct={act} disabled={disabled} icon />
+      <Btn uid="QA-01-BTN-PREV-FRAME" label={tx("qa.btn-prev-frame")} onAct={act} disabled={disabled} icon="prev" />
+      <Btn uid="QA-01-BTN-NEXT-FRAME" label={tx("qa.btn-next-frame")} onAct={act} disabled={disabled} icon="next" />
       <Field uid="QA-01-FLD-CURRENT-TIMECODE" label={tx("qa.fld-current-timecode")} value={v("QA-01-FLD-CURRENT-TIMECODE")} loading={loading} onAct={act} disabled={disabled} className={styles.timecode} />
-      <Btn uid="QA-01-BTN-FINDING-POINT" label={tx("qa.btn-finding-point")} onAct={(uid) => go("FINDING", uid)} disabled={disabled} />
-      <Btn uid="QA-01-BTN-EVIDENCE-IN" label={tx("qa.btn-evidence-in")} onAct={act} disabled={disabled} />
-      <Btn uid="QA-01-BTN-EVIDENCE-OUT" label={tx("qa.btn-evidence-out")} onAct={act} disabled={disabled} />
-      <Btn uid="QA-01-BTN-PLAY" label={tx("qa.btn-play")} onAct={act} disabled={disabled} />
+      <Btn uid="QA-01-BTN-FINDING-POINT" label={tx("qa.btn-finding-point")} onAct={(uid) => go("FINDING", uid)} disabled={disabled} icon="marker" />
+      <Btn uid="QA-01-BTN-EVIDENCE-IN" label={tx("qa.btn-evidence-in")} onAct={act} disabled={disabled} icon="set-in" />
+      <Btn uid="QA-01-BTN-EVIDENCE-OUT" label={tx("qa.btn-evidence-out")} onAct={act} disabled={disabled} icon="set-out" />
+      <Btn uid="QA-01-BTN-PLAY" label={tx("qa.btn-play")} onAct={act} disabled={disabled} icon="play" />
       <button type="button" className={`${styles.field} ${styles.seek}`} data-control-uid="QA-01-CTL-SEEK" disabled={disabled} onClick={() => void act("QA-01-CTL-SEEK")}>
         <span className={styles.label}>{tx("qa.ctl-seek")}</span>
         <span className={styles.value}>{dash}</span>
       </button>
-      <Btn uid="QA-01-BTN-VOLUME" label={tx("qa.btn-volume")} onAct={act} disabled={disabled} />
-      <Btn uid="QA-01-BTN-FULLSCREEN" label={tx("qa.btn-fullscreen")} onAct={act} disabled={disabled} />
+      <Btn uid="QA-01-BTN-VOLUME" label={tx("qa.btn-volume")} onAct={act} disabled={disabled} icon="volume" />
+      <Btn uid="QA-01-BTN-FULLSCREEN" label={tx("qa.btn-fullscreen")} onAct={act} disabled={disabled} icon="fullscreen" />
     </div>
   );
 
