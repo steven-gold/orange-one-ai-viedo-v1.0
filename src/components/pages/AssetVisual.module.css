@@ -28,10 +28,19 @@
 }
 
 .context {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  align-items: end;
+  align-items: stretch;
+}
+
+.context .field {
+  flex: 1 1 0;
+  min-width: 140px;
+}
+
+.context .btn {
+  flex: 0 0 auto;
 }
 
 .field,
@@ -131,6 +140,18 @@
   gap: 12px;
   min-height: 0;
   overflow: auto;
+}
+
+.left > section,
+.center > section,
+.right > section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.right .kv {
+  margin: 0;
 }
 
 .title {
