@@ -57,6 +57,7 @@ function Field({
   onAct,
   disabled,
   readonly = false,
+  readout = false,
 }: {
   uid: string;
   label: string;
@@ -65,10 +66,11 @@ function Field({
   onAct: (uid: string) => void;
   disabled: boolean;
   readonly?: boolean;
+  readout?: boolean;
 }) {
-  if (readonly) {
+  if (readonly || readout) {
     return (
-      <div className={styles.field} data-control-uid={uid}>
+      <div className={styles.field} data-control-uid={readout ? undefined : uid}>
         <span className={styles.label}>{label}</span>
         <span className={styles.value}>{displayEditValue(value, loading)}</span>
       </div>
@@ -249,7 +251,7 @@ export function EditVisual() {
         <aside className={`${styles.panel} ${styles.left}`}>
           <section data-component-uid="EDIT-01-CMP-MEDIA-BIN">
             <h2 className={styles.title}>{tx("edit.media_bin")}</h2>
-            <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.locked_blueprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.locked_blueprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readout />
             <Field uid="EDIT-01-LBL-CURRENT-SCRIPT-SECTION" label={tx("edit.lbl-current-script-section")} value={v("EDIT-01-LBL-CURRENT-SCRIPT-SECTION")} loading={loading} onAct={act} disabled={disabled} readonly />
             <Field uid="EDIT-01-FLD-SOURCE-VERSION" label={tx("edit.fld-source-version")} value={v("EDIT-01-FLD-SOURCE-VERSION")} loading={loading} onAct={act} disabled={disabled} readonly />
             <Field uid="EDIT-01-FLD-VOICE-ASSET" label={tx("edit.fld-voice-asset")} value={v("EDIT-01-FLD-VOICE-ASSET")} loading={loading} onAct={act} disabled={disabled} />
@@ -333,7 +335,6 @@ export function EditVisual() {
 
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-MINI-TIMELINE">
             <div className={styles.toolbar}>
-              <Btn uid="EDIT-01-BTN-SET-IN" label={tx("edit.set_in")} onAct={act} disabled={disabled} />
               <Btn uid="EDIT-01-BTN-MARKER" label={tx("edit.btn-marker")} onAct={act} disabled={disabled} />
               <Btn uid="EDIT-01-CTL-SNAP" label={tx("edit.ctl-snap")} onAct={act} disabled={disabled} primary />
               <Btn uid="EDIT-01-BTN-ZOOM-OUT" label={tx("edit.btn-zoom-out")} onAct={act} disabled={disabled} />
@@ -445,7 +446,7 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-VERSION">
           <h3 className={styles.sub}>{tx("edit.version")}</h3>
-          <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.baseline")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.baseline")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} readout />
           <div className={styles.list} data-control-uid="EDIT-01-LST-VERSION-HISTORY">
             <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-VERSION-HISTORY")}>
               <span>{tx("edit.candidate")}</span>
@@ -463,10 +464,10 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-OUTPUT">
           <h3 className={styles.sub}>{tx("edit.output")}</h3>
-          <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.stage_job")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.stage_job")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} readout />
           <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.lbl-binding-fingerprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readonly />
           <Field uid="EDIT-01-LBL-RENDER-JOB" label={tx("edit.lbl-render-job")} value={v("EDIT-01-LBL-RENDER-JOB")} loading={loading} onAct={act} disabled={disabled} readonly />
-          <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.output_checksum")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.output_checksum")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} readout />
           <div className={styles.list} data-control-uid="EDIT-01-LST-JOB-STATUS">
             <div className={styles.item}>
               <span>{tx("edit.blocking_error")}</span>
