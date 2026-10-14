@@ -21,6 +21,8 @@ const DEFAULT_SESSION = "sess-demo-001";
 
 const EMPTY_INBOUND: EditInbound = {
   ready: false,
+  standalone: false,
+  mode: "PROJECT_TASK",
   project: "",
   topic: "",
   task: "",
@@ -133,6 +135,8 @@ export function EditVisual() {
         setAuthorized(model.authorized);
         const resolved = resolveEditInbound(
           (uid) => video?.fields.find((row) => row.controlUid === uid)?.value ?? null,
+          () => null,
+          (uid) => model.fields.find((row) => row.controlUid === uid)?.value ?? null,
         );
         setInbound(resolved);
         const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
@@ -208,12 +212,13 @@ export function EditVisual() {
     [applyPatch],
   );
 
+  const v = (uid: string) => valueOf(uid);
+  const standalone = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD";
   const inboundReady = inbound.ready;
-  const disabled = !inboundReady;
+  const disabled = !(standalone || inboundReady);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayEditValue(null, loading);
-  const v = (uid: string) => valueOf(uid);
   const modeValue = v("EDIT-01-CTL-EXECUTION-MODE");
   const modeLabel = modeValue === "AUTO" ? tx("edit.auto") : tx("edit.ctl-execution-mode");
   const sourceLabel = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD" ? tx("edit.source_standalone") : tx("edit.source_value");
@@ -230,7 +235,7 @@ export function EditVisual() {
       {error ? <div className={styles.error} role="alert">{tx("edit.error")}</div> : null}
 
       <section className={`${styles.panel} ${styles.source}`} data-component-uid="EDIT-01-CMP-SOURCE-BAR">
-        <Field uid="EDIT-01-CTL-SOURCE-MODE" label={tx("edit.ctl-source-mode")} value={sourceLabel} loading={false} onAct={act} disabled={disabled} />
+        <Field uid="EDIT-01-CTL-SOURCE-MODE" label={tx("edit.ctl-source-mode")} value={sourceLabel} loading={false} onAct={act} disabled={loading || !authorized} />
         <Field uid="EDIT-01-FLD-PROJECT" label={tx("edit.fld-project")} value={v("EDIT-01-FLD-PROJECT")} loading={loading} onAct={act} disabled={disabled} readonly />
         <Field uid="EDIT-01-FLD-TOPIC" label={tx("edit.fld-topic")} value={v("EDIT-01-FLD-TOPIC")} loading={loading} onAct={act} disabled={disabled} readonly />
         <Field uid="EDIT-01-FLD-TASK" label={tx("edit.fld-task")} value={v("EDIT-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
@@ -265,16 +270,16 @@ export function EditVisual() {
             <Btn uid="EDIT-01-CTL-MEDIA-TYPE-FILTER" label={tx("edit.ctl-media-type-filter")} onAct={act} disabled={disabled} />
             <div className={styles.list} data-control-uid="EDIT-01-LST-MEDIA">
               <button type="button" className={`${styles.item} ${styles.itemActive}`} disabled={disabled} onClick={() => void act("EDIT-01-LST-MEDIA")}>
-                <span>{tx("edit.unbound_media")}</span>
-                <span>{dash}</span>
+                <span>{v("EDIT-01-LST-MEDIA") || tx("edit.unbound_media")}</span>
+                <span>{v("EDIT-01-LST-MEDIA") ? tx("edit.session_media") : dash}</span>
               </button>
             </div>
             <Btn uid="EDIT-01-BTN-ADD-MEDIA" label={tx("edit.btn-add-media")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-UPLOAD-SPEC" label={tx("edit.btn-upload-spec")} onAct={act} disabled={disabled} />
             <div className={styles.list} data-control-uid="EDIT-01-LST-IMPORT-QUEUE">
               <div className={styles.item}>
-                <span>{tx("edit.unbound_queue")}</span>
-                <span>{dash}</span>
+                <span>{v("EDIT-01-LST-IMPORT-QUEUE") || tx("edit.unbound_queue")}</span>
+                <span>{v("EDIT-01-LST-IMPORT-QUEUE") ? tx("edit.imported") : dash}</span>
               </div>
             </div>
             <p className={styles.warn}>{tx("edit.asset_picker_forbidden")}</p>

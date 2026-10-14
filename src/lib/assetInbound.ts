@@ -12,6 +12,9 @@ export type AssetInbound = {
   naming: string;
 };
 
+// The ASSET page is unlocked once CORE has a confirmed Project and a Topic.
+// Downstream refs (blueprint / child lock / DNA / canonical script) are resolved
+// independently so exact-ref actions can stay fail-closed without locking the page.
 export function resolveAssetInbound(current: (uid: string) => string | null): AssetInbound {
   const project = exactName(current("CORE-01-CTL-PROJECT"));
   const topic = exactName(current("CORE-01-CTL-TOPIC"));
@@ -24,16 +27,16 @@ export function resolveAssetInbound(current: (uid: string) => string | null): As
   const dna = exactName(current("CORE-01-BTN-DNA-LOCK"));
   const script = exactName(current("CORE-01-BTN-CANONICAL-SCRIPT"));
   const naming = exactName(current("CORE-01-FLD-NAMING-AUTHORITY")) || "ACPOS_SYSTEM";
-  const ready = Boolean(project && confirmed && topic && blueprint && childLock && dna && script);
+  const ready = Boolean(project && confirmed && topic);
   return {
     ready,
-    project: ready ? project : "",
-    topic: ready ? topic : "",
-    task: ready ? `${project} / ${topic}` : "",
-    blueprint: ready ? blueprint : "",
-    childLock: ready ? childLock : "",
-    dna: ready ? dna : "",
-    script: ready ? script : "",
-    naming: ready ? naming : "",
+    project,
+    topic,
+    task: project && topic ? `${project} / ${topic}` : "",
+    blueprint,
+    childLock,
+    dna,
+    script,
+    naming,
   };
 }

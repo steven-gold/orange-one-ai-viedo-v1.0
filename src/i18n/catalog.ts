@@ -555,6 +555,8 @@ const catalog = {
   "edit.unbound_version": { "zh-TW": "未綁定版本", "zh-CN": "未绑定版本", en: "Unbound Version" },
   "edit.unbound_take": { "zh-TW": "未綁定配音", "zh-CN": "未绑定配音", en: "Unbound Take" },
   "edit.unbound_queue": { "zh-TW": "未綁定佇列", "zh-CN": "未绑定伫列", en: "Unbound Queue" },
+  "edit.session_media": { "zh-TW": "工作階段素材", "zh-CN": "工作阶段素材", en: "Session Media" },
+  "edit.imported": { "zh-TW": "已匯入", "zh-CN": "已导入", en: "Imported" },
   "edit.unbound_job": { "zh-TW": "未綁定任務", "zh-CN": "未绑定任务", en: "Unbound Job" },
   "edit.btn-add-media": { "zh-TW": "上傳媒體", "zh-CN": "上传媒体", en: "Add Media" },
   "edit.btn-api-apply": { "zh-TW": "套用草稿", "zh-CN": "套用草稿", en: "Apply Draft" },

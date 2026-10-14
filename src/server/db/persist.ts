@@ -549,14 +549,14 @@ function overlayUpstreamOntoVideo(
   const inbound = resolveVideoInbound((uid) => core.get(uid) ?? null, (uid) => asset.get(uid) ?? null);
   const bound = [inbound.filename, inbound.checksum].filter(Boolean).join(" / ");
   return fields.map((row) => {
-    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project : null };
-    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic : null };
-    if (row.controlUid === "VIDEO-01-FLD-TASK") return { ...row, value: inbound.ready ? inbound.task : null };
+    if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-TASK") return { ...row, value: inbound.ready ? inbound.task || null : null };
     if (row.controlUid === "VIDEO-01-FLD-STATUS") return { ...row, value: inbound.ready ? row.value : null };
-    if (row.controlUid === "VIDEO-01-FLD-BLUEPRINT-REF") return { ...row, value: inbound.ready ? inbound.blueprint : null };
-    if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: inbound.ready ? inbound.dna : null };
-    if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script : null };
-    if (row.controlUid === "VIDEO-01-FLD-ASSET-REFS") return { ...row, value: inbound.ready ? inbound.assetVersion : null };
+    if (row.controlUid === "VIDEO-01-FLD-BLUEPRINT-REF") return { ...row, value: inbound.ready ? inbound.blueprint || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: inbound.ready ? inbound.dna || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-ASSET-REFS") return { ...row, value: inbound.ready ? inbound.assetVersion || null : null };
     if (row.controlUid === "VIDEO-01-FLD-FILENAME-CHECKSUM") return { ...row, value: inbound.ready ? bound || null : null };
     if (row.controlUid === "VIDEO-01-FLD-RIGHTS") return { ...row, value: inbound.ready ? inbound.rights || null : null };
     if (row.controlUid === "VIDEO-01-FLD-INSTRUCTION") return { ...row, value: inbound.ready ? inbound.instruction || null : null };
@@ -638,11 +638,14 @@ function overlayUpstreamOntoEdit(
   const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
   const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
   const video = new Map(videoFields.map((row) => [row.controlUid, row.value]));
+  const edit = new Map(fields.map((row) => [row.controlUid, row.value]));
   const coreCurrent = (uid: string) => core.get(uid) ?? null;
   const inbound = resolveEditInbound(
     effectiveVideoCurrent(coreCurrent, (uid) => asset.get(uid) ?? null, (uid) => video.get(uid) ?? null),
     coreCurrent,
+    (uid) => edit.get(uid) ?? null,
   );
+  const pageReady = inbound.ready || inbound.standalone;
   const STAGE_FIELDS = new Set([
     "EDIT-01-LBL-PAGE-STATE",
     "EDIT-01-LBL-PENDING-TASK",
@@ -659,13 +662,13 @@ function overlayUpstreamOntoEdit(
     "EDIT-01-BTN-HANDOFF-2",
   ]);
   return fields.map((row) => {
-    if (row.controlUid === "EDIT-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project : null };
-    if (row.controlUid === "EDIT-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic : null };
-    if (row.controlUid === "EDIT-01-FLD-TASK") return { ...row, value: inbound.ready ? inbound.task : null };
-    if (row.controlUid === "EDIT-01-FLD-SOURCE-VERSION") return { ...row, value: inbound.ready ? inbound.sourceVersion : null };
-    if (row.controlUid === "EDIT-01-LBL-BINDING-FINGERPRINT") return { ...row, value: inbound.ready ? inbound.handoffContract : null };
-    if (row.controlUid === "EDIT-01-LBL-CURRENT-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script : null };
-    if (STAGE_FIELDS.has(row.controlUid)) return { ...row, value: inbound.ready ? row.value : null };
+    if (row.controlUid === "EDIT-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project || null : null };
+    if (row.controlUid === "EDIT-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic || null : null };
+    if (row.controlUid === "EDIT-01-FLD-TASK") return { ...row, value: inbound.ready ? inbound.task || null : null };
+    if (row.controlUid === "EDIT-01-FLD-SOURCE-VERSION") return { ...row, value: inbound.ready ? inbound.sourceVersion || null : null };
+    if (row.controlUid === "EDIT-01-LBL-BINDING-FINGERPRINT") return { ...row, value: inbound.ready ? inbound.handoffContract || null : null };
+    if (row.controlUid === "EDIT-01-LBL-CURRENT-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script || null : null };
+    if (STAGE_FIELDS.has(row.controlUid)) return { ...row, value: pageReady ? row.value : null };
     return row;
   });
 }

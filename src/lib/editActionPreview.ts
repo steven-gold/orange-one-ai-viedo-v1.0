@@ -21,6 +21,20 @@ function inboundReady(current: (uid: string) => string | null): boolean {
   );
 }
 
+function isStandalone(current: (uid: string) => string | null): boolean {
+  return current("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD";
+}
+
+// STANDALONE_UPLOAD keeps Project/Topic/Task hidden and never claims Blueprint/DNA.
+// The workspace becomes usable once an owner session import lands in the queue.
+function standaloneReady(current: (uid: string) => string | null): boolean {
+  return Boolean(named(current("EDIT-01-LST-IMPORT-QUEUE")));
+}
+
+function sourceReady(current: (uid: string) => string | null): boolean {
+  return isStandalone(current) ? standaloneReady(current) : inboundReady(current);
+}
+
 const READONLY_ACTIONS = new Set([
   "EDIT-01-ACT-CONTEXT-PROJECT-SET",
   "EDIT-01-ACT-CONTEXT-TOPIC-SET",
@@ -159,7 +173,8 @@ export function previewEditAction(
   current: (uid: string) => string | null,
   nextValue?: string,
 ): Record<string, string> {
-  const ready = inboundReady(current);
+  const standalone = isStandalone(current);
+  const ready = sourceReady(current);
 
   if (READONLY_ACTIONS.has(actionUid)) {
     return {};
@@ -179,6 +194,19 @@ export function previewEditAction(
   }
   if (actionUid === "EDIT-01-ACT-LOOP-TOGGLE") {
     return { "EDIT-01-CTL-LOOP": toggle(current("EDIT-01-CTL-LOOP"), "active", "idle") };
+  }
+
+  // Standalone import opens the owner session source; it is reachable before the
+  // workspace is ready. In PROJECT_TASK mode the media bin only binds exact refs.
+  if (actionUid === "EDIT-01-ACT-MEDIA-IMPORT" || actionUid === "EDIT-01-ACT-STANDALONE-SPEC-IMPORT") {
+    if (!standalone) return {};
+    const media = actionUid === "EDIT-01-ACT-MEDIA-IMPORT";
+    return {
+      "EDIT-01-LST-IMPORT-QUEUE": namedValue(nextValue, media ? "session-media" : "session-spec"),
+      "EDIT-01-LST-MEDIA": keep(undefined, current("EDIT-01-LST-MEDIA"), "session-media"),
+      "EDIT-01-BTN-ADD-MEDIA": keep(undefined, current("EDIT-01-BTN-ADD-MEDIA"), "imported"),
+      "EDIT-01-LBL-CURRENT-STAGE": keep(undefined, current("EDIT-01-LBL-CURRENT-STAGE"), "STAGE 01 · ASSEMBLY"),
+    };
   }
 
   if (!ready) return {};

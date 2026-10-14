@@ -18,6 +18,8 @@ export type VideoInbound = {
   naming: string;
 };
 
+// The VIDEO page is unlocked by the same Project + Topic context as ASSET.
+// Asset handoff refs are resolved independently and stay fail-closed per action.
 export function resolveVideoInbound(
   coreCurrent: (uid: string) => string | null,
   assetCurrent: (uid: string) => string | null,
@@ -25,8 +27,6 @@ export function resolveVideoInbound(
   const core = resolveAssetInbound(coreCurrent);
   const assetVersion =
     exactName(assetCurrent("ASSET-01-FLD-HANDOFF-ASSET-VERSION")) || exactName(assetCurrent("ASSET-01-FLD-MANIFEST"));
-  const handoffSent =
-    assetCurrent("ASSET-01-BTN-HANDOFF") === "sent" || assetCurrent("ASSET-01-BTN-LOCK") === "locked";
   const filename =
     exactName(assetCurrent("ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME")) ||
     exactName(assetCurrent("ASSET-01-FLD-CANONICAL-FILENAME"));
@@ -34,28 +34,21 @@ export function resolveVideoInbound(
     exactName(assetCurrent("ASSET-01-FLD-HANDOFF-CHECKSUM")) || exactName(assetCurrent("ASSET-01-FLD-CHECKSUM"));
   const instruction = exactName(assetCurrent("ASSET-01-FLD-HANDOFF-CONTRACT-HASH"));
   const rights = exactName(assetCurrent("ASSET-01-FLD-HANDOFF-RIGHTS")) || exactName(assetCurrent("ASSET-01-FLD-RIGHTS"));
-  const ready =
-    core.ready &&
-    Boolean(assetVersion) &&
-    handoffSent &&
-    Boolean(core.blueprint) &&
-    Boolean(core.dna) &&
-    Boolean(core.script);
-  const task = ready && core.project && core.topic ? `${core.project} / ${core.topic}` : "";
+  const ready = core.ready;
   return {
     ready,
-    project: ready ? core.project : "",
-    topic: ready ? core.topic : "",
-    task,
-    blueprint: ready ? core.blueprint : "",
-    childLock: ready ? core.childLock : "",
-    dna: ready ? core.dna : "",
-    script: ready ? core.script : "",
-    assetVersion: ready ? assetVersion : "",
-    filename: ready ? filename : "",
-    checksum: ready ? checksum : "",
-    instruction: ready ? instruction : "",
-    rights: ready ? rights : "",
-    naming: ready ? core.naming : "",
+    project: core.project,
+    topic: core.topic,
+    task: core.project && core.topic ? `${core.project} / ${core.topic}` : "",
+    blueprint: core.blueprint,
+    childLock: core.childLock,
+    dna: core.dna,
+    script: core.script,
+    assetVersion,
+    filename,
+    checksum,
+    instruction,
+    rights,
+    naming: core.naming,
   };
 }

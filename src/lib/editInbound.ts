@@ -3,6 +3,8 @@ import { resolveVideoInbound } from "./videoInbound";
 
 export type EditInbound = {
   ready: boolean;
+  standalone: boolean;
+  mode: string;
   project: string;
   topic: string;
   task: string;
@@ -46,9 +48,13 @@ export function effectiveVideoCurrent(
   };
 }
 
+// EDIT unlocks on the same Project + Topic context as ASSET/VIDEO when in
+// PROJECT_TASK mode. STANDALONE_UPLOAD is a first-class Source Mode that needs no
+// Project/Topic and never claims Blueprint/DNA (owner session media / uploaded spec).
 export function resolveEditInbound(
   videoCurrent: (uid: string) => string | null,
   coreCurrent: (uid: string) => string | null = () => null,
+  editCurrent: (uid: string) => string | null = () => null,
 ): EditInbound {
   const project = exactName(videoCurrent("VIDEO-01-FLD-PROJECT"));
   const topic = exactName(videoCurrent("VIDEO-01-FLD-TOPIC"));
@@ -56,27 +62,28 @@ export function resolveEditInbound(
   const dna = exactName(videoCurrent("VIDEO-01-FLD-DNA-REFS"));
   const script = exactName(videoCurrent("VIDEO-01-FLD-SCRIPT-SECTION"));
   const mediaRefs = exactName(videoCurrent("VIDEO-01-FLD-ASSET-REFS"));
-  const handoffSent =
-    videoCurrent("VIDEO-01-BTN-HANDOFF") === "sent" || videoCurrent("VIDEO-01-BTN-LOCK") === "locked";
   const videoVersion =
     exactName(videoCurrent("VIDEO-01-FLD-VIDEO-VERSION")) ||
     exactName(coreCurrent("CORE-01-FLD-DOWNSTREAM-VIDEO"));
   const handoffContract = exactName(videoCurrent("VIDEO-01-FLD-HANDOFF-CONTRACT")) || videoVersion;
-  const ready =
-    Boolean(project && topic && blueprint && dna && script) && handoffSent && Boolean(videoVersion);
+  const mode = exactName(editCurrent("EDIT-01-CTL-SOURCE-MODE")) || "PROJECT_TASK";
+  const standalone = mode === "STANDALONE_UPLOAD";
+  const ready = Boolean(project && topic);
   return {
     ready,
-    project: ready ? project : "",
-    topic: ready ? topic : "",
-    task: ready && project && topic ? `${project} / ${topic}` : "",
-    blueprint: ready ? blueprint : "",
+    standalone,
+    mode,
+    project,
+    topic,
+    task: project && topic ? `${project} / ${topic}` : "",
+    blueprint,
     childLock: "",
-    dna: ready ? dna : "",
-    script: ready ? script : "",
+    dna,
+    script,
     naming: "",
-    videoVersion: ready ? videoVersion : "",
-    handoffContract: ready ? handoffContract : "",
-    sourceVersion: ready ? videoVersion : "",
-    mediaRefs: ready ? mediaRefs : "",
+    videoVersion,
+    handoffContract,
+    sourceVersion: videoVersion,
+    mediaRefs,
   };
 }

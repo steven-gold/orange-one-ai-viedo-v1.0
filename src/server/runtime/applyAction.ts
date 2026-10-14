@@ -92,6 +92,10 @@ async function readField(table: string, controlUid: string): Promise<string | nu
   return value === "" ? null : (value ?? null);
 }
 
+function compact(seed: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(Object.entries(seed).filter(([, value]) => Boolean(value)));
+}
+
 async function writeField(table: string, controlUid: string, value: string): Promise<void> {
   await getSqlClient().run(
     `INSERT INTO ${table} (control_uid, value_text)
@@ -142,17 +146,15 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
     );
     const inbound = resolveAssetInbound((uid) => coreByUid.get(uid) ?? null);
-    const seed: Record<string, string> = inbound.ready
-      ? {
-          "ASSET-01-CTL-PROJECT": inbound.project,
-          "ASSET-01-CTL-TOPIC": inbound.topic,
-          "ASSET-01-FLD-TASK": inbound.task,
-          "ASSET-01-FLD-BLUEPRINT": inbound.blueprint,
-          "ASSET-01-FLD-DNA": inbound.dna,
-          "ASSET-01-FLD-SCRIPT": inbound.script,
-          "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
-        }
-      : {};
+    const seed: Record<string, string> = compact({
+      "ASSET-01-CTL-PROJECT": inbound.project,
+      "ASSET-01-CTL-TOPIC": inbound.topic,
+      "ASSET-01-FLD-TASK": inbound.task,
+      "ASSET-01-FLD-BLUEPRINT": inbound.blueprint,
+      "ASSET-01-FLD-DNA": inbound.dna,
+      "ASSET-01-FLD-SCRIPT": inbound.script,
+      "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
+    });
     await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
@@ -175,7 +177,7 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       assetRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
     );
     const inbound = resolveVideoInbound((uid) => coreByUid.get(uid) ?? null, (uid) => assetByUid.get(uid) ?? null);
-    const seed: Record<string, string> = {
+    const seed: Record<string, string> = compact({
       "VIDEO-01-FLD-PROJECT": inbound.project,
       "VIDEO-01-FLD-TOPIC": inbound.topic,
       "VIDEO-01-FLD-TASK": inbound.task,
@@ -186,7 +188,7 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       "VIDEO-01-FLD-FILENAME-CHECKSUM": [inbound.filename, inbound.checksum].filter(Boolean).join(" / "),
       "VIDEO-01-FLD-RIGHTS": inbound.rights,
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
-    };
+    });
     await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
     if (actionUid === "VIDEO-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");
@@ -219,14 +221,14 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       effectiveVideoCurrent(coreCurrent, (uid) => assetByUid.get(uid) ?? null, (uid) => videoByUid.get(uid) ?? null),
       coreCurrent,
     );
-    const seed: Record<string, string> = {
+    const seed: Record<string, string> = compact({
       "EDIT-01-FLD-PROJECT": inbound.project,
       "EDIT-01-FLD-TOPIC": inbound.topic,
       "EDIT-01-FLD-TASK": inbound.task,
       "EDIT-01-FLD-SOURCE-VERSION": inbound.sourceVersion,
       "EDIT-01-LBL-BINDING-FINGERPRINT": inbound.handoffContract,
       "EDIT-01-LBL-CURRENT-SCRIPT-SECTION": inbound.script,
-    };
+    });
     await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
     if (actionUid === "EDIT-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");
