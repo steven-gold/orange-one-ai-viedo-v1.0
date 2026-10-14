@@ -35,12 +35,23 @@
 }
 
 .context {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: stretch;
   min-height: 72px;
   min-width: 0;
+}
+
+.context .field {
+  flex: 1 1 0;
+  min-width: 140px;
+}
+
+.context .btn {
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 40px;
 }
 
 .field,
