@@ -1,15 +1,43 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { EditClientError, fetchEditReadModel, postEditAction, type EditFieldValue } from "@/lib/client";
+import {
+  EditClientError,
+  fetchEditReadModel,
+  fetchVideoReadModel,
+  postEditAction,
+  type EditFieldValue,
+} from "@/lib/client";
+import { resolveEditInbound, type EditInbound } from "@/lib/editInbound";
+import { previewEditAction } from "@/lib/editActionPreview";
 import { displayEditValue } from "./editFormat";
 import { EDIT_CONTROL_ACTIONS, EDIT_VISIBLE_CONTROLS } from "./editControls";
 import styles from "./EditVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+
+const EMPTY_INBOUND: EditInbound = {
+  ready: false,
+  project: "",
+  topic: "",
+  task: "",
+  blueprint: "",
+  childLock: "",
+  dna: "",
+  script: "",
+  naming: "",
+  videoVersion: "",
+  handoffContract: "",
+  sourceVersion: "",
+  mediaRefs: "",
+};
+
+function emptyFields(): EditFieldValue[] {
+  return EDIT_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+}
 
 const TRACKS = [
   { id: "V1", labelKey: "edit.track_video" as const, clip: "clipV1" },
@@ -28,6 +56,7 @@ function Field({
   loading,
   onAct,
   disabled,
+  readonly = false,
 }: {
   uid: string;
   label: string;
@@ -35,7 +64,16 @@ function Field({
   loading: boolean;
   onAct: (uid: string) => void;
   disabled: boolean;
+  readonly?: boolean;
 }) {
+  if (readonly) {
+    return (
+      <div className={styles.field} data-control-uid={uid}>
+        <span className={styles.label}>{label}</span>
+        <span className={styles.value}>{displayEditValue(value, loading)}</span>
+      </div>
+    );
+  }
   return (
     <button type="button" className={styles.field} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
       <span className={styles.label}>{label}</span>
@@ -74,20 +112,44 @@ function Btn({
 export function EditVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
-  const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [authorized, setAuthorized] = useState(false);
-  const [fields, setFields] = useState<EditFieldValue[]>([]);
+  const [authorized, setAuthorized] = useState(true);
+  const [fields, setFields] = useState<EditFieldValue[]>(emptyFields);
+  const [inbound, setInbound] = useState<EditInbound>(EMPTY_INBOUND);
+  const fieldsRef = useRef(fields);
+  fieldsRef.current = fields;
 
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    if (tick === 0) setLoading(true);
-    fetchEditReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal)
-      .then((model) => {
+    Promise.all([
+      fetchEditReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal),
+      fetchVideoReadModel(DEFAULT_ACCOUNT, DEFAULT_SESSION, controller.signal).catch(() => null),
+    ])
+      .then(([model, video]) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
-        setFields(model.fields.length ? model.fields : EDIT_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        const resolved = resolveEditInbound(
+          (uid) => video?.fields.find((row) => row.controlUid === uid)?.value ?? null,
+        );
+        setInbound(resolved);
+        const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
+        for (const row of model.fields) {
+          if (row.value != null && row.value !== "") map.set(row.controlUid, row.value);
+        }
+        if (resolved.ready) {
+          map.set("EDIT-01-FLD-PROJECT", resolved.project);
+          map.set("EDIT-01-FLD-TOPIC", resolved.topic);
+          map.set("EDIT-01-FLD-TASK", resolved.task);
+          map.set("EDIT-01-FLD-SOURCE-VERSION", resolved.sourceVersion);
+          map.set("EDIT-01-LBL-BINDING-FINGERPRINT", resolved.handoffContract);
+        }
+        setFields(
+          EDIT_VISIBLE_CONTROLS.map((controlUid) => ({
+            controlUid,
+            value: map.get(controlUid) ?? null,
+          })),
+        );
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -95,7 +157,8 @@ export function EditVisual() {
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setError(cause instanceof EditClientError ? cause.code : "EDIT_READ_UNAVAILABLE");
         setAuthorized(false);
-        setFields(EDIT_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        setInbound(EMPTY_INBOUND);
+        setFields(emptyFields());
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -104,29 +167,54 @@ export function EditVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, [tick]);
+  }, []);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
     [fields],
   );
 
-  const act = useCallback(async (controlUid: string) => {
-    const actionUid = EDIT_CONTROL_ACTIONS[controlUid];
-    if (!actionUid) return;
-    try {
-      await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
-    } catch {
-      // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
-    }
-    setTick((n) => n + 1);
+  const applyPatch = useCallback((patch: Record<string, string>) => {
+    setFields((prev) => {
+      const map = new Map(prev.map((row) => [row.controlUid, row.value]));
+      for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
+      return EDIT_VISIBLE_CONTROLS.map((controlUid) => ({
+        controlUid,
+        value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
+      }));
+    });
   }, []);
 
-  const disabled = !authorized && !loading;
+  const act = useCallback(
+    async (controlUid: string, nextValue?: string) => {
+      const actionUid = EDIT_CONTROL_ACTIONS[controlUid];
+      if (!actionUid) return;
+      const patch = previewEditAction(
+        controlUid,
+        actionUid,
+        (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
+        nextValue,
+      );
+      if (!Object.keys(patch).length) return;
+      applyPatch(patch);
+      try {
+        await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      } catch {
+        // Optimistic projection stays visible when the write path is unbound.
+      }
+    },
+    [applyPatch],
+  );
+
+  const inboundReady = inbound.ready;
+  const disabled = !inboundReady;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayEditValue(null, loading);
   const v = (uid: string) => valueOf(uid);
+  const modeValue = v("EDIT-01-CTL-EXECUTION-MODE");
+  const modeLabel = modeValue === "AUTO" ? tx("edit.auto") : tx("edit.ctl-execution-mode");
+  const sourceLabel = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD" ? tx("edit.source_standalone") : tx("edit.source_value");
 
   return (
     <div
@@ -140,15 +228,15 @@ export function EditVisual() {
       {error ? <div className={styles.error} role="alert">{tx("edit.error")}</div> : null}
 
       <section className={`${styles.panel} ${styles.source}`} data-component-uid="EDIT-01-CMP-SOURCE-BAR">
-        <Field uid="EDIT-01-CTL-SOURCE-MODE" label={tx("edit.ctl-source-mode")} value={tx("edit.source_value")} loading={false} onAct={act} disabled={disabled} />
-        <Field uid="EDIT-01-FLD-PROJECT" label={tx("edit.fld-project")} value={v("EDIT-01-FLD-PROJECT")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="EDIT-01-FLD-TOPIC" label={tx("edit.fld-topic")} value={v("EDIT-01-FLD-TOPIC")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="EDIT-01-FLD-TASK" label={tx("edit.fld-task")} value={v("EDIT-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} />
-        <Field uid="EDIT-01-LBL-CURRENT-STAGE" label={tx("edit.lbl-current-stage")} value={tx("edit.stage_assembly")} loading={false} onAct={act} disabled={disabled} />
-        <Field uid="EDIT-01-LBL-PENDING-TASK" label={tx("edit.lbl-pending-task")} value={v("EDIT-01-LBL-PENDING-TASK")} loading={loading} onAct={act} disabled={disabled} />
+        <Field uid="EDIT-01-CTL-SOURCE-MODE" label={tx("edit.ctl-source-mode")} value={sourceLabel} loading={false} onAct={act} disabled={disabled} />
+        <Field uid="EDIT-01-FLD-PROJECT" label={tx("edit.fld-project")} value={v("EDIT-01-FLD-PROJECT")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="EDIT-01-FLD-TOPIC" label={tx("edit.fld-topic")} value={v("EDIT-01-FLD-TOPIC")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="EDIT-01-FLD-TASK" label={tx("edit.fld-task")} value={v("EDIT-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="EDIT-01-LBL-CURRENT-STAGE" label={tx("edit.lbl-current-stage")} value={v("EDIT-01-LBL-CURRENT-STAGE") || tx("edit.stage_assembly")} loading={loading} onAct={act} disabled={disabled} readonly />
+        <Field uid="EDIT-01-LBL-PENDING-TASK" label={tx("edit.lbl-pending-task")} value={v("EDIT-01-LBL-PENDING-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
         <div className={styles.modePair}>
           <button type="button" className={styles.btn} disabled={disabled} onClick={() => void act("EDIT-01-CTL-EXECUTION-MODE")}>{tx("edit.auto")}</button>
-          <Btn uid="EDIT-01-CTL-EXECUTION-MODE" label={tx("edit.ctl-execution-mode")} onAct={act} disabled={disabled} primary />
+          <Btn uid="EDIT-01-CTL-EXECUTION-MODE" label={modeLabel} onAct={act} disabled={disabled} primary />
         </div>
         <Btn uid="EDIT-01-BTN-FLOW-START" label={tx("edit.btn-flow-start")} onAct={act} disabled={disabled} primary />
         <Btn uid="EDIT-01-BTN-BLUEPRINT-VIEW" label={tx("edit.btn-blueprint-view")} onAct={act} disabled={disabled} />
@@ -161,13 +249,13 @@ export function EditVisual() {
         <aside className={`${styles.panel} ${styles.left}`}>
           <section data-component-uid="EDIT-01-CMP-MEDIA-BIN">
             <h2 className={styles.title}>{tx("edit.media_bin")}</h2>
-            <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.locked_blueprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="EDIT-01-LBL-CURRENT-SCRIPT-SECTION" label={tx("edit.lbl-current-script-section")} value={v("EDIT-01-LBL-CURRENT-SCRIPT-SECTION")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="EDIT-01-FLD-SOURCE-VERSION" label={tx("edit.fld-source-version")} value={v("EDIT-01-FLD-SOURCE-VERSION")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.locked_blueprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="EDIT-01-LBL-CURRENT-SCRIPT-SECTION" label={tx("edit.lbl-current-script-section")} value={v("EDIT-01-LBL-CURRENT-SCRIPT-SECTION")} loading={loading} onAct={act} disabled={disabled} readonly />
+            <Field uid="EDIT-01-FLD-SOURCE-VERSION" label={tx("edit.fld-source-version")} value={v("EDIT-01-FLD-SOURCE-VERSION")} loading={loading} onAct={act} disabled={disabled} readonly />
             <Field uid="EDIT-01-FLD-VOICE-ASSET" label={tx("edit.fld-voice-asset")} value={v("EDIT-01-FLD-VOICE-ASSET")} loading={loading} onAct={act} disabled={disabled} />
             <Field uid="EDIT-01-FLD-MUSIC-ASSET" label={tx("edit.fld-music-asset")} value={v("EDIT-01-FLD-MUSIC-ASSET")} loading={loading} onAct={act} disabled={disabled} />
             <Field uid="EDIT-01-FLD-SFX-ASSET" label={tx("edit.fld-sfx-asset")} value={v("EDIT-01-FLD-SFX-ASSET")} loading={loading} onAct={act} disabled={disabled} />
-            <Field uid="EDIT-01-LBL-SUB-SYNC-BINDING" label={tx("edit.subtitle_binding")} value={v("EDIT-01-LBL-SUB-SYNC-BINDING")} loading={loading} onAct={act} disabled={disabled} />
+            <Field uid="EDIT-01-LBL-SUB-SYNC-BINDING" label={tx("edit.subtitle_binding")} value={v("EDIT-01-LBL-SUB-SYNC-BINDING")} loading={loading} onAct={act} disabled={disabled} readonly />
             <label className={styles.search}>
               <span className={styles.label}>{tx("edit.fld-media-search")}</span>
               <input data-control-uid="EDIT-01-FLD-MEDIA-SEARCH" disabled={disabled} placeholder={tx("edit.fld-media-search")} defaultValue="" onBlur={() => void act("EDIT-01-FLD-MEDIA-SEARCH")} />
@@ -182,10 +270,10 @@ export function EditVisual() {
             <Btn uid="EDIT-01-BTN-ADD-MEDIA" label={tx("edit.btn-add-media")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-UPLOAD-SPEC" label={tx("edit.btn-upload-spec")} onAct={act} disabled={disabled} />
             <div className={styles.list} data-control-uid="EDIT-01-LST-IMPORT-QUEUE">
-              <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-IMPORT-QUEUE")}>
+              <div className={styles.item}>
                 <span>{tx("edit.unbound_queue")}</span>
                 <span>{dash}</span>
-              </button>
+              </div>
             </div>
             <p className={styles.warn}>{tx("edit.asset_picker_forbidden")}</p>
             <p className={styles.note}>{tx("edit.grid_note")}</p>
@@ -312,7 +400,7 @@ export function EditVisual() {
           </label>
           <Field uid="EDIT-01-FLD-API-MODEL" label={tx("edit.fld-api-model")} value={v("EDIT-01-FLD-API-MODEL")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-API-PROVIDER" label={tx("edit.fld-api-provider")} value={v("EDIT-01-FLD-API-PROVIDER")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-LBL-API-JOB" label={tx("edit.lbl-api-job")} value={v("EDIT-01-LBL-API-JOB")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-API-JOB" label={tx("edit.lbl-api-job")} value={v("EDIT-01-LBL-API-JOB")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.previewSm} data-control-uid="EDIT-01-PNL-API-CANDIDATE">{dash}</div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-CORR-GENERATE" label={tx("edit.btn-corr-generate")} onAct={act} disabled={disabled} />
@@ -327,9 +415,9 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-MICRO-ADJUSTMENT">
           <h3 className={styles.sub}>{tx("edit.micro_adjustment")}</h3>
-          <Field uid="EDIT-01-FLD-CLIP-ID" label={tx("edit.range_clip_track")} value={v("EDIT-01-FLD-CLIP-ID")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-FLD-CLIP-DURATION" label={tx("edit.drag_move")} value={v("EDIT-01-FLD-CLIP-DURATION")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-FLD-TRACK-ID" label={tx("edit.frame_nudge")} value={v("EDIT-01-FLD-TRACK-ID")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-FLD-CLIP-ID" label={tx("edit.range_clip_track")} value={v("EDIT-01-FLD-CLIP-ID")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-CLIP-DURATION" label={tx("edit.drag_move")} value={v("EDIT-01-FLD-CLIP-DURATION")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-TRACK-ID" label={tx("edit.frame_nudge")} value={v("EDIT-01-FLD-TRACK-ID")} loading={loading} onAct={act} disabled={disabled} readonly />
           <Field uid="EDIT-01-FLD-INSPECTOR-VOLUME" label={tx("edit.volume_fade")} value={v("EDIT-01-FLD-INSPECTOR-VOLUME")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-SUB-TIMECODE" label={tx("edit.subtitle_offset")} value={v("EDIT-01-FLD-SUB-TIMECODE")} loading={loading} onAct={act} disabled={disabled} />
         </section>
@@ -357,14 +445,14 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-VERSION">
           <h3 className={styles.sub}>{tx("edit.version")}</h3>
-          <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.baseline")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.baseline")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.list} data-control-uid="EDIT-01-LST-VERSION-HISTORY">
             <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-VERSION-HISTORY")}>
               <span>{tx("edit.candidate")}</span>
               <span>{dash}</span>
             </button>
           </div>
-          <Field uid="EDIT-01-LBL-STAGE-SCORE" label={tx("edit.score")} value={v("EDIT-01-LBL-STAGE-SCORE")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-STAGE-SCORE" label={tx("edit.score")} value={v("EDIT-01-LBL-STAGE-SCORE")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-VERSION-SAVE" label={tx("edit.btn-version-save")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-VERSION-RESTORE" label={tx("edit.btn-version-restore")} onAct={act} disabled={disabled} />
@@ -375,15 +463,15 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-OUTPUT">
           <h3 className={styles.sub}>{tx("edit.output")}</h3>
-          <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.stage_job")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.lbl-binding-fingerprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-LBL-RENDER-JOB" label={tx("edit.lbl-render-job")} value={v("EDIT-01-LBL-RENDER-JOB")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.output_checksum")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.stage_job")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.lbl-binding-fingerprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-RENDER-JOB" label={tx("edit.lbl-render-job")} value={v("EDIT-01-LBL-RENDER-JOB")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.output_checksum")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.list} data-control-uid="EDIT-01-LST-JOB-STATUS">
-            <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-JOB-STATUS")}>
+            <div className={styles.item}>
               <span>{tx("edit.blocking_error")}</span>
               <span>{dash}</span>
-            </button>
+            </div>
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-RENDER-SETTINGS" label={tx("edit.btn-render-settings")} onAct={act} disabled={disabled} />
@@ -403,10 +491,10 @@ export function EditVisual() {
           <Field uid="EDIT-01-FLD-VOICE-PROVIDER" label={tx("edit.fld-voice-provider")} value={v("EDIT-01-FLD-VOICE-PROVIDER")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-VOICE-SCRIPT" label={tx("edit.fld-voice-script")} value={v("EDIT-01-FLD-VOICE-SCRIPT")} loading={loading} onAct={act} disabled={disabled} />
           <div className={styles.list} data-control-uid="EDIT-01-LST-VOICE-TAKES">
-            <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-VOICE-TAKES")}>
+            <div className={styles.item}>
               <span>{tx("edit.unbound_take")}</span>
               <span>{dash}</span>
-            </button>
+            </div>
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-VOICE-GENERATE" label={tx("edit.btn-voice-generate")} onAct={act} disabled={disabled} primary />
@@ -497,19 +585,19 @@ export function EditVisual() {
       <div className={styles.lower}>
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-DIALOGUE-BINDING">
           <h3 className={styles.sub}>{tx("edit.dialogue_binding")}</h3>
-          <Field uid="EDIT-01-LBL-LIPSYNC-SYNC-BINDING" label={tx("edit.lbl-lipsync-sync-binding")} value={v("EDIT-01-LBL-LIPSYNC-SYNC-BINDING")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-LIPSYNC-SYNC-BINDING" label={tx("edit.lbl-lipsync-sync-binding")} value={v("EDIT-01-LBL-LIPSYNC-SYNC-BINDING")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.dialogueCard}>
             <p className={styles.warn}>{tx("edit.dialogue_warn")}</p>
           </div>
         </section>
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-STAGE-EVALUATION">
           <h3 className={styles.sub}>{tx("edit.stage_evaluation")}</h3>
-          <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.lbl-eval-summary")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.lbl-eval-summary")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} readonly />
         </section>
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-STATUS">
           <h3 className={styles.sub}>{tx("edit.status")}</h3>
-          <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.lbl-page-state")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.lbl-error-state")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.lbl-page-state")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.lbl-error-state")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} readonly />
         </section>
       </div>
     </div>

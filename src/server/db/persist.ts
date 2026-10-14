@@ -1,6 +1,7 @@
 import { seedScope } from "./seed";
 import { applyWorkbenchAction } from "../runtime/applyAction";
 import { resolveAssetInbound } from "@/lib/assetInbound";
+import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
@@ -628,9 +629,57 @@ export async function persistListEditFields(): Promise<EditFieldValue[]> {
   }));
 }
 
+function overlayUpstreamOntoEdit(
+  fields: EditFieldValue[],
+  coreFields: CoreFieldValue[],
+  assetFields: AssetFieldValue[],
+  videoFields: VideoFieldValue[],
+): EditFieldValue[] {
+  const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
+  const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
+  const video = new Map(videoFields.map((row) => [row.controlUid, row.value]));
+  const coreCurrent = (uid: string) => core.get(uid) ?? null;
+  const inbound = resolveEditInbound(
+    effectiveVideoCurrent(coreCurrent, (uid) => asset.get(uid) ?? null, (uid) => video.get(uid) ?? null),
+    coreCurrent,
+  );
+  const STAGE_FIELDS = new Set([
+    "EDIT-01-LBL-PAGE-STATE",
+    "EDIT-01-LBL-PENDING-TASK",
+    "EDIT-01-LBL-STAGE-SCORE",
+    "EDIT-01-LBL-EVAL-SUMMARY",
+    "EDIT-01-LBL-RENDER-JOB",
+    "EDIT-01-LBL-ERROR-STATE",
+    "EDIT-01-BTN-FLOW-START",
+    "EDIT-01-BTN-STAGE-CONFIRM",
+    "EDIT-01-BTN-VERSION-SAVE",
+    "EDIT-01-BTN-VERSION-LOCK",
+    "EDIT-01-BTN-RENDER-EXECUTE",
+    "EDIT-01-BTN-OUTPUT-SAVE",
+    "EDIT-01-BTN-HANDOFF-2",
+  ]);
+  return fields.map((row) => {
+    if (row.controlUid === "EDIT-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project : null };
+    if (row.controlUid === "EDIT-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic : null };
+    if (row.controlUid === "EDIT-01-FLD-TASK") return { ...row, value: inbound.ready ? inbound.task : null };
+    if (row.controlUid === "EDIT-01-FLD-SOURCE-VERSION") return { ...row, value: inbound.ready ? inbound.sourceVersion : null };
+    if (row.controlUid === "EDIT-01-LBL-BINDING-FINGERPRINT") return { ...row, value: inbound.ready ? inbound.handoffContract : null };
+    if (row.controlUid === "EDIT-01-LBL-CURRENT-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script : null };
+    if (STAGE_FIELDS.has(row.controlUid)) return { ...row, value: inbound.ready ? row.value : null };
+    return row;
+  });
+}
+
 export async function persistGetEditReadModel(accountUid: string): Promise<EditReadModel> {
   const authorized = await persistHasEditPermission(accountUid);
-  const fields = authorized ? await persistListEditFields() : [];
+  const fields = authorized
+    ? overlayUpstreamOntoEdit(
+        await persistListEditFields(),
+        await persistListCoreFields().catch(() => [] as CoreFieldValue[]),
+        await persistListAssetFields().catch(() => [] as AssetFieldValue[]),
+        await persistListVideoFields().catch(() => [] as VideoFieldValue[]),
+      )
+    : [];
   return {
     projectionUid: EDIT_PROJECTION,
     pageUid: EDIT_PAGE_UID,

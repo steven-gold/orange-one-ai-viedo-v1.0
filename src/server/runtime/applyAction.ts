@@ -1,6 +1,8 @@
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { previewCoreAction } from "@/lib/coreActionPreview";
+import { previewEditAction } from "@/lib/editActionPreview";
+import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { getSqlClient } from "../db/client";
@@ -190,6 +192,46 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");
       const contract = await readField(FIELD_TABLE.video, "VIDEO-01-FLD-HANDOFF-CONTRACT");
       if (locked === "locked" && contract) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-VIDEO", contract);
+    }
+    return;
+  }
+  if (page === "edit") {
+    const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_core_field_projection",
+    );
+    const coreByUid = new Map(
+      coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const assetRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_asset_field_projection",
+    );
+    const assetByUid = new Map(
+      assetRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const videoRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_video_field_projection",
+    );
+    const videoByUid = new Map(
+      videoRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const coreCurrent = (uid: string) => coreByUid.get(uid) ?? null;
+    const inbound = resolveEditInbound(
+      effectiveVideoCurrent(coreCurrent, (uid) => assetByUid.get(uid) ?? null, (uid) => videoByUid.get(uid) ?? null),
+      coreCurrent,
+    );
+    const seed: Record<string, string> = {
+      "EDIT-01-FLD-PROJECT": inbound.project,
+      "EDIT-01-FLD-TOPIC": inbound.topic,
+      "EDIT-01-FLD-TASK": inbound.task,
+      "EDIT-01-FLD-SOURCE-VERSION": inbound.sourceVersion,
+      "EDIT-01-LBL-BINDING-FINGERPRINT": inbound.handoffContract,
+      "EDIT-01-LBL-CURRENT-SCRIPT-SECTION": inbound.script,
+    };
+    await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "EDIT-01-ACT-HANDOFF") {
+      const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");
+      const version = await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION");
+      if (locked === "locked" && version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-EDIT", version);
     }
     return;
   }
