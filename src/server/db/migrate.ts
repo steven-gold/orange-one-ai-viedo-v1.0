@@ -381,6 +381,7 @@ const MIGRATION_FILES = [
   "021_identity_session.sql",
   "022_reset_core_drafts.sql",
   "023_reset_aiapi_drafts.sql",
+  "024_reset_aiapi_drafts.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -404,6 +405,12 @@ const RESET_CORE_DRAFTS = [
 const RESET_AIAPI_DRAFTS = [
   "UPDATE ghsn_aiapi_field_projection SET value_text = NULL",
 ];
+
+const RESET_MIGRATIONS: Record<string, string[]> = {
+  "022_reset_core_drafts.sql": RESET_CORE_DRAFTS,
+  "023_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
+  "024_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
+};
 
 async function runBootstrap(): Promise<MigrationResult> {
   const client = await openSqlClient();
@@ -434,13 +441,9 @@ async function runBootstrap(): Promise<MigrationResult> {
       alreadyApplied.push(filename);
       continue;
     }
-    if (filename === "022_reset_core_drafts.sql") {
-      for (const statement of RESET_CORE_DRAFTS) {
-        await client.exec(statement);
-      }
-    }
-    if (filename === "023_reset_aiapi_drafts.sql") {
-      for (const statement of RESET_AIAPI_DRAFTS) {
+    const resetStatements = RESET_MIGRATIONS[filename];
+    if (resetStatements) {
+      for (const statement of resetStatements) {
         await client.exec(statement);
       }
     }
