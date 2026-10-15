@@ -20,6 +20,49 @@ import styles from "./AiapiVisual.module.css";
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
 
+type FormField = { key: string; labelKey: TranslationKey; required?: boolean };
+
+const MODAL_FORMS: Record<string, FormField[]> = {
+  createProviderModelProfile: [
+    { key: "provider", labelKey: "aiapi.form-provider", required: true },
+    { key: "model", labelKey: "aiapi.form-model" },
+    { key: "capability", labelKey: "aiapi.form-capability" },
+    { key: "adapter", labelKey: "aiapi.form-adapter" },
+    { key: "baseUrl", labelKey: "aiapi.form-base-url" },
+    { key: "endpoint", labelKey: "aiapi.form-endpoint" },
+    { key: "timeout", labelKey: "aiapi.form-timeout" },
+  ],
+  updateProviderModelProfile: [
+    { key: "provider", labelKey: "aiapi.form-provider" },
+    { key: "model", labelKey: "aiapi.form-model" },
+    { key: "capability", labelKey: "aiapi.form-capability" },
+    { key: "adapter", labelKey: "aiapi.form-adapter" },
+    { key: "baseUrl", labelKey: "aiapi.form-base-url" },
+    { key: "endpoint", labelKey: "aiapi.form-endpoint" },
+    { key: "timeout", labelKey: "aiapi.form-timeout" },
+  ],
+  setProviderModelCredential: [{ key: "reference", labelKey: "aiapi.form-credential-ref", required: true }],
+  configureGovernedResource: [
+    { key: "capability", labelKey: "aiapi.form-capability" },
+    { key: "rights", labelKey: "aiapi.form-rights" },
+    { key: "data", labelKey: "aiapi.form-data" },
+    { key: "reference", labelKey: "aiapi.form-governed-ref", required: true },
+    { key: "budget", labelKey: "aiapi.form-budget" },
+  ],
+  approveGovernedResource: [{ key: "reason", labelKey: "aiapi.form-rationale", required: true }],
+  createProviderCandidateGroup: [
+    { key: "group", labelKey: "aiapi.form-group", required: true },
+    { key: "members", labelKey: "aiapi.form-members" },
+  ],
+  restoreProviderFromQuarantine: [{ key: "reason", labelKey: "aiapi.form-reason", required: true }],
+  setKillSwitch: [{ key: "reason", labelKey: "aiapi.form-reason", required: true }],
+  deleteProviderModelCredential: [{ key: "reason", labelKey: "aiapi.form-reason", required: true }],
+  retireProviderModelProfile: [{ key: "reason", labelKey: "aiapi.form-reason", required: true }],
+  testProviderModelProfile: [],
+  "admin:AIAPI-08:ACT-SYSTEM-TEST": [],
+  executeProviderRoute: [{ key: "instruction", labelKey: "aiapi.form-instruction" }],
+};
+
 function Btn({
   uid,
   label,
@@ -28,6 +71,7 @@ function Btn({
   primary = false,
   danger = false,
   icon,
+  gate,
 }: {
   uid: string;
   label: string;
@@ -36,6 +80,7 @@ function Btn({
   primary?: boolean;
   danger?: boolean;
   icon?: IconName;
+  gate?: string;
 }) {
   const className = [
     styles.btn,
@@ -43,14 +88,15 @@ function Btn({
     danger ? styles.btnDanger : "",
     icon ? styles.iconBtn : "",
   ].filter(Boolean).join(" ");
+  const tip = gate && disabled ? `${label} · ${gate}` : label;
   return (
     <button
       type="button"
       className={className}
       data-control-uid={uid}
-      data-tip={icon ? label : undefined}
-      aria-label={icon ? label : undefined}
-      title={icon ? undefined : label}
+      data-tip={icon ? tip : undefined}
+      aria-label={icon ? tip : undefined}
+      title={icon ? undefined : tip}
       disabled={disabled}
       onClick={() => onAct(uid)}
     >
@@ -102,16 +148,65 @@ function VisualKv({ label, value }: { label: string; value: string }) {
   );
 }
 
+function ModalForm({
+  actionUid,
+  title,
+  t,
+  onCancel,
+  onSubmit,
+}: {
+  actionUid: string;
+  title: string;
+  t: (key: TranslationKey) => string;
+  onCancel: () => void;
+  onSubmit: (value: string) => void;
+}) {
+  const fields = MODAL_FORMS[actionUid] ?? [];
+  const [values, setValues] = useState<Record<string, string>>({});
+  const canSubmit = fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0);
+  return (
+    <section className={styles.modal} data-component-uid="AIAPI-01-CMP-MODAL" data-modal-for={actionUid}>
+      <h3>{title}</h3>
+      <p className={styles.note}>{t("aiapi.modal-hint")}</p>
+      {fields.length ? (
+        <div className={styles.formGrid}>
+          {fields.map((field) => (
+            <label key={field.key} className={styles.formRow}>
+              <span>{t(field.labelKey)}{field.required ? " *" : ""}</span>
+              <input
+                className={styles.formInput}
+                value={values[field.key] ?? ""}
+                onChange={(event) => setValues((prev) => ({ ...prev, [field.key]: event.target.value }))}
+              />
+            </label>
+          ))}
+        </div>
+      ) : (
+        <p className={styles.note}>{t("aiapi.modal-confirm")}</p>
+      )}
+      <div className={styles.actions}>
+        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} disabled={!canSubmit} onClick={() => onSubmit(JSON.stringify(values))}>
+          {t("aiapi.submit")}
+        </button>
+        <button type="button" className={styles.btn} onClick={onCancel}>
+          {t("global.common.close")}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 export function AiapiVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
-  const [, setFields] = useState<AiapiFieldValue[]>([]);
+  const [fields, setFields] = useState<AiapiFieldValue[]>([]);
   const [view, setView] = useState<AiapiView>("provider_api");
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerUid, setDrawerUid] = useState<string | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -140,11 +235,11 @@ export function AiapiVisual() {
     };
   }, [tick]);
 
-  const act = useCallback(async (controlUid: string) => {
+  const act = useCallback(async (controlUid: string, value?: string) => {
     const actionUid = AIAPI_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postAiapiAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      await postAiapiAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, value);
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
@@ -157,20 +252,99 @@ export function AiapiVisual() {
   const dash = displayAiapiValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(AIAPI_VISIBLE_CONTROLS), []);
 
+  const valueOf = useCallback(
+    (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
+    [fields],
+  );
+  const rawValue = useCallback((controlUid: string) => valueOf(controlUid) ?? "", [valueOf]);
+  const show = useCallback(
+    (controlUid: string) => displayAiapiValue(valueOf(controlUid), loading),
+    [valueOf, loading],
+  );
+
+  const identity = rawValue("AIAPI-01-PROFILE-GRP-IDENTITY");
+  const [, modelName] = identity.split(" / ");
+  const status = rawValue("AIAPI-01-PROFILE-GRP-STATUS");
+  const hasProfile = Boolean(identity) && status !== "RETIRED";
+  const credential = rawValue("AIAPI-01-FLD-OPS-CREDENTIAL");
+  const credSet = credential === "SET";
+  const hasAdapter = Boolean(rawValue("AIAPI-01-PROFILE-GRP-ADAPTER"));
+  const hasReference = Boolean(rawValue("AIAPI-01-FLD-PF-REFERENCE"));
+  const approved = rawValue("AIAPI-01-FLD-PF-RIGHTS") === "APPROVED";
+  const hasDecision = Boolean(rawValue("AIAPI-01-FLD-ROUTE-DECISION"));
+  const quarantine = rawValue("AIAPI-01-FLD-OPS-QUARANTINE");
+  const hasQuarantine = Boolean(quarantine) && quarantine !== "RESTORED";
+
+  const gateOf = useCallback(
+    (uid: string): { blocked: boolean; reason: string } => {
+      switch (AIAPI_CONTROL_ACTIONS[uid]) {
+        case "testProviderModelProfile":
+          return { blocked: !(hasProfile && credSet && hasAdapter), reason: t("aiapi.gate-test") };
+        case "updateProviderModelProfile":
+        case "retireProviderModelProfile":
+        case "viewProviderProfile":
+        case "getProviderModelProfile":
+          return { blocked: !hasProfile, reason: t("aiapi.gate-profile") };
+        case "setProviderModelCredential":
+          return { blocked: !hasProfile, reason: t("aiapi.gate-profile") };
+        case "deleteProviderModelCredential":
+          return { blocked: !credSet, reason: t("aiapi.gate-credential") };
+        case "approveGovernedResource":
+          return { blocked: !hasReference, reason: t("aiapi.gate-reference") };
+        case "executeProviderRoute":
+          return { blocked: !(hasProfile && credSet && approved), reason: t("aiapi.gate-route") };
+        case "getProviderRouteDecision":
+          return { blocked: !hasDecision, reason: t("aiapi.gate-decision") };
+        case "getProviderQuarantine":
+        case "restoreProviderFromQuarantine":
+          return { blocked: !hasQuarantine, reason: t("aiapi.gate-quarantine") };
+        case "admin:AIAPI-08:ACT-SYSTEM-TEST":
+          return { blocked: !hasProfile, reason: t("aiapi.gate-profile") };
+        default:
+          return { blocked: false, reason: "" };
+      }
+    },
+    [hasProfile, credSet, hasAdapter, hasReference, approved, hasDecision, hasQuarantine, t],
+  );
+
+  const gatedDisabled = (uid: string) => disabled || gateOf(uid).blocked;
+  const gateReason = (uid: string) => gateOf(uid).reason;
+
   const selectView = (next: AiapiView, uid: string) => {
     setView(next);
     void act(uid);
   };
 
   const openDrawer = (uid: string) => {
-    setDrawerOpen(true);
+    setDrawerUid(uid);
     void act(uid);
   };
 
   const openModal = (uid: string) => {
     setModalUid(uid);
-    void act(uid);
   };
+
+  const submitModal = (value: string) => {
+    const uid = modalUid;
+    setModalUid(null);
+    if (uid) void act(uid, value);
+  };
+
+  const tableRows = hasProfile && (!query || identity.toLowerCase().includes(query.toLowerCase()));
+  const tableValues = [
+    show("AIAPI-01-FLD-OV-PROVIDER"),
+    modelName ? displayAiapiValue(modelName, loading) : dash,
+    show("AIAPI-01-PROFILE-GRP-CAPABILITY"),
+    show("AIAPI-01-PROFILE-GRP-ADAPTER"),
+    show("AIAPI-01-PROFILE-GRP-CONNECTION"),
+    show("AIAPI-01-PROFILE-GRP-DATA-CONTEXT"),
+    show("AIAPI-01-PRO-DESC-LIMITS"),
+    show("AIAPI-01-PROFILE-GRP-STATUS"),
+    show("AIAPI-01-FLD-OPS-CREDENTIAL"),
+    show("AIAPI-01-PRO-DESC-LAST-TEST"),
+  ];
+
+  const modalActionUid = modalUid ? AIAPI_CONTROL_ACTIONS[modalUid] : "";
 
   return (
     <div
@@ -211,21 +385,22 @@ export function AiapiVisual() {
       {view === "overview" || view === "provider_api" ? (
         <div className={styles.toolbar} data-component-uid="AIAPI-01-CMP-QUICK-ACTIONS">
           <div className={styles.actions}>
-            <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE" label={tx("aiapi.btn-create")} onAct={openModal} disabled={disabled} primary />
+            <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE" label={tx("aiapi.btn-create")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE")} primary />
             {view === "overview" ? (
               <>
-                <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL" label={tx("aiapi.btn-set-key")} onAct={openModal} disabled={disabled} icon="key" />
-                <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE" label={tx("aiapi.btn-test")} onAct={act} disabled={disabled} icon="plug" />
+                <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL" label={tx("aiapi.btn-set-key")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL")} icon="key" />
+                <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE" label={tx("aiapi.btn-test")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE")} icon="plug" />
               </>
             ) : null}
-            <Btn uid="AIAPI-01-BTN-RUN-SANDBOX-TEST" label={tx("aiapi.btn-sandbox")} onAct={openModal} disabled={disabled} icon="flask" />
+            <Btn uid="AIAPI-01-BTN-RUN-SANDBOX-TEST" label={tx("aiapi.btn-sandbox")} onAct={openModal} disabled={gatedDisabled("AIAPI-01-BTN-RUN-SANDBOX-TEST")} gate={gateReason("AIAPI-01-BTN-RUN-SANDBOX-TEST")} icon="flask" />
           </div>
           <input
             className={styles.search}
             data-control-uid="AIAPI-01-FLD-SEARCH"
             disabled={disabled}
             placeholder={tx("aiapi.search-placeholder")}
-            readOnly
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
           />
         </div>
       ) : null}
@@ -238,26 +413,26 @@ export function AiapiVisual() {
             <div className={styles.statusBar}>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-PROVIDER">
                 <span>{tx("aiapi.ov-provider")}</span>
-                <strong>{dash}</strong>
+                <strong>{show("AIAPI-01-FLD-OV-PROVIDER")}</strong>
               </div>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-ROUTE">
                 <span>{tx("aiapi.ov-route")}</span>
-                <strong>{dash}</strong>
+                <strong>{show("AIAPI-01-FLD-OV-ROUTE")}</strong>
               </div>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-CAPABILITY">
                 <span>{tx("aiapi.ov-capability")}</span>
-                <strong>{dash}</strong>
+                <strong>{show("AIAPI-01-FLD-OV-CAPABILITY")}</strong>
               </div>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-JOB">
                 <span>{tx("aiapi.ov-job")}</span>
-                <strong>{dash}</strong>
+                <strong>{show("AIAPI-01-FLD-OV-JOB")}</strong>
               </div>
             </div>
             <div className={styles.metricGrid}>
-              <Field uid="AIAPI-01-FLD-OV-COST" label={tx("aiapi.ov-cost")} value={dash} />
-              <Field uid="AIAPI-01-FLD-OV-HEALTH" label={tx("aiapi.ov-health")} value={dash} />
-              <Field uid="AIAPI-01-FLD-OV-INCIDENT" label={tx("aiapi.ov-incident")} value={dash} />
-              <Field uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={dash} />
+              <Field uid="AIAPI-01-FLD-OV-COST" label={tx("aiapi.ov-cost")} value={show("AIAPI-01-FLD-OV-COST")} />
+              <Field uid="AIAPI-01-FLD-OV-HEALTH" label={tx("aiapi.ov-health")} value={show("AIAPI-01-FLD-OV-HEALTH")} />
+              <Field uid="AIAPI-01-FLD-OV-INCIDENT" label={tx("aiapi.ov-incident")} value={show("AIAPI-01-FLD-OV-INCIDENT")} />
+              <Field uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={show("AIAPI-01-FLD-OPS-QUEUE")} />
             </div>
           </section>
         ) : null}
@@ -276,19 +451,27 @@ export function AiapiVisual() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className={styles.emptyRow}>
-                    <td colSpan={AIAPI_TABLE_COLUMNS.length}>{dash}</td>
-                  </tr>
+                  {tableRows ? (
+                    <tr>
+                      {tableValues.map((cell, index) => (
+                        <td key={AIAPI_TABLE_COLUMNS[index]}>{cell}</td>
+                      ))}
+                    </tr>
+                  ) : (
+                    <tr className={styles.emptyRow}>
+                      <td colSpan={AIAPI_TABLE_COLUMNS.length}>{dash}</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
             <div className={styles.actions}>
-              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE" label={tx("aiapi.btn-view")} onAct={openDrawer} disabled={disabled} icon="visible" />
-              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE" label={tx("aiapi.btn-edit")} onAct={openModal} disabled={disabled} icon="edit" />
-              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE" label={tx("aiapi.btn-row-test")} onAct={act} disabled={disabled} icon="plug" />
-              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE" label={tx("aiapi.btn-retire")} onAct={openModal} disabled={disabled} icon="archive" />
-              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL" label={tx("aiapi.btn-set-key")} onAct={openModal} disabled={disabled} icon="key" />
-              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL" label={tx("aiapi.btn-delete-key")} onAct={openModal} disabled={disabled} danger icon="delete" />
+              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE" label={tx("aiapi.btn-view")} onAct={openDrawer} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE")} icon="visible" />
+              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE" label={tx("aiapi.btn-edit")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE")} icon="edit" />
+              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE" label={tx("aiapi.btn-row-test")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE")} icon="plug" />
+              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE" label={tx("aiapi.btn-retire")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE")} icon="archive" />
+              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL" label={tx("aiapi.btn-set-key")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL")} icon="key" />
+              <Btn uid="CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL" label={tx("aiapi.btn-delete-key")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL")} gate={gateReason("CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL")} danger icon="delete" />
             </div>
             <div className={styles.card} data-section-uid="AIAPI-01-SEC-06" data-component-uid="AIAPI-01-CMP-PROFILE-FORM">
               <h3>{tx("aiapi.editor-title")}</h3>
@@ -296,13 +479,14 @@ export function AiapiVisual() {
               <div className={styles.groupGrid}>
                 {AIAPI_PROFILE_GROUPS.map((group) => (
                   <div key={group.uid} className={styles.groupChip} data-control-uid={group.uid}>
-                    {tx(group.labelKey)}
+                    <span>{tx(group.labelKey)}</span>
+                    <em>{show(group.uid)}</em>
                   </div>
                 ))}
               </div>
               <div className={styles.actions}>
-                <Btn uid="AIAPI-01-BTN-CONFIGURE-GOVERNED-RESOURCE" label={tx("aiapi.btn-configure")} onAct={openModal} disabled={disabled} icon="sliders" />
-                <Btn uid="AIAPI-01-BTN-APPROVE-GOVERNED-RESOURCE" label={tx("aiapi.btn-approve")} onAct={openModal} disabled={disabled} icon="check" />
+                <Btn uid="AIAPI-01-BTN-CONFIGURE-GOVERNED-RESOURCE" label={tx("aiapi.btn-configure")} onAct={openModal} disabled={gatedDisabled("AIAPI-01-BTN-CONFIGURE-GOVERNED-RESOURCE")} gate={gateReason("AIAPI-01-BTN-CONFIGURE-GOVERNED-RESOURCE")} icon="sliders" />
+                <Btn uid="AIAPI-01-BTN-APPROVE-GOVERNED-RESOURCE" label={tx("aiapi.btn-approve")} onAct={openModal} disabled={gatedDisabled("AIAPI-01-BTN-APPROVE-GOVERNED-RESOURCE")} gate={gateReason("AIAPI-01-BTN-APPROVE-GOVERNED-RESOURCE")} icon="check" />
               </div>
             </div>
           </section>
@@ -316,19 +500,20 @@ export function AiapiVisual() {
                 <h3>{tx("aiapi.candidate-title")}</h3>
                 <p className={styles.note}>{tx("aiapi.candidate-hint")}</p>
                 <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-OV-PROVIDER" label={tx("aiapi.col-provider")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-OV-CAPABILITY" label={tx("aiapi.col-capability")} value={dash} />
+                  <Kv uid="AIAPI-01-FLD-OV-PROVIDER" label={tx("aiapi.col-provider")} value={show("AIAPI-01-FLD-OV-PROVIDER")} />
+                  <Kv uid="AIAPI-01-FLD-OV-CAPABILITY" label={tx("aiapi.col-capability")} value={show("AIAPI-01-FLD-OV-CAPABILITY")} />
+                  <VisualKv label={tx("aiapi.fld-candidate-group")} value={show("AIAPI-01-FLD-CANDIDATE-GROUP")} />
                 </div>
-                <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP" label={tx("aiapi.btn-create-group")} onAct={openModal} disabled={disabled} primary />
+                <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP" label={tx("aiapi.btn-create-group")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP")} primary />
               </div>
               <div className={styles.card}>
                 <h3>{tx("aiapi.preflight-title")}</h3>
                 <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-PF-CAPABILITY" label={tx("aiapi.pf-capability")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-PF-RIGHTS" label={tx("aiapi.pf-rights")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-PF-DATA" label={tx("aiapi.pf-data")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-PF-REFERENCE" label={tx("aiapi.pf-reference")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-PF-BUDGET" label={tx("aiapi.pf-budget")} value={dash} />
+                  <Kv uid="AIAPI-01-FLD-PF-CAPABILITY" label={tx("aiapi.pf-capability")} value={show("AIAPI-01-FLD-PF-CAPABILITY")} />
+                  <Kv uid="AIAPI-01-FLD-PF-RIGHTS" label={tx("aiapi.pf-rights")} value={show("AIAPI-01-FLD-PF-RIGHTS")} />
+                  <Kv uid="AIAPI-01-FLD-PF-DATA" label={tx("aiapi.pf-data")} value={show("AIAPI-01-FLD-PF-DATA")} />
+                  <Kv uid="AIAPI-01-FLD-PF-REFERENCE" label={tx("aiapi.pf-reference")} value={show("AIAPI-01-FLD-PF-REFERENCE")} />
+                  <Kv uid="AIAPI-01-FLD-PF-BUDGET" label={tx("aiapi.pf-budget")} value={show("AIAPI-01-FLD-PF-BUDGET")} />
                 </div>
               </div>
             </div>
@@ -346,17 +531,19 @@ export function AiapiVisual() {
                 <div className={styles.flowCard}>
                   <h4>{tx("aiapi.flow-sandbox")}</h4>
                   <p>{tx("aiapi.flow-sandbox-hint")}</p>
+                  <strong>{show("AIAPI-01-FLD-SANDBOX-EVIDENCE")}</strong>
                 </div>
                 <div className={styles.flowCard}>
                   <h4>{tx("aiapi.flow-decision")}</h4>
                   <p>{tx("aiapi.flow-decision-hint")}</p>
+                  <strong>{show("AIAPI-01-FLD-ROUTE-DECISION")}</strong>
                 </div>
               </div>
               <div className={styles.actions}>
-                <Btn uid="CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE" label={tx("aiapi.btn-execute-route")} onAct={openModal} disabled={disabled} primary />
-                <Btn uid="AIAPI-01-BTN-RUN-SANDBOX-TEST" label={tx("aiapi.btn-sandbox")} onAct={openModal} disabled={disabled} icon="flask" />
-                <Btn uid="AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE" label={tx("aiapi.btn-queue-probe")} onAct={act} disabled={disabled} icon="probe" />
-                <Btn uid="CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION" label={tx("aiapi.btn-view-decision")} onAct={openDrawer} disabled={disabled} icon="visible" />
+                <Btn uid="CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE" label={tx("aiapi.btn-execute-route")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE")} gate={gateReason("CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE")} primary />
+                <Btn uid="AIAPI-01-BTN-RUN-SANDBOX-TEST" label={tx("aiapi.btn-sandbox")} onAct={openModal} disabled={gatedDisabled("AIAPI-01-BTN-RUN-SANDBOX-TEST")} gate={gateReason("AIAPI-01-BTN-RUN-SANDBOX-TEST")} icon="flask" />
+                <Btn uid="AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE" label={tx("aiapi.btn-queue-probe")} onAct={openModal} disabled={gatedDisabled("AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE")} gate={gateReason("AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE")} icon="probe" />
+                <Btn uid="CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION" label={tx("aiapi.btn-view-decision")} onAct={openDrawer} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION")} gate={gateReason("CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION")} icon="visible" />
               </div>
             </div>
           </section>
@@ -370,53 +557,56 @@ export function AiapiVisual() {
               <div className={styles.card}>
                 <h3>{tx("aiapi.job-title")}</h3>
                 <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-JOB-ID" label={tx("aiapi.field-job-id")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-JOB-STATUS" label={tx("aiapi.field-job-status")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-ATTEMPT-ID" label={tx("aiapi.field-attempt-id")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-CALLBACK" label={tx("aiapi.field-callback")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-ARTIFACT" label={tx("aiapi.field-artifact")} value={dash} />
+                  <Kv uid="AIAPI-01-FLD-JOB-ID" label={tx("aiapi.field-job-id")} value={show("AIAPI-01-FLD-JOB-ID")} />
+                  <Kv uid="AIAPI-01-FLD-JOB-STATUS" label={tx("aiapi.field-job-status")} value={show("AIAPI-01-FLD-JOB-STATUS")} />
+                  <Kv uid="AIAPI-01-FLD-ATTEMPT-ID" label={tx("aiapi.field-attempt-id")} value={show("AIAPI-01-FLD-ATTEMPT-ID")} />
+                  <Kv uid="AIAPI-01-FLD-CALLBACK" label={tx("aiapi.field-callback")} value={show("AIAPI-01-FLD-CALLBACK")} />
+                  <Kv uid="AIAPI-01-FLD-ARTIFACT" label={tx("aiapi.field-artifact")} value={show("AIAPI-01-FLD-ARTIFACT")} />
                 </div>
               </div>
               <div className={styles.card}>
                 <h3>{tx("aiapi.budget-title")}</h3>
                 <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-OV-COST" label={tx("aiapi.ov-cost")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-OPS-COST" label={tx("aiapi.ops-cost")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-OPS-INCIDENT" label={tx("aiapi.ops-incident")} value={dash} />
-                  <Kv uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={dash} />
+                  <Kv uid="AIAPI-01-FLD-OV-COST" label={tx("aiapi.ov-cost")} value={show("AIAPI-01-FLD-OV-COST")} />
+                  <Kv uid="AIAPI-01-FLD-OPS-COST" label={tx("aiapi.ops-cost")} value={show("AIAPI-01-FLD-OPS-COST")} />
+                  <Kv uid="AIAPI-01-FLD-OPS-INCIDENT" label={tx("aiapi.ops-incident")} value={show("AIAPI-01-FLD-OPS-INCIDENT")} />
+                  <Kv uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={show("AIAPI-01-FLD-OPS-QUEUE")} />
                 </div>
               </div>
             </div>
           </section>
         ) : null}
 
-        <ProfessionalRail t={tx} dash={dash} disabled={disabled} view={view} onDrawer={openDrawer} onModal={openModal} />
+        <ProfessionalRail t={tx} show={show} disabled={disabled} view={view} gateOf={gateOf} gateReason={gateReason} onDrawer={openDrawer} onModal={openModal} />
       </div>
 
-      {drawerOpen ? (
+      {drawerUid ? (
         <section className={styles.drawer} data-component-uid="AIAPI-01-CMP-DRAWER">
           <h3>{tx("aiapi.drawer-title")}</h3>
           <p className={styles.note}>{tx("aiapi.drawer-hint")}</p>
           <div className={styles.kvList}>
-            <VisualKv label={tx("aiapi.pro-identity")} value={dash} />
-            <VisualKv label={tx("aiapi.pro-endpoint")} value={dash} />
-            <VisualKv label={tx("aiapi.pro-auth")} value={dash} />
-            <VisualKv label={tx("aiapi.pro-last-test")} value={dash} />
+            <VisualKv label={tx("aiapi.pro-identity")} value={show("AIAPI-01-PRO-DESC-IDENTITY")} />
+            <VisualKv label={tx("aiapi.pro-endpoint")} value={show("AIAPI-01-PRO-DESC-ENDPOINT")} />
+            <VisualKv label={tx("aiapi.pro-auth")} value={show("AIAPI-01-PRO-DESC-AUTH")} />
+            <VisualKv label={tx("aiapi.pro-last-test")} value={show("AIAPI-01-PRO-DESC-LAST-TEST")} />
+            <VisualKv label={tx("aiapi.fld-route-decision")} value={show("AIAPI-01-FLD-ROUTE-DECISION")} />
+            <VisualKv label={tx("aiapi.ops-quarantine")} value={show("AIAPI-01-FLD-OPS-QUARANTINE")} />
           </div>
-          <button type="button" className={styles.btn} onClick={() => setDrawerOpen(false)}>
+          <button type="button" className={styles.btn} onClick={() => setDrawerUid(null)}>
             {tx("global.common.close")}
           </button>
         </section>
       ) : null}
 
       {modalUid ? (
-        <section className={styles.modal} data-component-uid="AIAPI-01-CMP-MODAL" data-modal-for={modalUid}>
-          <h3>{tx("aiapi.modal-title")}</h3>
-          <p className={styles.note}>{tx("aiapi.modal-hint")}</p>
-          <button type="button" className={styles.btn} onClick={() => setModalUid(null)}>
-            {tx("global.common.close")}
-          </button>
-        </section>
+        <ModalForm
+          key={modalUid}
+          actionUid={modalActionUid}
+          title={tx("aiapi.modal-title")}
+          t={tx}
+          onCancel={() => setModalUid(null)}
+          onSubmit={submitModal}
+        />
       ) : null}
 
       {view === "overview" || view === "provider_api" ? null : (
@@ -433,7 +623,7 @@ export function AiapiVisual() {
       {view === "overview" || view === "provider_api" ? null : (
         <div data-component-uid="AIAPI-01-PANEL-API-PROFESSIONAL-DESCRIPTION" hidden />
       )}
-      {drawerOpen ? null : <div data-component-uid="AIAPI-01-CMP-DRAWER" hidden />}
+      {drawerUid ? null : <div data-component-uid="AIAPI-01-CMP-DRAWER" hidden />}
       {modalUid ? null : <div data-component-uid="AIAPI-01-CMP-MODAL" hidden />}
     </div>
   );
@@ -441,16 +631,20 @@ export function AiapiVisual() {
 
 function ProfessionalRail({
   t,
-  dash,
+  show,
   disabled,
   view,
+  gateOf,
+  gateReason,
   onDrawer,
   onModal,
 }: {
   t: (key: TranslationKey) => string;
-  dash: string;
+  show: (uid: string) => string;
   disabled: boolean;
   view: AiapiView;
+  gateOf: (uid: string) => { blocked: boolean; reason: string };
+  gateReason: (uid: string) => string;
   onDrawer: (uid: string) => void;
   onModal: (uid: string) => void;
 }) {
@@ -461,7 +655,7 @@ function ProfessionalRail({
         <p className={styles.note}>{t("aiapi.panel-hint")}</p>
         <div className={styles.kvList}>
           {AIAPI_PRO_DESC_FIELDS.map((field) => (
-            <Kv key={field.uid} uid={field.uid} label={t(field.labelKey)} value={dash} />
+            <Kv key={field.uid} uid={field.uid} label={t(field.labelKey)} value={show(field.uid)} />
           ))}
         </div>
         <div className={styles.actions}>
@@ -481,21 +675,25 @@ function ProfessionalRail({
       <h2>{t("aiapi.ops-rail-title")}</h2>
       <div className={styles.railCard} data-control-uid="AIAPI-01-FLD-OPS-HEALTH">
         <span>{t("aiapi.ops-health")}</span>
-        <strong>{dash}</strong>
+        <strong>{show("AIAPI-01-FLD-OPS-HEALTH")}</strong>
       </div>
       <div className={styles.railCard} data-control-uid="AIAPI-01-FLD-OPS-CREDENTIAL">
         <span>{t("aiapi.ops-credential")}</span>
-        <strong>{dash}</strong>
+        <strong>{show("AIAPI-01-FLD-OPS-CREDENTIAL")}</strong>
       </div>
       <div className={styles.railCard} data-control-uid="AIAPI-01-FLD-OPS-QUARANTINE">
         <span>{t("aiapi.ops-quarantine")}</span>
-        <strong>{dash}</strong>
+        <strong>{show("AIAPI-01-FLD-OPS-QUARANTINE")}</strong>
+      </div>
+      <div className={styles.railCard}>
+        <span>{t("aiapi.ops-kill-switch")}</span>
+        <strong>{show("AIAPI-01-FLD-KILL-SWITCH")}</strong>
       </div>
       <p className={styles.note}>{t("aiapi.high-risk-hint")}</p>
       <div className={styles.actions}>
-        <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE" label={t("aiapi.btn-view-quarantine")} onAct={onDrawer} disabled={disabled} icon="visible" />
-        <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER" label={t("aiapi.btn-restore")} onAct={onModal} disabled={disabled} danger icon="restore" />
-        <Btn uid="CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH" label={t("aiapi.btn-kill-switch")} onAct={onModal} disabled={disabled} danger icon="power" />
+        <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE" label={t("aiapi.btn-view-quarantine")} onAct={onDrawer} disabled={disabled || gateOf("CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE").blocked} gate={gateReason("CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE")} icon="visible" />
+        <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER" label={t("aiapi.btn-restore")} onAct={onModal} disabled={disabled || gateOf("CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER").blocked} gate={gateReason("CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER")} danger icon="restore" />
+        <Btn uid="CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH" label={t("aiapi.btn-kill-switch")} onAct={onModal} disabled={disabled || gateOf("CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH").blocked} gate={gateReason("CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH")} danger icon="power" />
       </div>
     </aside>
   );

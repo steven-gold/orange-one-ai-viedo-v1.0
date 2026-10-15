@@ -1254,7 +1254,8 @@ export async function persistListAiapiFields(): Promise<AiapiFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_aiapi_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return AIAPI_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...AIAPI_VISIBLE_CONTROLS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1282,8 +1283,9 @@ export async function persistRecordAiapiAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  value?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("aiapi", controlUid, actionUid);
+  await applyWorkbenchAction("aiapi", controlUid, actionUid, value);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_aiapi_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

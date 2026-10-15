@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const principal = await requireAuth(request);
   if (principal instanceof NextResponse) return principal;
   try {
-    const body = (await request.json()) as { controlUid?: string; actionUid?: string };
+    const body = (await request.json()) as { controlUid?: string; actionUid?: string; value?: string };
     const controlUid = String(body.controlUid ?? "");
     const actionUid = String(body.actionUid ?? "");
     if (!knownAiapiAction(controlUid, actionUid)) {
@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${AIAPI_PERMISSION} required`, 403);
     }
-    const eventUid = await persistRecordAiapiAction(principal.accountUid, controlUid, actionUid);
+    const value = typeof body.value === "string" ? body.value : undefined;
+    const eventUid = await persistRecordAiapiAction(principal.accountUid, controlUid, actionUid, value);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected AIAPI runtime error", 500);

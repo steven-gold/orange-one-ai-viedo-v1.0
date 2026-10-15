@@ -1,3 +1,4 @@
+import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { previewCoreAction } from "@/lib/coreActionPreview";
@@ -235,6 +236,10 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       const version = await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION");
       if (locked === "locked" && version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-EDIT", version);
     }
+    return;
+  }
+  if (page === "aiapi") {
+    await applyProjectedAction(FIELD_TABLE.aiapi, previewAiapiAction, controlUid, actionUid, nextValue);
     return;
   }
   await writeField(FIELD_TABLE[page], controlUid, statusFromAction(actionUid));

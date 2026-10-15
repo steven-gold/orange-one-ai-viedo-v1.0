@@ -952,6 +952,7 @@ export async function postAiapiAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  value?: string,
 ): Promise<void> {
   await fetch("/api/aiapi/action", {
     method: "POST",
@@ -960,7 +961,7 @@ export async function postAiapiAction(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, value }),
   });
 }
 
