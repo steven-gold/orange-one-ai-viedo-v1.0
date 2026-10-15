@@ -380,6 +380,7 @@ const MIGRATION_FILES = [
   "020_admin_kb.sql",
   "021_identity_session.sql",
   "022_reset_core_drafts.sql",
+  "023_reset_aiapi_drafts.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -398,6 +399,10 @@ const RESET_CORE_DRAFTS = [
     'VIDEO-01-FLD-DNA-REFS','VIDEO-01-FLD-SCRIPT-SECTION','VIDEO-01-FLD-ASSET-REFS'
   )`,
   "UPDATE ghsn_dashboard_section_projection SET value_text = NULL, detail_text = ''",
+];
+
+const RESET_AIAPI_DRAFTS = [
+  "UPDATE ghsn_aiapi_field_projection SET value_text = NULL",
 ];
 
 async function runBootstrap(): Promise<MigrationResult> {
@@ -431,6 +436,11 @@ async function runBootstrap(): Promise<MigrationResult> {
     }
     if (filename === "022_reset_core_drafts.sql") {
       for (const statement of RESET_CORE_DRAFTS) {
+        await client.exec(statement);
+      }
+    }
+    if (filename === "023_reset_aiapi_drafts.sql") {
+      for (const statement of RESET_AIAPI_DRAFTS) {
         await client.exec(statement);
       }
     }
