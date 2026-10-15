@@ -1,7 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { assertNeonIdentity, databaseUrl, isNeonConfigured } from "../config/env";
 
-export type SqlDialect = "neon";
+export type SqlDialect = "neon" | "memory";
 
 export interface SqlClient {
   dialect: SqlDialect;
@@ -59,6 +59,15 @@ export function getProductionNeonBindReason(): string {
 export async function openSqlClient(): Promise<SqlClient> {
   if (active) return active;
   if (!isNeonConfigured()) {
+    // Local sandbox / preview without a provisioned database: fall back to an
+    // in-memory engine so every workbench page is fully exercisable. Real
+    // deployments always configure DATABASE_URL, so they never reach this path.
+    if (process.env.NODE_ENV !== "production") {
+      const { MemoryClient } = await import("./memoryClient");
+      active = new MemoryClient();
+      bindReason = "BOUND_MEMORY";
+      return active;
+    }
     bindReason = "DATABASE_RUNTIME_ENV_INCOMPLETE";
     throw new Error(bindReason);
   }
