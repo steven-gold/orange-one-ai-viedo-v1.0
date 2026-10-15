@@ -57,7 +57,20 @@ export type IconName =
   | "back"
   | "attachment"
   | "reference"
-  | "record";
+  | "record"
+  | "add"
+  | "key"
+  | "plug"
+  | "flask"
+  | "edit"
+  | "archive"
+  | "sliders"
+  | "check"
+  | "group"
+  | "route"
+  | "probe"
+  | "restore"
+  | "power";
 
 type IconNode = { body: ReactNode; fill?: boolean };
 
@@ -515,6 +528,118 @@ const ICONS: Record<IconName, IconNode> = {
       <>
         <circle cx="12" cy="12" r="9" />
         <circle cx="12" cy="12" r="3" fill="currentColor" />
+      </>
+    ),
+  },
+  add: {
+    body: (
+      <>
+        <line x1="12" x2="12" y1="5" y2="19" />
+        <line x1="5" x2="19" y1="12" y2="12" />
+      </>
+    ),
+  },
+  key: {
+    body: (
+      <>
+        <circle cx="7.5" cy="15.5" r="4.5" />
+        <path d="m21 2-9.6 9.6" />
+        <path d="m15.5 7.5 3 3L22 7l-3-3" />
+      </>
+    ),
+  },
+  plug: {
+    body: (
+      <>
+        <path d="M12 22v-5" />
+        <path d="M9 8V2" />
+        <path d="M15 8V2" />
+        <path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z" />
+      </>
+    ),
+  },
+  flask: {
+    body: (
+      <>
+        <path d="M10 2v7.5a2 2 0 0 1-.2.9l-5.1 10.1a1 1 0 0 0 .9 1.5h12.8a1 1 0 0 0 .9-1.5L14.2 10.4a2 2 0 0 1-.2-.9V2" />
+        <path d="M8.5 2h7" />
+        <path d="M7 16h10" />
+      </>
+    ),
+  },
+  edit: {
+    body: (
+      <>
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+      </>
+    ),
+  },
+  archive: {
+    body: (
+      <>
+        <rect width="20" height="5" x="2" y="3" rx="1" />
+        <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+        <path d="M10 12h4" />
+      </>
+    ),
+  },
+  sliders: {
+    body: (
+      <>
+        <line x1="4" x2="4" y1="21" y2="14" />
+        <line x1="4" x2="4" y1="10" y2="3" />
+        <line x1="12" x2="12" y1="21" y2="12" />
+        <line x1="12" x2="12" y1="8" y2="3" />
+        <line x1="20" x2="20" y1="21" y2="16" />
+        <line x1="20" x2="20" y1="12" y2="3" />
+        <line x1="2" x2="6" y1="14" y2="14" />
+        <line x1="10" x2="14" y1="8" y2="8" />
+        <line x1="18" x2="22" y1="16" y2="16" />
+      </>
+    ),
+  },
+  check: {
+    body: <path d="M20 6 9 17l-5-5" />,
+  },
+  group: {
+    body: (
+      <>
+        <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+        <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+        <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+  },
+  route: {
+    body: (
+      <>
+        <circle cx="6" cy="19" r="3" />
+        <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15" />
+        <circle cx="18" cy="5" r="3" />
+      </>
+    ),
+  },
+  probe: {
+    body: (
+      <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+    ),
+  },
+  restore: {
+    body: (
+      <>
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+        <path d="M3 3v5h5" />
+      </>
+    ),
+  },
+  power: {
+    body: (
+      <>
+        <path d="M12 2v10" />
+        <path d="M18.4 6.6a9 9 0 1 1-12.77.04" />
       </>
     ),
   },
