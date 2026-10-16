@@ -456,9 +456,15 @@
   display: block;
 }
 
-.drawer {
-  width: 520px;
-  max-width: 100%;
+.drawer,
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+  max-height: 88vh;
+  overflow: auto;
   border: 1px solid var(--aiapi-border);
   border-radius: 16px;
   background: var(--aiapi-surface);
@@ -466,24 +472,22 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow:
+    0 0 0 100vmax rgba(4, 7, 20, 0.66),
+    0 24px 64px rgba(0, 0, 0, 0.55);
 }
 
-.drawer h3 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
+.drawer {
+  width: 520px;
+  max-width: calc(100vw - 32px);
 }
 
 .modal {
-  border: 1px solid var(--aiapi-border);
-  border-radius: 16px;
-  background: var(--aiapi-surface);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  width: 560px;
+  max-width: calc(100vw - 32px);
 }
 
+.drawer h3,
 .modal h3 {
   margin: 0;
   font-size: 15px;
