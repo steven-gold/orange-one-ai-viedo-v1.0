@@ -262,6 +262,15 @@
   white-space: nowrap;
 }
 
+.table tbody tr {
+  cursor: pointer;
+}
+
+.rowSelected td {
+  background: rgba(142, 112, 255, 0.16);
+  color: var(--aiapi-primary, #ffffff);
+}
+
 .emptyRow td {
   text-align: center;
   color: var(--aiapi-muted);

@@ -5,6 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { AiapiClientError, fetchAiapiReadModel, postAiapiAction, type AiapiFieldValue } from "@/lib/client";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { AIAPI_REGISTRY_UID, parseProfiles, profileIdentity } from "@/lib/aiapiProfiles";
 import { displayAiapiValue } from "./aiapiFormat";
 import {
   AIAPI_CONTROL_ACTIONS,
@@ -19,6 +20,14 @@ import styles from "./AiapiVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+
+const PROFILE_TARGETED_ACTIONS = new Set([
+  "updateProviderModelProfile",
+  "retireProviderModelProfile",
+  "testProviderModelProfile",
+  "setProviderModelCredential",
+  "deleteProviderModelCredential",
+]);
 
 type FormField = { key: string; labelKey: TranslationKey; required?: boolean };
 
@@ -207,6 +216,7 @@ export function AiapiVisual() {
   const [drawerUid, setDrawerUid] = useState<string | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [selectedProfileId, setSelectedProfileId] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -262,13 +272,20 @@ export function AiapiVisual() {
     [valueOf, loading],
   );
 
-  const identity = rawValue("AIAPI-01-PROFILE-GRP-IDENTITY");
-  const [, modelName] = identity.split(" / ");
-  const status = rawValue("AIAPI-01-PROFILE-GRP-STATUS");
-  const hasProfile = Boolean(identity) && status !== "RETIRED";
-  const credential = rawValue("AIAPI-01-FLD-OPS-CREDENTIAL");
-  const credSet = credential === "SET";
-  const hasAdapter = Boolean(rawValue("AIAPI-01-PROFILE-GRP-ADAPTER"));
+  const registryRaw = rawValue(AIAPI_REGISTRY_UID);
+  const profiles = useMemo(() => parseProfiles(registryRaw), [registryRaw]);
+  const selected =
+    profiles.find((profile) => profile.profileId === selectedProfileId) ?? profiles[0] ?? null;
+
+  useEffect(() => {
+    if (profiles.length && !profiles.some((profile) => profile.profileId === selectedProfileId)) {
+      setSelectedProfileId(profiles[0].profileId);
+    }
+  }, [profiles, selectedProfileId]);
+
+  const hasProfile = profiles.length > 0;
+  const credSet = Boolean(selected?.credentialSet);
+  const hasAdapter = Boolean(selected?.adapter);
   const hasReference = Boolean(rawValue("AIAPI-01-FLD-PF-REFERENCE"));
   const approved = rawValue("AIAPI-01-FLD-PF-RIGHTS") === "APPROVED";
   const hasDecision = Boolean(rawValue("AIAPI-01-FLD-ROUTE-DECISION"));
@@ -327,22 +344,56 @@ export function AiapiVisual() {
   const submitModal = (value: string) => {
     const uid = modalUid;
     setModalUid(null);
-    if (uid) void act(uid, value);
+    if (!uid) return;
+    const actionUid = AIAPI_CONTROL_ACTIONS[uid];
+    let payload = value;
+    if (PROFILE_TARGETED_ACTIONS.has(actionUid) && selectedProfileId) {
+      try {
+        const parsed = JSON.parse(value) as Record<string, unknown>;
+        payload = JSON.stringify({ ...parsed, profileId: selectedProfileId });
+      } catch {
+        payload = value;
+      }
+    }
+    void act(uid, payload);
   };
 
-  const tableRows = hasProfile && (!query || identity.toLowerCase().includes(query.toLowerCase()));
-  const tableValues = [
-    show("AIAPI-01-FLD-OV-PROVIDER"),
-    modelName ? displayAiapiValue(modelName, loading) : dash,
-    show("AIAPI-01-PROFILE-GRP-CAPABILITY"),
-    show("AIAPI-01-PROFILE-GRP-ADAPTER"),
-    show("AIAPI-01-PROFILE-GRP-CONNECTION"),
-    show("AIAPI-01-PROFILE-GRP-DATA-CONTEXT"),
-    show("AIAPI-01-PRO-DESC-LIMITS"),
-    show("AIAPI-01-PROFILE-GRP-STATUS"),
-    show("AIAPI-01-FLD-OPS-CREDENTIAL"),
-    show("AIAPI-01-PRO-DESC-LAST-TEST"),
+  const filteredProfiles = query
+    ? profiles.filter((profile) => profileIdentity(profile).toLowerCase().includes(query.toLowerCase()))
+    : profiles;
+
+  const profileRow = (profile: (typeof profiles)[number]) => [
+    displayAiapiValue(profile.provider, loading),
+    displayAiapiValue(profile.model, loading),
+    displayAiapiValue(profile.capability, loading),
+    displayAiapiValue(profile.adapter, loading),
+    displayAiapiValue(profile.baseUrl, loading),
+    displayAiapiValue(profile.endpoint, loading),
+    displayAiapiValue(profile.timeout, loading),
+    profile.enabled ? "ENABLED" : "DISABLED",
+    profile.credentialSet ? "SET" : "NOT_SET",
+    displayAiapiValue(profile.lastTest, loading),
   ];
+
+  const groupValue = (uid: string): string => {
+    if (!selected) return dash;
+    switch (uid) {
+      case "AIAPI-01-PROFILE-GRP-IDENTITY":
+        return displayAiapiValue(profileIdentity(selected), loading);
+      case "AIAPI-01-PROFILE-GRP-CONNECTION":
+        return displayAiapiValue(selected.baseUrl, loading);
+      case "AIAPI-01-PROFILE-GRP-ADAPTER":
+        return displayAiapiValue(selected.adapter, loading);
+      case "AIAPI-01-PROFILE-GRP-CAPABILITY":
+        return displayAiapiValue(selected.capability, loading);
+      case "AIAPI-01-PROFILE-GRP-DATA-CONTEXT":
+        return displayAiapiValue(selected.endpoint, loading);
+      case "AIAPI-01-PROFILE-GRP-STATUS":
+        return selected.enabled ? "ENABLED" : "DISABLED";
+      default:
+        return dash;
+    }
+  };
 
   const modalActionUid = modalUid ? AIAPI_CONTROL_ACTIONS[modalUid] : "";
 
@@ -451,12 +502,19 @@ export function AiapiVisual() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tableRows ? (
-                    <tr>
-                      {tableValues.map((cell, index) => (
-                        <td key={AIAPI_TABLE_COLUMNS[index]}>{cell}</td>
-                      ))}
-                    </tr>
+                  {filteredProfiles.length ? (
+                    filteredProfiles.map((profile) => (
+                      <tr
+                        key={profile.profileId}
+                        className={profile.profileId === selectedProfileId ? styles.rowSelected : ""}
+                        data-profile-id={profile.profileId}
+                        onClick={() => setSelectedProfileId(profile.profileId)}
+                      >
+                        {profileRow(profile).map((cell, index) => (
+                          <td key={AIAPI_TABLE_COLUMNS[index]}>{cell}</td>
+                        ))}
+                      </tr>
+                    ))
                   ) : (
                     <tr className={styles.emptyRow}>
                       <td colSpan={AIAPI_TABLE_COLUMNS.length}>{dash}</td>
@@ -480,7 +538,7 @@ export function AiapiVisual() {
                 {AIAPI_PROFILE_GROUPS.map((group) => (
                   <div key={group.uid} className={styles.groupChip} data-control-uid={group.uid}>
                     <span>{tx(group.labelKey)}</span>
-                    <em>{show(group.uid)}</em>
+                    <em>{groupValue(group.uid)}</em>
                   </div>
                 ))}
               </div>

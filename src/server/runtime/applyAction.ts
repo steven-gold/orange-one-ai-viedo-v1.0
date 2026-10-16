@@ -156,6 +156,18 @@ async function credentialFromValue(raw?: string): Promise<string> {
   return text;
 }
 
+function profileIdFromValue(raw?: string): string {
+  const text = (raw ?? "").trim();
+  if (!text.startsWith("{")) return "";
+  try {
+    const parsed = JSON.parse(text) as Record<string, unknown>;
+    const candidate = parsed.profileId;
+    return typeof candidate === "string" ? candidate.trim() : "";
+  } catch {
+    return "";
+  }
+}
+
 async function applyProjectedAction(
   table: string,
   preview: (
@@ -304,9 +316,11 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
     await applyProjectedAction(FIELD_TABLE.aiapi, previewAiapiAction, controlUid, actionUid, nextValue);
     if (actionUid === "setProviderModelCredential") {
       const secret = await credentialFromValue(nextValue);
-      if (secret) await setAiapiCredential(secret);
+      const profileId = profileIdFromValue(nextValue);
+      if (secret && profileId) await setAiapiCredential(profileId, secret);
     } else if (actionUid === "deleteProviderModelCredential") {
-      await clearAiapiCredential();
+      const profileId = profileIdFromValue(nextValue);
+      if (profileId) await clearAiapiCredential(profileId);
     }
     return;
   }

@@ -6,6 +6,7 @@ import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
+import { AIAPI_REGISTRY_UID, readProfiles, serializeProfiles } from "@/lib/aiapiProfiles";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
@@ -1271,7 +1272,11 @@ export async function persistListAiapiFields(): Promise<AiapiFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_aiapi_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  const uids = new Set<string>([...AIAPI_VISIBLE_CONTROLS, ...rows.map((row) => row.control_uid)]);
+  if (!byUid.get(AIAPI_REGISTRY_UID)) {
+    const profiles = readProfiles((uid) => byUid.get(uid) ?? null);
+    if (profiles.length) byUid.set(AIAPI_REGISTRY_UID, serializeProfiles(profiles));
+  }
+  const uids = new Set<string>([...AIAPI_VISIBLE_CONTROLS, AIAPI_REGISTRY_UID, ...rows.map((row) => row.control_uid)]);
   return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,

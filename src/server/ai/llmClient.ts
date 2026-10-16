@@ -1,7 +1,14 @@
 import { getSqlClient } from "../db/client";
 import { getAiapiCredential } from "../db/aiapiCredential";
+import { eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
 
 export type AiPageUid = "core" | "asset" | "video";
+
+export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
+  core: "chat",
+  asset: "correction",
+  video: "correction",
+};
 
 export interface ProviderConfig {
   url: string;
@@ -37,30 +44,35 @@ async function readAiapiFields(): Promise<Map<string, string | null>> {
   return new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
 }
 
-export async function resolveProviderConfig(): Promise<ProviderConfig | null> {
-  const fields = await readAiapiFields();
-  const provider = clean(fields.get("AIAPI-01-FLD-OV-PROVIDER"));
-  const adapter = clean(fields.get("AIAPI-01-PROFILE-GRP-ADAPTER"));
-  const status = clean(fields.get("AIAPI-01-PROFILE-GRP-STATUS"));
+function toProviderConfig(profile: AiapiProfile, credential: string): ProviderConfig | null {
+  const provider = clean(profile.provider);
   if (!provider) return null;
-  if (status === "RETIRED" || status === "DISABLED") return null;
 
-  const base = (clean(fields.get("AIAPI-01-PROFILE-GRP-CONNECTION")) || defaultBase(provider, adapter)).replace(/\/+$/, "");
+  const base = (clean(profile.baseUrl) || defaultBase(provider, profile.adapter)).replace(/\/+$/, "");
   if (!base) return null;
-  const rawEndpoint = clean(fields.get("AIAPI-01-PROFILE-GRP-DATA-CONTEXT"));
+  const rawEndpoint = clean(profile.endpoint);
   const endpoint = rawEndpoint ? (rawEndpoint.startsWith("/") ? rawEndpoint : `/${rawEndpoint}`) : "/chat/completions";
 
-  const identity = clean(fields.get("AIAPI-01-PROFILE-GRP-IDENTITY"));
-  const identityModel = identity.includes("/") ? clean(identity.split("/").pop()) : "";
-  const model = identityModel || clean(process.env.ACPOS_LLM_MODEL) || "llama-3.1-8b-instant";
-
-  const timeoutSeconds = Number.parseInt(clean(fields.get("AIAPI-01-PRO-DESC-LIMITS")), 10);
+  const model = clean(profile.model) || clean(process.env.ACPOS_LLM_MODEL) || "llama-3.1-8b-instant";
+  const timeoutSeconds = Number.parseInt(clean(profile.timeout), 10);
   const timeoutMs = Number.isFinite(timeoutSeconds) && timeoutSeconds > 0 ? timeoutSeconds * 1000 : 20000;
 
-  const credential = await getAiapiCredential();
-  if (!credential) return null;
-
   return { url: `${base}${endpoint}`, model, provider, credential, timeoutMs };
+}
+
+export async function resolveProviderConfigs(capability: string): Promise<ProviderConfig[]> {
+  const fields = await readAiapiFields();
+  const profiles = readProfiles((uid) => fields.get(uid) ?? null);
+  const candidates = eligibleProfiles(profiles, capability);
+
+  const configs: ProviderConfig[] = [];
+  for (const profile of candidates) {
+    const credential = await getAiapiCredential(profile.profileId);
+    if (!credential) continue;
+    const config = toProviderConfig(profile, credential);
+    if (config) configs.push(config);
+  }
+  return configs;
 }
 
 export interface ChatMessage {
@@ -78,9 +90,7 @@ export class AiProviderError extends Error {
   }
 }
 
-export async function callChat(messages: ChatMessage[]): Promise<string> {
-  const config = await resolveProviderConfig();
-  if (!config) throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", "No enabled AI provider with a stored credential");
+async function callProvider(config: ProviderConfig, messages: ChatMessage[]): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), config.timeoutMs);
   try {
@@ -115,6 +125,22 @@ export async function callChat(messages: ChatMessage[]): Promise<string> {
   }
 }
 
+export async function callChat(messages: ChatMessage[], capability: string): Promise<string> {
+  const configs = await resolveProviderConfigs(capability);
+  if (!configs.length) {
+    throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${capability} provider with a stored credential`);
+  }
+  let lastError: AiProviderError | null = null;
+  for (const config of configs) {
+    try {
+      return await callProvider(config, messages);
+    } catch (error) {
+      lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
+    }
+  }
+  throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
+}
+
 const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
   core: "你是 ACPOS 核心製作助理。以繁體中文、精簡且可執行地回覆使用者在專案／專題對話中的需求。",
   asset: "你是 ACPOS 素材製作助理。以繁體中文回覆素材修正需求，輸出可直接套用的修正內容。",
@@ -123,8 +149,11 @@ const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
 
 export async function generatePageReply(page: AiPageUid, prompt: string, context?: string): Promise<string> {
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
-  return callChat([
-    { role: "system", content: SYSTEM_PROMPTS[page] },
-    { role: "user", content: user },
-  ]);
+  return callChat(
+    [
+      { role: "system", content: SYSTEM_PROMPTS[page] },
+      { role: "user", content: user },
+    ],
+    AI_CAPABILITY_BY_PAGE[page],
+  );
 }

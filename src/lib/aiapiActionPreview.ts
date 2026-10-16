@@ -1,4 +1,15 @@
+import {
+  AIAPI_REGISTRY_UID,
+  type AiapiProfile,
+  nextProfileId,
+  nextSeq,
+  profileIdentity,
+  readProfiles,
+  serializeProfiles,
+} from "./aiapiProfiles";
+
 export const AIAPI_EXTRA_PROJECTION_KEYS = [
+  AIAPI_REGISTRY_UID,
   "AIAPI-01-FLD-CANDIDATE-GROUP",
   "AIAPI-01-FLD-SANDBOX-EVIDENCE",
   "AIAPI-01-FLD-ROUTE-DECISION",
@@ -7,6 +18,7 @@ export const AIAPI_EXTRA_PROJECTION_KEYS = [
 ] as const;
 
 interface AiapiPayload {
+  profileId?: string;
   provider?: string;
   model?: string;
   capability?: string;
@@ -53,13 +65,9 @@ function join(parts: Array<string | undefined>): string {
   return parts.map((part) => usable(part)).filter(Boolean).join(" / ");
 }
 
-function profileIdentity(current: (uid: string) => string | null): string {
-  return usable(current("AIAPI-01-PROFILE-GRP-IDENTITY"));
-}
-
 function profileExists(current: (uid: string) => string | null): boolean {
   const status = current("AIAPI-01-PROFILE-GRP-STATUS");
-  if (!profileIdentity(current)) return false;
+  if (!usable(current("AIAPI-01-PROFILE-GRP-IDENTITY"))) return false;
   return status !== "RETIRED";
 }
 
@@ -69,6 +77,43 @@ function credentialSet(current: (uid: string) => string | null): boolean {
 
 function capabilityApproved(current: (uid: string) => string | null): boolean {
   return current("AIAPI-01-FLD-PF-RIGHTS") === "APPROVED";
+}
+
+function targetProfile(
+  profiles: AiapiProfile[],
+  payload: AiapiPayload,
+  current: (uid: string) => string | null,
+): AiapiProfile | undefined {
+  const wantedId = usable(payload.profileId);
+  if (wantedId) return profiles.find((profile) => profile.profileId === wantedId);
+  if (profiles.length === 1) return profiles[0];
+  const identity = usable(current("AIAPI-01-PROFILE-GRP-IDENTITY"));
+  return profiles.find((profile) => profileIdentity(profile) === identity);
+}
+
+function replaceProfile(profiles: AiapiProfile[], updated: AiapiProfile): AiapiProfile[] {
+  return profiles.map((profile) => (profile.profileId === updated.profileId ? updated : profile));
+}
+
+function mirrorProfile(profile: AiapiProfile): Record<string, string> {
+  return {
+    "AIAPI-01-FLD-OV-PROVIDER": profile.provider,
+    "AIAPI-01-FLD-OV-CAPABILITY": profile.capability,
+    "AIAPI-01-PROFILE-GRP-IDENTITY": profileIdentity(profile),
+    "AIAPI-01-PROFILE-GRP-CONNECTION": profile.baseUrl,
+    "AIAPI-01-PROFILE-GRP-ADAPTER": profile.adapter,
+    "AIAPI-01-PROFILE-GRP-CAPABILITY": profile.capability,
+    "AIAPI-01-PROFILE-GRP-DATA-CONTEXT": profile.endpoint,
+    "AIAPI-01-PROFILE-GRP-STATUS": profile.enabled ? "ENABLED" : "DISABLED",
+    "AIAPI-01-FLD-OPS-CREDENTIAL": profile.credentialSet ? "SET" : "NOT_SET",
+    "AIAPI-01-PRO-DESC-IDENTITY": profileIdentity(profile),
+    "AIAPI-01-PRO-DESC-CAPABILITIES": profile.capability,
+    "AIAPI-01-PRO-DESC-ENDPOINT": join([profile.baseUrl, profile.endpoint]),
+    "AIAPI-01-PRO-DESC-AUTH": profile.credentialSet ? "SET" : "NOT_SET",
+    "AIAPI-01-PRO-DESC-LIMITS": profile.timeout,
+    "AIAPI-01-PRO-DESC-LAST-TEST": profile.lastTest,
+    "AIAPI-01-PRO-DESC-HEALTH": profile.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN",
+  };
 }
 
 export function previewAiapiAction(
@@ -82,60 +127,55 @@ export function previewAiapiAction(
   if (actionUid === "createProviderModelProfile") {
     const provider = safeName(payload.provider);
     if (!provider) return {};
-    const model = usable(payload.model);
-    const identity = join([provider, model]);
+    const profiles = readProfiles(current);
+    const profile: AiapiProfile = {
+      profileId: nextProfileId(profiles),
+      provider,
+      model: usable(payload.model),
+      capability: usable(payload.capability),
+      adapter: usable(payload.adapter),
+      baseUrl: usable(payload.baseUrl),
+      endpoint: usable(payload.endpoint),
+      timeout: usable(payload.timeout),
+      enabled: (usable(payload.enabled) || "ENABLED") !== "DISABLED",
+      credentialSet: false,
+      lastTest: "",
+      seq: nextSeq(profiles),
+    };
     return {
-      "AIAPI-01-FLD-OV-PROVIDER": provider,
-      "AIAPI-01-FLD-OV-CAPABILITY": usable(payload.capability),
+      [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, profile]),
       "AIAPI-01-FLD-OV-ROUTE": "",
-      "AIAPI-01-PROFILE-GRP-IDENTITY": identity,
-      "AIAPI-01-PROFILE-GRP-CONNECTION": usable(payload.baseUrl),
-      "AIAPI-01-PROFILE-GRP-ADAPTER": usable(payload.adapter),
-      "AIAPI-01-PROFILE-GRP-CAPABILITY": usable(payload.capability),
-      "AIAPI-01-PROFILE-GRP-DATA-CONTEXT": usable(payload.endpoint),
-      "AIAPI-01-PROFILE-GRP-STATUS": usable(payload.enabled) || "ENABLED",
-      "AIAPI-01-FLD-OPS-CREDENTIAL": "NOT_SET",
       "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
-      "AIAPI-01-PRO-DESC-IDENTITY": identity,
-      "AIAPI-01-PRO-DESC-CAPABILITIES": usable(payload.capability),
-      "AIAPI-01-PRO-DESC-ENDPOINT": join([usable(payload.baseUrl), usable(payload.endpoint)]),
-      "AIAPI-01-PRO-DESC-AUTH": "NOT_SET",
-      "AIAPI-01-PRO-DESC-LIMITS": usable(payload.timeout),
-      "AIAPI-01-PRO-DESC-LAST-TEST": "",
-      "AIAPI-01-PRO-DESC-HEALTH": "UNKNOWN",
+      ...mirrorProfile(profile),
     };
   }
 
   if (actionUid === "updateProviderModelProfile") {
-    if (!profileExists(current)) return {};
-    const patch: Record<string, string> = {};
-    const providerName = safeName(payload.provider);
-    const identity = join([providerName, usable(payload.model)]);
-    if (identity) {
-      patch["AIAPI-01-PROFILE-GRP-IDENTITY"] = identity;
-      patch["AIAPI-01-PRO-DESC-IDENTITY"] = identity;
-      patch["AIAPI-01-FLD-OV-PROVIDER"] = providerName || identity;
-    }
-    if (usable(payload.baseUrl)) patch["AIAPI-01-PROFILE-GRP-CONNECTION"] = usable(payload.baseUrl);
-    if (usable(payload.adapter)) patch["AIAPI-01-PROFILE-GRP-ADAPTER"] = usable(payload.adapter);
-    if (usable(payload.capability)) {
-      patch["AIAPI-01-PROFILE-GRP-CAPABILITY"] = usable(payload.capability);
-      patch["AIAPI-01-PRO-DESC-CAPABILITIES"] = usable(payload.capability);
-      patch["AIAPI-01-FLD-OV-CAPABILITY"] = usable(payload.capability);
-    }
-    if (usable(payload.endpoint)) {
-      patch["AIAPI-01-PROFILE-GRP-DATA-CONTEXT"] = usable(payload.endpoint);
-      patch["AIAPI-01-PRO-DESC-ENDPOINT"] = join([usable(payload.baseUrl), usable(payload.endpoint)]);
-    }
-    if (usable(payload.timeout)) patch["AIAPI-01-PRO-DESC-LIMITS"] = usable(payload.timeout);
-    return patch;
+    const profiles = readProfiles(current);
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return {};
+    const updated: AiapiProfile = {
+      ...target,
+      provider: safeName(payload.provider) || target.provider,
+      model: usable(payload.model) || target.model,
+      capability: usable(payload.capability) || target.capability,
+      adapter: usable(payload.adapter) || target.adapter,
+      baseUrl: usable(payload.baseUrl) || target.baseUrl,
+      endpoint: usable(payload.endpoint) || target.endpoint,
+      timeout: usable(payload.timeout) || target.timeout,
+    };
+    return { [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)), ...mirrorProfile(updated) };
   }
 
   if (actionUid === "testProviderModelProfile") {
-    if (!profileExists(current)) return {};
-    if (!credentialSet(current)) return {};
-    if (!usable(current("AIAPI-01-PROFILE-GRP-ADAPTER"))) return {};
+    const profiles = readProfiles(current);
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return {};
+    if (!target.credentialSet) return {};
+    if (!usable(target.adapter)) return {};
+    const updated: AiapiProfile = { ...target, lastTest: "PASS" };
     return {
+      [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)),
       "AIAPI-01-PRO-DESC-LAST-TEST": "PASS",
       "AIAPI-01-PRO-DESC-HEALTH": "HEALTHY",
       "AIAPI-01-FLD-OPS-HEALTH": "HEALTHY",
@@ -143,30 +183,35 @@ export function previewAiapiAction(
   }
 
   if (actionUid === "retireProviderModelProfile") {
-    if (!profileExists(current)) return {};
+    const profiles = readProfiles(current);
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return {};
+    const updated: AiapiProfile = { ...target, enabled: false };
     return {
-      "AIAPI-01-PROFILE-GRP-STATUS": "RETIRED",
+      [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)),
       "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
-      "AIAPI-01-PRO-DESC-HEALTH": "UNKNOWN",
-      "AIAPI-01-FLD-OPS-CREDENTIAL": "NOT_SET",
+      ...mirrorProfile(updated),
     };
   }
 
   if (actionUid === "setProviderModelCredential") {
-    if (!profileExists(current)) return {};
-    return {
-      "AIAPI-01-FLD-OPS-CREDENTIAL": "SET",
-      "AIAPI-01-PRO-DESC-AUTH": "SET",
-    };
+    const profiles = readProfiles(current);
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return {};
+    const updated: AiapiProfile = { ...target, credentialSet: true };
+    return { [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)), ...mirrorProfile(updated) };
   }
 
   if (actionUid === "deleteProviderModelCredential") {
-    if (!credentialSet(current)) return {};
+    const profiles = readProfiles(current);
+    const target = targetProfile(profiles, payload, current);
+    if (!target || !target.credentialSet) return {};
+    const updated: AiapiProfile = { ...target, credentialSet: false, lastTest: "" };
     return {
-      "AIAPI-01-FLD-OPS-CREDENTIAL": "NOT_SET",
-      "AIAPI-01-PRO-DESC-AUTH": "NOT_SET",
+      [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)),
       "AIAPI-01-PRO-DESC-HEALTH": "UNKNOWN",
       "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
+      ...mirrorProfile(updated),
     };
   }
 
