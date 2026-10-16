@@ -382,6 +382,7 @@ const MIGRATION_FILES = [
   "022_reset_core_drafts.sql",
   "023_reset_aiapi_drafts.sql",
   "024_reset_aiapi_drafts.sql",
+  "025_reset_aiapi_drafts.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -410,6 +411,7 @@ const RESET_MIGRATIONS: Record<string, string[]> = {
   "022_reset_core_drafts.sql": RESET_CORE_DRAFTS,
   "023_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "024_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
+  "025_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
 };
 
 async function runBootstrap(): Promise<MigrationResult> {
