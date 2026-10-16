@@ -1,6 +1,7 @@
 import {
   AIAPI_REGISTRY_UID,
   type AiapiProfile,
+  findDuplicateProfile,
   nextProfileId,
   nextSeq,
   profileIdentity,
@@ -26,6 +27,14 @@ interface AiapiPayload {
   baseUrl?: string;
   endpoint?: string;
   timeout?: string;
+  positioning?: string;
+  acposScope?: string;
+  inputReq?: string;
+  outputReq?: string;
+  billing?: string;
+  recommendedUse?: string;
+  restrictions?: string;
+  docs?: string;
   enabled?: string;
   group?: string;
   members?: string;
@@ -111,9 +120,100 @@ function mirrorProfile(profile: AiapiProfile): Record<string, string> {
     "AIAPI-01-PRO-DESC-ENDPOINT": join([profile.baseUrl, profile.endpoint]),
     "AIAPI-01-PRO-DESC-AUTH": profile.credentialSet ? "SET" : "NOT_SET",
     "AIAPI-01-PRO-DESC-LIMITS": profile.timeout,
+    "AIAPI-01-PRO-DESC-POSITIONING": profile.positioning,
+    "AIAPI-01-PRO-DESC-ACPOS-SCOPE": profile.acposScope,
+    "AIAPI-01-PRO-DESC-INPUT": profile.inputReq,
+    "AIAPI-01-PRO-DESC-OUTPUT": profile.outputReq,
+    "AIAPI-01-PRO-DESC-BILLING": profile.billing,
+    "AIAPI-01-PRO-DESC-RECOMMENDED-USE": profile.recommendedUse,
+    "AIAPI-01-PRO-DESC-RESTRICTIONS": profile.restrictions,
+    "AIAPI-01-PRO-DESC-DOCS": profile.docs,
     "AIAPI-01-PRO-DESC-LAST-TEST": profile.lastTest,
     "AIAPI-01-PRO-DESC-HEALTH": profile.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN",
   };
+}
+
+function metadataFromPayload(payload: AiapiPayload): Pick<
+  AiapiProfile,
+  "positioning" | "acposScope" | "inputReq" | "outputReq" | "billing" | "recommendedUse" | "restrictions" | "docs"
+> {
+  return {
+    positioning: usable(payload.positioning),
+    acposScope: usable(payload.acposScope),
+    inputReq: usable(payload.inputReq),
+    outputReq: usable(payload.outputReq),
+    billing: usable(payload.billing),
+    recommendedUse: usable(payload.recommendedUse),
+    restrictions: usable(payload.restrictions),
+    docs: usable(payload.docs),
+  };
+}
+
+function candidateFromPayload(
+  payload: AiapiPayload,
+  base: Pick<AiapiProfile, "provider" | "model" | "capability" | "adapter" | "baseUrl" | "endpoint">,
+): AiapiProfile {
+  return {
+    profileId: "",
+    provider: safeName(payload.provider) || base.provider,
+    model: usable(payload.model) || base.model,
+    capability: usable(payload.capability) || base.capability,
+    adapter: usable(payload.adapter) || base.adapter,
+    baseUrl: usable(payload.baseUrl) || base.baseUrl,
+    endpoint: usable(payload.endpoint) || base.endpoint,
+    timeout: "",
+    positioning: "",
+    acposScope: "",
+    inputReq: "",
+    outputReq: "",
+    billing: "",
+    recommendedUse: "",
+    restrictions: "",
+    docs: "",
+    enabled: true,
+    credentialSet: false,
+    lastTest: "",
+    seq: 0,
+  };
+}
+
+export type AiapiValidationResult = { ok: true } | { ok: false; code: string };
+
+export function validateAiapiAction(
+  _controlUid: string,
+  actionUid: string,
+  current: (uid: string) => string | null,
+  nextValue?: string,
+): AiapiValidationResult {
+  const payload = parsePayload(nextValue);
+  const profiles = readProfiles(current);
+
+  if (actionUid === "createProviderModelProfile") {
+    const provider = safeName(payload.provider);
+    if (!provider) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
+    const candidate = candidateFromPayload(payload, {
+      provider,
+      model: "",
+      capability: "",
+      adapter: "",
+      baseUrl: "",
+      endpoint: "",
+    });
+    if (findDuplicateProfile(profiles, candidate)) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+    return { ok: true };
+  }
+
+  if (actionUid === "updateProviderModelProfile") {
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return { ok: false, code: "AIAPI_PROFILE_NOT_FOUND" };
+    const candidate = candidateFromPayload(payload, target);
+    if (findDuplicateProfile(profiles, candidate, target.profileId)) {
+      return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+    }
+    return { ok: true };
+  }
+
+  return { ok: true };
 }
 
 export function previewAiapiAction(
@@ -137,6 +237,7 @@ export function previewAiapiAction(
       baseUrl: usable(payload.baseUrl),
       endpoint: usable(payload.endpoint),
       timeout: usable(payload.timeout),
+      ...metadataFromPayload(payload),
       enabled: (usable(payload.enabled) || "ENABLED") !== "DISABLED",
       credentialSet: false,
       lastTest: "",
@@ -154,6 +255,7 @@ export function previewAiapiAction(
     const profiles = readProfiles(current);
     const target = targetProfile(profiles, payload, current);
     if (!target) return {};
+    const metadata = metadataFromPayload(payload);
     const updated: AiapiProfile = {
       ...target,
       provider: safeName(payload.provider) || target.provider,
@@ -163,6 +265,14 @@ export function previewAiapiAction(
       baseUrl: usable(payload.baseUrl) || target.baseUrl,
       endpoint: usable(payload.endpoint) || target.endpoint,
       timeout: usable(payload.timeout) || target.timeout,
+      positioning: metadata.positioning || target.positioning,
+      acposScope: metadata.acposScope || target.acposScope,
+      inputReq: metadata.inputReq || target.inputReq,
+      outputReq: metadata.outputReq || target.outputReq,
+      billing: metadata.billing || target.billing,
+      recommendedUse: metadata.recommendedUse || target.recommendedUse,
+      restrictions: metadata.restrictions || target.restrictions,
+      docs: metadata.docs || target.docs,
     };
     return { [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)), ...mirrorProfile(updated) };
   }

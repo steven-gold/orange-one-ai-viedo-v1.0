@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { jsonError, requireAuth } from "@/server/auth/requireAuth";
-import { knownAiapiAction, persistHasAiapiPermission, persistRecordAiapiAction } from "@/server/db/persist";
+import { knownAiapiAction, persistHasAiapiPermission, persistListAiapiFields, persistRecordAiapiAction } from "@/server/db/persist";
 import { AIAPI_PERMISSION } from "@/server/domain/aiapi";
+import { validateAiapiAction } from "@/lib/aiapiActionPreview";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,12 @@ export async function POST(request: Request) {
       return jsonError("AUTHORIZATION_DENIED", `${AIAPI_PERMISSION} required`, 403);
     }
     const value = typeof body.value === "string" ? body.value : undefined;
+    const fields = await persistListAiapiFields();
+    const fieldMap = new Map(fields.map((field) => [field.controlUid, field.value] as const));
+    const validation = validateAiapiAction(controlUid, actionUid, (uid) => fieldMap.get(uid) ?? null, value);
+    if (!validation.ok) {
+      return jsonError(validation.code, `AIAPI action rejected: ${validation.code}`, 409);
+    }
     const eventUid = await persistRecordAiapiAction(principal.accountUid, controlUid, actionUid, value);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {

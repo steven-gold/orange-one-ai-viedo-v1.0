@@ -30,6 +30,39 @@
   color: var(--aiapi-danger);
 }
 
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--aiapi-border-active);
+  border-radius: 10px;
+  background: var(--aiapi-input);
+  color: var(--aiapi-text);
+  font-size: 12px;
+}
+
+.noticeClose {
+  flex: none;
+  background: none;
+  border: none;
+  color: var(--aiapi-muted);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.emptyHint {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 2px solid var(--aiapi-border-active);
+  color: var(--aiapi-muted);
+  font-size: 11px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+}
+
 .heading {
   display: flex;
   flex-direction: column;
@@ -260,6 +293,9 @@
   border-bottom: 1px solid rgba(142, 112, 255, 0.14);
   color: var(--aiapi-secondary);
   white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .table tbody tr {
@@ -301,6 +337,9 @@
   color: var(--aiapi-secondary);
   font-weight: 500;
   text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .groupGrid {
@@ -310,7 +349,7 @@
 }
 
 .groupChip {
-  height: 40px;
+  min-height: 40px;
   border: 1px solid var(--aiapi-border);
   border-radius: 10px;
   background: var(--aiapi-input);
@@ -319,6 +358,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .flow {
@@ -542,6 +585,11 @@
   color: var(--aiapi-text);
   font-size: 12px;
   font-weight: 600;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: center;
 }
 
 .flowCard strong {

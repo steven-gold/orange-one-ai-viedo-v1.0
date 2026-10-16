@@ -947,14 +947,19 @@ export async function fetchAiapiReadModel(
   return (await response.json()) as AiapiReadModel;
 }
 
+export interface AiapiActionResult {
+  ok: boolean;
+  code?: string;
+}
+
 export async function postAiapiAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
   value?: string,
-): Promise<void> {
-  await fetch("/api/aiapi/action", {
+): Promise<AiapiActionResult> {
+  const response = await fetch("/api/aiapi/action", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -963,6 +968,15 @@ export async function postAiapiAction(
     },
     body: JSON.stringify({ controlUid, actionUid, value }),
   });
+  if (response.ok) return { ok: true };
+  let code = "AIAPI_ACTION_UNAVAILABLE";
+  try {
+    const body = (await response.json()) as { error?: { code?: string }; code?: string };
+    code = body.error?.code ?? body.code ?? code;
+  } catch {
+    // keep the default code when the body is unavailable
+  }
+  return { ok: false, code };
 }
 
 export interface Sg02FieldValue {

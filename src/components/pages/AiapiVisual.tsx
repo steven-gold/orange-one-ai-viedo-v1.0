@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { AiapiClientError, fetchAiapiReadModel, postAiapiAction, type AiapiFieldValue } from "@/lib/client";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { AIAPI_REGISTRY_UID, parseProfiles, profileIdentity } from "@/lib/aiapiProfiles";
-import { displayAiapiValue } from "./aiapiFormat";
+import { displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
 import {
   AIAPI_CONTROL_ACTIONS,
   AIAPI_PRO_DESC_FIELDS,
@@ -40,6 +40,14 @@ const MODAL_FORMS: Record<string, FormField[]> = {
     { key: "baseUrl", labelKey: "aiapi.form-base-url" },
     { key: "endpoint", labelKey: "aiapi.form-endpoint" },
     { key: "timeout", labelKey: "aiapi.form-timeout" },
+    { key: "positioning", labelKey: "aiapi.form-positioning" },
+    { key: "acposScope", labelKey: "aiapi.form-acpos-scope" },
+    { key: "inputReq", labelKey: "aiapi.form-input" },
+    { key: "outputReq", labelKey: "aiapi.form-output" },
+    { key: "billing", labelKey: "aiapi.form-billing" },
+    { key: "recommendedUse", labelKey: "aiapi.form-recommended-use" },
+    { key: "restrictions", labelKey: "aiapi.form-restrictions" },
+    { key: "docs", labelKey: "aiapi.form-docs" },
   ],
   updateProviderModelProfile: [
     { key: "provider", labelKey: "aiapi.form-provider" },
@@ -49,6 +57,14 @@ const MODAL_FORMS: Record<string, FormField[]> = {
     { key: "baseUrl", labelKey: "aiapi.form-base-url" },
     { key: "endpoint", labelKey: "aiapi.form-endpoint" },
     { key: "timeout", labelKey: "aiapi.form-timeout" },
+    { key: "positioning", labelKey: "aiapi.form-positioning" },
+    { key: "acposScope", labelKey: "aiapi.form-acpos-scope" },
+    { key: "inputReq", labelKey: "aiapi.form-input" },
+    { key: "outputReq", labelKey: "aiapi.form-output" },
+    { key: "billing", labelKey: "aiapi.form-billing" },
+    { key: "recommendedUse", labelKey: "aiapi.form-recommended-use" },
+    { key: "restrictions", labelKey: "aiapi.form-restrictions" },
+    { key: "docs", labelKey: "aiapi.form-docs" },
   ],
   setProviderModelCredential: [{ key: "reference", labelKey: "aiapi.form-credential-ref", required: true }],
   configureGovernedResource: [
@@ -71,6 +87,17 @@ const MODAL_FORMS: Record<string, FormField[]> = {
   "admin:AIAPI-08:ACT-SYSTEM-TEST": [],
   executeProviderRoute: [{ key: "instruction", labelKey: "aiapi.form-instruction" }],
 };
+
+const NOTICE_KEYS: Record<string, TranslationKey> = {
+  AIAPI_PROFILE_DUPLICATE: "aiapi.notice-duplicate",
+  AIAPI_PROFILE_PROVIDER_REQUIRED: "aiapi.notice-provider-required",
+  AIAPI_PROFILE_NOT_FOUND: "aiapi.notice-profile-not-found",
+};
+
+function noticeKeyForCode(code?: string): TranslationKey {
+  if (code && NOTICE_KEYS[code]) return NOTICE_KEYS[code];
+  return "aiapi.notice-rejected";
+}
 
 function Btn({
   uid,
@@ -217,6 +244,7 @@ export function AiapiVisual() {
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [selectedProfileId, setSelectedProfileId] = useState("");
+  const [notice, setNotice] = useState<TranslationKey | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -249,9 +277,11 @@ export function AiapiVisual() {
     const actionUid = AIAPI_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postAiapiAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, value);
+      const result = await postAiapiAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, value);
+      setNotice(result.ok ? null : noticeKeyForCode(result.code));
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
+      setNotice("aiapi.notice-rejected");
     }
     setTick((n) => n + 1);
   }, []);
@@ -277,8 +307,17 @@ export function AiapiVisual() {
   const selected =
     profiles.find((profile) => profile.profileId === selectedProfileId) ?? profiles[0] ?? null;
 
+  const knownProfileIds = useRef<Set<string>>(new Set());
   useEffect(() => {
-    if (profiles.length && !profiles.some((profile) => profile.profileId === selectedProfileId)) {
+    if (!profiles.length) return;
+    const ids = new Set(profiles.map((profile) => profile.profileId));
+    const added = profiles.find((profile) => !knownProfileIds.current.has(profile.profileId));
+    knownProfileIds.current = ids;
+    if (added) {
+      setSelectedProfileId(added.profileId);
+      return;
+    }
+    if (!ids.has(selectedProfileId)) {
       setSelectedProfileId(profiles[0].profileId);
     }
   }, [profiles, selectedProfileId]);
@@ -370,9 +409,9 @@ export function AiapiVisual() {
     displayAiapiValue(profile.baseUrl, loading),
     displayAiapiValue(profile.endpoint, loading),
     displayAiapiValue(profile.timeout, loading),
-    profile.enabled ? "ENABLED" : "DISABLED",
-    profile.credentialSet ? "SET" : "NOT_SET",
-    displayAiapiValue(profile.lastTest, loading),
+    displayAiapiStatus(profile.enabled ? "ENABLED" : "DISABLED", tx, loading),
+    displayAiapiStatus(profile.credentialSet ? "SET" : "NOT_SET", tx, loading),
+    displayAiapiStatus(profile.lastTest, tx, loading),
   ];
 
   const groupValue = (uid: string): string => {
@@ -389,9 +428,55 @@ export function AiapiVisual() {
       case "AIAPI-01-PROFILE-GRP-DATA-CONTEXT":
         return displayAiapiValue(selected.endpoint, loading);
       case "AIAPI-01-PROFILE-GRP-STATUS":
-        return selected.enabled ? "ENABLED" : "DISABLED";
+        return displayAiapiStatus(selected.enabled ? "ENABLED" : "DISABLED", tx, loading);
       default:
         return dash;
+    }
+  };
+
+  const selectedField = (uid: string): string => {
+    if (!selected) return dash;
+    switch (uid) {
+      case "AIAPI-01-PRO-DESC-IDENTITY":
+        return displayAiapiValue(profileIdentity(selected), loading);
+      case "AIAPI-01-PRO-DESC-POSITIONING":
+        return displayAiapiValue(selected.positioning, loading);
+      case "AIAPI-01-PRO-DESC-ACPOS-SCOPE":
+        return displayAiapiValue(selected.acposScope, loading);
+      case "AIAPI-01-PRO-DESC-CAPABILITIES":
+        return displayAiapiValue(selected.capability, loading);
+      case "AIAPI-01-PRO-DESC-INPUT":
+        return displayAiapiValue(selected.inputReq, loading);
+      case "AIAPI-01-PRO-DESC-OUTPUT":
+        return displayAiapiValue(selected.outputReq, loading);
+      case "AIAPI-01-PRO-DESC-LIMITS":
+        return displayAiapiValue(selected.timeout, loading);
+      case "AIAPI-01-PRO-DESC-ENDPOINT":
+        return displayAiapiValue([selected.baseUrl, selected.endpoint].filter(Boolean).join(" · "), loading);
+      case "AIAPI-01-PRO-DESC-AUTH":
+        return displayAiapiStatus(selected.credentialSet ? "SET" : "NOT_SET", tx, loading);
+      case "AIAPI-01-PRO-DESC-BILLING":
+        return displayAiapiValue(selected.billing, loading);
+      case "AIAPI-01-PRO-DESC-HEALTH":
+        return displayAiapiStatus(selected.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN", tx, loading);
+      case "AIAPI-01-PRO-DESC-LAST-TEST":
+        return displayAiapiStatus(selected.lastTest, tx, loading);
+      case "AIAPI-01-PRO-DESC-RECOMMENDED-USE":
+        return displayAiapiValue(selected.recommendedUse, loading);
+      case "AIAPI-01-PRO-DESC-RESTRICTIONS":
+        return displayAiapiValue(selected.restrictions, loading);
+      case "AIAPI-01-PRO-DESC-DOCS":
+        return displayAiapiValue(selected.docs, loading);
+      case "AIAPI-01-FLD-OV-PROVIDER":
+        return displayAiapiValue(selected.provider, loading);
+      case "AIAPI-01-FLD-OV-CAPABILITY":
+        return displayAiapiValue(selected.capability, loading);
+      case "AIAPI-01-FLD-OPS-CREDENTIAL":
+        return displayAiapiStatus(selected.credentialSet ? "SET" : "NOT_SET", tx, loading);
+      case "AIAPI-01-FLD-OPS-HEALTH":
+        return displayAiapiStatus(selected.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN", tx, loading);
+      default:
+        return show(uid);
     }
   };
 
@@ -410,6 +495,15 @@ export function AiapiVisual() {
       {error ? (
         <div className={styles.error} role="alert">
           {tx("aiapi.error")}
+        </div>
+      ) : null}
+
+      {notice ? (
+        <div className={styles.notice} role="status" data-notice-key={notice}>
+          <span>{tx(notice)}</span>
+          <button type="button" className={styles.noticeClose} aria-label={tx("global.common.close")} onClick={() => setNotice(null)}>
+            {tx("global.common.close")}
+          </button>
         </div>
       ) : null}
 
@@ -461,10 +555,11 @@ export function AiapiVisual() {
           <section className={styles.workspace} data-section-uid="AIAPI-01-SEC-03" data-component-uid="AIAPI-01-CMP-OVERVIEW">
             <h2>{tx("aiapi.overview-title")}</h2>
             <p className={styles.note}>{tx("aiapi.overview-hint")}</p>
+            <p className={styles.emptyHint}>{tx("aiapi.empty-overview")}</p>
             <div className={styles.statusBar}>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-PROVIDER">
                 <span>{tx("aiapi.ov-provider")}</span>
-                <strong>{show("AIAPI-01-FLD-OV-PROVIDER")}</strong>
+                <strong>{selectedField("AIAPI-01-FLD-OV-PROVIDER")}</strong>
               </div>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-ROUTE">
                 <span>{tx("aiapi.ov-route")}</span>
@@ -472,7 +567,7 @@ export function AiapiVisual() {
               </div>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-CAPABILITY">
                 <span>{tx("aiapi.ov-capability")}</span>
-                <strong>{show("AIAPI-01-FLD-OV-CAPABILITY")}</strong>
+                <strong>{selectedField("AIAPI-01-FLD-OV-CAPABILITY")}</strong>
               </div>
               <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-JOB">
                 <span>{tx("aiapi.ov-job")}</span>
@@ -511,7 +606,7 @@ export function AiapiVisual() {
                         onClick={() => setSelectedProfileId(profile.profileId)}
                       >
                         {profileRow(profile).map((cell, index) => (
-                          <td key={AIAPI_TABLE_COLUMNS[index]}>{cell}</td>
+                          <td key={AIAPI_TABLE_COLUMNS[index]} title={cell}>{cell}</td>
                         ))}
                       </tr>
                     ))
@@ -536,7 +631,7 @@ export function AiapiVisual() {
               <p className={styles.note}>{tx("aiapi.editor-hint")}</p>
               <div className={styles.groupGrid}>
                 {AIAPI_PROFILE_GROUPS.map((group) => (
-                  <div key={group.uid} className={styles.groupChip} data-control-uid={group.uid}>
+                  <div key={group.uid} className={styles.groupChip} data-control-uid={group.uid} title={groupValue(group.uid)}>
                     <span>{tx(group.labelKey)}</span>
                     <em>{groupValue(group.uid)}</em>
                   </div>
@@ -553,13 +648,14 @@ export function AiapiVisual() {
         {view === "routing_test" ? (
           <section className={styles.workspace} data-section-uid="AIAPI-01-SEC-07" data-component-uid="AIAPI-01-CMP-ROUTING">
             <h2>{tx("aiapi.routing-title")}</h2>
+            <p className={styles.emptyHint}>{tx("aiapi.empty-routing")}</p>
             <div className={styles.duo}>
               <div className={styles.card}>
                 <h3>{tx("aiapi.candidate-title")}</h3>
                 <p className={styles.note}>{tx("aiapi.candidate-hint")}</p>
                 <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-OV-PROVIDER" label={tx("aiapi.col-provider")} value={show("AIAPI-01-FLD-OV-PROVIDER")} />
-                  <Kv uid="AIAPI-01-FLD-OV-CAPABILITY" label={tx("aiapi.col-capability")} value={show("AIAPI-01-FLD-OV-CAPABILITY")} />
+                  <Kv uid="AIAPI-01-FLD-OV-PROVIDER" label={tx("aiapi.col-provider")} value={selectedField("AIAPI-01-FLD-OV-PROVIDER")} />
+                  <Kv uid="AIAPI-01-FLD-OV-CAPABILITY" label={tx("aiapi.col-capability")} value={selectedField("AIAPI-01-FLD-OV-CAPABILITY")} />
                   <VisualKv label={tx("aiapi.fld-candidate-group")} value={show("AIAPI-01-FLD-CANDIDATE-GROUP")} />
                 </div>
                 <Btn uid="CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP" label={tx("aiapi.btn-create-group")} onAct={openModal} disabled={gatedDisabled("CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP")} primary />
@@ -611,6 +707,7 @@ export function AiapiVisual() {
           <section className={styles.workspace} data-section-uid="AIAPI-01-SEC-08" data-component-uid="AIAPI-01-CMP-OPERATIONS">
             <h2>{tx("aiapi.ops-title")}</h2>
             <p className={styles.note}>{tx("aiapi.ops-hint")}</p>
+            <p className={styles.emptyHint}>{tx("aiapi.empty-operations")}</p>
             <div className={styles.duo}>
               <div className={styles.card}>
                 <h3>{tx("aiapi.job-title")}</h3>
@@ -635,7 +732,7 @@ export function AiapiVisual() {
           </section>
         ) : null}
 
-        <ProfessionalRail t={tx} show={show} disabled={disabled} view={view} gateOf={gateOf} gateReason={gateReason} onDrawer={openDrawer} onModal={openModal} />
+        <ProfessionalRail t={tx} show={show} field={selectedField} disabled={disabled} view={view} gateOf={gateOf} gateReason={gateReason} onDrawer={openDrawer} onModal={openModal} />
       </div>
 
       {drawerUid ? (
@@ -643,10 +740,10 @@ export function AiapiVisual() {
           <h3>{tx("aiapi.drawer-title")}</h3>
           <p className={styles.note}>{tx("aiapi.drawer-hint")}</p>
           <div className={styles.kvList}>
-            <VisualKv label={tx("aiapi.pro-identity")} value={show("AIAPI-01-PRO-DESC-IDENTITY")} />
-            <VisualKv label={tx("aiapi.pro-endpoint")} value={show("AIAPI-01-PRO-DESC-ENDPOINT")} />
-            <VisualKv label={tx("aiapi.pro-auth")} value={show("AIAPI-01-PRO-DESC-AUTH")} />
-            <VisualKv label={tx("aiapi.pro-last-test")} value={show("AIAPI-01-PRO-DESC-LAST-TEST")} />
+            <VisualKv label={tx("aiapi.pro-identity")} value={selectedField("AIAPI-01-PRO-DESC-IDENTITY")} />
+            <VisualKv label={tx("aiapi.pro-endpoint")} value={selectedField("AIAPI-01-PRO-DESC-ENDPOINT")} />
+            <VisualKv label={tx("aiapi.pro-auth")} value={selectedField("AIAPI-01-PRO-DESC-AUTH")} />
+            <VisualKv label={tx("aiapi.pro-last-test")} value={selectedField("AIAPI-01-PRO-DESC-LAST-TEST")} />
             <VisualKv label={tx("aiapi.fld-route-decision")} value={show("AIAPI-01-FLD-ROUTE-DECISION")} />
             <VisualKv label={tx("aiapi.ops-quarantine")} value={show("AIAPI-01-FLD-OPS-QUARANTINE")} />
           </div>
@@ -690,6 +787,7 @@ export function AiapiVisual() {
 function ProfessionalRail({
   t,
   show,
+  field,
   disabled,
   view,
   gateOf,
@@ -699,6 +797,7 @@ function ProfessionalRail({
 }: {
   t: (key: TranslationKey) => string;
   show: (uid: string) => string;
+  field: (uid: string) => string;
   disabled: boolean;
   view: AiapiView;
   gateOf: (uid: string) => { blocked: boolean; reason: string };
@@ -712,8 +811,8 @@ function ProfessionalRail({
         <h2>{t("aiapi.panel-title")}</h2>
         <p className={styles.note}>{t("aiapi.panel-hint")}</p>
         <div className={styles.kvList}>
-          {AIAPI_PRO_DESC_FIELDS.map((field) => (
-            <Kv key={field.uid} uid={field.uid} label={t(field.labelKey)} value={show(field.uid)} />
+          {AIAPI_PRO_DESC_FIELDS.map((item) => (
+            <Kv key={item.uid} uid={item.uid} label={t(item.labelKey)} value={field(item.uid)} />
           ))}
         </div>
         <div className={styles.actions}>
@@ -733,11 +832,11 @@ function ProfessionalRail({
       <h2>{t("aiapi.ops-rail-title")}</h2>
       <div className={styles.railCard} data-control-uid="AIAPI-01-FLD-OPS-HEALTH">
         <span>{t("aiapi.ops-health")}</span>
-        <strong>{show("AIAPI-01-FLD-OPS-HEALTH")}</strong>
+        <strong>{field("AIAPI-01-FLD-OPS-HEALTH")}</strong>
       </div>
       <div className={styles.railCard} data-control-uid="AIAPI-01-FLD-OPS-CREDENTIAL">
         <span>{t("aiapi.ops-credential")}</span>
-        <strong>{show("AIAPI-01-FLD-OPS-CREDENTIAL")}</strong>
+        <strong>{field("AIAPI-01-FLD-OPS-CREDENTIAL")}</strong>
       </div>
       <div className={styles.railCard} data-control-uid="AIAPI-01-FLD-OPS-QUARANTINE">
         <span>{t("aiapi.ops-quarantine")}</span>
