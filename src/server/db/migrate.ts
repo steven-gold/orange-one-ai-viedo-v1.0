@@ -277,6 +277,11 @@ const DDL = [
     action_uid TEXT NOT NULL,
     occurred_at TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_aiapi_credential (
+    credential_uid TEXT PRIMARY KEY,
+    secret_text TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  )`,
   `CREATE TABLE IF NOT EXISTS ghsn_sg02_field_projection (
     control_uid TEXT PRIMARY KEY,
     value_text TEXT
@@ -383,6 +388,7 @@ const MIGRATION_FILES = [
   "023_reset_aiapi_drafts.sql",
   "024_reset_aiapi_drafts.sql",
   "025_reset_aiapi_drafts.sql",
+  "026_reset_aiapi_drafts.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -412,6 +418,7 @@ const RESET_MIGRATIONS: Record<string, string[]> = {
   "023_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "024_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "025_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
+  "026_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
 };
 
 async function runBootstrap(): Promise<MigrationResult> {

@@ -42,6 +42,13 @@ function usable(value: string | null | undefined): string {
   return (value ?? "").trim().slice(0, 120);
 }
 
+const SECRET_PATTERN = /^(gsk_|sk-|sk_|xai-|AIza|glpat-|hf_|Bearer\s)/i;
+
+function safeName(value: string | undefined): string {
+  const name = usable(value);
+  return SECRET_PATTERN.test(name) ? "" : name;
+}
+
 function join(parts: Array<string | undefined>): string {
   return parts.map((part) => usable(part)).filter(Boolean).join(" / ");
 }
@@ -73,7 +80,7 @@ export function previewAiapiAction(
   const payload = parsePayload(nextValue);
 
   if (actionUid === "createProviderModelProfile") {
-    const provider = usable(payload.provider);
+    const provider = safeName(payload.provider);
     if (!provider) return {};
     const model = usable(payload.model);
     const identity = join([provider, model]);
@@ -102,11 +109,12 @@ export function previewAiapiAction(
   if (actionUid === "updateProviderModelProfile") {
     if (!profileExists(current)) return {};
     const patch: Record<string, string> = {};
-    const identity = join([usable(payload.provider), usable(payload.model)]);
+    const providerName = safeName(payload.provider);
+    const identity = join([providerName, usable(payload.model)]);
     if (identity) {
       patch["AIAPI-01-PROFILE-GRP-IDENTITY"] = identity;
       patch["AIAPI-01-PRO-DESC-IDENTITY"] = identity;
-      patch["AIAPI-01-FLD-OV-PROVIDER"] = usable(payload.provider) || identity;
+      patch["AIAPI-01-FLD-OV-PROVIDER"] = providerName || identity;
     }
     if (usable(payload.baseUrl)) patch["AIAPI-01-PROFILE-GRP-CONNECTION"] = usable(payload.baseUrl);
     if (usable(payload.adapter)) patch["AIAPI-01-PROFILE-GRP-ADAPTER"] = usable(payload.adapter);

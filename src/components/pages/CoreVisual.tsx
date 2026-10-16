@@ -76,6 +76,7 @@ export function CoreVisual() {
   const [dialog, setDialog] = useState<NameDialogKind | null>(null);
   const [dialogName, setDialogName] = useState("");
   const [draftMessage, setDraftMessage] = useState("");
+  const [tick, setTick] = useState(0);
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
   const referenceRef = useRef<HTMLInputElement>(null);
@@ -114,7 +115,7 @@ export function CoreVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
@@ -145,6 +146,7 @@ export function CoreVisual() {
     applyPatch(patch);
     try {
       await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+      if (actionUid === "CORE-01-ACT-SEND") setTick((value) => value + 1);
     } catch {
       // Optimistic projection stays visible when the write path is unbound.
     }

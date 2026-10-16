@@ -104,6 +104,8 @@ export function VideoVisual() {
   const [fields, setFields] = useState<VideoFieldValue[]>(emptyFields);
   const [inbound, setInbound] = useState<VideoInbound>(EMPTY_INBOUND);
   const [compareOn, setCompareOn] = useState(false);
+  const [correctionDraft, setCorrectionDraft] = useState("");
+  const [tick, setTick] = useState(0);
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
 
@@ -162,7 +164,12 @@ export function VideoVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
+
+  useEffect(() => {
+    const value = fields.find((row) => row.controlUid === "VIDEO-01-TXT-CORRECTION")?.value;
+    if (value) setCorrectionDraft(value);
+  }, [fields]);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
@@ -194,6 +201,7 @@ export function VideoVisual() {
       applyPatch(patch);
       try {
         await postVideoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+        if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE") setTick((value) => value + 1);
       } catch {
         // Optimistic projection stays visible when the write path is unbound.
       }
@@ -399,10 +407,10 @@ export function VideoVisual() {
           </div>
           <label className={styles.composer}>
             <span className={styles.label}>{tx("video.correction_request")}</span>
-            <textarea data-control-uid="VIDEO-01-TXT-CORRECTION" disabled={disabled} defaultValue="" placeholder={tx("video.correction_hint")} onBlur={() => void act("VIDEO-01-TXT-CORRECTION")} />
+            <textarea data-control-uid="VIDEO-01-TXT-CORRECTION" disabled={disabled} value={correctionDraft} placeholder={tx("video.correction_hint")} onChange={(event) => setCorrectionDraft(event.target.value)} />
           </label>
           <div className={styles.corrActions}>
-            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION")}>{tx("video.correction_generate")}</button>
+            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION", correctionDraft.trim() || undefined)}>{tx("video.correction_generate")}</button>
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>
             <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXEC-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-EXEC-CORRECTION")}>{tx("video.correction_execute")}</button>
             <IconButton uid="VIDEO-01-BTN-COMPARE-CORRECTION" label={tx("video.correction_compare")} icon="compare" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />

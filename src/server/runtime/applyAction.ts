@@ -6,6 +6,8 @@ import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
+import { generatePageReply } from "../ai/llmClient";
+import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 
 export type WorkbenchPage =
@@ -106,6 +108,53 @@ async function writeField(table: string, controlUid: string, value: string): Pro
   );
 }
 
+const AI_UNAVAILABLE_ZH = "目前無法取得 AI 回應（供應商未設定或暫時無法使用）。";
+
+function promptFromValue(raw?: string): string {
+  const text = (raw ?? "").trim();
+  if (!text) return "";
+  if (text.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(text) as Record<string, unknown>;
+      const candidate = parsed.message ?? parsed.instruction ?? parsed.reference ?? parsed.prompt;
+      if (typeof candidate === "string") return candidate.trim();
+    } catch {
+      return text;
+    }
+  }
+  return text;
+}
+
+async function writeGeneratedReply(
+  table: string,
+  targetUids: string[],
+  page: "core" | "asset" | "video",
+  prompt: string,
+  context: string,
+): Promise<void> {
+  if (!prompt) return;
+  try {
+    const reply = await generatePageReply(page, prompt, context);
+    for (const uid of targetUids) await writeField(table, uid, reply);
+  } catch {
+    for (const uid of targetUids) await writeField(table, uid, AI_UNAVAILABLE_ZH);
+  }
+}
+
+async function credentialFromValue(raw?: string): Promise<string> {
+  const text = (raw ?? "").trim();
+  if (text.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(text) as Record<string, unknown>;
+      const candidate = parsed.reference ?? parsed.credential ?? parsed.secret;
+      if (typeof candidate === "string") return candidate.trim();
+    } catch {
+      return "";
+    }
+  }
+  return text;
+}
+
 async function applyProjectedAction(
   table: string,
   preview: (
@@ -137,6 +186,10 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
   }
   if (page === "core") {
     await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
+    if (actionUid === "CORE-01-ACT-SEND") {
+      const prompt = promptFromValue(nextValue);
+      await writeGeneratedReply(FIELD_TABLE.core, ["CORE-01-FLD-ASSISTANT-SUMMARY"], "core", prompt, "");
+    }
     return;
   }
   if (page === "asset") {
@@ -157,6 +210,10 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
     });
     await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") {
+      const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
+      await writeGeneratedReply(FIELD_TABLE.asset, ["ASSET-01-TXT-CORRECTION-REQUEST"], "asset", prompt, "");
+    }
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
       const version = await readField(FIELD_TABLE.asset, "ASSET-01-FLD-HANDOFF-ASSET-VERSION");
@@ -191,6 +248,10 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
     });
     await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE") {
+      const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
+      await writeGeneratedReply(FIELD_TABLE.video, ["VIDEO-01-TXT-CORRECTION"], "video", prompt, "");
+    }
     if (actionUid === "VIDEO-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");
       const contract = await readField(FIELD_TABLE.video, "VIDEO-01-FLD-HANDOFF-CONTRACT");
@@ -240,6 +301,12 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
   }
   if (page === "aiapi") {
     await applyProjectedAction(FIELD_TABLE.aiapi, previewAiapiAction, controlUid, actionUid, nextValue);
+    if (actionUid === "setProviderModelCredential") {
+      const secret = await credentialFromValue(nextValue);
+      if (secret) await setAiapiCredential(secret);
+    } else if (actionUid === "deleteProviderModelCredential") {
+      await clearAiapiCredential();
+    }
     return;
   }
   await writeField(FIELD_TABLE[page], controlUid, statusFromAction(actionUid));

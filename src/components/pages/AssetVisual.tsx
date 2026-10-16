@@ -84,6 +84,7 @@ export function AssetVisual() {
   const [searchDraft, setSearchDraft] = useState("");
   const [correctionDraft, setCorrectionDraft] = useState("");
   const [inbound, setInbound] = useState<AssetInbound>(EMPTY_INBOUND);
+  const [tick, setTick] = useState(0);
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
 
@@ -132,7 +133,12 @@ export function AssetVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
+
+  useEffect(() => {
+    const value = fields.find((row) => row.controlUid === "ASSET-01-TXT-CORRECTION-REQUEST")?.value;
+    if (value) setCorrectionDraft(value);
+  }, [fields]);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
@@ -163,6 +169,7 @@ export function AssetVisual() {
     applyPatch(patch);
     try {
       await postAssetAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+      if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") setTick((value) => value + 1);
     } catch {
       // Optimistic projection stays visible when the write path is unbound.
     }
@@ -425,9 +432,6 @@ export function AssetVisual() {
               disabled={disabled}
               value={correctionDraft}
               onChange={(event) => setCorrectionDraft(event.target.value)}
-              onBlur={() => {
-                if (correctionDraft.trim()) void act("ASSET-01-TXT-CORRECTION-REQUEST", correctionDraft.trim());
-              }}
             />
           </label>
         </section>
