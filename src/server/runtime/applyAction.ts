@@ -1,3 +1,4 @@
+import { AI_UNAVAILABLE_ZH, ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
@@ -108,7 +109,7 @@ async function writeField(table: string, controlUid: string, value: string): Pro
   );
 }
 
-const AI_UNAVAILABLE_ZH = "目前無法取得 AI 回應（供應商未設定或暫時無法使用）。";
+
 
 function promptFromValue(raw?: string): string {
   const text = (raw ?? "").trim();
@@ -212,7 +213,7 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
     await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
-      await writeGeneratedReply(FIELD_TABLE.asset, ["ASSET-01-TXT-CORRECTION-REQUEST"], "asset", prompt, "");
+      await writeGeneratedReply(FIELD_TABLE.asset, [ASSET_CORRECTION_RESPONSE_UID], "asset", prompt, "");
     }
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
@@ -250,7 +251,7 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
     await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
     if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE") {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
-      await writeGeneratedReply(FIELD_TABLE.video, ["VIDEO-01-TXT-CORRECTION"], "video", prompt, "");
+      await writeGeneratedReply(FIELD_TABLE.video, [VIDEO_CORRECTION_RESPONSE_UID], "video", prompt, "");
     }
     if (actionUid === "VIDEO-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");

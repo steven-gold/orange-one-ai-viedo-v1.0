@@ -148,6 +148,12 @@ const catalog = {
     en: "AI response content in current context",
   },
   "core.source_refs": { "zh-TW": "來源：目前對話", "zh-CN": "来源：当前对话", en: "Source: current thread" },
+  "core.user_message": { "zh-TW": "使用者訊息", "zh-CN": "用户讯息", en: "User Message" },
+  "ai.unavailable": {
+    "zh-TW": "目前無法取得 AI 回應（供應商未設定或暫時無法使用）",
+    "zh-CN": "当前无法取得 AI 回应（供应商未设定或暂时无法使用）",
+    en: "AI response is currently unavailable (provider not configured or temporarily unavailable)",
+  },
   "core.summary_inline": { "zh-TW": "助理摘要", "zh-CN": "助理摘要", en: "Assistant Summary" },
   "core.summary_hint": {
     "zh-TW": "由目前回應組合產生；不可自動核准",
@@ -317,6 +323,12 @@ const catalog = {
   "asset.correction_approve": { "zh-TW": "核准候選", "zh-CN": "核准候选", en: "Approve candidate" },
   "asset.correction_execute": { "zh-TW": "執行修正", "zh-CN": "执行修正", en: "Execute correction" },
   "asset.correction_request": { "zh-TW": "修改要求", "zh-CN": "修改要求", en: "Correction request" },
+  "asset.correction_response": { "zh-TW": "AI 修正建議", "zh-CN": "AI 修正建议", en: "AI Correction Suggestion" },
+  "asset.correction_response_placeholder": {
+    "zh-TW": "送出修改要求後，AI 產生的修正腳本候選會顯示在這裡",
+    "zh-CN": "送出修改要求后，AI 产生的修正脚本候选会显示在这里",
+    en: "The AI-generated correction script candidate appears here after you submit a request",
+  },
   "asset.layer_stack": { "zh-TW": "圖層堆疊", "zh-CN": "图层堆叠", en: "Layer Stack" },
   "asset.layer_doc_create": { "zh-TW": "建立圖層文件", "zh-CN": "建立图层文件", en: "Create Layer Document" },
   "asset.layer_doc_update": { "zh-TW": "更新圖層文件", "zh-CN": "更新图层文件", en: "Update Layer Document" },
@@ -446,6 +458,12 @@ const catalog = {
   "video.context_build": { "zh-TW": "建立修正內容", "zh-CN": "建立修正内容", en: "Build Correction Context" },
   "video.ai_revision": { "zh-TW": "AI 語意修正 · 僅限繁體中文", "zh-CN": "AI 语意修正 · 仅限繁体中文", en: "AI Semantic Correction · Traditional Chinese only" },
   "video.correction_request": { "zh-TW": "繁中修改要求", "zh-CN": "繁中修改要求", en: "Correction Request (Traditional Chinese)" },
+  "video.correction_response": { "zh-TW": "AI 修正腳本候選", "zh-CN": "AI 修正脚本候选", en: "AI Correction Script Candidate" },
+  "video.correction_response_placeholder": {
+    "zh-TW": "送出修改要求後，AI 產生的修正腳本候選會顯示在這裡",
+    "zh-CN": "送出修改要求后，AI 产生的修正脚本候选会显示在这里",
+    en: "The AI-generated correction script candidate appears here after you submit a request",
+  },
   "video.correction_generate": { "zh-TW": "產生修正腳本", "zh-CN": "产生修正脚本", en: "Generate Correction Script" },
   "video.correction_approve": { "zh-TW": "核准修正腳本", "zh-CN": "核准修正脚本", en: "Approve Correction Script" },
   "video.correction_execute": { "zh-TW": "執行修正", "zh-CN": "执行修正", en: "Execute Correction" },

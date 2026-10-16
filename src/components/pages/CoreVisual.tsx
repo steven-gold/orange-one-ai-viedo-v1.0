@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
+import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
 import { exactName, parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
@@ -221,6 +222,14 @@ export function CoreVisual() {
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
   const sentMessage = valueOf("CORE-01-FLD-MESSAGE");
+  const assistantSummary = valueOf("CORE-01-FLD-ASSISTANT-SUMMARY");
+  const sentText = sentMessage && sentMessage !== "sent" ? sentMessage : null;
+  const aiReplyText =
+    assistantSummary && assistantSummary !== "sent"
+      ? isAiUnavailable(assistantSummary)
+        ? tx("ai.unavailable")
+        : assistantSummary
+      : null;
   const pickedFileName = (stored: string | null) => (stored && !FILE_STATUS.has(stored) ? stored : "");
   const attachedName = pickedFileName(attachedFile);
   const referenceName = pickedFileName(referenceFile);
@@ -334,18 +343,24 @@ export function CoreVisual() {
               <h2 className={styles.title}>{tx("core.messages")}</h2>
               <span>{tx("core.right_click_only")}</span>
             </div>
+            {sentText ? (
+              <div className={styles.userMessage}>
+                <div className={styles.bubbleRole}>{tx("core.user_message")}</div>
+                <p>{sentText}</p>
+              </div>
+            ) : null}
             <div className={`${styles.messageGrid} ${singleActive ? styles.messageGridSingle : ""}`}>
               {(singleActive ? ["1"] : ["1", "2", "3"]).map((n) => (
                 <article key={n} className={styles.bubble}>
                   <div className={styles.bubbleRole}>{singleActive ? tx("core.ai_response_n") : `${tx("core.ai_response_n")} ${n}`}</div>
-                  <p>{sentMessage && sentMessage !== "sent" ? sentMessage : sentMessage === "sent" ? tx("core.summary_hint") : tx("core.ai_placeholder")}</p>
+                  <p>{aiReplyText ?? tx("core.ai_placeholder")}</p>
                   <span className={styles.meta}>{tx("core.source_refs")}</span>
                 </article>
               ))}
             </div>
             <div className={styles.summaryInline}>
               <span className={styles.summaryLabel}>{tx("core.summary_inline")}</span>
-              <p>{displayCoreValue(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), loading) === "—" ? tx("core.summary_hint") : displayCoreValue(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), loading)}</p>
+              <p>{aiReplyText ?? tx("core.summary_hint")}</p>
             </div>
             <div data-component-uid="CORE-01-CMP-MESSAGE-MENU" hidden>
               {CORE_MESSAGE_ACTIONS.map((uid) => <span key={uid} data-action-uid={uid} />)}

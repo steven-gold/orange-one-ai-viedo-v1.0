@@ -308,6 +308,22 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.userMessage {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--core-input);
+  border: 1px solid var(--core-border);
+}
+
+.userMessage p {
+  margin: 6px 0 0;
+  color: var(--core-secondary);
+  font-size: 13px;
+  line-height: 18px;
+  white-space: pre-wrap;
+}
+
 .bubble {
   display: flex;
   flex-direction: column;

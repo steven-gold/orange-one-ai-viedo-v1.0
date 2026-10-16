@@ -109,6 +109,26 @@
   background: var(--video-input);
 }
 
+.aiResponse {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--video-border);
+  border-radius: 12px;
+  background: var(--video-input);
+}
+
+.aiResponse p {
+  margin: 0;
+  color: var(--video-text);
+  font-size: 13px;
+  line-height: 20px;
+  white-space: pre-wrap;
+}
+
 .composer textarea {
   min-height: 72px;
   resize: vertical;

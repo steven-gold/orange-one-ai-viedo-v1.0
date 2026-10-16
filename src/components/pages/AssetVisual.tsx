@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
+import { ASSET_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
@@ -36,8 +37,10 @@ const EMPTY_INBOUND: AssetInbound = {
   naming: "",
 };
 
+const CLIENT_FIELDS: string[] = [...ASSET_VISIBLE_CONTROLS, ASSET_CORRECTION_RESPONSE_UID];
+
 function emptyFields(): AssetFieldValue[] {
-  return ASSET_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+  return CLIENT_FIELDS.map((controlUid) => ({ controlUid, value: null }));
 }
 
 function Field({
@@ -114,7 +117,7 @@ export function AssetVisual() {
           map.set("ASSET-01-FLD-NAMING-AUTHORITY", resolved.naming);
         }
         setFields(
-          ASSET_VISIBLE_CONTROLS.map((controlUid) => ({
+          CLIENT_FIELDS.map((controlUid) => ({
             controlUid,
             value: map.get(controlUid) ?? null,
           })),
@@ -145,11 +148,18 @@ export function AssetVisual() {
     [fields],
   );
 
+  const correctionResponseRaw = valueOf(ASSET_CORRECTION_RESPONSE_UID);
+  const correctionResponse = correctionResponseRaw
+    ? isAiUnavailable(correctionResponseRaw)
+      ? t("ai.unavailable")
+      : correctionResponseRaw
+    : null;
+
   const applyPatch = useCallback((patch: Record<string, string>) => {
     setFields((prev) => {
       const map = new Map(prev.map((row) => [row.controlUid, row.value]));
       for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
-      return ASSET_VISIBLE_CONTROLS.map((controlUid) => ({
+      return CLIENT_FIELDS.map((controlUid) => ({
         controlUid,
         value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
       }));
@@ -434,6 +444,10 @@ export function AssetVisual() {
               onChange={(event) => setCorrectionDraft(event.target.value)}
             />
           </label>
+          <div className={styles.aiResponse} data-ai-response-uid={ASSET_CORRECTION_RESPONSE_UID} aria-live="polite">
+            <span className={styles.label}>{tx("asset.correction_response")}</span>
+            <p>{correctionResponse ?? tx("asset.correction_response_placeholder")}</p>
+          </div>
         </section>
         <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-STACK">
           <h3 className={styles.sub}>{tx("asset.layer_stack")}</h3>

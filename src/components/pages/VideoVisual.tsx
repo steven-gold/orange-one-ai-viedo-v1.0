@@ -11,6 +11,7 @@ import {
   postVideoAction,
   type VideoFieldValue,
 } from "@/lib/client";
+import { VIDEO_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
 import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { displayVideoValue } from "./videoFormat";
@@ -59,8 +60,10 @@ const EMPTY_INBOUND: VideoInbound = {
   naming: "",
 };
 
+const CLIENT_FIELDS: string[] = [...VIDEO_VISIBLE_CONTROLS, VIDEO_CORRECTION_RESPONSE_UID];
+
 function emptyFields(): VideoFieldValue[] {
-  return VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+  return CLIENT_FIELDS.map((controlUid) => ({ controlUid, value: null }));
 }
 
 function Field({
@@ -142,7 +145,7 @@ export function VideoVisual() {
           map.set("VIDEO-01-FLD-INSTRUCTION", resolved.instruction);
         }
         setFields(
-          VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({
+          CLIENT_FIELDS.map((controlUid) => ({
             controlUid,
             value: map.get(controlUid) ?? null,
           })),
@@ -176,11 +179,18 @@ export function VideoVisual() {
     [fields],
   );
 
+  const correctionResponseRaw = valueOf(VIDEO_CORRECTION_RESPONSE_UID);
+  const correctionResponse = correctionResponseRaw
+    ? isAiUnavailable(correctionResponseRaw)
+      ? t("ai.unavailable")
+      : correctionResponseRaw
+    : null;
+
   const applyPatch = useCallback((patch: Record<string, string>) => {
     setFields((prev) => {
       const map = new Map(prev.map((row) => [row.controlUid, row.value]));
       for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
-      return VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({
+      return CLIENT_FIELDS.map((controlUid) => ({
         controlUid,
         value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
       }));
@@ -409,6 +419,10 @@ export function VideoVisual() {
             <span className={styles.label}>{tx("video.correction_request")}</span>
             <textarea data-control-uid="VIDEO-01-TXT-CORRECTION" disabled={disabled} value={correctionDraft} placeholder={tx("video.correction_hint")} onChange={(event) => setCorrectionDraft(event.target.value)} />
           </label>
+          <div className={styles.aiResponse} data-ai-response-uid={VIDEO_CORRECTION_RESPONSE_UID} aria-live="polite">
+            <span className={styles.label}>{tx("video.correction_response")}</span>
+            <p>{correctionResponse ?? tx("video.correction_response_placeholder")}</p>
+          </div>
           <div className={styles.corrActions}>
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION", correctionDraft.trim() || undefined)}>{tx("video.correction_generate")}</button>
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>

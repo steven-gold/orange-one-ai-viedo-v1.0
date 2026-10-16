@@ -64,6 +64,26 @@
   letter-spacing: 0.02em;
 }
 
+.aiResponse {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--asset-border);
+  border-radius: 12px;
+  background: var(--asset-input);
+}
+
+.aiResponse p {
+  margin: 0;
+  color: var(--asset-text);
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+}
+
 .value,
 .search input,
 .composerInput textarea {
