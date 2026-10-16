@@ -6,7 +6,7 @@ import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { generatePageReply } from "../ai/llmClient";
+import { AiProviderError, generatePageReply } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 
@@ -136,8 +136,11 @@ async function writeGeneratedReply(
   try {
     const reply = await generatePageReply(page, prompt, context);
     for (const uid of targetUids) await writeField(table, uid, reply);
-  } catch {
-    for (const uid of targetUids) await writeField(table, uid, AI_UNAVAILABLE_ZH);
+  } catch (error) {
+    const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_ERROR";
+    const status = error instanceof Error ? (error.message.match(/responded (\d{3})/)?.[1] ?? "") : "";
+    const diagnostics = `${AI_UNAVAILABLE_ZH} [${code}${status ? ":" + status : ":" + (error instanceof Error ? error.message.slice(0, 120) : "")}]`;
+    for (const uid of targetUids) await writeField(table, uid, diagnostics);
   }
 }
 
