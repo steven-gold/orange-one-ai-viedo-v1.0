@@ -12,7 +12,7 @@ import {
 type LocaleContextValue = {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 };
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
@@ -36,7 +36,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   };
 
   const value = useMemo<LocaleContextValue>(
-    () => ({ locale, setLocale, t: (key) => translate(locale, key) }),
+    () => ({ locale, setLocale, t: (key, params) => translate(locale, key, params) }),
     [locale],
   );
 

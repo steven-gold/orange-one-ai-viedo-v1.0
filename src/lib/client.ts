@@ -950,6 +950,7 @@ export async function fetchAiapiReadModel(
 export interface AiapiActionResult {
   ok: boolean;
   code?: string;
+  imported?: number;
 }
 
 export async function postAiapiAction(
@@ -968,7 +969,10 @@ export async function postAiapiAction(
     },
     body: JSON.stringify({ controlUid, actionUid, value }),
   });
-  if (response.ok) return { ok: true };
+  if (response.ok) {
+    const body = (await response.json().catch(() => null)) as { imported?: number } | null;
+    return { ok: true, imported: typeof body?.imported === "number" ? body.imported : undefined };
+  }
   let code = "AIAPI_ACTION_UNAVAILABLE";
   try {
     const body = (await response.json()) as { error?: { code?: string }; code?: string };

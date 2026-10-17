@@ -1,169 +1,175 @@
 import { AIAPI_PROMPT_TEMPLATE_TOKEN } from "./aiapiProfiles";
 
-export type ProviderAdapterType = "openai" | "anthropic" | "gemini";
+export type AuthStyle = "bearer" | "anthropic" | "gemini";
 
-export interface ProviderCatalogEntry {
+export type ModuleKind = "model" | "operation";
+
+export interface ProviderRegistryEntry {
   providerId: string;
   providerName: string;
-  adapterType: ProviderAdapterType;
+  adapterType: string;
   baseUrl: string;
-  endpointTemplate: string;
+  authStyle: AuthStyle;
+  /** OpenAI-compatible model list. Empty when the provider does not expose one. */
   modelsPath: string;
-  responseTextPath: string;
-  timeoutSeconds: string;
-  docs: string;
+  /** Machine-readable documentation index published by the provider itself. */
+  docsIndex?: string;
+  /** A documented read-only call used only to confirm the key is accepted. */
+  verifyPath?: string;
+  verifyMethod?: string;
   keyPrefixes: readonly string[];
-  preferredModels: readonly string[];
+  docs: string;
 }
 
 /**
- * Registered provider endpoints. Every value below is the provider's published
- * API surface; nothing here is derived from a user supplied key. Keys are only
- * matched to an entry by prefix so the browser never invents a provider alias.
+ * Registry of providers with a published, machine-readable surface. Every URL
+ * here is the provider's own documented endpoint or docs index; no endpoint is
+ * synthesized from a model name or a user supplied key.
  */
-export const AIAPI_PROVIDER_CATALOG: readonly ProviderCatalogEntry[] = [
+export const AIAPI_PROVIDER_REGISTRY: readonly ProviderRegistryEntry[] = [
   {
     providerId: "openai",
     providerName: "OpenAI",
     adapterType: "openai",
     baseUrl: "https://api.openai.com/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://platform.openai.com/docs",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: ["sk-proj-", "sk-svcacct-", "sk-"],
-    preferredModels: ["gpt-4.1-mini", "gpt-4o-mini", "gpt-4.1", "gpt-4o"],
+    docs: "https://platform.openai.com/docs",
   },
   {
     providerId: "anthropic",
     providerName: "Anthropic",
     adapterType: "anthropic",
     baseUrl: "https://api.anthropic.com",
-    endpointTemplate: "/v1/messages",
+    authStyle: "anthropic",
     modelsPath: "/v1/models",
-    responseTextPath: "content[0].text",
-    timeoutSeconds: "30",
-    docs: "https://docs.anthropic.com/en/api",
+    verifyPath: "/v1/models",
+    verifyMethod: "GET",
     keyPrefixes: ["sk-ant-"],
-    preferredModels: ["claude-sonnet-4", "claude-3-7-sonnet", "claude-3-5-sonnet", "claude-3-5-haiku"],
+    docs: "https://docs.anthropic.com/en/api",
   },
   {
     providerId: "google",
     providerName: "Google Gemini",
     adapterType: "gemini",
     baseUrl: "https://generativelanguage.googleapis.com/v1beta",
-    endpointTemplate: "/models/{model}:generateContent",
+    authStyle: "gemini",
     modelsPath: "/models",
-    responseTextPath: "candidates[0].content.parts[0].text",
-    timeoutSeconds: "30",
-    docs: "https://ai.google.dev/gemini-api/docs",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: ["AIza"],
-    preferredModels: ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash"],
+    docs: "https://ai.google.dev/gemini-api/docs",
   },
   {
     providerId: "deepseek",
     providerName: "DeepSeek",
     adapterType: "openai",
     baseUrl: "https://api.deepseek.com/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://api-docs.deepseek.com",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: ["sk-"],
-    preferredModels: ["deepseek-chat", "deepseek-reasoner"],
+    docs: "https://api-docs.deepseek.com",
   },
   {
     providerId: "openrouter",
     providerName: "OpenRouter",
     adapterType: "openai",
     baseUrl: "https://openrouter.ai/api/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://openrouter.ai/docs",
+    // OpenRouter publishes /models publicly, so it cannot prove a key; /key
+    // is the authenticated endpoint that answers 401 for a bad key.
+    verifyPath: "/key",
+    verifyMethod: "GET",
     keyPrefixes: ["sk-or-v1-"],
-    preferredModels: ["gpt-4o-mini", "claude-3.5-sonnet"],
+    docs: "https://openrouter.ai/docs",
   },
   {
     providerId: "groq",
     providerName: "Groq",
     adapterType: "openai",
     baseUrl: "https://api.groq.com/openai/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://console.groq.com/docs",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: ["gsk_"],
-    preferredModels: ["llama-3.3-70b", "llama-3.1-8b"],
+    docs: "https://console.groq.com/docs",
   },
   {
     providerId: "xai",
     providerName: "xAI",
     adapterType: "openai",
     baseUrl: "https://api.x.ai/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://docs.x.ai",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: ["xai-"],
-    preferredModels: ["grok-2", "grok-beta"],
+    docs: "https://docs.x.ai",
   },
   {
     providerId: "mistral",
     providerName: "Mistral AI",
     adapterType: "openai",
     baseUrl: "https://api.mistral.ai/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://docs.mistral.ai",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: [],
-    preferredModels: ["mistral-small-latest", "mistral-large-latest"],
+    docs: "https://docs.mistral.ai",
   },
   {
     providerId: "together",
     providerName: "Together AI",
     adapterType: "openai",
     baseUrl: "https://api.together.xyz/v1",
-    endpointTemplate: "/chat/completions",
+    authStyle: "bearer",
     modelsPath: "/models",
-    responseTextPath: "choices[0].message.content",
-    timeoutSeconds: "30",
-    docs: "https://docs.together.ai",
+    verifyPath: "/models",
+    verifyMethod: "GET",
     keyPrefixes: [],
-    preferredModels: ["llama-3.3-70b"],
+    docs: "https://docs.together.ai",
+  },
+  {
+    providerId: "kling",
+    providerName: "Kling AI",
+    adapterType: "http-json",
+    baseUrl: "https://api-singapore.klingai.com",
+    authStyle: "bearer",
+    modelsPath: "",
+    docsIndex: "https://kling.ai/document-api/llms.txt",
+    verifyPath: "/account/billing/balance",
+    verifyMethod: "POST",
+    keyPrefixes: ["api-key-kling-"],
+    docs: "https://klingai.com/document-api/",
   },
 ] as const;
 
-export const AIAPI_DETECTABLE_PROVIDERS = AIAPI_PROVIDER_CATALOG.filter(
-  (entry) => entry.keyPrefixes.length > 0,
-);
-
-export function catalogEntry(providerId: string): ProviderCatalogEntry | null {
+export function registryEntry(providerId: string): ProviderRegistryEntry | null {
   const wanted = providerId.trim().toLowerCase();
   if (!wanted) return null;
-  return AIAPI_PROVIDER_CATALOG.find((entry) => entry.providerId === wanted) ?? null;
+  return AIAPI_PROVIDER_REGISTRY.find((entry) => entry.providerId === wanted) ?? null;
 }
 
-/** Deterministic prefix match. Longest prefix wins so `sk-or-v1-` beats `sk-`. */
-export function detectProviders(secret: string): ProviderCatalogEntry[] {
+/** Longest-prefix match. A prefix only narrows the probe order, never the identity. */
+export function prefixCandidates(secret: string): ProviderRegistryEntry[] {
   const key = secret.trim();
   if (!key) return [];
   let best = 0;
-  const matches: ProviderCatalogEntry[] = [];
-  for (const entry of AIAPI_DETECTABLE_PROVIDERS) {
+  let matches: ProviderRegistryEntry[] = [];
+  for (const entry of AIAPI_PROVIDER_REGISTRY) {
     for (const prefix of entry.keyPrefixes) {
       if (!key.startsWith(prefix)) continue;
       if (prefix.length > best) {
         best = prefix.length;
-        matches.length = 0;
-        matches.push(entry);
+        matches = [entry];
       } else if (prefix.length === best && !matches.includes(entry)) {
         matches.push(entry);
       }
@@ -172,17 +178,12 @@ export function detectProviders(secret: string): ProviderCatalogEntry[] {
   return matches;
 }
 
-const NON_CHAT_MODEL = /embed|tts|whisper|dall-e|moderation|image|audio|realtime|transcribe|rerank|guard|ocr|vision-only/i;
+const NON_CHAT_MODEL =
+  /embed|tts|whisper|dall-e|moderation|image|audio|realtime|transcribe|rerank|guard|ocr/i;
 
-export function pickDefaultModel(entry: ProviderCatalogEntry, models: readonly string[]): string {
+export function pickDefaultModel(_entry: ProviderRegistryEntry, models: readonly string[]): string {
   const usable = models.map((model) => model.trim()).filter((model) => model && !NON_CHAT_MODEL.test(model));
   if (!usable.length) return "";
-  for (const preferred of entry.preferredModels) {
-    const exact = usable.find((model) => model === preferred);
-    if (exact) return exact;
-    const partial = usable.find((model) => model.startsWith(preferred));
-    if (partial) return partial;
-  }
   for (const hint of ["mini", "flash", "haiku", "lite", "small"]) {
     const match = usable.find((model) => model.toLowerCase().includes(hint));
     if (match) return match;
@@ -190,10 +191,49 @@ export function pickDefaultModel(entry: ProviderCatalogEntry, models: readonly s
   return usable.sort()[0] ?? "";
 }
 
-export function endpointForModel(entry: ProviderCatalogEntry, model: string): string {
-  return entry.endpointTemplate.split("{model}").join(model);
+export function endpointForModel(entry: ProviderRegistryEntry, model: string, capability = "chat"): string {
+  if (entry.providerId === "google") {
+    return capability === "embedding" ? `/models/${model}:embedContent` : `/models/${model}:generateContent`;
+  }
+  if (entry.providerId === "anthropic") return "/v1/messages";
+  switch (capability) {
+    case "embedding":
+      return "/embeddings";
+    case "moderation":
+      return "/moderations";
+    case "transcription":
+      return "/audio/transcriptions";
+    case "audio-generation":
+      return "/audio/speech";
+    default:
+      return "/chat/completions";
+  }
 }
 
 export function promptTemplateForProvider(): string {
   return AIAPI_PROMPT_TEMPLATE_TOKEN;
+}
+
+const MODULE_CAPABILITY_RULES: ReadonlyArray<{ capability: string; pattern: RegExp }> = [
+  { capability: "embedding", pattern: /(embed|vector|rerank)/i },
+  { capability: "moderation", pattern: /(moderation|guard)/i },
+  { capability: "transcription", pattern: /(transcri|whisper|stt)/i },
+  { capability: "chat", pattern: /(chat|completion|conversation|messages|responses)/i },
+  { capability: "correction", pattern: /(correct|proofread|rewrite|grammar)/i },
+  { capability: "text-to-video", pattern: /(text[- ]to[- ]video|t2v)/i },
+  { capability: "image-to-video", pattern: /(image[- ]to[- ]video|i2v)/i },
+  { capability: "video-generation", pattern: /(video|motion|lip[- ]?sync|avatar)/i },
+  { capability: "image-generation", pattern: /(image|outpaint|upscal|try[- ]on|apparel|goods|commerce)/i },
+  { capability: "audio-generation", pattern: /(audio|voice|speech|tts)/i },
+  { capability: "element-management", pattern: /(element|asset|voice[- ]custom)/i },
+  { capability: "billing", pattern: /(billing|balance|account|usage|cost)/i },
+];
+
+/** Derives a capability token from the provider's own path and title text. */
+export function capabilityFromModule(title: string, path: string): string {
+  const haystack = `${title} ${path}`;
+  for (const rule of MODULE_CAPABILITY_RULES) {
+    if (rule.pattern.test(haystack)) return rule.capability;
+  }
+  return "operation";
 }

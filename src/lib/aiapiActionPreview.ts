@@ -4,6 +4,7 @@ import {
   type AiapiProfile,
   findDuplicateProfile,
   isAiapiCapability,
+  isCapabilityToken,
   profileIdentity,
   readProfiles,
   serializeProfiles,
@@ -163,7 +164,9 @@ export type AiapiValidationResult = { ok: true } | { ok: false; code: string };
 function validateFields(profile: Omit<AiapiProfile, "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "seq">): AiapiValidationResult {
   if (!profile.providerId) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
   if (!profile.modelId) return { ok: false, code: "AIAPI_PROFILE_MODEL_REQUIRED" };
-  if (!isAiapiCapability(profile.capabilityType)) return { ok: false, code: "AIAPI_PROFILE_CAPABILITY_INVALID" };
+  if (!isAiapiCapability(profile.capabilityType) && !isCapabilityToken(profile.capabilityType)) {
+    return { ok: false, code: "AIAPI_PROFILE_CAPABILITY_INVALID" };
+  }
   if (!profile.adapterType) return { ok: false, code: "AIAPI_PROFILE_ADAPTER_REQUIRED" };
   if (!isHttpUrl(profile.baseUrl)) return { ok: false, code: "AIAPI_PROFILE_BASE_URL_INVALID" };
   if (!profile.endpointPath) return { ok: false, code: "AIAPI_PROFILE_ENDPOINT_REQUIRED" };

@@ -16,10 +16,10 @@ import {
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
 import {
-  AIAPI_PROVIDER_CATALOG,
-  catalogEntry,
-  detectProviders,
+  AIAPI_PROVIDER_REGISTRY,
   endpointForModel,
+  prefixCandidates,
+  registryEntry,
 } from "@/lib/aiapiProviderCatalog";
 import { displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
 import {
@@ -305,7 +305,7 @@ function ModalForm({
     }
     return seed;
   });
-  const detected = useMemo(() => detectProviders(secret), [secret]);
+  const detected = useMemo(() => prefixCandidates(secret), [secret]);
   const canSubmit =
     !busy &&
     (isCreate
@@ -319,7 +319,7 @@ function ModalForm({
 
   const applyProvider = (id: string) => {
     setProviderId(id);
-    const entry = catalogEntry(id);
+    const entry = registryEntry(id);
     if (!entry) return;
     setValues((prev) => ({
       ...prev,
@@ -328,8 +328,7 @@ function ModalForm({
       baseUrl: prev.baseUrl || entry.baseUrl,
       adapterType: prev.adapterType || entry.adapterType,
       httpMethod: prev.httpMethod || "POST",
-      timeoutSeconds: prev.timeoutSeconds || entry.timeoutSeconds,
-      responseTextPath: prev.responseTextPath || entry.responseTextPath,
+      timeoutSeconds: prev.timeoutSeconds || "30",
       promptTemplate: prev.promptTemplate || AIAPI_PROMPT_TEMPLATE_TOKEN,
       capabilityType: prev.capabilityType || "chat",
       enabled: prev.enabled || "ENABLED",
@@ -344,7 +343,7 @@ function ModalForm({
         return (
           <select className={styles.formInput} value={value} onChange={(event) => update(field.key, event.target.value)}>
             <option value="">—</option>
-            {AIAPI_CAPABILITIES.map((capability) => (
+            {Array.from(new Set([...AIAPI_CAPABILITIES, value].filter(Boolean))).map((capability) => (
               <option key={capability} value={capability}>
                 {capability}
               </option>
@@ -454,7 +453,7 @@ function ModalForm({
               onChange={(event) => applyProvider(event.target.value)}
             >
               <option value="">{t("aiapi.fld-provider-auto")}</option>
-              {AIAPI_PROVIDER_CATALOG.map((entry) => (
+              {AIAPI_PROVIDER_REGISTRY.map((entry) => (
                 <option key={entry.providerId} value={entry.providerId}>
                   {entry.providerName}
                 </option>
@@ -548,7 +547,7 @@ export function AiapiVisual() {
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [selectedProfileId, setSelectedProfileId] = useState("");
-  const [notice, setNotice] = useState<TranslationKey | null>(null);
+  const [notice, setNotice] = useState<{ key: TranslationKey; count?: number } | null>(null);
   const [busy, setBusy] = useState(false);
 
   const knownProfileIds = useRef<Set<string>>(new Set());
@@ -588,9 +587,20 @@ export function AiapiVisual() {
     try {
       const result = await postAiapiAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, value);
       ok = result.ok;
-      setNotice(result.ok ? successKey ?? null : noticeKeyForCode(result.code));
+      if (result.ok) {
+        const imported = result.imported ?? 0;
+        setNotice(
+          imported > 0
+            ? { key: "aiapi.notice-created-modules", count: imported }
+            : successKey
+              ? { key: successKey }
+              : null,
+        );
+      } else {
+        setNotice({ key: noticeKeyForCode(result.code) });
+      }
     } catch {
-      setNotice("aiapi.notice-rejected");
+      setNotice({ key: "aiapi.notice-rejected" });
     } finally {
       setBusy(false);
     }
@@ -874,8 +884,8 @@ export function AiapiVisual() {
       ) : null}
 
       {notice ? (
-        <div className={styles.notice} role="status" data-notice-key={notice}>
-          <span>{tx(notice)}</span>
+        <div className={styles.notice} role="status" data-notice-key={notice.key} data-notice-count={notice.count}>
+          <span>{t(notice.key, notice.count !== undefined ? { count: notice.count } : undefined)}</span>
           <button type="button" className={styles.noticeClose} aria-label={tx("global.common.close")} onClick={() => setNotice(null)}>
             {tx("global.common.close")}
           </button>

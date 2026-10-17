@@ -5,6 +5,7 @@ import { AIAPI_PERMISSION } from "@/server/domain/aiapi";
 import { validateAiapiAction } from "@/lib/aiapiActionPreview";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   const principal = await requireAuth(request);
@@ -31,7 +32,10 @@ export async function POST(request: Request) {
     if (outcome && !outcome.ok) {
       return jsonError(outcome.code ?? "AIAPI_ACTION_FAILED", "AIAPI runtime rejected the action", 409);
     }
-    return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
+    return NextResponse.json(
+      { eventUid, controlUid, actionUid, imported: outcome?.imported ?? 0 },
+      { status: 202 },
+    );
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected AIAPI runtime error", 500);
   }

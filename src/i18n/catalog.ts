@@ -1839,7 +1839,7 @@ const catalog = {
   "aiapi.fld-provider-auto": { "zh-TW": "自動判斷", "zh-CN": "自动判断", en: "Auto detect" },
   "aiapi.fld-model": { "zh-TW": "模型（留空自動選擇）", "zh-CN": "模型（留空自动选择）", en: "Model (auto-select when empty)" },
   "aiapi.fld-model-auto": { "zh-TW": "由供應商帳號自動選擇", "zh-CN": "由供应商帐号自动选择", en: "Selected from the provider account" },
-  "aiapi.detect-hint": { "zh-TW": "貼上金鑰後送出，系統會用這把金鑰向候選供應商驗證，並自動帶入供應商、模型與連線設定。", "zh-CN": "贴上金钥后送出，系统会用这把金钥向候选供应商验证，并自动带入供应商、模型与连线设定。", en: "After you submit a key, the system verifies it against candidate providers and fills the provider, model and connection settings automatically." },
+  "aiapi.detect-hint": { "zh-TW": "貼上金鑰後送出，系統會用這把金鑰向供應商驗證，並把該帳號開通的全部模組、端點與能力一次帶回。", "zh-CN": "贴上金钥后送出，系统会用这把金钥向供应商验证，并把该帐号开通的全部模组、端点与能力一次带回。", en: "After you submit a key, the system verifies it with the provider and imports every module, endpoint and capability the account can use." },
   "aiapi.detect-matched": { "zh-TW": "此金鑰格式可能屬於：", "zh-CN": "此金钥格式可能属于：", en: "This key format may belong to:" },
   "aiapi.detect-ambiguous": { "zh-TW": "多個供應商都接受此金鑰，請指定：", "zh-CN": "多个供应商都接受此金钥，请指定：", en: "Several providers accepted this key; choose one:" },
   "aiapi.advanced-show": { "zh-TW": "進階：手動指定全部欄位", "zh-CN": "进阶：手动指定全部栏位", en: "Advanced: set every field manually" },
@@ -1959,6 +1959,7 @@ const catalog = {
   "aiapi.state-not-tested": { "zh-TW": "尚未測試", "zh-CN": "尚未测试", en: "Not tested yet" },
   "aiapi.state-not-approved": { "zh-TW": "未核准", "zh-CN": "未核准", en: "Not approved" },
   "aiapi.state-not-classified": { "zh-TW": "未分級", "zh-CN": "未分级", en: "Not classified" },
+  "aiapi.notice-created-modules": { "zh-TW": "已用這把金鑰帶回 {{count}} 個模組，並切換到供應商分頁。", "zh-CN": "已用这把金钥带回 {{count}} 个模组，并切换到供应商分页。", en: "Imported {{count}} modules from this key and switched to the provider tab." },
   "aiapi.notice-created": { "zh-TW": "已新增供應商設定檔，並切換到供應商分頁。", "zh-CN": "已新增供应商设定档，并切换到供应商分页。", en: "Provider profile created; switched to the provider tab." },
   "aiapi.notice-saved": { "zh-TW": "設定已儲存。", "zh-CN": "设定已储存。", en: "Settings saved." },
   "aiapi.notice-credential-saved": { "zh-TW": "API 金鑰已儲存（不會回顯明文）。", "zh-CN": "API 密钥已储存（不会回显明文）。", en: "API key stored (never echoed)." },
@@ -2319,8 +2320,12 @@ const catalog = {
 
 export type TranslationKey = keyof typeof catalog;
 
-export function translate(locale: Locale, key: TranslationKey): string {
-  return catalog[key][locale];
+export function translate(locale: Locale, key: TranslationKey, params?: Record<string, string | number>): string {
+  const text = catalog[key][locale];
+  if (!params) return text;
+  return text.replace(/\{\{(\w+)\}\}/g, (match, name: string) =>
+    Object.prototype.hasOwnProperty.call(params, name) ? String(params[name]) : match,
+  );
 }
 
 export function isLocale(value: string | null): value is Locale {

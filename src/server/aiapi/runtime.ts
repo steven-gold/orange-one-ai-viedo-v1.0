@@ -3,28 +3,29 @@ import {
   AIAPI_REGISTRY_UID,
   findDuplicateProfile,
   isAiapiCapability,
+  isCapabilityToken,
   nextProfileId,
   nextSeq,
+  profileFingerprint,
   readProfiles,
   serializeProfiles,
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
 import {
-  catalogEntry,
-  detectProviders,
-  endpointForModel,
-  pickDefaultModel,
+  AIAPI_PROVIDER_REGISTRY,
+  prefixCandidates,
   promptTemplateForProvider,
-  type ProviderCatalogEntry,
+  registryEntry,
 } from "@/lib/aiapiProviderCatalog";
 import { mirrorProfile } from "@/lib/aiapiActionPreview";
 import { getAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
-import { identifyProvider, listProviderModels } from "./discovery";
+import { identifyProvider } from "./discovery";
 
 export interface AiapiOutcome {
   ok: boolean;
   code?: string;
+  imported?: number;
 }
 
 const FIELD_TABLE = "ghsn_aiapi_field_projection";
@@ -271,98 +272,153 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
   const secret = textOf(payload.secret) || textOf(payload.credential);
   const profiles = await loadProfiles();
 
-  const requestedProvider = textOf(payload.providerId).toLowerCase();
-  let entry = catalogEntry(requestedProvider);
-  let discoveredModels: string[] = [];
-
   // The manual path is fully specified by the caller: connection plus a model,
-  // and either an adapter or a provider that supplies one. An unregistered
-  // provider is allowed there, so no key verification is attempted.
+  // and either an adapter or a registered provider. An unregistered provider is
+  // allowed there, so no key verification is attempted.
+  const requestedProvider = textOf(payload.providerId).toLowerCase();
+  let entry = registryEntry(requestedProvider);
   const manual =
     Boolean(textOf(payload.baseUrl)) &&
     Boolean(textOf(payload.endpointPath)) &&
     Boolean(textOf(payload.modelId)) &&
     (Boolean(textOf(payload.adapterType)) || entry !== null);
 
-  if (secret && !manual) {
-    const prefixMatches = detectProviders(secret);
-    const requested = entry;
-    const mismatched =
-      requested !== null &&
-      prefixMatches.length > 0 &&
-      prefixMatches.every((match) => match.providerId !== requested.providerId);
-    if (mismatched) return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
-    // Prefixes only shortlist candidates; whichever provider actually accepts
-    // the key is the authority, so `sk-` resolves without a manual choice.
-    // An unrecognised prefix never probes the whole catalog.
-    const candidates: readonly ProviderCatalogEntry[] = entry ? [entry] : prefixMatches;
-    const identified = await identifyProvider(candidates, secret);
-    if (!identified.ok) return { ok: false, code: identified.code };
-    entry = identified.entry;
-    discoveredModels = identified.models;
+  if (manual) {
+    const candidate: AiapiProfile = {
+      profileId: textOf(payload.profileId) || nextProfileId(profiles),
+      version: 1,
+      providerId: textOf(payload.providerId),
+      providerName: textOf(payload.providerName) || entry?.providerName || "",
+      modelId: textOf(payload.modelId),
+      modelName: textOf(payload.modelName),
+      baseUrl: textOf(payload.baseUrl),
+      endpointPath: textOf(payload.endpointPath),
+      httpMethod: textOf(payload.httpMethod) || "POST",
+      timeoutSeconds: textOf(payload.timeoutSeconds) || "30",
+      adapterType: textOf(payload.adapterType) || entry?.adapterType || "",
+      requestTemplate: textOf(payload.requestTemplate),
+      responseTextPath: textOf(payload.responseTextPath),
+      promptTemplate: textOf(payload.promptTemplate) || promptTemplateForProvider(),
+      capabilityType: textOf(payload.capabilityType) || "chat",
+      additionalCapabilities: textOf(payload.additionalCapabilities),
+      supportsReferences: textOf(payload.supportsReferences),
+      rightsCompatible: textOf(payload.rightsCompatible),
+      dataClassifications: textOf(payload.dataClassifications),
+      preferredLanguage: textOf(payload.preferredLanguage),
+      maxContext: textOf(payload.maxContext),
+      enabled: textOf(payload.enabled) !== "DISABLED",
+      credentialSet: Boolean(secret),
+      lastTest: "",
+      lastTestAt: "",
+      seq: nextSeq(profiles),
+    };
+    const invalid = validateCandidate(candidate);
+    if (invalid) return invalid;
+    if (findDuplicateProfile(profiles, candidate)) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+    await writeFields({
+      [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, candidate]),
+      "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
+      ...mirrorProfile(candidate),
+    });
+    if (secret) await setAiapiCredential(candidate.profileId, secret);
+    return { ok: true };
   }
 
-  let modelId = textOf(payload.modelId);
-  if (!modelId && entry && discoveredModels.length) {
-    modelId = pickDefaultModel(entry, discoveredModels);
-    if (!modelId) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+  if (!secret) return { ok: false, code: "AIAPI_CREDENTIAL_REQUIRED" };
+
+  // Prefixes only shorten the probe list. When the prefix is unknown the whole
+  // registry is probed, so no brand is decided by the key format.
+  const shortlist = prefixCandidates(secret);
+  if (entry && shortlist.length && shortlist.every((candidate) => candidate.providerId !== entry?.providerId)) {
+    return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
   }
-  if (!modelId && entry && secret && !discoveredModels.length) {
-    const discovered = await listProviderModels(entry, secret);
-    if (!discovered.ok) return { ok: false, code: discovered.code };
-    modelId = pickDefaultModel(entry, discovered.models);
-    if (!modelId) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+  const primary = entry ? [entry] : shortlist;
+  const fallback = AIAPI_PROVIDER_REGISTRY;
+  const identified = await identifyProvider(secret, primary.length ? primary : fallback, fallback);
+  if (!identified.ok) return { ok: false, code: identified.code };
+
+  if (entry && identified.entry.providerId !== entry.providerId) {
+    return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
+  }
+  entry = identified.entry;
+  const modules = identified.modules;
+  if (!modules.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+
+  // One profile per module the provider publishes, all sharing one credential.
+  const known = new Set(profiles.map((profile) => profileFingerprint(profile)));
+  const imported: AiapiProfile[] = [];
+  let seq = nextSeq(profiles);
+  let nextId = nextProfileId(profiles);
+  for (const module of modules) {
+    const capability = module.capability || "operation";
+    const candidate: AiapiProfile = {
+      profileId: nextId,
+      version: 1,
+      providerId: entry.providerId,
+      providerName: entry.providerName,
+      modelId: module.source === "model" ? module.title : module.moduleId,
+      modelName: module.title,
+      baseUrl: entry.baseUrl,
+      endpointPath: module.path,
+      httpMethod: module.method,
+      timeoutSeconds: "30",
+      adapterType: entry.adapterType,
+      requestTemplate: "",
+      responseTextPath: "",
+      promptTemplate: promptTemplateForProvider(),
+      capabilityType: capability,
+      additionalCapabilities: module.source === "operation" ? module.title : "",
+      supportsReferences: "",
+      rightsCompatible: "",
+      dataClassifications: "",
+      preferredLanguage: "",
+      maxContext: module.contextWindow,
+      enabled: true,
+      credentialSet: true,
+      lastTest: "",
+      lastTestAt: "",
+      seq,
+    };
+    const fingerprint = profileFingerprint(candidate);
+    if (known.has(fingerprint)) continue;
+    known.add(fingerprint);
+    imported.push(candidate);
+    seq += 1;
+    nextId = bumpProfileId(nextId);
   }
 
-  const providerId = textOf(payload.providerId) || entry?.providerId || "";
-  const candidate: AiapiProfile = {
-    profileId: textOf(payload.profileId) || nextProfileId(profiles),
-    version: 1,
-    providerId,
-    providerName: textOf(payload.providerName) || entry?.providerName || "",
-    modelId,
-    modelName: textOf(payload.modelName),
-    baseUrl: textOf(payload.baseUrl) || entry?.baseUrl || "",
-    endpointPath:
-      textOf(payload.endpointPath) || (entry && modelId ? endpointForModel(entry, modelId) : ""),
-    httpMethod: textOf(payload.httpMethod) || "POST",
-    timeoutSeconds: textOf(payload.timeoutSeconds) || entry?.timeoutSeconds || "30",
-    adapterType: textOf(payload.adapterType) || entry?.adapterType || "",
-    requestTemplate: textOf(payload.requestTemplate),
-    responseTextPath: textOf(payload.responseTextPath) || entry?.responseTextPath || "",
-    promptTemplate: textOf(payload.promptTemplate) || promptTemplateForProvider(),
-    capabilityType: textOf(payload.capabilityType) || "chat",
-    additionalCapabilities: textOf(payload.additionalCapabilities),
-    supportsReferences: textOf(payload.supportsReferences),
-    rightsCompatible: textOf(payload.rightsCompatible),
-    dataClassifications: textOf(payload.dataClassifications),
-    preferredLanguage: textOf(payload.preferredLanguage),
-    maxContext: textOf(payload.maxContext),
-    enabled: textOf(payload.enabled) !== "DISABLED",
-    credentialSet: Boolean(secret),
-    lastTest: "",
-    lastTestAt: "",
-    seq: nextSeq(profiles),
-  };
+  if (!imported.length) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
 
+  const next = [...profiles, ...imported];
+  await writeFields({
+    [AIAPI_REGISTRY_UID]: serializeProfiles(next),
+    "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
+    "AIAPI-01-FLD-OPS-CREDENTIAL": "SET",
+    ...mirrorProfile(imported[0]),
+  });
+  await setAiapiCredential(imported[0].profileId, secret);
+  for (const profile of imported.slice(1)) await setAiapiCredential(profile.profileId, secret);
+  return { ok: true, imported: imported.length };
+}
+
+function bumpProfileId(profileId: string): string {
+  const match = /^AIAPI-01-PROFILE-(\d+)$/.exec(profileId);
+  return match ? `AIAPI-01-PROFILE-${Number.parseInt(match[1], 10) + 1}` : `${profileId}-2`;
+}
+
+function validateCandidate(candidate: AiapiProfile): AiapiOutcome | null {
   if (!candidate.providerId) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
   if (!candidate.modelId) return { ok: false, code: "AIAPI_PROFILE_MODEL_REQUIRED" };
-  if (!isAiapiCapability(candidate.capabilityType)) return { ok: false, code: "AIAPI_PROFILE_CAPABILITY_INVALID" };
+  if (!isAiapiCapability(candidate.capabilityType) && !isCapabilityToken(candidate.capabilityType)) {
+    return { ok: false, code: "AIAPI_PROFILE_CAPABILITY_INVALID" };
+  }
   if (!candidate.adapterType) return { ok: false, code: "AIAPI_PROFILE_ADAPTER_REQUIRED" };
   if (!isHttpUrl(candidate.baseUrl)) return { ok: false, code: "AIAPI_PROFILE_BASE_URL_INVALID" };
   if (!candidate.endpointPath) return { ok: false, code: "AIAPI_PROFILE_ENDPOINT_REQUIRED" };
   if (!candidate.promptTemplate.includes(AIAPI_PROMPT_TEMPLATE_TOKEN)) {
     return { ok: false, code: "AIAPI_PROFILE_PROMPT_TEMPLATE_INVALID" };
   }
-  if (findDuplicateProfile(profiles, candidate)) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
-
-  await writeFields({
-    [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, candidate]),
-    "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
-    ...mirrorProfile(candidate),
-  });
-  if (secret) await setAiapiCredential(candidate.profileId, secret);
-  return { ok: true };
+  return null;
 }
 
 export async function runConnectionTest(profileIdRaw: string | undefined): Promise<AiapiOutcome> {

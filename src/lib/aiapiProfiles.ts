@@ -8,8 +8,19 @@ export const AIAPI_CAPABILITIES = ["chat", "correction"] as const;
 
 export type AiapiCapability = (typeof AIAPI_CAPABILITIES)[number];
 
+/**
+ * Routing only accepts the two governed capabilities. Provider modules can
+ * declare any further token (video, image, audio...); those are registered and
+ * listed, and stay ineligible for text routing.
+ */
 export function isAiapiCapability(value: string): value is AiapiCapability {
   return AIAPI_CAPABILITIES.includes(value as AiapiCapability);
+}
+
+const CAPABILITY_TOKEN = /^[a-z][a-z0-9-]{1,39}$/;
+
+export function isCapabilityToken(value: string): boolean {
+  return CAPABILITY_TOKEN.test(value.trim());
 }
 
 /**
