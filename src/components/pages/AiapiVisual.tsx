@@ -276,6 +276,7 @@ function ModalForm({
   title,
   t,
   initial,
+  busy,
   onCancel,
   onSubmit,
 }: {
@@ -283,6 +284,7 @@ function ModalForm({
   title: string;
   t: (key: TranslationKey) => string;
   initial?: Record<string, string>;
+  busy?: boolean;
   onCancel: () => void;
   onSubmit: (value: string) => void;
 }) {
@@ -304,12 +306,14 @@ function ModalForm({
     return seed;
   });
   const detected = useMemo(() => detectProviders(secret), [secret]);
-  const canSubmit = isCreate
-    ? advanced
-      ? secret.trim().length > 0 &&
-        fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0)
-      : secret.trim().length > 0
-    : fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0);
+  const canSubmit =
+    !busy &&
+    (isCreate
+      ? advanced
+        ? secret.trim().length > 0 &&
+          fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0)
+        : secret.trim().length > 0
+      : fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0));
 
   const update = (key: string, value: string) => setValues((prev) => ({ ...prev, [key]: value }));
 
@@ -421,7 +425,12 @@ function ModalForm({
   };
 
   return (
-    <section className={styles.modal} data-component-uid="AIAPI-01-CMP-MODAL" data-modal-for={actionUid}>
+    <section
+      className={styles.modal}
+      data-component-uid="AIAPI-01-CMP-MODAL"
+      data-modal-for={actionUid}
+      aria-busy={busy ? "true" : "false"}
+    >
       <h3>{title}</h3>
       <p className={styles.note}>{isCreate ? t("aiapi.modal-hint-key") : t("aiapi.modal-hint")}</p>
       {isCreate ? (
@@ -519,7 +528,7 @@ function ModalForm({
         >
           {t("aiapi.submit")}
         </button>
-        <button type="button" className={styles.btn} onClick={onCancel}>
+        <button type="button" className={styles.btn} disabled={busy} onClick={onCancel}>
           {t("global.common.close")}
         </button>
       </div>
@@ -540,6 +549,7 @@ export function AiapiVisual() {
   const [query, setQuery] = useState("");
   const [selectedProfileId, setSelectedProfileId] = useState("");
   const [notice, setNotice] = useState<TranslationKey | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const knownProfileIds = useRef<Set<string>>(new Set());
 
@@ -574,12 +584,15 @@ export function AiapiVisual() {
     const actionUid = AIAPI_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return false;
     let ok = false;
+    setBusy(true);
     try {
       const result = await postAiapiAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, value);
       ok = result.ok;
       setNotice(result.ok ? successKey ?? null : noticeKeyForCode(result.code));
     } catch {
       setNotice("aiapi.notice-rejected");
+    } finally {
+      setBusy(false);
     }
     setTick((n) => n + 1);
     return ok;
@@ -1247,6 +1260,7 @@ export function AiapiVisual() {
           title={tx("aiapi.modal-title")}
           t={tx}
           initial={modalInitial}
+          busy={busy}
           onCancel={() => setModalUid(null)}
           onSubmit={submitModal}
         />

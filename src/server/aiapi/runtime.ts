@@ -15,11 +15,12 @@ import {
   endpointForModel,
   pickDefaultModel,
   promptTemplateForProvider,
+  type ProviderCatalogEntry,
 } from "@/lib/aiapiProviderCatalog";
 import { mirrorProfile } from "@/lib/aiapiActionPreview";
 import { getAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
-import { listProviderModels } from "./discovery";
+import { identifyProvider, listProviderModels } from "./discovery";
 
 export interface AiapiOutcome {
   ok: boolean;
@@ -270,31 +271,43 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
   const secret = textOf(payload.secret) || textOf(payload.credential);
   const profiles = await loadProfiles();
 
-  // The manual path is fully specified by the caller: connection, adapter and
-  // model are all present, so an unregistered provider is allowed.
-  const manual =
-    Boolean(textOf(payload.baseUrl)) &&
-    Boolean(textOf(payload.adapterType)) &&
-    Boolean(textOf(payload.endpointPath)) &&
-    Boolean(textOf(payload.modelId));
-
   const requestedProvider = textOf(payload.providerId).toLowerCase();
   let entry = catalogEntry(requestedProvider);
-  if (!entry && secret && !manual) {
-    const detected = detectProviders(secret);
-    if (detected.length === 1) entry = detected[0];
-    else if (detected.length > 1) return { ok: false, code: "AIAPI_PROVIDER_AMBIGUOUS" };
-    else return { ok: false, code: "AIAPI_PROVIDER_UNSUPPORTED" };
-  }
-  if (secret && entry) {
-    const detected = detectProviders(secret);
-    if (detected.length && !detected.includes(entry)) {
-      return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
-    }
+  let discoveredModels: string[] = [];
+
+  // The manual path is fully specified by the caller: connection plus a model,
+  // and either an adapter or a provider that supplies one. An unregistered
+  // provider is allowed there, so no key verification is attempted.
+  const manual =
+    Boolean(textOf(payload.baseUrl)) &&
+    Boolean(textOf(payload.endpointPath)) &&
+    Boolean(textOf(payload.modelId)) &&
+    (Boolean(textOf(payload.adapterType)) || entry !== null);
+
+  if (secret && !manual) {
+    const prefixMatches = detectProviders(secret);
+    const requested = entry;
+    const mismatched =
+      requested !== null &&
+      prefixMatches.length > 0 &&
+      prefixMatches.every((match) => match.providerId !== requested.providerId);
+    if (mismatched) return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
+    // Prefixes only shortlist candidates; whichever provider actually accepts
+    // the key is the authority, so `sk-` resolves without a manual choice.
+    // An unrecognised prefix never probes the whole catalog.
+    const candidates: readonly ProviderCatalogEntry[] = entry ? [entry] : prefixMatches;
+    const identified = await identifyProvider(candidates, secret);
+    if (!identified.ok) return { ok: false, code: identified.code };
+    entry = identified.entry;
+    discoveredModels = identified.models;
   }
 
   let modelId = textOf(payload.modelId);
-  if (entry && secret && !modelId) {
+  if (!modelId && entry && discoveredModels.length) {
+    modelId = pickDefaultModel(entry, discoveredModels);
+    if (!modelId) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+  }
+  if (!modelId && entry && secret && !discoveredModels.length) {
     const discovered = await listProviderModels(entry, secret);
     if (!discovered.ok) return { ok: false, code: discovered.code };
     modelId = pickDefaultModel(entry, discovered.models);

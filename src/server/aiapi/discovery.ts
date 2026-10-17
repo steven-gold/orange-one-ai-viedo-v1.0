@@ -75,3 +75,40 @@ export async function listProviderModels(
     clearTimeout(timer);
   }
 }
+
+export type ProviderIdentification =
+  | { ok: true; entry: ProviderCatalogEntry; models: string[] }
+  | { ok: false; code: string; matches: string[] };
+
+/**
+ * Uses the key itself instead of trusting its prefix: every candidate is asked
+ * for its own model list and the provider that answers with 200 wins. Only the
+ * shortlisted candidates ever see the key, so an ambiguous prefix (e.g. `sk-`)
+ * resolves without sending the secret to every registered provider.
+ */
+export async function identifyProvider(
+  candidates: readonly ProviderCatalogEntry[],
+  secret: string,
+  timeoutMs = 15000,
+): Promise<ProviderIdentification> {
+  if (!candidates.length) return { ok: false, code: "AIAPI_PROVIDER_UNSUPPORTED", matches: [] };
+
+  const outcomes = await Promise.all(
+    candidates.map(async (entry) => ({ entry, result: await listProviderModels(entry, secret, timeoutMs) })),
+  );
+  const winners = outcomes.filter(
+    (outcome): outcome is { entry: ProviderCatalogEntry; result: { ok: true; models: string[] } } => outcome.result.ok,
+  );
+
+  if (winners.length === 1) return { ok: true, entry: winners[0].entry, models: winners[0].result.models };
+  if (winners.length > 1) {
+    return { ok: false, code: "AIAPI_PROVIDER_AMBIGUOUS", matches: winners.map((winner) => winner.entry.providerId) };
+  }
+
+  const codes = outcomes.map((outcome) => (outcome.result.ok ? "" : outcome.result.code));
+  if (codes.includes("AIAPI_PROVIDER_KEY_INVALID")) return { ok: false, code: "AIAPI_PROVIDER_KEY_INVALID", matches: [] };
+  if (codes.every((code) => code === "AIAPI_PROVIDER_UNREACHABLE" || code === "AIAPI_PROVIDER_TIMEOUT")) {
+    return { ok: false, code: "AIAPI_PROVIDER_UNREACHABLE", matches: [] };
+  }
+  return { ok: false, code: codes.find(Boolean) ?? "AIAPI_PROVIDER_HTTP_ERROR", matches: [] };
+}
