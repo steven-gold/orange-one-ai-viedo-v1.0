@@ -10,6 +10,13 @@ import { previewVideoAction } from "@/lib/videoActionPreview";
 import { generatePageReply } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
+import {
+  runConnectionTest,
+  runQueueProbe,
+  runRouteExecution,
+  runSandboxTest,
+  type AiapiOutcome,
+} from "../aiapi/runtime";
 
 export type WorkbenchPage =
   | "dashboard"
@@ -193,7 +200,12 @@ async function applyProjectedAction(
   }
 }
 
-export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: string, actionUid: string, nextValue?: string): Promise<void> {
+export async function applyWorkbenchAction(
+  page: WorkbenchPage,
+  controlUid: string,
+  actionUid: string,
+  nextValue?: string,
+): Promise<AiapiOutcome | void> {
   if (page === "dashboard") {
     return;
   }
@@ -313,6 +325,10 @@ export async function applyWorkbenchAction(page: WorkbenchPage, controlUid: stri
     return;
   }
   if (page === "aiapi") {
+    if (actionUid === "testProviderModelProfile") return runConnectionTest(nextValue);
+    if (actionUid === "admin:AIAPI-08:ACT-SYSTEM-TEST") return runSandboxTest(nextValue);
+    if (actionUid === "executeProviderRoute") return runRouteExecution(nextValue);
+    if (actionUid === "runProviderQueueProbe") return runQueueProbe();
     await applyProjectedAction(FIELD_TABLE.aiapi, previewAiapiAction, controlUid, actionUid, nextValue);
     if (actionUid === "setProviderModelCredential") {
       const secret = await credentialFromValue(nextValue);

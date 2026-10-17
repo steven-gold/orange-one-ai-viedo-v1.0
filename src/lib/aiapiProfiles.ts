@@ -2,50 +2,132 @@ export const AIAPI_REGISTRY_UID = "AIAPI-01-PROFILE-REGISTRY";
 
 export const AIAPI_LEGACY_PROFILE_ID = "AIAPI-01-CRED-ACTIVE";
 
-export const AIAPI_LEGACY_CAPABILITY = "chat";
+export const AIAPI_PROMPT_TEMPLATE_TOKEN = "{{canonical_instruction}}";
 
+export const AIAPI_CAPABILITIES = ["chat", "correction"] as const;
+
+export type AiapiCapability = (typeof AIAPI_CAPABILITIES)[number];
+
+export function isAiapiCapability(value: string): value is AiapiCapability {
+  return AIAPI_CAPABILITIES.includes(value as AiapiCapability);
+}
+
+/**
+ * Provider Model Profile field contract (AIAPI-01 section 13).
+ * Groups: Identity / Connection / Adapter / Capability / Data-Context / Status.
+ */
 export interface AiapiProfile {
   profileId: string;
-  provider: string;
-  model: string;
-  capability: string;
-  adapter: string;
+  version: number;
+
+  providerId: string;
+  providerName: string;
+  modelId: string;
+  modelName: string;
+
   baseUrl: string;
-  endpoint: string;
-  timeout: string;
-  positioning: string;
-  acposScope: string;
-  inputReq: string;
-  outputReq: string;
-  billing: string;
-  recommendedUse: string;
-  restrictions: string;
-  docs: string;
+  endpointPath: string;
+  httpMethod: string;
+  timeoutSeconds: string;
+
+  adapterType: string;
+  requestTemplate: string;
+  responseTextPath: string;
+  promptTemplate: string;
+
+  capabilityType: string;
+  additionalCapabilities: string;
+  supportsReferences: string;
+  rightsCompatible: string;
+
+  dataClassifications: string;
+  preferredLanguage: string;
+  maxContext: string;
+
   enabled: boolean;
   credentialSet: boolean;
   lastTest: string;
+  lastTestAt: string;
   seq: number;
 }
 
-const PROFILE_METADATA_FIELDS = [
-  "positioning",
-  "acposScope",
-  "inputReq",
-  "outputReq",
-  "billing",
-  "recommendedUse",
-  "restrictions",
-  "docs",
+export interface AiapiProfileField {
+  group: string;
+  name: keyof AiapiProfile;
+  required?: boolean;
+}
+
+export const AIAPI_PROFILE_FIELD_GROUPS: ReadonlyArray<{
+  group: string;
+  labelKey:
+    | "aiapi.grp-identity"
+    | "aiapi.grp-connection"
+    | "aiapi.grp-adapter"
+    | "aiapi.grp-capability"
+    | "aiapi.grp-data"
+    | "aiapi.grp-status";
+  fields: ReadonlyArray<keyof AiapiProfile>;
+}> = [
+  {
+    group: "Identity",
+    labelKey: "aiapi.grp-identity",
+    fields: ["providerId", "providerName", "modelId", "modelName"],
+  },
+  {
+    group: "Connection",
+    labelKey: "aiapi.grp-connection",
+    fields: ["baseUrl", "endpointPath", "httpMethod", "timeoutSeconds"],
+  },
+  {
+    group: "Adapter",
+    labelKey: "aiapi.grp-adapter",
+    fields: ["adapterType", "requestTemplate", "responseTextPath", "promptTemplate"],
+  },
+  {
+    group: "Capability",
+    labelKey: "aiapi.grp-capability",
+    fields: ["capabilityType", "additionalCapabilities", "supportsReferences", "rightsCompatible"],
+  },
+  {
+    group: "Data / Context",
+    labelKey: "aiapi.grp-data",
+    fields: ["dataClassifications", "preferredLanguage", "maxContext"],
+  },
+  {
+    group: "Status",
+    labelKey: "aiapi.grp-status",
+    fields: ["enabled"],
+  },
+];
+
+const TEXT_FIELDS = [
+  "providerId",
+  "providerName",
+  "modelId",
+  "modelName",
+  "baseUrl",
+  "endpointPath",
+  "httpMethod",
+  "timeoutSeconds",
+  "adapterType",
+  "requestTemplate",
+  "responseTextPath",
+  "promptTemplate",
+  "capabilityType",
+  "additionalCapabilities",
+  "supportsReferences",
+  "rightsCompatible",
+  "dataClassifications",
+  "preferredLanguage",
+  "maxContext",
+  "lastTest",
+  "lastTestAt",
 ] as const satisfies readonly (keyof AiapiProfile)[];
-
-export type AiapiProfileMetadataField = (typeof PROFILE_METADATA_FIELDS)[number];
-
-export const AIAPI_PROFILE_METADATA_FIELDS: readonly AiapiProfileMetadataField[] = PROFILE_METADATA_FIELDS;
 
 export type FieldReader = (uid: string) => string | null;
 
 function clean(value: unknown): string {
-  return typeof value === "string" ? value.trim().slice(0, 240) : "";
+  return typeof value === "string" ? value.trim().slice(0, 400) : "";
 }
 
 function num(value: unknown): number {
@@ -53,35 +135,69 @@ function num(value: unknown): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
-export function profileIdentity(profile: Pick<AiapiProfile, "provider" | "model">): string {
-  return [profile.provider, profile.model].map((part) => clean(part)).filter(Boolean).join(" / ");
+export function profileIdentity(profile: Pick<AiapiProfile, "providerId" | "providerName" | "modelId" | "modelName">): string {
+  const provider = clean(profile.providerName) || clean(profile.providerId);
+  const model = clean(profile.modelName) || clean(profile.modelId);
+  return [provider, model].filter(Boolean).join(" / ");
+}
+
+export function profileCapabilities(profile: Pick<AiapiProfile, "capabilityType" | "additionalCapabilities">): string[] {
+  return [
+    clean(profile.capabilityType),
+    ...clean(profile.additionalCapabilities)
+      .split(",")
+      .map((part) => clean(part)),
+  ].filter(Boolean);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
+function readText(value: Record<string, unknown>, key: string): string {
+  return clean(value[key]);
+}
+
+/**
+ * Normalizes stored registry rows. Legacy rows (provider / model / capability /
+ * adapter / endpoint / timeout) are migrated on read; the previously invented
+ * description fields are intentionally dropped so they stop travelling through
+ * the registry.
+ */
 function normalize(value: unknown): AiapiProfile | null {
   if (!isRecord(value)) return null;
   const profileId = clean(value.profileId);
-  const provider = clean(value.provider);
-  if (!profileId || !provider) return null;
-  const metadata = Object.fromEntries(
-    PROFILE_METADATA_FIELDS.map((field) => [field, clean(value[field])]),
-  ) as Record<AiapiProfileMetadataField, string>;
+  const providerId = clean(value.providerId) || clean(value.provider);
+  if (!profileId || !providerId) return null;
+  const text = (key: string, legacy?: string): string =>
+    readText(value, key) || (legacy ? readText(value, legacy) : "");
+
   return {
     profileId,
-    provider,
-    model: clean(value.model),
-    capability: clean(value.capability),
-    adapter: clean(value.adapter),
-    baseUrl: clean(value.baseUrl),
-    endpoint: clean(value.endpoint),
-    timeout: clean(value.timeout),
-    ...metadata,
+    version: num(value.version) || 1,
+    providerId,
+    providerName: readText(value, "providerName"),
+    modelId: text("modelId", "model"),
+    modelName: readText(value, "modelName"),
+    baseUrl: readText(value, "baseUrl"),
+    endpointPath: text("endpointPath", "endpoint"),
+    httpMethod: readText(value, "httpMethod"),
+    timeoutSeconds: text("timeoutSeconds", "timeout"),
+    adapterType: text("adapterType", "adapter"),
+    requestTemplate: readText(value, "requestTemplate"),
+    responseTextPath: readText(value, "responseTextPath"),
+    promptTemplate: readText(value, "promptTemplate"),
+    capabilityType: text("capabilityType", "capability"),
+    additionalCapabilities: readText(value, "additionalCapabilities"),
+    supportsReferences: readText(value, "supportsReferences"),
+    rightsCompatible: readText(value, "rightsCompatible"),
+    dataClassifications: readText(value, "dataClassifications"),
+    preferredLanguage: readText(value, "preferredLanguage"),
+    maxContext: readText(value, "maxContext"),
     enabled: value.enabled !== false,
     credentialSet: value.credentialSet === true,
-    lastTest: clean(value.lastTest),
+    lastTest: readText(value, "lastTest"),
+    lastTestAt: readText(value, "lastTestAt"),
     seq: num(value.seq),
   };
 }
@@ -104,28 +220,14 @@ export function parseProfiles(raw: string | null | undefined): AiapiProfile[] {
 
 export function serializeProfiles(profiles: AiapiProfile[]): string {
   return JSON.stringify(
-    profiles.map((profile) => ({
-      profileId: profile.profileId,
-      provider: profile.provider,
-      model: profile.model,
-      capability: profile.capability,
-      adapter: profile.adapter,
-      baseUrl: profile.baseUrl,
-      endpoint: profile.endpoint,
-      timeout: profile.timeout,
-      positioning: profile.positioning,
-      acposScope: profile.acposScope,
-      inputReq: profile.inputReq,
-      outputReq: profile.outputReq,
-      billing: profile.billing,
-      recommendedUse: profile.recommendedUse,
-      restrictions: profile.restrictions,
-      docs: profile.docs,
-      enabled: profile.enabled,
-      credentialSet: profile.credentialSet,
-      lastTest: profile.lastTest,
-      seq: profile.seq,
-    })),
+    profiles.map((profile) => {
+      const row: Record<string, unknown> = { profileId: profile.profileId, version: profile.version };
+      for (const field of TEXT_FIELDS) row[field] = profile[field];
+      row.enabled = profile.enabled;
+      row.credentialSet = profile.credentialSet;
+      row.seq = profile.seq;
+      return row;
+    }),
   );
 }
 
@@ -147,37 +249,43 @@ export function synthesizeLegacyProfile(read: FieldReader): AiapiProfile | null 
   const providerColumn = clean(read("AIAPI-01-FLD-OV-PROVIDER"));
   if (!identity && !providerColumn) return null;
 
-  let provider = providerColumn;
-  let model = "";
+  let providerId = providerColumn;
+  let modelId = "";
   const separator = identity.includes(" / ") ? " / " : identity.includes("/") ? "/" : "";
   if (separator) {
     const parts = identity.split(separator).map((part) => clean(part)).filter(Boolean);
-    provider = provider || parts[0] || "";
-    model = parts[parts.length - 1] ?? "";
-    if (parts.length === 1) model = "";
+    providerId = providerId || parts[0] || "";
+    modelId = parts[parts.length - 1] ?? "";
+    if (parts.length === 1) modelId = "";
   }
 
   const status = clean(read("AIAPI-01-PROFILE-GRP-STATUS"));
   return {
     profileId: AIAPI_LEGACY_PROFILE_ID,
-    provider: provider || identity,
-    model,
-    capability: clean(read("AIAPI-01-PROFILE-GRP-CAPABILITY")) || AIAPI_LEGACY_CAPABILITY,
-    adapter: clean(read("AIAPI-01-PROFILE-GRP-ADAPTER")),
+    version: 1,
+    providerId: providerId || identity,
+    providerName: "",
+    modelId,
+    modelName: "",
     baseUrl: clean(read("AIAPI-01-PROFILE-GRP-CONNECTION")),
-    endpoint: clean(read("AIAPI-01-PROFILE-GRP-DATA-CONTEXT")),
-    timeout: clean(read("AIAPI-01-PRO-DESC-LIMITS")),
-    positioning: clean(read("AIAPI-01-PRO-DESC-POSITIONING")),
-    acposScope: clean(read("AIAPI-01-PRO-DESC-ACPOS-SCOPE")),
-    inputReq: clean(read("AIAPI-01-PRO-DESC-INPUT")),
-    outputReq: clean(read("AIAPI-01-PRO-DESC-OUTPUT")),
-    billing: clean(read("AIAPI-01-PRO-DESC-BILLING")),
-    recommendedUse: clean(read("AIAPI-01-PRO-DESC-RECOMMENDED-USE")),
-    restrictions: clean(read("AIAPI-01-PRO-DESC-RESTRICTIONS")),
-    docs: clean(read("AIAPI-01-PRO-DESC-DOCS")),
+    endpointPath: clean(read("AIAPI-01-PROFILE-GRP-DATA-CONTEXT")),
+    httpMethod: "",
+    timeoutSeconds: clean(read("AIAPI-01-PRO-DESC-LIMITS")),
+    adapterType: clean(read("AIAPI-01-PROFILE-GRP-ADAPTER")),
+    requestTemplate: "",
+    responseTextPath: "",
+    promptTemplate: AIAPI_PROMPT_TEMPLATE_TOKEN,
+    capabilityType: clean(read("AIAPI-01-PROFILE-GRP-CAPABILITY")),
+    additionalCapabilities: "",
+    supportsReferences: "",
+    rightsCompatible: "",
+    dataClassifications: "",
+    preferredLanguage: "",
+    maxContext: "",
     enabled: status !== "RETIRED" && status !== "DISABLED",
     credentialSet: clean(read("AIAPI-01-FLD-OPS-CREDENTIAL")) === "SET",
     lastTest: clean(read("AIAPI-01-PRO-DESC-LAST-TEST")),
+    lastTestAt: "",
     seq: 1,
   };
 }
@@ -189,15 +297,17 @@ export function readProfiles(read: FieldReader): AiapiProfile[] {
   return legacy ? [legacy] : [];
 }
 
-export function profileFingerprint(profile: Pick<AiapiProfile, "provider" | "model" | "capability" | "baseUrl" | "endpoint">): string {
-  return [profile.provider, profile.model, profile.capability, profile.baseUrl, profile.endpoint]
+export function profileFingerprint(
+  profile: Pick<AiapiProfile, "providerId" | "modelId" | "capabilityType" | "baseUrl" | "endpointPath">,
+): string {
+  return [profile.providerId, profile.modelId, profile.capabilityType, profile.baseUrl, profile.endpointPath]
     .map((part) => clean(part).toLowerCase())
     .join("\u0001");
 }
 
 export function findDuplicateProfile(
   profiles: AiapiProfile[],
-  candidate: Pick<AiapiProfile, "provider" | "model" | "capability" | "baseUrl" | "endpoint">,
+  candidate: Pick<AiapiProfile, "providerId" | "modelId" | "capabilityType" | "baseUrl" | "endpointPath">,
   excludeProfileId?: string,
 ): AiapiProfile | null {
   const wanted = profileFingerprint(candidate);
@@ -208,9 +318,13 @@ export function findDuplicateProfile(
   );
 }
 
-export function eligibleProfiles(profiles: AiapiProfile[], capability: string): AiapiProfile[] {
+export function supportsCapability(profile: AiapiProfile, capability: string): boolean {
   const wanted = clean(capability);
+  return Boolean(wanted) && profileCapabilities(profile).includes(wanted);
+}
+
+export function eligibleProfiles(profiles: AiapiProfile[], capability: string): AiapiProfile[] {
   return profiles
-    .filter((profile) => profile.enabled && profile.capability === wanted)
+    .filter((profile) => profile.enabled && supportsCapability(profile, capability))
     .sort((left, right) => left.seq - right.seq);
 }

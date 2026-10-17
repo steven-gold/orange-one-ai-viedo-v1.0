@@ -1,7 +1,9 @@
 import {
+  AIAPI_PROMPT_TEMPLATE_TOKEN,
   AIAPI_REGISTRY_UID,
   type AiapiProfile,
   findDuplicateProfile,
+  isAiapiCapability,
   nextProfileId,
   nextSeq,
   profileIdentity,
@@ -20,29 +22,38 @@ export const AIAPI_EXTRA_PROJECTION_KEYS = [
 
 interface AiapiPayload {
   profileId?: string;
-  provider?: string;
-  model?: string;
-  capability?: string;
-  adapter?: string;
+  expectedVersion?: string | number;
+  providerId?: string;
+  providerName?: string;
+  modelId?: string;
+  modelName?: string;
   baseUrl?: string;
-  endpoint?: string;
-  timeout?: string;
-  positioning?: string;
-  acposScope?: string;
-  inputReq?: string;
-  outputReq?: string;
-  billing?: string;
-  recommendedUse?: string;
-  restrictions?: string;
-  docs?: string;
+  endpointPath?: string;
+  httpMethod?: string;
+  timeoutSeconds?: string;
+  adapterType?: string;
+  requestTemplate?: string;
+  responseTextPath?: string;
+  promptTemplate?: string;
+  capabilityType?: string;
+  additionalCapabilities?: string;
+  supportsReferences?: string;
+  rightsCompatible?: string;
+  dataClassifications?: string;
+  preferredLanguage?: string;
+  maxContext?: string;
   enabled?: string;
+  secret?: string;
+  credential?: string;
+  reference?: string;
   group?: string;
   members?: string;
   reason?: string;
-  reference?: string;
   rights?: string;
+  capability?: string;
   data?: string;
   budget?: string;
+  instruction?: string;
 }
 
 function parsePayload(raw: string | undefined): AiapiPayload {
@@ -53,14 +64,14 @@ function parsePayload(raw: string | undefined): AiapiPayload {
       const parsed = JSON.parse(text) as unknown;
       if (parsed && typeof parsed === "object") return parsed as AiapiPayload;
     } catch {
-      return { provider: text };
+      return {};
     }
   }
-  return { provider: text };
+  return { secret: text };
 }
 
 function usable(value: string | null | undefined): string {
-  return (value ?? "").trim().slice(0, 120);
+  return (value ?? "").trim().slice(0, 400);
 }
 
 const SECRET_PATTERN = /^(gsk_|sk-|sk_|xai-|AIza|glpat-|hf_|Bearer\s)/i;
@@ -72,20 +83,6 @@ function safeName(value: string | undefined): string {
 
 function join(parts: Array<string | undefined>): string {
   return parts.map((part) => usable(part)).filter(Boolean).join(" / ");
-}
-
-function profileExists(current: (uid: string) => string | null): boolean {
-  const status = current("AIAPI-01-PROFILE-GRP-STATUS");
-  if (!usable(current("AIAPI-01-PROFILE-GRP-IDENTITY"))) return false;
-  return status !== "RETIRED";
-}
-
-function credentialSet(current: (uid: string) => string | null): boolean {
-  return current("AIAPI-01-FLD-OPS-CREDENTIAL") === "SET";
-}
-
-function capabilityApproved(current: (uid: string) => string | null): boolean {
-  return current("AIAPI-01-FLD-PF-RIGHTS") === "APPROVED";
 }
 
 function targetProfile(
@@ -104,80 +101,79 @@ function replaceProfile(profiles: AiapiProfile[], updated: AiapiProfile): AiapiP
   return profiles.map((profile) => (profile.profileId === updated.profileId ? updated : profile));
 }
 
-function mirrorProfile(profile: AiapiProfile): Record<string, string> {
+export function mirrorProfile(profile: AiapiProfile): Record<string, string> {
   return {
-    "AIAPI-01-FLD-OV-PROVIDER": profile.provider,
-    "AIAPI-01-FLD-OV-CAPABILITY": profile.capability,
+    "AIAPI-01-FLD-OV-PROVIDER": profile.providerName || profile.providerId,
+    "AIAPI-01-FLD-OV-CAPABILITY": profile.capabilityType,
     "AIAPI-01-PROFILE-GRP-IDENTITY": profileIdentity(profile),
     "AIAPI-01-PROFILE-GRP-CONNECTION": profile.baseUrl,
-    "AIAPI-01-PROFILE-GRP-ADAPTER": profile.adapter,
-    "AIAPI-01-PROFILE-GRP-CAPABILITY": profile.capability,
-    "AIAPI-01-PROFILE-GRP-DATA-CONTEXT": profile.endpoint,
+    "AIAPI-01-PROFILE-GRP-ADAPTER": profile.adapterType,
+    "AIAPI-01-PROFILE-GRP-CAPABILITY": profile.capabilityType,
+    "AIAPI-01-PROFILE-GRP-DATA-CONTEXT": profile.endpointPath,
     "AIAPI-01-PROFILE-GRP-STATUS": profile.enabled ? "ENABLED" : "DISABLED",
     "AIAPI-01-FLD-OPS-CREDENTIAL": profile.credentialSet ? "SET" : "NOT_SET",
     "AIAPI-01-PRO-DESC-IDENTITY": profileIdentity(profile),
-    "AIAPI-01-PRO-DESC-CAPABILITIES": profile.capability,
-    "AIAPI-01-PRO-DESC-ENDPOINT": join([profile.baseUrl, profile.endpoint]),
+    "AIAPI-01-PRO-DESC-CAPABILITIES": join([profile.capabilityType, profile.additionalCapabilities]),
+    "AIAPI-01-PRO-DESC-INPUT": profile.requestTemplate,
+    "AIAPI-01-PRO-DESC-OUTPUT": profile.responseTextPath,
+    "AIAPI-01-PRO-DESC-LIMITS": join([profile.timeoutSeconds, profile.maxContext]),
+    "AIAPI-01-PRO-DESC-ENDPOINT": join([profile.baseUrl, profile.endpointPath, profile.httpMethod]),
     "AIAPI-01-PRO-DESC-AUTH": profile.credentialSet ? "SET" : "NOT_SET",
-    "AIAPI-01-PRO-DESC-LIMITS": profile.timeout,
-    "AIAPI-01-PRO-DESC-POSITIONING": profile.positioning,
-    "AIAPI-01-PRO-DESC-ACPOS-SCOPE": profile.acposScope,
-    "AIAPI-01-PRO-DESC-INPUT": profile.inputReq,
-    "AIAPI-01-PRO-DESC-OUTPUT": profile.outputReq,
-    "AIAPI-01-PRO-DESC-BILLING": profile.billing,
-    "AIAPI-01-PRO-DESC-RECOMMENDED-USE": profile.recommendedUse,
-    "AIAPI-01-PRO-DESC-RESTRICTIONS": profile.restrictions,
-    "AIAPI-01-PRO-DESC-DOCS": profile.docs,
     "AIAPI-01-PRO-DESC-LAST-TEST": profile.lastTest,
     "AIAPI-01-PRO-DESC-HEALTH": profile.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN",
   };
 }
 
-function metadataFromPayload(payload: AiapiPayload): Pick<
+type ProfileText = Omit<
   AiapiProfile,
-  "positioning" | "acposScope" | "inputReq" | "outputReq" | "billing" | "recommendedUse" | "restrictions" | "docs"
-> {
+  "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "seq"
+>;
+
+function textFrom(payload: AiapiPayload, base: AiapiProfile | null): ProfileText {
+  const pick = (key: keyof ProfileText): string =>
+    usable(payload[key as keyof AiapiPayload] as string | undefined) || (base ? usable(base[key]) : "");
+  const providerId = safeName(payload.providerId) || (base ? base.providerId : "");
   return {
-    positioning: usable(payload.positioning),
-    acposScope: usable(payload.acposScope),
-    inputReq: usable(payload.inputReq),
-    outputReq: usable(payload.outputReq),
-    billing: usable(payload.billing),
-    recommendedUse: usable(payload.recommendedUse),
-    restrictions: usable(payload.restrictions),
-    docs: usable(payload.docs),
+    providerId,
+    providerName: pick("providerName"),
+    modelId: pick("modelId"),
+    modelName: pick("modelName"),
+    baseUrl: pick("baseUrl"),
+    endpointPath: pick("endpointPath"),
+    httpMethod: pick("httpMethod"),
+    timeoutSeconds: pick("timeoutSeconds"),
+    adapterType: pick("adapterType"),
+    requestTemplate: pick("requestTemplate"),
+    responseTextPath: pick("responseTextPath"),
+    promptTemplate: pick("promptTemplate"),
+    capabilityType: pick("capabilityType"),
+    additionalCapabilities: pick("additionalCapabilities"),
+    supportsReferences: pick("supportsReferences"),
+    rightsCompatible: pick("rightsCompatible"),
+    dataClassifications: pick("dataClassifications"),
+    preferredLanguage: pick("preferredLanguage"),
+    maxContext: pick("maxContext"),
   };
 }
 
-function candidateFromPayload(
-  payload: AiapiPayload,
-  base: Pick<AiapiProfile, "provider" | "model" | "capability" | "adapter" | "baseUrl" | "endpoint">,
-): AiapiProfile {
-  return {
-    profileId: "",
-    provider: safeName(payload.provider) || base.provider,
-    model: usable(payload.model) || base.model,
-    capability: usable(payload.capability) || base.capability,
-    adapter: usable(payload.adapter) || base.adapter,
-    baseUrl: usable(payload.baseUrl) || base.baseUrl,
-    endpoint: usable(payload.endpoint) || base.endpoint,
-    timeout: "",
-    positioning: "",
-    acposScope: "",
-    inputReq: "",
-    outputReq: "",
-    billing: "",
-    recommendedUse: "",
-    restrictions: "",
-    docs: "",
-    enabled: true,
-    credentialSet: false,
-    lastTest: "",
-    seq: 0,
-  };
+function isHttpUrl(value: string): boolean {
+  return /^https?:\/\/[^\s]+$/i.test(value);
 }
 
 export type AiapiValidationResult = { ok: true } | { ok: false; code: string };
+
+function validateFields(profile: Omit<AiapiProfile, "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "seq">): AiapiValidationResult {
+  if (!profile.providerId) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
+  if (!profile.modelId) return { ok: false, code: "AIAPI_PROFILE_MODEL_REQUIRED" };
+  if (!isAiapiCapability(profile.capabilityType)) return { ok: false, code: "AIAPI_PROFILE_CAPABILITY_INVALID" };
+  if (!profile.adapterType) return { ok: false, code: "AIAPI_PROFILE_ADAPTER_REQUIRED" };
+  if (!isHttpUrl(profile.baseUrl)) return { ok: false, code: "AIAPI_PROFILE_BASE_URL_INVALID" };
+  if (!profile.endpointPath) return { ok: false, code: "AIAPI_PROFILE_ENDPOINT_REQUIRED" };
+  if (!profile.promptTemplate.includes(AIAPI_PROMPT_TEMPLATE_TOKEN)) {
+    return { ok: false, code: "AIAPI_PROFILE_PROMPT_TEMPLATE_INVALID" };
+  }
+  return { ok: true };
+}
 
 export function validateAiapiAction(
   _controlUid: string,
@@ -189,16 +185,10 @@ export function validateAiapiAction(
   const profiles = readProfiles(current);
 
   if (actionUid === "createProviderModelProfile") {
-    const provider = safeName(payload.provider);
-    if (!provider) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
-    const candidate = candidateFromPayload(payload, {
-      provider,
-      model: "",
-      capability: "",
-      adapter: "",
-      baseUrl: "",
-      endpoint: "",
-    });
+    const fields = textFrom(payload, null);
+    const invalid = validateFields(fields);
+    if (!invalid.ok) return invalid;
+    const candidate = { ...fields, profileId: "", version: 1, enabled: true, credentialSet: false, lastTest: "", lastTestAt: "", seq: 0 };
     if (findDuplicateProfile(profiles, candidate)) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
     return { ok: true };
   }
@@ -206,9 +196,70 @@ export function validateAiapiAction(
   if (actionUid === "updateProviderModelProfile") {
     const target = targetProfile(profiles, payload, current);
     if (!target) return { ok: false, code: "AIAPI_PROFILE_NOT_FOUND" };
-    const candidate = candidateFromPayload(payload, target);
+    const expected = Number.parseInt(String(payload.expectedVersion ?? ""), 10);
+    if (!Number.isFinite(expected) || expected !== target.version) {
+      return { ok: false, code: "AIAPI_PROFILE_VERSION_CONFLICT" };
+    }
+    const fields = textFrom(payload, target);
+    const invalid = validateFields(fields);
+    if (!invalid.ok) return invalid;
+    const candidate = { ...target, ...fields };
     if (findDuplicateProfile(profiles, candidate, target.profileId)) {
       return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+    }
+    return { ok: true };
+  }
+
+  if (actionUid === "configureGovernedResource") {
+    if (!usable(payload.reference)) return { ok: false, code: "AIAPI_GOVERNED_REFERENCE_REQUIRED" };
+    return { ok: true };
+  }
+
+  if (actionUid === "approveGovernedResource") {
+    if (!usable(current("AIAPI-01-FLD-PF-REFERENCE"))) return { ok: false, code: "AIAPI_GOVERNED_REFERENCE_REQUIRED" };
+    return { ok: true };
+  }
+
+  if (actionUid === "createProviderCandidateGroup") {
+    if (!usable(payload.group)) return { ok: false, code: "AIAPI_CANDIDATE_GROUP_REQUIRED" };
+    return { ok: true };
+  }
+
+  if (
+    actionUid === "retireProviderModelProfile" ||
+    actionUid === "restoreProviderFromQuarantine" ||
+    actionUid === "setKillSwitch" ||
+    actionUid === "deleteProviderModelCredential"
+  ) {
+    if (!usable(payload.reason)) return { ok: false, code: "AIAPI_REASON_REQUIRED" };
+  }
+
+  if (actionUid === "setProviderModelCredential") {
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return { ok: false, code: "AIAPI_PROFILE_NOT_FOUND" };
+    const secret = usable(payload.secret) || usable(payload.credential) || usable(payload.reference);
+    if (!secret) return { ok: false, code: "AIAPI_CREDENTIAL_REQUIRED" };
+    return { ok: true };
+  }
+
+  if (actionUid === "deleteProviderModelCredential") {
+    const target = targetProfile(profiles, payload, current);
+    if (!target) return { ok: false, code: "AIAPI_PROFILE_NOT_FOUND" };
+    if (!target.credentialSet) return { ok: false, code: "AIAPI_CREDENTIAL_NOT_SET" };
+    return { ok: true };
+  }
+
+  if (
+    actionUid === "testProviderModelProfile" ||
+    actionUid === "retireProviderModelProfile" ||
+    actionUid === "admin:AIAPI-08:ACT-SYSTEM-TEST"
+  ) {
+    const target = targetProfile(profiles, payload, current);
+    if (!target && profiles.length) return { ok: false, code: "AIAPI_PROFILE_NOT_FOUND" };
+    if (!target) return { ok: false, code: "AIAPI_PROFILE_REQUIRED" };
+    if (actionUid === "testProviderModelProfile") {
+      if (!target.credentialSet) return { ok: false, code: "AIAPI_CREDENTIAL_REQUIRED" };
+      if (!target.adapterType) return { ok: false, code: "AIAPI_PROFILE_ADAPTER_REQUIRED" };
     }
     return { ok: true };
   }
@@ -217,7 +268,7 @@ export function validateAiapiAction(
 }
 
 export function previewAiapiAction(
-  controlUid: string,
+  _controlUid: string,
   actionUid: string,
   current: (uid: string) => string | null,
   nextValue?: string,
@@ -225,28 +276,28 @@ export function previewAiapiAction(
   const payload = parsePayload(nextValue);
 
   if (actionUid === "createProviderModelProfile") {
-    const provider = safeName(payload.provider);
-    if (!provider) return {};
     const profiles = readProfiles(current);
+    const fields = textFrom(payload, null);
+    if (!fields.providerId) return {};
     const profile: AiapiProfile = {
+      ...fields,
       profileId: nextProfileId(profiles),
-      provider,
-      model: usable(payload.model),
-      capability: usable(payload.capability),
-      adapter: usable(payload.adapter),
-      baseUrl: usable(payload.baseUrl),
-      endpoint: usable(payload.endpoint),
-      timeout: usable(payload.timeout),
-      ...metadataFromPayload(payload),
-      enabled: (usable(payload.enabled) || "ENABLED") !== "DISABLED",
+      version: 1,
+      enabled: usable(payload.enabled) !== "DISABLED",
       credentialSet: false,
       lastTest: "",
+      lastTestAt: "",
       seq: nextSeq(profiles),
     };
     return {
       [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, profile]),
-      "AIAPI-01-FLD-OV-ROUTE": "",
       "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
+      "AIAPI-01-PRO-DESC-POSITIONING": "",
+      "AIAPI-01-PRO-DESC-ACPOS-SCOPE": "",
+      "AIAPI-01-PRO-DESC-BILLING": "",
+      "AIAPI-01-PRO-DESC-RECOMMENDED-USE": "",
+      "AIAPI-01-PRO-DESC-RESTRICTIONS": "",
+      "AIAPI-01-PRO-DESC-DOCS": "",
       ...mirrorProfile(profile),
     };
   }
@@ -255,48 +306,26 @@ export function previewAiapiAction(
     const profiles = readProfiles(current);
     const target = targetProfile(profiles, payload, current);
     if (!target) return {};
-    const metadata = metadataFromPayload(payload);
     const updated: AiapiProfile = {
       ...target,
-      provider: safeName(payload.provider) || target.provider,
-      model: usable(payload.model) || target.model,
-      capability: usable(payload.capability) || target.capability,
-      adapter: usable(payload.adapter) || target.adapter,
-      baseUrl: usable(payload.baseUrl) || target.baseUrl,
-      endpoint: usable(payload.endpoint) || target.endpoint,
-      timeout: usable(payload.timeout) || target.timeout,
-      positioning: metadata.positioning || target.positioning,
-      acposScope: metadata.acposScope || target.acposScope,
-      inputReq: metadata.inputReq || target.inputReq,
-      outputReq: metadata.outputReq || target.outputReq,
-      billing: metadata.billing || target.billing,
-      recommendedUse: metadata.recommendedUse || target.recommendedUse,
-      restrictions: metadata.restrictions || target.restrictions,
-      docs: metadata.docs || target.docs,
+      ...textFrom(payload, target),
+      version: target.version + 1,
+      enabled: usable(payload.enabled) ? usable(payload.enabled) !== "DISABLED" : target.enabled,
     };
     return { [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)), ...mirrorProfile(updated) };
-  }
-
-  if (actionUid === "testProviderModelProfile") {
-    const profiles = readProfiles(current);
-    const target = targetProfile(profiles, payload, current);
-    if (!target) return {};
-    if (!target.credentialSet) return {};
-    if (!usable(target.adapter)) return {};
-    const updated: AiapiProfile = { ...target, lastTest: "PASS" };
-    return {
-      [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)),
-      "AIAPI-01-PRO-DESC-LAST-TEST": "PASS",
-      "AIAPI-01-PRO-DESC-HEALTH": "HEALTHY",
-      "AIAPI-01-FLD-OPS-HEALTH": "HEALTHY",
-    };
   }
 
   if (actionUid === "retireProviderModelProfile") {
     const profiles = readProfiles(current);
     const target = targetProfile(profiles, payload, current);
     if (!target) return {};
-    const updated: AiapiProfile = { ...target, enabled: false };
+    const updated: AiapiProfile = {
+      ...target,
+      version: target.version + 1,
+      enabled: false,
+      lastTest: "",
+      lastTestAt: "",
+    };
     return {
       [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)),
       "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
@@ -308,7 +337,7 @@ export function previewAiapiAction(
     const profiles = readProfiles(current);
     const target = targetProfile(profiles, payload, current);
     if (!target) return {};
-    const updated: AiapiProfile = { ...target, credentialSet: true };
+    const updated: AiapiProfile = { ...target, credentialSet: true, lastTest: "", lastTestAt: "" };
     return { [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)), ...mirrorProfile(updated) };
   }
 
@@ -316,7 +345,7 @@ export function previewAiapiAction(
     const profiles = readProfiles(current);
     const target = targetProfile(profiles, payload, current);
     if (!target || !target.credentialSet) return {};
-    const updated: AiapiProfile = { ...target, credentialSet: false, lastTest: "" };
+    const updated: AiapiProfile = { ...target, credentialSet: false, lastTest: "", lastTestAt: "" };
     return {
       [AIAPI_REGISTRY_UID]: serializeProfiles(replaceProfile(profiles, updated)),
       "AIAPI-01-PRO-DESC-HEALTH": "UNKNOWN",
@@ -354,27 +383,6 @@ export function previewAiapiAction(
     };
   }
 
-  if (actionUid === "admin:AIAPI-08:ACT-SYSTEM-TEST") {
-    if (!profileExists(current)) return {};
-    return {
-      "AIAPI-01-FLD-SANDBOX-EVIDENCE": "SANDBOX_PASS",
-      "AIAPI-01-FLD-JOB-STATUS": "completed",
-    };
-  }
-
-  if (actionUid === "executeProviderRoute") {
-    if (!profileExists(current)) return {};
-    if (!credentialSet(current)) return {};
-    if (!capabilityApproved(current)) return {};
-    return {
-      "AIAPI-01-FLD-ROUTE-DECISION": "ROUTE_READY",
-      "AIAPI-01-FLD-OV-ROUTE": "ROUTE_READY",
-      "AIAPI-01-FLD-JOB-ID": `ROUTE-${Date.now().toString(36).toUpperCase()}`,
-      "AIAPI-01-FLD-JOB-STATUS": "running",
-      "AIAPI-01-FLD-ATTEMPT-ID": "ATT-1",
-    };
-  }
-
   if (actionUid === "getProviderRouteDecision") {
     const decision = current("AIAPI-01-FLD-ROUTE-DECISION");
     return decision ? { "AIAPI-01-FLD-ROUTE-DECISION": decision } : {};
@@ -391,22 +399,13 @@ export function previewAiapiAction(
     return { "AIAPI-01-FLD-OPS-QUARANTINE": "RESTORED" };
   }
 
-  if (actionUid === "runProviderQueueProbe") {
-    return {
-      "AIAPI-01-FLD-OPS-QUEUE": "PROBED",
-      "AIAPI-01-FLD-OPS-COST": current("AIAPI-01-FLD-OPS-COST") ?? "",
-    };
-  }
-
   if (actionUid === "setKillSwitch") {
+    if (!usable(payload.reason)) return {};
     const currentState = current("AIAPI-01-FLD-KILL-SWITCH");
-    const next = currentState === "ON" ? "OFF" : "ON";
-    return { "AIAPI-01-FLD-KILL-SWITCH": next };
+    return { "AIAPI-01-FLD-KILL-SWITCH": currentState === "ON" ? "OFF" : "ON" };
   }
 
-  if (actionUid.startsWith("AIAPI-01-ACT-VIEW-") || actionUid === "searchProjection") {
-    return {};
-  }
-
+  // Connection test, sandbox, route execution and queue probe are runtime
+  // operations; they write real evidence from the server runtime only.
   return {};
 }

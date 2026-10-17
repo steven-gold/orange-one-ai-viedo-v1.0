@@ -1,12 +1,14 @@
 import { seedScope } from "./seed";
 import { pagePermissionEnforced } from "../auth/pageAccess";
 import { applyWorkbenchAction } from "../runtime/applyAction";
+import type { AiapiOutcome } from "../aiapi/runtime";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
 import { AIAPI_REGISTRY_UID, readProfiles, serializeProfiles } from "@/lib/aiapiProfiles";
+import { AIAPI_EXTRA_PROJECTION_KEYS } from "@/lib/aiapiActionPreview";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
@@ -1276,7 +1278,12 @@ export async function persistListAiapiFields(): Promise<AiapiFieldValue[]> {
     const profiles = readProfiles((uid) => byUid.get(uid) ?? null);
     if (profiles.length) byUid.set(AIAPI_REGISTRY_UID, serializeProfiles(profiles));
   }
-  const uids = new Set<string>([...AIAPI_VISIBLE_CONTROLS, AIAPI_REGISTRY_UID, ...rows.map((row) => row.control_uid)]);
+  const uids = new Set<string>([
+    ...AIAPI_VISIBLE_CONTROLS,
+    ...AIAPI_EXTRA_PROJECTION_KEYS,
+    AIAPI_REGISTRY_UID,
+    ...rows.map((row) => row.control_uid),
+  ]);
   return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
@@ -1306,15 +1313,15 @@ export async function persistRecordAiapiAction(
   controlUid: string,
   actionUid: string,
   value?: string,
-): Promise<string> {
-  await applyWorkbenchAction("aiapi", controlUid, actionUid, value);
+): Promise<{ eventUid: string; outcome: AiapiOutcome | null }> {
+  const result = await applyWorkbenchAction("aiapi", controlUid, actionUid, value);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_aiapi_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
-  return eventUid;
+  return { eventUid, outcome: result ?? null };
 }
 
 interface Sg02FieldRow {

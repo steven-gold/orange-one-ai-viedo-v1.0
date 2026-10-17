@@ -18,23 +18,8 @@ export interface ProviderConfig {
   timeoutMs: number;
 }
 
-const PROVIDER_DEFAULT_BASE: Array<[RegExp, string]> = [
-  [/groq/i, "https://api.groq.com/openai/v1"],
-  [/openrouter/i, "https://openrouter.ai/api/v1"],
-  [/deepseek/i, "https://api.deepseek.com/v1"],
-  [/openai/i, "https://api.openai.com/v1"],
-];
-
 function clean(value: string | null | undefined): string {
   return (value ?? "").trim();
-}
-
-function defaultBase(provider: string, adapter: string): string {
-  const haystack = `${provider} ${adapter}`;
-  for (const [pattern, base] of PROVIDER_DEFAULT_BASE) {
-    if (pattern.test(haystack)) return base;
-  }
-  return clean(process.env.ACPOS_LLM_BASE_URL);
 }
 
 async function readAiapiFields(): Promise<Map<string, string | null>> {
@@ -45,16 +30,15 @@ async function readAiapiFields(): Promise<Map<string, string | null>> {
 }
 
 function toProviderConfig(profile: AiapiProfile, credential: string): ProviderConfig | null {
-  const provider = clean(profile.provider);
-  if (!provider) return null;
+  const provider = clean(profile.providerId);
+  const base = clean(profile.baseUrl).replace(/\/+$/, "");
+  const rawEndpoint = clean(profile.endpointPath);
+  if (!provider || !base || !rawEndpoint) return null;
+  const endpoint = rawEndpoint.startsWith("/") ? rawEndpoint : `/${rawEndpoint}`;
 
-  const base = (clean(profile.baseUrl) || defaultBase(provider, profile.adapter)).replace(/\/+$/, "");
-  if (!base) return null;
-  const rawEndpoint = clean(profile.endpoint);
-  const endpoint = rawEndpoint ? (rawEndpoint.startsWith("/") ? rawEndpoint : `/${rawEndpoint}`) : "/chat/completions";
-
-  const model = clean(profile.model) || clean(process.env.ACPOS_LLM_MODEL) || "llama-3.1-8b-instant";
-  const timeoutSeconds = Number.parseInt(clean(profile.timeout), 10);
+  const model = clean(profile.modelId);
+  if (!model) return null;
+  const timeoutSeconds = Number.parseInt(clean(profile.timeoutSeconds), 10);
   const timeoutMs = Number.isFinite(timeoutSeconds) && timeoutSeconds > 0 ? timeoutSeconds * 1000 : 20000;
 
   return { url: `${base}${endpoint}`, model, provider, credential, timeoutMs };

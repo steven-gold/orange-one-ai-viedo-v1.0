@@ -27,7 +27,10 @@ export async function POST(request: Request) {
     if (!validation.ok) {
       return jsonError(validation.code, `AIAPI action rejected: ${validation.code}`, 409);
     }
-    const eventUid = await persistRecordAiapiAction(principal.accountUid, controlUid, actionUid, value);
+    const { eventUid, outcome } = await persistRecordAiapiAction(principal.accountUid, controlUid, actionUid, value);
+    if (outcome && !outcome.ok) {
+      return jsonError(outcome.code ?? "AIAPI_ACTION_FAILED", "AIAPI runtime rejected the action", 409);
+    }
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected AIAPI runtime error", 500);
