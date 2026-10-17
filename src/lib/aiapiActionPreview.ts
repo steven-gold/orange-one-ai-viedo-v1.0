@@ -4,8 +4,6 @@ import {
   type AiapiProfile,
   findDuplicateProfile,
   isAiapiCapability,
-  nextProfileId,
-  nextSeq,
   profileIdentity,
   readProfiles,
   serializeProfiles,
@@ -184,14 +182,9 @@ export function validateAiapiAction(
   const payload = parsePayload(nextValue);
   const profiles = readProfiles(current);
 
-  if (actionUid === "createProviderModelProfile") {
-    const fields = textFrom(payload, null);
-    const invalid = validateFields(fields);
-    if (!invalid.ok) return invalid;
-    const candidate = { ...fields, profileId: "", version: 1, enabled: true, credentialSet: false, lastTest: "", lastTestAt: "", seq: 0 };
-    if (findDuplicateProfile(profiles, candidate)) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
-    return { ok: true };
-  }
+  // createProviderModelProfile is authoritative in the server runtime: it derives
+  // the provider/model/connection from the supplied key before validating.
+  if (actionUid === "createProviderModelProfile") return { ok: true };
 
   if (actionUid === "updateProviderModelProfile") {
     const target = targetProfile(profiles, payload, current);
@@ -274,33 +267,6 @@ export function previewAiapiAction(
   nextValue?: string,
 ): Record<string, string> {
   const payload = parsePayload(nextValue);
-
-  if (actionUid === "createProviderModelProfile") {
-    const profiles = readProfiles(current);
-    const fields = textFrom(payload, null);
-    if (!fields.providerId) return {};
-    const profile: AiapiProfile = {
-      ...fields,
-      profileId: nextProfileId(profiles),
-      version: 1,
-      enabled: usable(payload.enabled) !== "DISABLED",
-      credentialSet: false,
-      lastTest: "",
-      lastTestAt: "",
-      seq: nextSeq(profiles),
-    };
-    return {
-      [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, profile]),
-      "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
-      "AIAPI-01-PRO-DESC-POSITIONING": "",
-      "AIAPI-01-PRO-DESC-ACPOS-SCOPE": "",
-      "AIAPI-01-PRO-DESC-BILLING": "",
-      "AIAPI-01-PRO-DESC-RECOMMENDED-USE": "",
-      "AIAPI-01-PRO-DESC-RESTRICTIONS": "",
-      "AIAPI-01-PRO-DESC-DOCS": "",
-      ...mirrorProfile(profile),
-    };
-  }
 
   if (actionUid === "updateProviderModelProfile") {
     const profiles = readProfiles(current);

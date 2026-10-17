@@ -12,6 +12,7 @@ import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential"
 import { getSqlClient } from "../db/client";
 import {
   runConnectionTest,
+  runCreateProviderProfile,
   runQueueProbe,
   runRouteExecution,
   runSandboxTest,
@@ -325,6 +326,7 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "aiapi") {
+    if (actionUid === "createProviderModelProfile") return runCreateProviderProfile(nextValue);
     if (actionUid === "testProviderModelProfile") return runConnectionTest(nextValue);
     if (actionUid === "admin:AIAPI-08:ACT-SYSTEM-TEST") return runSandboxTest(nextValue);
     if (actionUid === "executeProviderRoute") return runRouteExecution(nextValue);

@@ -1,13 +1,25 @@
 import {
   AIAPI_PROMPT_TEMPLATE_TOKEN,
   AIAPI_REGISTRY_UID,
+  findDuplicateProfile,
+  isAiapiCapability,
+  nextProfileId,
+  nextSeq,
   readProfiles,
   serializeProfiles,
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
+import {
+  catalogEntry,
+  detectProviders,
+  endpointForModel,
+  pickDefaultModel,
+  promptTemplateForProvider,
+} from "@/lib/aiapiProviderCatalog";
 import { mirrorProfile } from "@/lib/aiapiActionPreview";
-import { getAiapiCredential } from "../db/aiapiCredential";
+import { getAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
+import { listProviderModels } from "./discovery";
 
 export interface AiapiOutcome {
   ok: boolean;
@@ -198,6 +210,146 @@ async function callProvider(profile: AiapiProfile, credential: string, instructi
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+interface AiapiCreatePayload {
+  secret?: string;
+  credential?: string;
+  profileId?: string;
+  providerId?: string;
+  providerName?: string;
+  modelId?: string;
+  modelName?: string;
+  baseUrl?: string;
+  endpointPath?: string;
+  httpMethod?: string;
+  timeoutSeconds?: string;
+  adapterType?: string;
+  requestTemplate?: string;
+  responseTextPath?: string;
+  promptTemplate?: string;
+  capabilityType?: string;
+  additionalCapabilities?: string;
+  supportsReferences?: string;
+  rightsCompatible?: string;
+  dataClassifications?: string;
+  preferredLanguage?: string;
+  maxContext?: string;
+  enabled?: string;
+}
+
+function parseCreatePayload(raw: string | undefined): AiapiCreatePayload {
+  const source = (raw ?? "").trim();
+  if (!source) return {};
+  if (!source.startsWith("{")) return { secret: source };
+  try {
+    const parsed = JSON.parse(source) as unknown;
+    return parsed && typeof parsed === "object" ? (parsed as AiapiCreatePayload) : {};
+  } catch {
+    return {};
+  }
+}
+
+function textOf(value: string | undefined): string {
+  return (value ?? "").trim().slice(0, 400);
+}
+
+function isHttpUrl(value: string): boolean {
+  return /^https?:\/\/[^\s]+$/i.test(value);
+}
+
+/**
+ * Single-step provider onboarding. The key is the only required input: the
+ * provider is matched from a registered catalog, the model comes from the
+ * provider's own /models answer, and every remaining profile field is filled
+ * from that catalog entry. Explicit payload fields still win so the advanced
+ * form keeps working.
+ */
+export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutcome> {
+  const payload = parseCreatePayload(raw);
+  const secret = textOf(payload.secret) || textOf(payload.credential);
+  const profiles = await loadProfiles();
+
+  // The manual path is fully specified by the caller: connection, adapter and
+  // model are all present, so an unregistered provider is allowed.
+  const manual =
+    Boolean(textOf(payload.baseUrl)) &&
+    Boolean(textOf(payload.adapterType)) &&
+    Boolean(textOf(payload.endpointPath)) &&
+    Boolean(textOf(payload.modelId));
+
+  const requestedProvider = textOf(payload.providerId).toLowerCase();
+  let entry = catalogEntry(requestedProvider);
+  if (!entry && secret && !manual) {
+    const detected = detectProviders(secret);
+    if (detected.length === 1) entry = detected[0];
+    else if (detected.length > 1) return { ok: false, code: "AIAPI_PROVIDER_AMBIGUOUS" };
+    else return { ok: false, code: "AIAPI_PROVIDER_UNSUPPORTED" };
+  }
+  if (secret && entry) {
+    const detected = detectProviders(secret);
+    if (detected.length && !detected.includes(entry)) {
+      return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
+    }
+  }
+
+  let modelId = textOf(payload.modelId);
+  if (entry && secret && !modelId) {
+    const discovered = await listProviderModels(entry, secret);
+    if (!discovered.ok) return { ok: false, code: discovered.code };
+    modelId = pickDefaultModel(entry, discovered.models);
+    if (!modelId) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+  }
+
+  const providerId = textOf(payload.providerId) || entry?.providerId || "";
+  const candidate: AiapiProfile = {
+    profileId: textOf(payload.profileId) || nextProfileId(profiles),
+    version: 1,
+    providerId,
+    providerName: textOf(payload.providerName) || entry?.providerName || "",
+    modelId,
+    modelName: textOf(payload.modelName),
+    baseUrl: textOf(payload.baseUrl) || entry?.baseUrl || "",
+    endpointPath:
+      textOf(payload.endpointPath) || (entry && modelId ? endpointForModel(entry, modelId) : ""),
+    httpMethod: textOf(payload.httpMethod) || "POST",
+    timeoutSeconds: textOf(payload.timeoutSeconds) || entry?.timeoutSeconds || "30",
+    adapterType: textOf(payload.adapterType) || entry?.adapterType || "",
+    requestTemplate: textOf(payload.requestTemplate),
+    responseTextPath: textOf(payload.responseTextPath) || entry?.responseTextPath || "",
+    promptTemplate: textOf(payload.promptTemplate) || promptTemplateForProvider(),
+    capabilityType: textOf(payload.capabilityType) || "chat",
+    additionalCapabilities: textOf(payload.additionalCapabilities),
+    supportsReferences: textOf(payload.supportsReferences),
+    rightsCompatible: textOf(payload.rightsCompatible),
+    dataClassifications: textOf(payload.dataClassifications),
+    preferredLanguage: textOf(payload.preferredLanguage),
+    maxContext: textOf(payload.maxContext),
+    enabled: textOf(payload.enabled) !== "DISABLED",
+    credentialSet: Boolean(secret),
+    lastTest: "",
+    lastTestAt: "",
+    seq: nextSeq(profiles),
+  };
+
+  if (!candidate.providerId) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
+  if (!candidate.modelId) return { ok: false, code: "AIAPI_PROFILE_MODEL_REQUIRED" };
+  if (!isAiapiCapability(candidate.capabilityType)) return { ok: false, code: "AIAPI_PROFILE_CAPABILITY_INVALID" };
+  if (!candidate.adapterType) return { ok: false, code: "AIAPI_PROFILE_ADAPTER_REQUIRED" };
+  if (!isHttpUrl(candidate.baseUrl)) return { ok: false, code: "AIAPI_PROFILE_BASE_URL_INVALID" };
+  if (!candidate.endpointPath) return { ok: false, code: "AIAPI_PROFILE_ENDPOINT_REQUIRED" };
+  if (!candidate.promptTemplate.includes(AIAPI_PROMPT_TEMPLATE_TOKEN)) {
+    return { ok: false, code: "AIAPI_PROFILE_PROMPT_TEMPLATE_INVALID" };
+  }
+  if (findDuplicateProfile(profiles, candidate)) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+
+  await writeFields({
+    [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, candidate]),
+    "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
+    ...mirrorProfile(candidate),
+  });
+  if (secret) await setAiapiCredential(candidate.profileId, secret);
+  return { ok: true };
 }
 
 export async function runConnectionTest(profileIdRaw: string | undefined): Promise<AiapiOutcome> {

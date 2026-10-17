@@ -15,6 +15,12 @@ import {
   profileIdentity,
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
+import {
+  AIAPI_PROVIDER_CATALOG,
+  catalogEntry,
+  detectProviders,
+  endpointForModel,
+} from "@/lib/aiapiProviderCatalog";
 import { displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
 import {
   AIAPI_CONTROL_ACTIONS,
@@ -138,6 +144,11 @@ function profileFormFields(): FormField[] {
 const NOTICE_KEYS: Record<string, TranslationKey> = {
   AIAPI_PROFILE_DUPLICATE: "aiapi.notice-duplicate",
   AIAPI_PROFILE_PROVIDER_REQUIRED: "aiapi.notice-provider-required",
+  AIAPI_PROVIDER_AMBIGUOUS: "aiapi.notice-provider-ambiguous",
+  AIAPI_PROVIDER_UNSUPPORTED: "aiapi.notice-provider-unsupported",
+  AIAPI_PROVIDER_KEY_MISMATCH: "aiapi.notice-provider-key-mismatch",
+  AIAPI_PROVIDER_KEY_INVALID: "aiapi.notice-key-invalid",
+  AIAPI_MODEL_UNAVAILABLE: "aiapi.notice-model-unavailable",
   AIAPI_PROFILE_MODEL_REQUIRED: "aiapi.notice-model-required",
   AIAPI_PROFILE_CAPABILITY_INVALID: "aiapi.notice-capability-invalid",
   AIAPI_PROFILE_ADAPTER_REQUIRED: "aiapi.notice-adapter-required",
@@ -275,19 +286,52 @@ function ModalForm({
   onCancel: () => void;
   onSubmit: (value: string) => void;
 }) {
-  const grouped = actionUid === "createProviderModelProfile" || actionUid === "updateProviderModelProfile";
+  const isCreate = actionUid === "createProviderModelProfile";
+  const [advanced, setAdvanced] = useState(false);
+  const [secret, setSecret] = useState("");
+  const [providerId, setProviderId] = useState("");
+  const [modelId, setModelId] = useState("");
+  const grouped = actionUid === "updateProviderModelProfile" || (isCreate && advanced);
   const fields = grouped ? profileFormFields() : MODAL_FORMS[actionUid] ?? [];
   const [values, setValues] = useState<Record<string, string>>(() => {
     const seed = { ...(initial ?? {}) };
     if (grouped) {
       if (!seed.promptTemplate) seed.promptTemplate = AIAPI_PROMPT_TEMPLATE_TOKEN;
       if (!seed.enabled) seed.enabled = "ENABLED";
+      if (!seed.capabilityType) seed.capabilityType = "chat";
+      if (!seed.httpMethod) seed.httpMethod = "POST";
     }
     return seed;
   });
-  const canSubmit = fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0);
+  const detected = useMemo(() => detectProviders(secret), [secret]);
+  const canSubmit = isCreate
+    ? advanced
+      ? secret.trim().length > 0 &&
+        fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0)
+      : secret.trim().length > 0
+    : fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0);
 
   const update = (key: string, value: string) => setValues((prev) => ({ ...prev, [key]: value }));
+
+  const applyProvider = (id: string) => {
+    setProviderId(id);
+    const entry = catalogEntry(id);
+    if (!entry) return;
+    setValues((prev) => ({
+      ...prev,
+      providerId: prev.providerId || entry.providerId,
+      providerName: prev.providerName || entry.providerName,
+      baseUrl: prev.baseUrl || entry.baseUrl,
+      adapterType: prev.adapterType || entry.adapterType,
+      httpMethod: prev.httpMethod || "POST",
+      timeoutSeconds: prev.timeoutSeconds || entry.timeoutSeconds,
+      responseTextPath: prev.responseTextPath || entry.responseTextPath,
+      promptTemplate: prev.promptTemplate || AIAPI_PROMPT_TEMPLATE_TOKEN,
+      capabilityType: prev.capabilityType || "chat",
+      enabled: prev.enabled || "ENABLED",
+      endpointPath: prev.endpointPath || (modelId ? endpointForModel(entry, modelId) : ""),
+    }));
+  };
 
   const renderInput = (field: FormField) => {
     const value = values[field.key] ?? "";
@@ -360,32 +404,118 @@ function ModalForm({
     </label>
   );
 
+  const submit = () => {
+    if (!isCreate) {
+      onSubmit(JSON.stringify(values));
+      return;
+    }
+    const payload = advanced
+      ? {
+          ...values,
+          secret,
+          providerId: providerId || values.providerId || "",
+          modelId: modelId || values.modelId || "",
+        }
+      : { secret, providerId, modelId };
+    onSubmit(JSON.stringify(payload));
+  };
+
   return (
     <section className={styles.modal} data-component-uid="AIAPI-01-CMP-MODAL" data-modal-for={actionUid}>
       <h3>{title}</h3>
-      <p className={styles.note}>{t("aiapi.modal-hint")}</p>
-      {fields.length ? (
-        grouped ? (
-          <div className={styles.formGroups}>
-            {AIAPI_PROFILE_FIELD_GROUPS.map((group) => (
-              <fieldset key={group.group} className={styles.formGroup}>
-                <legend>{t(group.labelKey)}</legend>
-                {fields.filter((field) => (group.fields as readonly string[]).includes(field.key)).map(renderField)}
-              </fieldset>
-            ))}
-          </div>
-        ) : (
+      <p className={styles.note}>{isCreate ? t("aiapi.modal-hint-key") : t("aiapi.modal-hint")}</p>
+      {isCreate ? (
+        <div className={styles.formGrid}>
+          <label className={styles.formRow}>
+            <span>{t("aiapi.fld-api-key")} *</span>
+            <input
+              className={styles.formInput}
+              type="password"
+              autoComplete="new-password"
+              spellCheck={false}
+              value={secret}
+              onChange={(event) => setSecret(event.target.value)}
+            />
+          </label>
+          <label className={styles.formRow}>
+            <span>{t("aiapi.fld-provider")}</span>
+            <select
+              className={styles.formInput}
+              value={providerId}
+              onChange={(event) => applyProvider(event.target.value)}
+            >
+              <option value="">{t("aiapi.fld-provider-auto")}</option>
+              {AIAPI_PROVIDER_CATALOG.map((entry) => (
+                <option key={entry.providerId} value={entry.providerId}>
+                  {entry.providerName}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={styles.formRow}>
+            <span>{t("aiapi.fld-model")}</span>
+            <input
+              className={styles.formInput}
+              value={modelId}
+              placeholder={t("aiapi.fld-model-auto")}
+              onChange={(event) => setModelId(event.target.value)}
+            />
+          </label>
+        </div>
+      ) : null}
+      {isCreate ? (
+        <p className={styles.note} data-detected-providers={detected.map((entry) => entry.providerId).join(",")}>
+          {detected.length > 1
+            ? `${t("aiapi.detect-ambiguous")} ${detected.map((entry) => entry.providerName).join(" / ")}`
+            : detected.length === 1
+              ? `${t("aiapi.detect-matched")} ${detected[0].providerName}`
+              : t("aiapi.detect-hint")}
+        </p>
+      ) : null}
+      {isCreate ? (
+        <button
+          type="button"
+          className={styles.linkBtn}
+          onClick={() =>
+            setAdvanced((value) => {
+              if (!value) {
+                setValues((prev) => ({
+                  ...prev,
+                  promptTemplate: prev.promptTemplate || AIAPI_PROMPT_TEMPLATE_TOKEN,
+                  capabilityType: prev.capabilityType || "chat",
+                  httpMethod: prev.httpMethod || "POST",
+                  enabled: prev.enabled || "ENABLED",
+                }));
+              }
+              return !value;
+            })
+          }
+        >
+          {advanced ? t("aiapi.advanced-hide") : t("aiapi.advanced-show")}
+        </button>
+      ) : null}
+      {!isCreate ? (
+        fields.length ? (
           <div className={styles.formGrid}>{fields.map(renderField)}</div>
+        ) : (
+          <p className={styles.note}>{t("aiapi.modal-confirm")}</p>
         )
-      ) : (
-        <p className={styles.note}>{t("aiapi.modal-confirm")}</p>
-      )}
+      ) : advanced ? (
+        <div className={styles.formGroups} data-create-advanced="true">
+          {AIAPI_PROFILE_FIELD_GROUPS.map((group) => (
+            <fieldset key={group.group} className={styles.formGroup}>
+              <legend>{t(group.labelKey)}</legend>
+              {fields.filter((field) => (group.fields as readonly string[]).includes(field.key)).map(renderField)}
+            </fieldset>
+          ))}
+        </div>
+      ) : null}
       <div className={styles.actions}>
         <button
           type="button"
           className={`${styles.btn} ${styles.btnPrimary}`}
           disabled={!canSubmit}
-          onClick={() => onSubmit(JSON.stringify(values))}
+          onClick={submit}
         >
           {t("aiapi.submit")}
         </button>
@@ -411,7 +541,6 @@ export function AiapiVisual() {
   const [selectedProfileId, setSelectedProfileId] = useState("");
   const [notice, setNotice] = useState<TranslationKey | null>(null);
 
-  const pendingCredential = useRef(false);
   const knownProfileIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -483,11 +612,7 @@ export function AiapiVisual() {
     knownProfileIds.current = ids;
     if (added) {
       setSelectedProfileId(added.profileId);
-      if (pendingCredential.current) {
-        pendingCredential.current = false;
-        setView("provider_api");
-        setModalUid(SET_CREDENTIAL_UID);
-      }
+      setView("provider_api");
       return;
     }
     if (!ids.has(selectedProfileId)) setSelectedProfileId(profiles[0].profileId);
@@ -561,7 +686,6 @@ export function AiapiVisual() {
 
   const submitModal = (value: string) => {
     const uid = modalUid;
-    setModalUid(null);
     if (!uid) return;
     const actionUid = AIAPI_CONTROL_ACTIONS[uid];
     let payload = value;
@@ -575,7 +699,7 @@ export function AiapiVisual() {
     }
     const run = async () => {
       const ok = await act(uid, payload, SUCCESS_NOTICE_KEYS[actionUid]);
-      if (ok && actionUid === "createProviderModelProfile") pendingCredential.current = true;
+      if (ok) setModalUid(null);
     };
     void run();
   };
