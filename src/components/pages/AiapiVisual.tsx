@@ -574,32 +574,37 @@ export function AiapiVisual() {
     }
   };
 
+  const showMeta = (field: AiapiCatalogField): string => {
+    if (!selected) return dash;
+    const value = metaOf(selected, field);
+    return value ? displayAiapiValue(value, loading) : loading ? dash : tx("aiapi.state-not-filled");
+  };
+
   const selectedField = (uid: string): string => {
     if (!selected) return dash;
     switch (uid) {
       case "AIAPI-01-PRO-DESC-IDENTITY":
         return displayAiapiValue(profileIdentity(selected), loading);
       case "AIAPI-01-PRO-DESC-POSITIONING":
-        return displayAiapiValue(metaOf(selected, "positioning"), loading);
+        return showMeta("positioning");
       case "AIAPI-01-PRO-DESC-ACPOS-SCOPE":
-        return displayAiapiValue(metaOf(selected, "acposScope"), loading);
+        return showMeta("acposScope");
       case "AIAPI-01-PRO-DESC-CAPABILITIES":
-        return displayAiapiValue(metaOf(selected, "capability"), loading);
+        return showMeta("capability");
       case "AIAPI-01-PRO-DESC-INPUT":
-        return displayAiapiValue(metaOf(selected, "inputReq"), loading);
+        return showMeta("inputReq");
       case "AIAPI-01-PRO-DESC-OUTPUT":
-        return displayAiapiValue(metaOf(selected, "outputReq"), loading);
+        return showMeta("outputReq");
       case "AIAPI-01-PRO-DESC-LIMITS":
-        return displayAiapiValue(metaOf(selected, "timeout"), loading);
-      case "AIAPI-01-PRO-DESC-ENDPOINT":
-        return displayAiapiValue(
-          [metaOf(selected, "baseUrl"), metaOf(selected, "endpoint")].filter(Boolean).join(" · "),
-          loading,
-        );
+        return showMeta("timeout");
+      case "AIAPI-01-PRO-DESC-ENDPOINT": {
+        const endpoint = [metaOf(selected, "baseUrl"), metaOf(selected, "endpoint")].filter(Boolean).join(" · ");
+        return endpoint ? displayAiapiValue(endpoint, loading) : loading ? dash : tx("aiapi.state-not-filled");
+      }
       case "AIAPI-01-PRO-DESC-AUTH":
         return displayAiapiStatus(selected.credentialSet ? "SET" : "NOT_SET", tx, loading);
       case "AIAPI-01-PRO-DESC-BILLING":
-        return displayAiapiValue(metaOf(selected, "billing"), loading);
+        return showMeta("billing");
       case "AIAPI-01-PRO-DESC-HEALTH":
         return selected.lastTest
           ? displayAiapiStatus(selected.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN", tx, loading)
@@ -613,11 +618,11 @@ export function AiapiVisual() {
             ? dash
             : tx("aiapi.state-not-tested");
       case "AIAPI-01-PRO-DESC-RECOMMENDED-USE":
-        return displayAiapiValue(metaOf(selected, "recommendedUse"), loading);
+        return showMeta("recommendedUse");
       case "AIAPI-01-PRO-DESC-RESTRICTIONS":
-        return displayAiapiValue(metaOf(selected, "restrictions"), loading);
+        return showMeta("restrictions");
       case "AIAPI-01-PRO-DESC-DOCS":
-        return displayAiapiValue(metaOf(selected, "docs"), loading);
+        return showMeta("docs");
       case "AIAPI-01-FLD-OV-PROVIDER":
         return displayAiapiValue(selected.provider, loading);
       case "AIAPI-01-FLD-OV-CAPABILITY":

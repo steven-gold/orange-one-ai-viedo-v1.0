@@ -1888,6 +1888,7 @@ const catalog = {
   "aiapi.state-no-artifact": { "zh-TW": "尚無產物", "zh-CN": "尚无产物", en: "No artifact yet" },
   "aiapi.state-not-configured": { "zh-TW": "未設定", "zh-CN": "未设定", en: "Not configured" },
   "aiapi.state-not-tested": { "zh-TW": "尚未測試", "zh-CN": "尚未测试", en: "Not tested yet" },
+  "aiapi.state-not-filled": { "zh-TW": "未填寫", "zh-CN": "未填写", en: "Not filled in" },
   "aiapi.state-not-approved": { "zh-TW": "未核准", "zh-CN": "未核准", en: "Not approved" },
   "aiapi.state-not-classified": { "zh-TW": "未分級", "zh-CN": "未分级", en: "Not classified" },
   "aiapi.notice-created": { "zh-TW": "已新增供應商設定檔，並切換到供應商分頁。", "zh-CN": "已新增供应商设定档，并切换到供应商分页。", en: "Provider profile created; switched to the provider tab." },
