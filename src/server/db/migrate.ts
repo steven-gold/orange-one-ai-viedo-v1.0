@@ -389,6 +389,7 @@ const MIGRATION_FILES = [
   "024_reset_aiapi_drafts.sql",
   "025_reset_aiapi_drafts.sql",
   "026_reset_aiapi_drafts.sql",
+  "027_reset_aiapi_registry.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -413,12 +414,18 @@ const RESET_AIAPI_DRAFTS = [
   "UPDATE ghsn_aiapi_field_projection SET value_text = NULL",
 ];
 
+const RESET_AIAPI_REGISTRY = [
+  "UPDATE ghsn_aiapi_field_projection SET value_text = NULL",
+  "DELETE FROM ghsn_aiapi_credential",
+];
+
 const RESET_MIGRATIONS: Record<string, string[]> = {
   "022_reset_core_drafts.sql": RESET_CORE_DRAFTS,
   "023_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "024_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "025_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "026_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
+  "027_reset_aiapi_registry.sql": RESET_AIAPI_REGISTRY,
 };
 
 async function runBootstrap(): Promise<MigrationResult> {
