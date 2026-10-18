@@ -30,6 +30,8 @@ export interface AiapiOutcome {
 }
 
 const FIELD_TABLE = "ghsn_aiapi_field_projection";
+/** Provider-published metadata for each imported profile, keyed by profileId. */
+export const AIAPI_PROFILE_NOTES_UID = "AIAPI-01-PROFILE-NOTES";
 
 const QUEUE_TABLES = ["queues", "workers", "outbox_events", "inbox_events", "dead_letters"] as const;
 
@@ -359,12 +361,17 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
   if (entry && shortlist.length && shortlist.every((candidate) => candidate.providerId !== entry.providerId)) {
     return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
   }
-  if (!entry && !shortlist.length) return { ok: false, code: "AIAPI_PROVIDER_UNKNOWN" };
-
-  const primary = entry ? [entry] : shortlist;
-  const fallback = AIAPI_PROVIDER_REGISTRY;
-  const identified = await identifyProvider(secret, primary, fallback);
-  if (!identified.ok) return { ok: false, code: identified.code };
+  const probeAll = !entry && !shortlist.length;
+  const primary = entry ? [entry] : probeAll ? AIAPI_PROVIDER_REGISTRY : shortlist;
+  const identified = await identifyProvider(secret, primary, AIAPI_PROVIDER_REGISTRY);
+  if (!identified.ok) {
+    // No known provider accepted the key: ask for the site address instead of
+    // blaming the key, because the provider may simply not be in the registry.
+    if (probeAll && identified.code === "AIAPI_PROVIDER_KEY_INVALID") {
+      return { ok: false, code: "AIAPI_PROVIDER_UNKNOWN" };
+    }
+    return { ok: false, code: identified.code };
+  }
   if (entry && identified.entry.providerId !== entry.providerId) {
     return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
   }
@@ -378,6 +385,13 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
     adapterType: identified.entry.adapterType,
     source: module.source,
     contextWindow: module.contextWindow,
+    billing: module.billing,
+    docs: module.docs,
+    description: module.description,
+    inputHint: module.inputHint,
+    outputHint: module.outputHint,
+    restrictions: module.restrictions,
+    tags: module.tags,
   }));
   const modules = filterModules(mapped, textOf(payload.modelId));
   if (!modules.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
@@ -400,6 +414,13 @@ interface ImportModule {
   adapterType: string;
   source: "model" | "operation";
   contextWindow: string;
+  billing?: string;
+  docs?: string;
+  description?: string;
+  inputHint?: string;
+  outputHint?: string;
+  restrictions?: string;
+  tags?: string;
 }
 
 function filterModules<T extends ImportModule>(modules: T[], wanted: string): T[] {
@@ -419,7 +440,10 @@ async function importModules(
   modules: readonly ImportModule[],
 ): Promise<AiapiOutcome> {
   const known = new Set(profiles.map((profile) => profileFingerprint(profile)));
+  const byFingerprint = new Map(profiles.map((profile) => [profileFingerprint(profile), profile] as const));
   const imported: AiapiProfile[] = [];
+  const notes: Record<string, Record<string, string>> = { ...(await loadNotes()) };
+  let notesChanged = false;
   let seq = nextSeq(profiles);
   let nextId = nextProfileId(profiles);
   for (const module of modules) {
@@ -453,23 +477,59 @@ async function importModules(
       seq,
     };
     const fingerprint = profileFingerprint(candidate);
-    if (known.has(fingerprint)) continue;
+    const note = {
+      description: module.description ?? "",
+      inputHint: module.inputHint ?? "",
+      outputHint: module.outputHint ?? "",
+      restrictions: module.restrictions ?? "",
+      tags: module.tags ?? "",
+      billing: module.billing ?? "",
+      docs: module.docs ?? "",
+      source: module.source,
+    };
+    if (known.has(fingerprint)) {
+      // Re-submitting the same catalogue refreshes the published metadata even
+      // though no new profile is created.
+      const existing = byFingerprint.get(fingerprint);
+      if (existing) {
+        notes[existing.profileId] = note;
+        notesChanged = true;
+      }
+      continue;
+    }
     known.add(fingerprint);
     imported.push(candidate);
+    notes[candidate.profileId] = note;
     seq += 1;
     nextId = bumpProfileId(nextId);
   }
 
-  if (!imported.length) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+  if (!imported.length) {
+    if (notesChanged) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+    return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
+  }
 
   await writeFields({
     [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, ...imported]),
+    [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes),
     "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
     "AIAPI-01-FLD-OPS-CREDENTIAL": "SET",
     ...mirrorProfile(imported[0]),
   });
   for (const profile of imported) await setAiapiCredential(profile.profileId, secret);
   return { ok: true, imported: imported.length };
+}
+
+async function loadNotes(): Promise<Record<string, Record<string, string>>> {
+  const fields = await loadFields();
+  const raw = fields.get(AIAPI_PROFILE_NOTES_UID) ?? "";
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, Record<string, string>>) : {};
+  } catch {
+    return {};
+  }
 }
 
 function hostProviderId(baseUrl: string): string {

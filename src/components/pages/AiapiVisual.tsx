@@ -37,6 +37,23 @@ const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
 
 const SET_CREDENTIAL_UID = "CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL";
+const PROFILE_NOTES_UID = "AIAPI-01-PROFILE-NOTES";
+
+const ACPOS_SCOPE_KEYS: Record<string, TranslationKey> = {
+  chat: "aiapi.scope-chat",
+  correction: "aiapi.scope-correction",
+  "video-generation": "aiapi.scope-video",
+  "text-to-video": "aiapi.scope-video",
+  "image-to-video": "aiapi.scope-video",
+  "image-generation": "aiapi.scope-image",
+  "audio-generation": "aiapi.scope-audio",
+  embedding: "aiapi.scope-embedding",
+  moderation: "aiapi.scope-moderation",
+  transcription: "aiapi.scope-transcription",
+  operation: "aiapi.scope-operation",
+  "element-management": "aiapi.scope-element",
+  billing: "aiapi.scope-billing",
+};
 
 const PROFILE_TARGETED_ACTIONS = new Set([
   "updateProviderModelProfile",
@@ -644,6 +661,16 @@ export function AiapiVisual() {
   const registryRaw = rawValue(AIAPI_REGISTRY_UID);
   const profiles = useMemo(() => parseProfiles(registryRaw), [registryRaw]);
   const selected = profiles.find((profile) => profile.profileId === selectedProfileId) ?? profiles[0] ?? null;
+  const notesRaw = rawValue(PROFILE_NOTES_UID);
+  const notes = useMemo<Record<string, Record<string, string>>>(() => {
+    if (!notesRaw) return {};
+    try {
+      const parsed = JSON.parse(notesRaw) as unknown;
+      return parsed && typeof parsed === "object" ? (parsed as Record<string, Record<string, string>>) : {};
+    } catch {
+      return {};
+    }
+  }, [notesRaw]);
 
   useEffect(() => {
     if (!profiles.length) return;
@@ -802,15 +829,16 @@ export function AiapiVisual() {
 
   const selectedField = (uid: string): string => {
     if (!selected) return dash;
+    const note = notes[selected.profileId] ?? {};
     switch (uid) {
       case "AIAPI-01-PRO-DESC-IDENTITY":
         return profileValue(profileIdentity(selected));
       case "AIAPI-01-PRO-DESC-CAPABILITIES":
         return profileValue(profileCapabilities(selected).join(" / "));
       case "AIAPI-01-PRO-DESC-INPUT":
-        return profileValue(selected.requestTemplate);
+        return profileValue(selected.requestTemplate || note.inputHint || "");
       case "AIAPI-01-PRO-DESC-OUTPUT":
-        return profileValue(selected.responseTextPath);
+        return profileValue(selected.responseTextPath || note.outputHint || "");
       case "AIAPI-01-PRO-DESC-LIMITS":
         return profileValue(
           [selected.timeoutSeconds ? `${selected.timeoutSeconds}s` : "", selected.maxContext]
@@ -842,12 +870,19 @@ export function AiapiVisual() {
           ? displayAiapiStatus(selected.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN", tx, loading)
           : dash;
       case "AIAPI-01-PRO-DESC-POSITIONING":
-      case "AIAPI-01-PRO-DESC-ACPOS-SCOPE":
+        return profileValue(note.description ?? "");
+      case "AIAPI-01-PRO-DESC-ACPOS-SCOPE": {
+        const scopeKey = ACPOS_SCOPE_KEYS[selected.capabilityType.trim().toLowerCase()];
+        return scopeKey ? tx(scopeKey) : dash;
+      }
       case "AIAPI-01-PRO-DESC-BILLING":
+        return profileValue(note.billing ?? "");
       case "AIAPI-01-PRO-DESC-RECOMMENDED-USE":
+        return profileValue(note.tags ?? "");
       case "AIAPI-01-PRO-DESC-RESTRICTIONS":
+        return profileValue(note.restrictions ?? "");
       case "AIAPI-01-PRO-DESC-DOCS":
-        return dash;
+        return profileValue(note.docs ?? "");
       default:
         return show(uid);
     }

@@ -14,6 +14,9 @@ export interface SurfaceModel {
   apiEndpoint: string;
   contextWindow: string;
   billing: string;
+  description: string;
+  inputHint: string;
+  tags: string;
 }
 
 export interface SurfaceOperation {
@@ -31,6 +34,7 @@ export interface ProviderSurface {
   models: SurfaceModel[];
   operations: SurfaceOperation[];
   mediaEndpoint: string;
+  mediaStatusPath: string;
 }
 
 export type SurfaceResult =
@@ -198,6 +202,9 @@ function parseSurfaceModels(payload: unknown): SurfaceModel[] {
     const type = typeof item.type === "string" ? item.type.toLowerCase() : "";
     const context = item.context_length ?? item.context_window ?? item.max_context_length;
     const prompt = (item.pricing as { prompt?: unknown } | undefined)?.prompt;
+    const tags = Array.isArray(item.tags)
+      ? item.tags.filter((tag): tag is string => typeof tag === "string").join(", ")
+      : "";
     models.push({
       id: rawId,
       title: typeof item.display_name === "string" && item.display_name.trim() ? item.display_name.trim() : rawId,
@@ -209,6 +216,9 @@ function parseSurfaceModels(payload: unknown): SurfaceModel[] {
         typeof prompt === "string" && prompt !== "0"
           ? `prompt ${prompt} / completion ${String((item.pricing as { completion?: unknown } | undefined)?.completion ?? "")}`
           : "",
+      description: typeof item.description === "string" ? item.description.trim().slice(0, 400) : "",
+      inputHint: typeof item.input_hint === "string" ? item.input_hint.trim().slice(0, 300) : "",
+      tags,
     });
   }
   return models;
@@ -258,6 +268,12 @@ export function expandEndpoint(template: string, model: string): string {
   const withModel = template.trim().replace(/\{model(?:_name)?\}/gi, model);
   return withModel.replace(/\{action\}/gi, "generateContent");
 }
+
+const CHAT_OUTPUT: Record<string, string> = {
+  openai: "choices[0].message.content",
+  gemini: "candidates[0].content.parts[].text",
+  anthropic: "content[].text",
+};
 
 export function adapterForEndpoint(path: string, declaredFormat = ""): string {
   const format = declaredFormat.trim().toLowerCase();
@@ -316,6 +332,11 @@ export async function fetchSurface(baseUrl: string, secret: string): Promise<Sur
 
   const mediaEndpoint =
     manifest.operations.find((operation) => /\/media\/generate$/i.test(operation.path))?.path ?? "";
+  const mediaStatus =
+    manifest.operations.find((operation) => /\/media\/(status|result|query)$/i.test(operation.path)) ?? null;
+  const mediaStatusPath = mediaStatus
+    ? `${mediaStatus.path}${/[?]/.test(mediaStatus.path) ? "&" : "?"}task_id=`
+    : "";
 
   const host = (() => {
     try {
@@ -344,6 +365,7 @@ export async function fetchSurface(baseUrl: string, secret: string): Promise<Sur
       models,
       operations: manifest.operations.filter((operation) => isGenerationOperation(operation.path)),
       mediaEndpoint,
+      mediaStatusPath,
     },
   };
 }
@@ -360,6 +382,11 @@ export interface SurfaceModule {
   source: "model" | "operation";
   contextWindow: string;
   billing: string;
+  description: string;
+  inputHint: string;
+  outputHint: string;
+  restrictions: string;
+  tags: string;
 }
 
 /**
@@ -398,18 +425,28 @@ export function surfaceModules(surface: ProviderSurface): SurfaceModule[] {
     const chatPath = model.apiEndpoint || `${apiPath}/chat/completions`;
     const path = isChat ? absolute(expandEndpoint(chatPath, model.id)) : absolute(surface.mediaEndpoint);
     if (!path) continue;
+    const adapterType = isChat ? adapterForEndpoint(path, model.apiFormat) : "http-json";
     modules.push({
       moduleId: `model-${model.id}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-").slice(0, 60),
       title: model.title,
       capability,
       method: "POST",
       path,
-      adapterType: isChat ? adapterForEndpoint(path, model.apiFormat) : "http-json",
+      adapterType,
       modelId: model.id,
       docs: `${surface.apiBase}/skills/models/${encodeURIComponent(model.id)}`,
       source: "model",
       contextWindow: model.contextWindow,
       billing: model.billing,
+      description: model.description,
+      inputHint: model.inputHint,
+      outputHint: isChat
+        ? CHAT_OUTPUT[adapterType] ?? ""
+        : surface.mediaStatusPath
+          ? `建立任務後以 GET ${surface.mediaStatusPath} 查詢結果`
+          : "",
+      restrictions: "",
+      tags: model.tags,
     });
   }
 
@@ -426,6 +463,11 @@ export function surfaceModules(surface: ProviderSurface): SurfaceModule[] {
       source: "operation",
       contextWindow: "",
       billing: "",
+      description: operation.description,
+      inputHint: "",
+      outputHint: "",
+      restrictions: "",
+      tags: "",
     });
   }
   return modules;

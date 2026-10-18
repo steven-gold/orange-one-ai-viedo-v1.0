@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import type { ProviderRegistryEntry } from "@/lib/aiapiProviderCatalog";
 import { capabilityFromModule, endpointForModel } from "@/lib/aiapiProviderCatalog";
 
@@ -21,6 +22,11 @@ export interface DiscoveredModule {
   source: "model" | "operation";
   contextWindow: string;
   billing: string;
+  description: string;
+  inputHint: string;
+  outputHint: string;
+  restrictions: string;
+  tags: string;
 }
 
 export type ProviderDiscovery =
@@ -36,12 +42,41 @@ function trimBase(baseUrl: string): string {
   return baseUrl.trim().replace(/\/+$/, "");
 }
 
+/**
+ * Kling's legacy credentials are an AccessKey/SecretKey pair that must be
+ * signed into a short-lived HS256 JWT. New Kling API keys are already a Bearer
+ * token, so a plain key is passed through unchanged.
+ */
+function signKlingToken(pair: string): string {
+  const match = /^([A-Za-z0-9_.-]{6,}):([A-Za-z0-9_.-]{6,})$/.exec(pair.trim());
+  if (!match) return "";
+  const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const now = Math.floor(Date.now() / 1000);
+  const head = encode({ alg: "HS256", typ: "JWT" });
+  const body = encode({ iss: match[1], exp: now + 1800, nbf: now - 5 });
+  const signature = createHmac("sha256", match[2]).update(`${head}.${body}`).digest("base64url");
+  return `${head}.${body}.${signature}`;
+}
+
+export function klingCredential(secret: string): string {
+  return signKlingToken(secret) || secret;
+}
+
 function authHeaders(entry: ProviderRegistryEntry, secret: string): Record<string, string> {
   if (entry.authStyle === "anthropic") {
     return { "x-api-key": secret, "anthropic-version": "2023-06-01" };
   }
   if (entry.authStyle === "gemini") return { "x-goog-api-key": secret };
-  return { authorization: `Bearer ${secret}` };
+  const bearer = entry.providerId === "kling" ? klingCredential(secret) : secret;
+  return { authorization: `Bearer ${bearer}` };
+}
+
+function verifyUrl(entry: ProviderRegistryEntry): string {
+  const now = Date.now();
+  const filled = (entry.verifyPath ?? "")
+    .replace(/\{start\}/g, String(now - 30 * 24 * 3600 * 1000))
+    .replace(/\{end\}/g, String(now));
+  return `${trimBase(entry.baseUrl)}${filled}`;
 }
 
 async function fetchWithTimeout(
@@ -131,7 +166,7 @@ export async function listProviderModels(
 /** Confirms the key against one documented read-only call. */
 export async function verifyKey(entry: ProviderRegistryEntry, secret: string): Promise<boolean> {
   if (!entry.verifyPath) return true;
-  const url = `${trimBase(entry.baseUrl)}${entry.verifyPath}`;
+  const url = verifyUrl(entry);
   const method = (entry.verifyMethod ?? "GET").toUpperCase();
   const init: RequestInit = {
     method,
@@ -168,11 +203,50 @@ export function parseDocsIndex(markdown: string): DocLink[] {
 export type DocOperation = Omit<DiscoveredModule, "moduleId" | "capability" | "source">;
 
 /**
+ * Providers put the human description of an operation in a "Description"
+ * blockquote. Reading only that keeps table rows and schema noise out.
+ */
+function docDescription(markdown: string): string {
+  const sections = markdown.split(/^#{2,4}\s+/m);
+  const section = sections.find((part) => /^Description\b/i.test(part));
+  const scope = section ? section.replace(/^Description[^\n]*\n/, "") : markdown.slice(0, 1200);
+  for (const line of scope.split("\n")) {
+    const quoted = /^>\s*(.+)$/.exec(line.trim());
+    if (!quoted) continue;
+    const text = quoted[1].replace(/^Note:\s*/i, "").trim();
+    if (text.length >= 20) return text.slice(0, 400);
+  }
+  return "";
+}
+
+/** Required parameter names from the documented request tables. */
+function docInputHint(markdown: string): string {
+  const sections = markdown.split(/^#{2,4}\s+/m);
+  const parts: string[] = [];
+  for (const section of sections) {
+    const name = /^(Body|Query|Path) Params\b/i.exec(section)?.[1];
+    if (!name) continue;
+    const required: string[] = [];
+    for (const line of section.split("\n")) {
+      const cells = line.split("|").map((cell) => cell.trim());
+      if (cells.length < 5) continue;
+      const field = /^`([^`]+)`$/.exec(cells[1])?.[1];
+      const isRequired = /^yes$/i.test(cells[3] ?? "");
+      if (field && isRequired) required.push(field);
+    }
+    if (required.length) parts.push(`${name}: ${required.join(", ")}`);
+  }
+  return parts.join(" · ").slice(0, 300);
+}
+
+/**
  * One documented page can describe several calls (create, query, list), so
  * every Method/Path pair on the page becomes its own module.
  */
 export function parseDocPage(markdown: string, title: string): DocOperation[] {
   const heading = /^#\s+(.+)$/m.exec(markdown)?.[1]?.trim() ?? title;
+  const description = docDescription(markdown);
+  const inputHint = docInputHint(markdown);
   const operations: DocOperation[] = [];
   const seen = new Set<string>();
   const pair = /Method:\s*`(GET|POST|PUT|PATCH|DELETE)`[\s\S]{0,160}?Path:\s*`(\/[^`\s]*)`/gi;
@@ -182,7 +256,19 @@ export function parseDocPage(markdown: string, title: string): DocOperation[] {
     const key = `${method} ${path}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    operations.push({ title: heading, method, path, docs: "", contextWindow: "", billing: "" });
+    operations.push({
+      title: heading,
+      method,
+      path,
+      docs: "",
+      contextWindow: "",
+      billing: "",
+      description,
+      inputHint,
+      outputHint: "",
+      restrictions: "",
+      tags: "",
+    });
   }
   return operations;
 }
@@ -227,6 +313,11 @@ async function discoverFromModels(entry: ProviderRegistryEntry, secret: string):
       source: "model" as const,
       contextWindow: model.contextWindow ?? "",
       billing: model.billing ?? "",
+      description: "",
+      inputHint: "",
+      outputHint: "",
+      restrictions: "",
+      tags: "",
     };
   });
 }
@@ -277,6 +368,11 @@ async function discoverFromDocs(entry: ProviderRegistryEntry): Promise<Discovere
       source: "operation",
       contextWindow: "",
       billing: "",
+      description: page.description,
+      inputHint: page.inputHint,
+      outputHint: page.outputHint,
+      restrictions: page.restrictions,
+      tags: page.tags,
     });
     if (modules.length >= MODULE_LIMIT) break;
   }
