@@ -220,11 +220,19 @@ const MODULE_CAPABILITY_RULES: ReadonlyArray<{ capability: string; pattern: RegE
   { capability: "transcription", pattern: /(transcri|whisper|stt)/i },
   { capability: "chat", pattern: /(chat|completion|conversation|messages|responses)/i },
   { capability: "correction", pattern: /(correct|proofread|rewrite|grammar)/i },
-  { capability: "text-to-video", pattern: /(text[- ]to[- ]video|t2v)/i },
-  { capability: "image-to-video", pattern: /(image[- ]to[- ]video|i2v)/i },
-  { capability: "video-generation", pattern: /(video|motion|lip[- ]?sync|avatar)/i },
-  { capability: "image-generation", pattern: /(image|outpaint|upscal|try[- ]on|apparel|goods|commerce)/i },
-  { capability: "audio-generation", pattern: /(audio|voice|speech|tts)/i },
+  { capability: "text-to-video", pattern: /(text[- ]to[- ]video|t2v|wensheng)/i },
+  { capability: "image-to-video", pattern: /(image[- ]to[- ]video|i2v|image2video)/i },
+  {
+    capability: "video-generation",
+    pattern:
+      /(video|motion|lip[- ]?sync|avatar|seedance|kling|hailuo|vidu|pixverse|wan\d|happyhorse|sora|veo|grok-video)/i,
+  },
+  {
+    capability: "image-generation",
+    pattern:
+      /(image|outpaint|upscal|try[- ]on|apparel|goods|commerce|banana|seedream|imagine|midjourney|flux|dall-e)/i,
+  },
+  { capability: "audio-generation", pattern: /(audio|voice|speech|tts|suno|music|sound)/i },
   { capability: "element-management", pattern: /(element|asset|voice[- ]custom)/i },
   { capability: "billing", pattern: /(billing|balance|account|usage|cost)/i },
 ];

@@ -147,6 +147,9 @@ const NOTICE_KEYS: Record<string, TranslationKey> = {
   AIAPI_PROVIDER_AMBIGUOUS: "aiapi.notice-provider-ambiguous",
   AIAPI_PROVIDER_UNSUPPORTED: "aiapi.notice-provider-unsupported",
   AIAPI_PROVIDER_KEY_MISMATCH: "aiapi.notice-provider-key-mismatch",
+  AIAPI_PROVIDER_UNKNOWN: "aiapi.notice-provider-unknown",
+  AIAPI_PROVIDER_SURFACE_UNREACHABLE: "aiapi.notice-surface-unreachable",
+  AIAPI_MODELS_NOT_PUBLISHED: "aiapi.notice-model-unavailable",
   AIAPI_PROVIDER_KEY_INVALID: "aiapi.notice-key-invalid",
   AIAPI_MODEL_UNAVAILABLE: "aiapi.notice-model-unavailable",
   AIAPI_PROFILE_MODEL_REQUIRED: "aiapi.notice-model-required",
@@ -292,6 +295,7 @@ function ModalForm({
   const [advanced, setAdvanced] = useState(false);
   const [secret, setSecret] = useState("");
   const [providerId, setProviderId] = useState("");
+  const [siteUrl, setSiteUrl] = useState("");
   const [modelId, setModelId] = useState("");
   const grouped = actionUid === "updateProviderModelProfile" || (isCreate && advanced);
   const fields = grouped ? profileFormFields() : MODAL_FORMS[actionUid] ?? [];
@@ -416,10 +420,11 @@ function ModalForm({
       ? {
           ...values,
           secret,
+          siteUrl,
           providerId: providerId || values.providerId || "",
           modelId: modelId || values.modelId || "",
         }
-      : { secret, providerId, modelId };
+      : { secret, providerId, modelId, siteUrl };
     onSubmit(JSON.stringify(payload));
   };
 
@@ -447,18 +452,30 @@ function ModalForm({
           </label>
           <label className={styles.formRow}>
             <span>{t("aiapi.fld-provider")}</span>
-            <select
+            <input
               className={styles.formInput}
+              list="aiapi-provider-options"
               value={providerId}
+              placeholder={t("aiapi.fld-provider-auto")}
               onChange={(event) => applyProvider(event.target.value)}
-            >
-              <option value="">{t("aiapi.fld-provider-auto")}</option>
+            />
+            <datalist id="aiapi-provider-options">
               {AIAPI_PROVIDER_REGISTRY.map((entry) => (
                 <option key={entry.providerId} value={entry.providerId}>
                   {entry.providerName}
                 </option>
               ))}
-            </select>
+            </datalist>
+            <small className={styles.note}>{t("aiapi.fld-provider-custom")}</small>
+          </label>
+          <label className={styles.formRow}>
+            <span>{t("aiapi.fld-site-url")}</span>
+            <input
+              className={styles.formInput}
+              value={siteUrl}
+              placeholder={t("aiapi.fld-site-url-placeholder")}
+              onChange={(event) => setSiteUrl(event.target.value)}
+            />
           </label>
           <label className={styles.formRow}>
             <span>{t("aiapi.fld-model")}</span>

@@ -21,6 +21,7 @@ import { mirrorProfile } from "@/lib/aiapiActionPreview";
 import { getAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import { identifyProvider } from "./discovery";
+import { adapterForEndpoint, fetchSurface, resolveApiBase, surfaceModules } from "./surface";
 
 export interface AiapiOutcome {
   ok: boolean;
@@ -223,6 +224,8 @@ interface AiapiCreatePayload {
   modelId?: string;
   modelName?: string;
   baseUrl?: string;
+  siteUrl?: string;
+  url?: string;
   endpointPath?: string;
   httpMethod?: string;
   timeoutSeconds?: string;
@@ -272,30 +275,28 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
   const secret = textOf(payload.secret) || textOf(payload.credential);
   const profiles = await loadProfiles();
 
-  // The manual path is fully specified by the caller: connection plus a model,
-  // and either an adapter or a registered provider. An unregistered provider is
-  // allowed there, so no key verification is attempted.
+  // The manual path is fully specified by the caller: a connection plus a
+  // model. The provider may be one we have never seen, so no key verification
+  // is attempted and no catalog entry is required.
   const requestedProvider = textOf(payload.providerId).toLowerCase();
-  let entry = registryEntry(requestedProvider);
+  const entry = registryEntry(requestedProvider);
   const manual =
-    Boolean(textOf(payload.baseUrl)) &&
-    Boolean(textOf(payload.endpointPath)) &&
-    Boolean(textOf(payload.modelId)) &&
-    (Boolean(textOf(payload.adapterType)) || entry !== null);
+    Boolean(textOf(payload.baseUrl)) && Boolean(textOf(payload.endpointPath)) && Boolean(textOf(payload.modelId));
 
   if (manual) {
+    const endpointPath = textOf(payload.endpointPath);
     const candidate: AiapiProfile = {
       profileId: textOf(payload.profileId) || nextProfileId(profiles),
       version: 1,
-      providerId: textOf(payload.providerId),
+      providerId: textOf(payload.providerId) || entry?.providerId || hostProviderId(textOf(payload.baseUrl)),
       providerName: textOf(payload.providerName) || entry?.providerName || "",
       modelId: textOf(payload.modelId),
       modelName: textOf(payload.modelName),
       baseUrl: textOf(payload.baseUrl),
-      endpointPath: textOf(payload.endpointPath),
+      endpointPath,
       httpMethod: textOf(payload.httpMethod) || "POST",
       timeoutSeconds: textOf(payload.timeoutSeconds) || "30",
-      adapterType: textOf(payload.adapterType) || entry?.adapterType || "",
+      adapterType: textOf(payload.adapterType) || entry?.adapterType || adapterForEndpoint(endpointPath),
       requestTemplate: textOf(payload.requestTemplate),
       responseTextPath: textOf(payload.responseTextPath),
       promptTemplate: textOf(payload.promptTemplate) || promptTemplateForProvider(),
@@ -326,25 +327,97 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
 
   if (!secret) return { ok: false, code: "AIAPI_CREDENTIAL_REQUIRED" };
 
-  // Prefixes only shorten the probe list. When the prefix is unknown the whole
-  // registry is probed, so no brand is decided by the key format.
+  // A site or API address turns any OpenAI-compatible provider into a
+  // first-class one: the address is resolved, the key is verified against it,
+  // and every module the provider publishes is imported.
+  const address = textOf(payload.siteUrl) || textOf(payload.url);
+  if (address) {
+    const resolved = await resolveApiBase(address, secret);
+    if (!resolved.ok) return { ok: false, code: resolved.code };
+    const surface = await fetchSurface(resolved.baseUrl, secret);
+    if (!surface.ok) return { ok: false, code: surface.code };
+    const surfaceProviderId = textOf(payload.providerId) || surface.surface.providerId;
+    const surfaceProviderName = textOf(payload.providerName) || surface.surface.providerName;
+    const modules = surfaceModules(surface.surface);
+    if (!modules.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+    const filtered = filterModules(modules, textOf(payload.modelId));
+    if (!filtered.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+    return importModules(
+      profiles,
+      secret,
+      surfaceProviderId,
+      surfaceProviderName,
+      surface.surface.baseUrl,
+      filtered,
+    );
+  }
+
+  // Prefixes only shorten the probe list; whichever provider accepts the key
+  // is the authority. An unknown key with no site address is reported as
+  // unknown so the caller can ask for the address instead of failing silently.
   const shortlist = prefixCandidates(secret);
-  if (entry && shortlist.length && shortlist.every((candidate) => candidate.providerId !== entry?.providerId)) {
+  if (entry && shortlist.length && shortlist.every((candidate) => candidate.providerId !== entry.providerId)) {
     return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
   }
+  if (!entry && !shortlist.length) return { ok: false, code: "AIAPI_PROVIDER_UNKNOWN" };
+
   const primary = entry ? [entry] : shortlist;
   const fallback = AIAPI_PROVIDER_REGISTRY;
-  const identified = await identifyProvider(secret, primary.length ? primary : fallback, fallback);
+  const identified = await identifyProvider(secret, primary, fallback);
   if (!identified.ok) return { ok: false, code: identified.code };
-
   if (entry && identified.entry.providerId !== entry.providerId) {
     return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
   }
-  entry = identified.entry;
-  const modules = identified.modules;
-  if (!modules.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
 
-  // One profile per module the provider publishes, all sharing one credential.
+  const mapped: ImportModule[] = identified.modules.map((module) => ({
+    modelId: module.source === "model" ? module.title : module.moduleId,
+    title: module.title,
+    capability: module.capability,
+    method: module.method,
+    path: module.path,
+    adapterType: identified.entry.adapterType,
+    source: module.source,
+    contextWindow: module.contextWindow,
+  }));
+  const modules = filterModules(mapped, textOf(payload.modelId));
+  if (!modules.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+  return importModules(
+    profiles,
+    secret,
+    identified.entry.providerId,
+    identified.entry.providerName,
+    identified.entry.baseUrl,
+    modules,
+  );
+}
+
+interface ImportModule {
+  modelId: string;
+  title: string;
+  capability: string;
+  method: string;
+  path: string;
+  adapterType: string;
+  source: "model" | "operation";
+  contextWindow: string;
+}
+
+function filterModules<T extends ImportModule>(modules: T[], wanted: string): T[] {
+  const value = wanted.trim().toLowerCase();
+  if (!value) return modules;
+  return modules.filter(
+    (module) => module.modelId.toLowerCase() === value || module.title.toLowerCase() === value,
+  );
+}
+
+async function importModules(
+  profiles: AiapiProfile[],
+  secret: string,
+  providerId: string,
+  providerName: string,
+  baseUrl: string,
+  modules: readonly ImportModule[],
+): Promise<AiapiOutcome> {
   const known = new Set(profiles.map((profile) => profileFingerprint(profile)));
   const imported: AiapiProfile[] = [];
   let seq = nextSeq(profiles);
@@ -354,15 +427,15 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
     const candidate: AiapiProfile = {
       profileId: nextId,
       version: 1,
-      providerId: entry.providerId,
-      providerName: entry.providerName,
-      modelId: module.source === "model" ? module.title : module.moduleId,
+      providerId,
+      providerName,
+      modelId: module.modelId,
       modelName: module.title,
-      baseUrl: entry.baseUrl,
+      baseUrl,
       endpointPath: module.path,
       httpMethod: module.method,
       timeoutSeconds: "30",
-      adapterType: entry.adapterType,
+      adapterType: module.adapterType,
       requestTemplate: "",
       responseTextPath: "",
       promptTemplate: promptTemplateForProvider(),
@@ -389,16 +462,25 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
 
   if (!imported.length) return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
 
-  const next = [...profiles, ...imported];
   await writeFields({
-    [AIAPI_REGISTRY_UID]: serializeProfiles(next),
+    [AIAPI_REGISTRY_UID]: serializeProfiles([...profiles, ...imported]),
     "AIAPI-01-FLD-OPS-HEALTH": "UNKNOWN",
     "AIAPI-01-FLD-OPS-CREDENTIAL": "SET",
     ...mirrorProfile(imported[0]),
   });
-  await setAiapiCredential(imported[0].profileId, secret);
-  for (const profile of imported.slice(1)) await setAiapiCredential(profile.profileId, secret);
+  for (const profile of imported) await setAiapiCredential(profile.profileId, secret);
   return { ok: true, imported: imported.length };
+}
+
+function hostProviderId(baseUrl: string): string {
+  try {
+    const host = new URL(baseUrl).host.toLowerCase().replace(/^www\./, "").replace(/^api\./, "");
+    const parts = host.split(".").filter(Boolean);
+    const label = parts.length > 1 ? parts[parts.length - 2] : parts[0] ?? host;
+    return label.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "provider";
+  } catch {
+    return "provider";
+  }
 }
 
 function bumpProfileId(profileId: string): string {
