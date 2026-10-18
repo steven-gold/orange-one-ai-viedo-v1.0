@@ -30,11 +30,18 @@ export interface DiscoveredModule {
 }
 
 export type ProviderDiscovery =
-  | { ok: true; entry: ProviderRegistryEntry; modules: DiscoveredModule[] }
+  | { ok: true; entry: ProviderRegistryEntry; baseUrl: string; modules: DiscoveredModule[] }
   | { ok: false; code: string; matches: string[] };
+
+/** The host and header scheme that actually accepted the key. */
+export interface VerifiedSurface {
+  baseUrl: string;
+  headers: Record<string, string>;
+}
 
 const MODULE_LIMIT = 200;
 const PAGE_LIMIT = 60;
+const VERIFY_TIMEOUT_MS = 5000;
 const PAGE_TIMEOUT_MS = 9000;
 const CONCURRENCY = 4;
 
@@ -48,7 +55,7 @@ function trimBase(baseUrl: string): string {
  * token, so a plain key is passed through unchanged.
  */
 function signKlingToken(pair: string): string {
-  const match = /^([A-Za-z0-9_.-]{6,}):([A-Za-z0-9_.-]{6,})$/.exec(pair.trim());
+  const match = /^([^:\s]{6,}):(\S{6,})$/.exec(pair.trim());
   if (!match) return "";
   const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
   const now = Math.floor(Date.now() / 1000);
@@ -62,21 +69,62 @@ export function klingCredential(secret: string): string {
   return signKlingToken(secret) || secret;
 }
 
-function authHeaders(entry: ProviderRegistryEntry, secret: string): Record<string, string> {
-  if (entry.authStyle === "anthropic") {
-    return { "x-api-key": secret, "anthropic-version": "2023-06-01" };
-  }
-  if (entry.authStyle === "gemini") return { "x-goog-api-key": secret };
-  const bearer = entry.providerId === "kling" ? klingCredential(secret) : secret;
-  return { authorization: `Bearer ${bearer}` };
+function credentialFor(entry: ProviderRegistryEntry, secret: string): string {
+  return entry.providerId === "kling" ? klingCredential(secret) : secret;
 }
 
-function verifyUrl(entry: ProviderRegistryEntry): string {
+function headersForStyle(style: string, entry: ProviderRegistryEntry, secret: string): Record<string, string> {
+  const credential = credentialFor(entry, secret);
+  switch (style) {
+    case "anthropic":
+      return { "x-api-key": credential, "anthropic-version": "2023-06-01" };
+    case "gemini":
+      return { "x-goog-api-key": credential };
+    case "x-api-key":
+      return { "x-api-key": credential };
+    case "api-key":
+      return { "api-key": credential };
+    case "raw":
+      return { authorization: credential };
+    default:
+      return { authorization: `Bearer ${credential}` };
+  }
+}
+
+/**
+ * Providers disagree about how a key is carried. The declared style is tried
+ * first, then the documented alternatives, so an unfamiliar key is discovered
+ * instead of being rejected because the brand guess was wrong.
+ */
+export function authHeaderVariants(entry: ProviderRegistryEntry, secret: string): Record<string, string>[] {
+  const styles = [entry.authStyle, ...(entry.authStyles ?? []), "bearer", "x-api-key", "api-key", "raw"];
+  const seen = new Set<string>();
+  const variants: Record<string, string>[] = [];
+  for (const style of styles) {
+    const headers = headersForStyle(style, entry, secret);
+    const fingerprint = JSON.stringify(headers);
+    if (seen.has(fingerprint)) continue;
+    seen.add(fingerprint);
+    variants.push(headers);
+  }
+  return variants;
+}
+
+function authHeaders(entry: ProviderRegistryEntry, secret: string): Record<string, string> {
+  return authHeaderVariants(entry, secret)[0];
+}
+
+/** Every published host for a provider, primary first. */
+export function baseVariants(entry: ProviderRegistryEntry): string[] {
+  return Array.from(new Set([entry.baseUrl, ...(entry.baseUrls ?? [])].map((base) => trimBase(base))));
+}
+
+function verifyUrl(entry: ProviderRegistryEntry, baseUrl = entry.baseUrl): string {
   const now = Date.now();
   const filled = (entry.verifyPath ?? "")
     .replace(/\{start\}/g, String(now - 30 * 24 * 3600 * 1000))
     .replace(/\{end\}/g, String(now));
-  return `${trimBase(entry.baseUrl)}${filled}`;
+  return `${trimBase(baseUrl)}${filled}`;
 }
 
 async function fetchWithTimeout(
@@ -143,44 +191,75 @@ export async function listProviderModels(
   entry: ProviderRegistryEntry,
   secret: string,
   timeoutMs = PAGE_TIMEOUT_MS,
+  verified?: VerifiedSurface,
 ): Promise<ModelDiscovery> {
   if (!entry.modelsPath) return { ok: false, code: "AIAPI_MODELS_NOT_PUBLISHED" };
-  const url = `${trimBase(entry.baseUrl)}${entry.modelsPath}`;
+  const bases = verified ? [verified.baseUrl] : baseVariants(entry);
+  const headerVariants = verified ? [verified.headers] : authHeaderVariants(entry, secret);
+  let denied = false;
+  for (const base of bases) {
+    for (const headers of headerVariants) {
+      const url = `${trimBase(base)}${entry.modelsPath}`;
+      try {
+        const { status, text } = await fetchWithTimeout(
+          url,
+          { method: "GET", headers: { accept: "application/json", ...headers } },
+          timeoutMs,
+        );
+        if (status === 401 || status === 403) {
+          denied = true;
+          continue;
+        }
+        if (!status.toString().startsWith("2")) continue;
+        const models = parseModels(parseJson(text));
+        if (!models.length) continue;
+        return { ok: true, models };
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") continue;
+        continue;
+      }
+    }
+  }
+  return { ok: false, code: denied ? "AIAPI_PROVIDER_KEY_INVALID" : "AIAPI_PROVIDER_HTTP_ERROR" };
+}
+
+/**
+ * Confirms the key against a documented read-only call. The declared host and
+ * header style are tried first, then every other published host and scheme,
+ * so a key from a different region or client is discovered instead of being
+ * rejected because the initial guess did not match.
+ */
+export async function verifyKeyAt(entry: ProviderRegistryEntry, secret: string): Promise<VerifiedSurface | null> {
+  const headers = authHeaderVariants(entry, secret);
+  if (!entry.verifyPath) {
+    return { baseUrl: entry.baseUrl, headers: headers[0] };
+  }
+  const method = (entry.verifyMethod ?? "GET").toUpperCase();
+  // Every published host and scheme is attempted at once. A ladder of guesses
+  // run in sequence turns one unresponsive host into a minute of waiting, and
+  // the first answer that actually proves the key is all we need.
+  const attempt = async (baseUrl: string, header: Record<string, string>): Promise<VerifiedSurface> => {
+    const init: RequestInit = {
+      method,
+      headers: { accept: "application/json", "content-type": "application/json", ...header },
+    };
+    if (method !== "GET") init.body = "{}";
+    const { status } = await fetchWithTimeout(verifyUrl(entry, baseUrl), init, VERIFY_TIMEOUT_MS);
+    // Only a 2xx from the authenticated call proves the key; a 404 or 5xx on a
+    // misconfigured path must never be mistaken for acceptance.
+    if (status >= 200 && status < 300) return { baseUrl, headers: header };
+    throw new Error("rejected");
+  };
+  const tasks = baseVariants(entry).flatMap((baseUrl) => headers.map((header) => attempt(baseUrl, header)));
   try {
-    const { status, text } = await fetchWithTimeout(
-      url,
-      { method: "GET", headers: { accept: "application/json", ...authHeaders(entry, secret) } },
-      timeoutMs,
-    );
-    if (status === 401 || status === 403) return { ok: false, code: "AIAPI_PROVIDER_KEY_INVALID" };
-    if (!status.toString().startsWith("2")) return { ok: false, code: "AIAPI_PROVIDER_HTTP_ERROR" };
-    const models = parseModels(parseJson(text));
-    if (!models.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
-    return { ok: true, models };
-  } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") return { ok: false, code: "AIAPI_PROVIDER_TIMEOUT" };
-    return { ok: false, code: "AIAPI_PROVIDER_UNREACHABLE" };
+    return await Promise.any(tasks);
+  } catch {
+    return null;
   }
 }
 
-/** Confirms the key against one documented read-only call. */
 export async function verifyKey(entry: ProviderRegistryEntry, secret: string): Promise<boolean> {
-  if (!entry.verifyPath) return true;
-  const url = verifyUrl(entry);
-  const method = (entry.verifyMethod ?? "GET").toUpperCase();
-  const init: RequestInit = {
-    method,
-    headers: { accept: "application/json", "content-type": "application/json", ...authHeaders(entry, secret) },
-  };
-  if (method !== "GET") init.body = "{}";
-  try {
-    const { status } = await fetchWithTimeout(url, init, PAGE_TIMEOUT_MS);
-    // Only a 2xx from the authenticated call proves the key; a 404 or 5xx on a
-    // misconfigured path must never be mistaken for acceptance.
-    return status >= 200 && status < 300;
-  } catch {
-    return false;
-  }
+  return (await verifyKeyAt(entry, secret)) !== null;
 }
 
 interface DocLink {
@@ -294,8 +373,12 @@ async function mapLimit<T, R>(items: readonly T[], limit: number, worker: (item:
   return results;
 }
 
-async function discoverFromModels(entry: ProviderRegistryEntry, secret: string): Promise<DiscoveredModule[]> {
-  const discovery = await listProviderModels(entry, secret);
+async function discoverFromModels(
+  entry: ProviderRegistryEntry,
+  secret: string,
+  verified?: VerifiedSurface,
+): Promise<DiscoveredModule[]> {
+  const discovery = await listProviderModels(entry, secret, PAGE_TIMEOUT_MS, verified);
   if (!discovery.ok) return [];
   return discovery.models.slice(0, MODULE_LIMIT).map((model) => {
     // A model-list entry is a text model unless its own name marks another
@@ -379,12 +462,21 @@ async function discoverFromDocs(entry: ProviderRegistryEntry): Promise<Discovere
   return modules;
 }
 
-async function discoverEntry(entry: ProviderRegistryEntry, secret: string): Promise<DiscoveredModule[] | null> {
-  const [fromModels, fromDocs] = await Promise.all([discoverFromModels(entry, secret), discoverFromDocs(entry)]);
+async function discoverEntry(
+  entry: ProviderRegistryEntry,
+  secret: string,
+): Promise<{ modules: DiscoveredModule[]; baseUrl: string } | null> {
+  // Prove the key before spending time on the documentation index: an
+  // unaccepted key must not trigger a sixty-page crawl.
+  const verified = await verifyKeyAt(entry, secret);
+  if (!verified) return null;
+  const [fromModels, fromDocs] = await Promise.all([
+    discoverFromModels(entry, secret, verified),
+    discoverFromDocs(entry),
+  ]);
   const modules = [...fromModels, ...fromDocs];
   if (!modules.length) return null;
-  const accepted = await verifyKey(entry, secret);
-  return accepted ? modules : null;
+  return { modules, baseUrl: verified.baseUrl };
 }
 
 /**
@@ -398,11 +490,19 @@ export async function identifyProvider(
   probeAll: readonly ProviderRegistryEntry[],
 ): Promise<ProviderDiscovery> {
   const ordered = [...entries];
-  const results = await mapLimit(ordered, 3, async (entry) => ({ entry, modules: await discoverEntry(entry, secret) }));
+  const results = await mapLimit(ordered, 3, async (entry) => ({ entry, found: await discoverEntry(entry, secret) }));
   const winners = results.filter(
-    (result): result is { entry: ProviderRegistryEntry; modules: DiscoveredModule[] } => result.modules !== null,
+    (result): result is { entry: ProviderRegistryEntry; found: { modules: DiscoveredModule[]; baseUrl: string } } =>
+      result.found !== null,
   );
-  if (winners.length === 1) return { ok: true, entry: winners[0].entry, modules: winners[0].modules };
+  if (winners.length === 1) {
+    return {
+      ok: true,
+      entry: winners[0].entry,
+      baseUrl: winners[0].found.baseUrl,
+      modules: winners[0].found.modules,
+    };
+  }
   if (winners.length > 1) {
     return { ok: false, code: "AIAPI_PROVIDER_AMBIGUOUS", matches: winners.map((winner) => winner.entry.providerId) };
   }
@@ -410,11 +510,19 @@ export async function identifyProvider(
   if (entries.length && probeAll.length) {
     const remaining = probeAll.filter((candidate) => !entries.some((entry) => entry.providerId === candidate.providerId));
     if (remaining.length) {
-      const fallback = await mapLimit(remaining, 3, async (entry) => ({ entry, modules: await discoverEntry(entry, secret) }));
+      const fallback = await mapLimit(remaining, 3, async (entry) => ({ entry, found: await discoverEntry(entry, secret) }));
       const hits = fallback.filter(
-        (result): result is { entry: ProviderRegistryEntry; modules: DiscoveredModule[] } => result.modules !== null,
+        (result): result is { entry: ProviderRegistryEntry; found: { modules: DiscoveredModule[]; baseUrl: string } } =>
+          result.found !== null,
       );
-      if (hits.length === 1) return { ok: true, entry: hits[0].entry, modules: hits[0].modules };
+      if (hits.length === 1) {
+        return {
+          ok: true,
+          entry: hits[0].entry,
+          baseUrl: hits[0].found.baseUrl,
+          modules: hits[0].found.modules,
+        };
+      }
       if (hits.length > 1) return { ok: false, code: "AIAPI_PROVIDER_AMBIGUOUS", matches: hits.map((hit) => hit.entry.providerId) };
     }
   }

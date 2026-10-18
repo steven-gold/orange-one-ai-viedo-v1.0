@@ -62,8 +62,45 @@ function trimBase(value: string): string {
   return value.trim().replace(/\/+$/, "");
 }
 
+/**
+ * The same key is carried differently by different gateways. Probing tries
+ * every documented scheme so an unfamiliar key is discovered rather than
+ * rejected because the first guess was wrong.
+ */
+function authVariants(secret: string): Record<string, string>[] {
+  return [
+    { authorization: `Bearer ${secret}` },
+    { authorization: secret },
+    { "x-api-key": secret },
+    { "api-key": secret },
+    { "x-goog-api-key": secret },
+  ];
+}
+
 function authHeaders(secret: string): Record<string, string> {
-  return { accept: "application/json", authorization: `Bearer ${secret}` };
+  return { accept: "application/json", ...authVariants(secret)[0] };
+}
+
+/** Returns the first response that is not an auth rejection. */
+async function fetchAccepted(
+  url: string,
+  secret: string,
+  timeoutMs: number,
+): Promise<{ status: number; text: string; contentType: string }> {
+  let denied: { status: number; text: string; contentType: string } | null = null;
+  for (const headers of authVariants(secret)) {
+    const response = await fetchWithTimeout(
+      url,
+      { method: "GET", headers: { accept: "application/json", ...headers } },
+      timeoutMs,
+    );
+    if (response.status === 401 || response.status === 403) {
+      denied = response;
+      continue;
+    }
+    return response;
+  }
+  return denied ?? { status: 0, text: "", contentType: "" };
 }
 
 async function fetchWithTimeout(
@@ -119,14 +156,18 @@ function providerIdFromHost(host: string): string {
 }
 
 async function probeBase(base: string, secret: string): Promise<{ name: string } | "DENIED" | null> {
+  let denied = false;
   for (const path of ["/skills/models", "/models"]) {
     try {
-      const { status, text, contentType } = await fetchWithTimeout(
+      const { status, text, contentType } = await fetchAccepted(
         `${trimBase(base)}${path}`,
-        { method: "GET", headers: authHeaders(secret) },
+        secret,
         PROBE_TIMEOUT_MS,
       );
-      if (status === 401 || status === 403) return "DENIED";
+      if (status === 401 || status === 403) {
+        denied = true;
+        continue;
+      }
       if (status !== 200) continue;
       if (!/json/i.test(contentType)) continue;
       const rows = modelRows(readJson(text));
@@ -136,7 +177,49 @@ async function probeBase(base: string, secret: string): Promise<{ name: string }
       // try the next candidate
     }
   }
-  return null;
+  return denied ? "DENIED" : null;
+}
+
+function registrableDomain(host: string): string {
+  const parts = host.toLowerCase().split(".").filter(Boolean);
+  if (parts.length <= 2) return parts.join(".");
+  const twoLevel = /^(com|net|org|gov|edu)\.(cn|hk|tw|jp|uk)$/;
+  const tail = parts.slice(-2).join(".");
+  return twoLevel.test(tail) ? parts.slice(-3).join(".") : tail;
+}
+
+const THIRD_PARTY = /(^|\.)(googletagmanager|google-analytics|doubleclick|bootcdn|jsdelivr|unpkg|cloudflare|sentry|segment|mixpanel|hotjar|w3\.org|schema\.org)$/;
+
+/**
+ * Hosts the vendor page itself references: same-domain hosts, plus explicitly
+ * named API hosts on another domain (a portal often serves its API from a
+ * separate api.* host). Known third-party CDNs and analytics are skipped so
+ * the key is never sent to them.
+ */
+function apiHostsFromPage(page: URL, html: string): string[] {
+  const hosts = new Set<string>();
+  const domain = registrableDomain(page.hostname);
+  for (const match of html.matchAll(/https?:\/\/([a-z0-9.-]+)/gi)) {
+    const host = match[1].toLowerCase().replace(/\.$/, "");
+    if (!host || host === page.hostname) continue;
+    if (THIRD_PARTY.test(host)) continue;
+    if (registrableDomain(host) === domain) {
+      hosts.add(host);
+      continue;
+    }
+    if (/^(api|openapi|gateway)[.-]/.test(host)) hosts.add(host);
+  }
+  return Array.from(hosts);
+}
+
+function baseCandidates(host: string): string[] {
+  return [
+    `https://${host}`,
+    `https://${host}/v1`,
+    `https://${host}/api/v1`,
+    `https://${host}/api`,
+    `https://${host}/openai/v1`,
+  ];
 }
 
 /**
@@ -154,6 +237,8 @@ export async function resolveApiBase(input: string, secret: string): Promise<Bas
   }
   candidates.add(origin);
   candidates.add(`${origin}/v1`);
+  candidates.add(`${origin}/api/v1`);
+  candidates.add(`${origin}/api`);
 
   let denied = false;
   for (const base of candidates) {
@@ -169,12 +254,8 @@ export async function resolveApiBase(input: string, secret: string): Promise<Bas
   // Read the page once and try only the API origins it publishes itself.
   try {
     const page = await fetchWithTimeout(url.toString(), { method: "GET" }, PROBE_TIMEOUT_MS);
-    const hosts = new Set<string>();
-    for (const match of page.text.matchAll(/https:\/\/api\.[a-z0-9-]+(?:\.[a-z0-9-]+)+/gi)) {
-      hosts.add(match[0].toLowerCase());
-    }
-    for (const host of hosts) {
-      for (const base of [host, `${host}/v1`]) {
+    for (const host of apiHostsFromPage(url, page.text)) {
+      for (const base of baseCandidates(host)) {
         const probe = await probeBase(base, secret);
         if (probe === "DENIED") {
           denied = true;
@@ -284,6 +365,100 @@ export function adapterForEndpoint(path: string, declaredFormat = ""): string {
   return "openai";
 }
 
+interface PricingGroup {
+  is_active?: unknown;
+  billing_method?: unknown;
+  base_price?: unknown;
+  input_token_price?: unknown;
+  output_token_price?: unknown;
+  current_time_discount?: unknown;
+  option_prices?: unknown;
+}
+
+function price(value: unknown): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function amount(value: number): string {
+  return Number(value.toFixed(4)).toString();
+}
+
+/**
+ * Formats the vendor's own active pricing group. Nothing is estimated: when
+ * the vendor publishes no active group the field stays empty.
+ */
+export function formatPricing(json: unknown): string {
+  const groups = (json as { channel_groups?: unknown } | null)?.channel_groups;
+  if (!Array.isArray(groups)) return "";
+  const live = (groups as PricingGroup[]).filter((group) => group?.is_active === true);
+  const group = live[0];
+  if (!group) return "";
+  const method = typeof group.billing_method === "string" ? group.billing_method.trim() : "";
+  const base = price(group.base_price);
+  const input = price(group.input_token_price);
+  const output = price(group.output_token_price);
+  const discount = price(group.current_time_discount);
+  let text = "";
+  if (method === "按token" || method === "按 token") {
+    const parts: string[] = [];
+    if (input) parts.push(`輸入 ${amount(input)}`);
+    if (output) parts.push(`輸出 ${amount(output)}`);
+    text = parts.length ? `按 token：${parts.join("、")}` : "";
+  } else if (method === "按次") {
+    text = base ? `按次：每次 ${amount(base)}` : "";
+  } else if (method === "按秒") {
+    text = base ? `按秒：每秒 ${amount(base)}` : "";
+  } else if (base) {
+    text = method ? `${method}：${amount(base)}` : amount(base);
+  }
+  if (!text) return "";
+  if (discount && discount !== 1) text += `（折扣 ${amount(discount)}）`;
+  const options = Array.isArray(group.option_prices) ? (group.option_prices as Record<string, unknown>[]) : [];
+  const notable = options
+    .map((option) => ({
+      label: typeof option.option_label === "string" ? option.option_label : "",
+      value: price(option.final_output_token_price ?? option.final_price),
+    }))
+    .filter((option) => option.label && option.value && option.value !== (output || base));
+  if (notable.length) {
+    text += `；${notable
+      .slice(0, 2)
+      .map((option) => `${option.label} ${amount(option.value)}`)
+      .join("、")}`;
+  }
+  return text;
+}
+
+async function readPricing(base: string, secret: string, modelId: string): Promise<string> {
+  try {
+    const response = await fetchAccepted(
+      `${base}/skills/models/${encodeURIComponent(modelId)}/pricing`,
+      secret,
+      PROBE_TIMEOUT_MS,
+    );
+    if (response.status !== 200 || !/json/i.test(response.contentType)) return "";
+    return formatPricing(readJson(response.text));
+  } catch {
+    return "";
+  }
+}
+
+/** Fills the billing column from each model's own pricing endpoint. */
+async function attachPricing(base: string, secret: string, models: SurfaceModel[]): Promise<SurfaceModel[]> {
+  const queue = models.filter((model) => !model.billing && model.id);
+  let cursor = 0;
+  const worker = async (): Promise<void> => {
+    while (cursor < queue.length) {
+      const model = queue[cursor];
+      cursor += 1;
+      const billing = await readPricing(base, secret, model.id);
+      if (billing) model.billing = billing;
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(8, queue.length) }, worker));
+  return models;
+}
+
 /**
  * Reads the surface the provider publishes at the resolved base. A JSON model
  * list is mandatory; the manifest and the typed catalogue are used when the
@@ -292,12 +467,8 @@ export function adapterForEndpoint(path: string, declaredFormat = ""): string {
 export async function fetchSurface(baseUrl: string, secret: string): Promise<SurfaceResult> {
   const base = trimBase(baseUrl);
   const [manifestRes, skillsRes] = await Promise.all([
-    fetchWithTimeout(`${base}/skills`, { method: "GET", headers: authHeaders(secret) }, SURFACE_TIMEOUT_MS).catch(
-      () => null,
-    ),
-    fetchWithTimeout(`${base}/skills/models`, { method: "GET", headers: authHeaders(secret) }, SURFACE_TIMEOUT_MS).catch(
-      () => null,
-    ),
+    fetchAccepted(`${base}/skills`, secret, SURFACE_TIMEOUT_MS).catch(() => null),
+    fetchAccepted(`${base}/skills/models`, secret, SURFACE_TIMEOUT_MS).catch(() => null),
   ]);
 
   if (manifestRes && (manifestRes.status === 401 || manifestRes.status === 403)) {
@@ -313,11 +484,7 @@ export async function fetchSurface(baseUrl: string, secret: string): Promise<Sur
 
   if (!models.length) {
     try {
-      const list = await fetchWithTimeout(
-        `${base}/models`,
-        { method: "GET", headers: authHeaders(secret) },
-        SURFACE_TIMEOUT_MS,
-      );
+      const list = await fetchAccepted(`${base}/models`, secret, SURFACE_TIMEOUT_MS);
       if (list.status === 401 || list.status === 403) return { ok: false, code: "AIAPI_PROVIDER_KEY_INVALID" };
       if (list.status !== 200 || !/json/i.test(list.contentType)) {
         return { ok: false, code: "AIAPI_MODELS_NOT_PUBLISHED" };
@@ -329,6 +496,8 @@ export async function fetchSurface(baseUrl: string, secret: string): Promise<Sur
   }
 
   if (!models.length) return { ok: false, code: "AIAPI_MODEL_UNAVAILABLE" };
+
+  await attachPricing(base, secret, models);
 
   const mediaEndpoint =
     manifest.operations.find((operation) => /\/media\/generate$/i.test(operation.path))?.path ?? "";

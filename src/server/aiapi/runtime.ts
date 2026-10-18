@@ -354,26 +354,21 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
     );
   }
 
-  // Prefixes only shorten the probe list; whichever provider accepts the key
-  // is the authority. An unknown key with no site address is reported as
-  // unknown so the caller can ask for the address instead of failing silently.
+  // Prefixes and a manual provider choice only shorten the probe list; whichever
+  // provider actually accepts the key is the authority. The selection can never
+  // lock the key out of providers that would accept it, and an unknown key with
+  // no site address is reported as unknown so the caller can ask for the address.
   const shortlist = prefixCandidates(secret);
-  if (entry && shortlist.length && shortlist.every((candidate) => candidate.providerId !== entry.providerId)) {
-    return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
-  }
   const probeAll = !entry && !shortlist.length;
   const primary = entry ? [entry] : probeAll ? AIAPI_PROVIDER_REGISTRY : shortlist;
   const identified = await identifyProvider(secret, primary, AIAPI_PROVIDER_REGISTRY);
   if (!identified.ok) {
     // No known provider accepted the key: ask for the site address instead of
     // blaming the key, because the provider may simply not be in the registry.
-    if (probeAll && identified.code === "AIAPI_PROVIDER_KEY_INVALID") {
+    if ((probeAll || entry) && identified.code === "AIAPI_PROVIDER_KEY_INVALID") {
       return { ok: false, code: "AIAPI_PROVIDER_UNKNOWN" };
     }
     return { ok: false, code: identified.code };
-  }
-  if (entry && identified.entry.providerId !== entry.providerId) {
-    return { ok: false, code: "AIAPI_PROVIDER_KEY_MISMATCH" };
   }
 
   const mapped: ImportModule[] = identified.modules.map((module) => ({
@@ -400,7 +395,7 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
     secret,
     identified.entry.providerId,
     identified.entry.providerName,
-    identified.entry.baseUrl,
+    identified.baseUrl,
     modules,
   );
 }

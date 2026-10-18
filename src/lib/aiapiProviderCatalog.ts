@@ -1,6 +1,6 @@
 import { AIAPI_PROMPT_TEMPLATE_TOKEN } from "./aiapiProfiles";
 
-export type AuthStyle = "bearer" | "anthropic" | "gemini";
+export type AuthStyle = "bearer" | "anthropic" | "gemini" | "x-api-key" | "api-key" | "raw";
 
 export type ModuleKind = "model" | "operation";
 
@@ -10,6 +10,13 @@ export interface ProviderRegistryEntry {
   adapterType: string;
   baseUrl: string;
   authStyle: AuthStyle;
+  /**
+   * Regional or alternate API hosts the same provider publishes. A key is
+   * valid for exactly one of them, so verification tries each in order.
+   */
+  baseUrls?: readonly string[];
+  /** Alternate header schemes, used only while probing an unfamiliar key. */
+  authStyles?: readonly AuthStyle[];
   /** OpenAI-compatible model list. Empty when the provider does not expose one. */
   modelsPath: string;
   /** Machine-readable documentation index published by the provider itself. */
@@ -142,6 +149,11 @@ export const AIAPI_PROVIDER_REGISTRY: readonly ProviderRegistryEntry[] = [
     providerName: "Kling AI",
     adapterType: "http-json",
     baseUrl: "https://api-singapore.klingai.com",
+    baseUrls: [
+      "https://api-singapore.klingai.com",
+      "https://api-beijing.klingai.com",
+      "https://api.klingai.com",
+    ],
     authStyle: "bearer",
     modelsPath: "",
     docsIndex: "https://kling.ai/document-api/llms.txt",
@@ -149,6 +161,18 @@ export const AIAPI_PROVIDER_REGISTRY: readonly ProviderRegistryEntry[] = [
     verifyMethod: "GET",
     keyPrefixes: ["api-key-kling-"],
     docs: "https://klingai.com/document-api/",
+  },
+  {
+    providerId: "baizhi",
+    providerName: "長亭百智雲",
+    adapterType: "openai",
+    baseUrl: "https://ai-models.app.baizhi.cloud/api/v1",
+    authStyle: "bearer",
+    modelsPath: "/models",
+    verifyPath: "/models",
+    verifyMethod: "GET",
+    keyPrefixes: [],
+    docs: "https://baizhi.cloud/landing/api-gateway",
   },
 ] as const;
 

@@ -16,10 +16,8 @@ import {
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
 import {
-  AIAPI_PROVIDER_REGISTRY,
   endpointForModel,
   prefixCandidates,
-  registryEntry,
 } from "@/lib/aiapiProviderCatalog";
 import { displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
 import {
@@ -311,7 +309,6 @@ function ModalForm({
   const isCreate = actionUid === "createProviderModelProfile";
   const [advanced, setAdvanced] = useState(false);
   const [secret, setSecret] = useState("");
-  const [providerId, setProviderId] = useState("");
   const [siteUrl, setSiteUrl] = useState("");
   const [modelId, setModelId] = useState("");
   const grouped = actionUid === "updateProviderModelProfile" || (isCreate && advanced);
@@ -337,25 +334,6 @@ function ModalForm({
       : fields.every((field) => !field.required || (values[field.key] ?? "").trim().length > 0));
 
   const update = (key: string, value: string) => setValues((prev) => ({ ...prev, [key]: value }));
-
-  const applyProvider = (id: string) => {
-    setProviderId(id);
-    const entry = registryEntry(id);
-    if (!entry) return;
-    setValues((prev) => ({
-      ...prev,
-      providerId: prev.providerId || entry.providerId,
-      providerName: prev.providerName || entry.providerName,
-      baseUrl: prev.baseUrl || entry.baseUrl,
-      adapterType: prev.adapterType || entry.adapterType,
-      httpMethod: prev.httpMethod || "POST",
-      timeoutSeconds: prev.timeoutSeconds || "30",
-      promptTemplate: prev.promptTemplate || AIAPI_PROMPT_TEMPLATE_TOKEN,
-      capabilityType: prev.capabilityType || "chat",
-      enabled: prev.enabled || "ENABLED",
-      endpointPath: prev.endpointPath || (modelId ? endpointForModel(entry, modelId) : ""),
-    }));
-  };
 
   const renderInput = (field: FormField) => {
     const value = values[field.key] ?? "";
@@ -438,10 +416,9 @@ function ModalForm({
           ...values,
           secret,
           siteUrl,
-          providerId: providerId || values.providerId || "",
           modelId: modelId || values.modelId || "",
         }
-      : { secret, providerId, modelId, siteUrl };
+      : { secret, modelId, siteUrl };
     onSubmit(JSON.stringify(payload));
   };
 
@@ -466,24 +443,6 @@ function ModalForm({
               value={secret}
               onChange={(event) => setSecret(event.target.value)}
             />
-          </label>
-          <label className={styles.formRow}>
-            <span>{t("aiapi.fld-provider")}</span>
-            <input
-              className={styles.formInput}
-              list="aiapi-provider-options"
-              value={providerId}
-              placeholder={t("aiapi.fld-provider-auto")}
-              onChange={(event) => applyProvider(event.target.value)}
-            />
-            <datalist id="aiapi-provider-options">
-              {AIAPI_PROVIDER_REGISTRY.map((entry) => (
-                <option key={entry.providerId} value={entry.providerId}>
-                  {entry.providerName}
-                </option>
-              ))}
-            </datalist>
-            <small className={styles.note}>{t("aiapi.fld-provider-custom")}</small>
           </label>
           <label className={styles.formRow}>
             <span>{t("aiapi.fld-site-url")}</span>

@@ -267,7 +267,20 @@
 }
 
 .tableWrap {
-  overflow-x: auto;
+  overflow: auto;
+  /* Fifteen rows stay in view; the rest scroll inside the panel. */
+  max-height: 654px;
+  scrollbar-width: thin;
+}
+
+.tableWrap::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableWrap::-webkit-scrollbar-thumb {
+  background: rgba(142, 112, 255, 0.35);
+  border-radius: 4px;
 }
 
 .table {
