@@ -24,7 +24,6 @@ import { getSqlClient } from "../db/client";
 import {
   billingFor,
   cachedDocs,
-  discoverFromDocs,
   identifyProvider,
   listProviderModels,
   parseDocsIndex,
@@ -565,6 +564,39 @@ function fillProtocolNote(profile: AiapiProfile, current: Record<string, string>
   return notesDiffer(current, next) ? next : null;
 }
 
+function markdownDocUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return "";
+  if (/\.md($|\?)/i.test(trimmed)) return trimmed;
+  if (/\/document-api\//i.test(trimmed)) return `${trimmed.replace(/\/+$/, "")}.md`;
+  return "";
+}
+
+function noteNeedsDocs(note: Record<string, string> | undefined): boolean {
+  return !note?.description;
+}
+
+function fillBillingNote(
+  profile: AiapiProfile,
+  current: Record<string, string> | undefined,
+  prices: readonly { name: string; billing: string }[],
+): Record<string, string> | null {
+  if (current?.billing || !prices.length) return null;
+  const billing = billingFor(profile.modelName, profile.endpointPath, prices);
+  if (!billing) return null;
+  const next = {
+    description: current?.description ?? "",
+    inputHint: current?.inputHint ?? "",
+    outputHint: current?.outputHint ?? "",
+    restrictions: current?.restrictions ?? "",
+    tags: current?.tags ?? "",
+    billing,
+    docs: current?.docs ?? "",
+    source: current?.source ?? "",
+  };
+  return notesDiffer(current, next) ? next : null;
+}
+
 function matchDocNote(
   profile: AiapiProfile,
   modules: readonly { title: string; method: string; path: string; description: string; inputHint: string; outputHint: string; restrictions: string; tags: string; billing: string; docs: string }[],
@@ -655,83 +687,89 @@ export async function refreshPublishedNotes(): Promise<boolean> {
         byProvider.set(profile.providerId, list);
       }
 
-      for (const [providerId, group] of byProvider) {
-        const entry = registryEntry(providerId);
-        if (!entry?.modelsPath) continue;
-        const secret = await getAiapiCredential(group[0].profileId);
-        if (!secret) continue;
-        const listed = await listProviderModels(entry, secret, 8000, {
-          baseUrl: group[0].baseUrl,
-          headers: { authorization: `Bearer ${secret}` },
-        });
-        if (!listed.ok) continue;
-        const byId = new Map(listed.models.map((model) => [model.id, model] as const));
-        for (const profile of group) {
-          const model = byId.get(profile.modelId);
-          if (!model) continue;
-          const current = notes[profile.profileId] ?? {};
-          const next = {
-            description: current.description || model.description || "",
-            inputHint: current.inputHint || "",
-            outputHint: current.outputHint || "",
-            restrictions: current.restrictions || "",
-            tags: current.tags || model.ownedBy || "",
-            billing: current.billing || model.billing || "",
-            docs: current.docs || entry.docs || "",
-            source: current.source || "model",
-          };
-          if (!notesDiffer(current, next)) continue;
-          notes[profile.profileId] = next;
-          changed = true;
-        }
-      }
-      if (changed) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
-
-      for (const [providerId, group] of byProvider) {
-        const entry = registryEntry(providerId);
-        if (!entry?.docsIndex) continue;
-        const cached = cachedDocs(entry);
-        const modules = cached ? [...cached] : [];
-        if (!cached) {
-          const docUrls = [
-            ...new Set(
-              group
-                .map((profile) => notes[profile.profileId]?.docs ?? "")
-                .filter((url) => /^https?:\/\//i.test(url) && /\.md($|\?)/i.test(url)),
-            ),
-          ];
-          const pages = await readMany(docUrls, 8, Date.now() + 25_000);
+      const applyModelNotes = async () => {
+        for (const [providerId, group] of byProvider) {
+          const entry = registryEntry(providerId);
+          if (!entry?.modelsPath) continue;
+          const secret = await getAiapiCredential(group[0].profileId);
+          if (!secret) continue;
+          const listed = await listProviderModels(entry, secret, 6000, {
+            baseUrl: group[0].baseUrl,
+            headers: { authorization: `Bearer ${secret}` },
+          });
+          if (!listed.ok) continue;
+          const byId = new Map(listed.models.map((model) => [model.id, model] as const));
           for (const profile of group) {
-            const url = notes[profile.profileId]?.docs ?? "";
-            const markdown = pages.get(url);
-            if (!markdown) continue;
-            modules.push(...parsePublishedPage(markdown, profile.modelName, url));
-          }
-          const index = await readMarkdown(entry.docsIndex);
-          const pricingLinks = parseDocsIndex(index).filter((link) => /\/pricing\//i.test(link.url));
-          const pricePages = await readMany(
-            pricingLinks.map((link) => link.url),
-            4,
-            Date.now() + 12_000,
-          );
-          const prices: { name: string; billing: string }[] = [];
-          for (const markdown of pricePages.values()) prices.push(...parsePricingTables(markdown));
-          for (const module of modules) {
-            if (!module.billing) module.billing = billingFor(module.title, module.path, prices);
-          }
-          if (!modules.length) {
-            modules.push(...(await discoverFromDocs(entry, 20_000)));
+            const model = byId.get(profile.modelId);
+            if (!model) continue;
+            const current = notes[profile.profileId] ?? {};
+            const next = {
+              description: current.description || model.description || "",
+              inputHint: current.inputHint || "",
+              outputHint: current.outputHint || "",
+              restrictions: current.restrictions || "",
+              tags: current.tags || model.ownedBy || "",
+              billing: current.billing || model.billing || "",
+              docs: current.docs || entry.docs || "",
+              source: current.source || "model",
+            };
+            if (!notesDiffer(current, next)) continue;
+            notes[profile.profileId] = next;
+            changed = true;
           }
         }
-        if (!modules.length) continue;
-        for (const profile of group) {
-          const next = matchDocNote(profile, modules, notes[profile.profileId]);
-          if (!next) continue;
-          notes[profile.profileId] = next;
-          changed = true;
-        }
-      }
+      };
 
+      const applyDocNotes = async () => {
+        for (const [providerId, group] of byProvider) {
+          const entry = registryEntry(providerId);
+          if (!entry?.docsIndex) continue;
+          const cached = cachedDocs(entry);
+          const modules = cached ? [...cached] : [];
+          const incomplete = group.filter((profile) => noteNeedsDocs(notes[profile.profileId]));
+          let prices: { name: string; billing: string }[] = [];
+          if (!cached) {
+            const docUrls = [
+              ...new Set(incomplete.map((profile) => markdownDocUrl(notes[profile.profileId]?.docs ?? "")).filter(Boolean)),
+            ];
+            const pageDeadline = Date.now() + 12_000;
+            const pagesPromise = readMany(docUrls, 8, pageDeadline);
+            const pricesPromise = (async () => {
+              const index = await readMarkdown(entry.docsIndex);
+              const pricingLinks = parseDocsIndex(index).filter((link) => /\/pricing\//i.test(link.url));
+              const pricePages = await readMany(pricingLinks.map((link) => link.url), 4, Date.now() + 8_000);
+              const rows: { name: string; billing: string }[] = [];
+              for (const markdown of pricePages.values()) rows.push(...parsePricingTables(markdown));
+              return rows;
+            })();
+            const [pages, priceRows] = await Promise.all([pagesPromise, pricesPromise]);
+            prices = priceRows;
+            for (const profile of incomplete) {
+              const raw = notes[profile.profileId]?.docs ?? "";
+              const url = markdownDocUrl(raw);
+              const markdown = (url ? pages.get(url) : undefined) ?? pages.get(raw);
+              if (!markdown) continue;
+              modules.push(...parsePublishedPage(markdown, profile.modelName, raw || url));
+            }
+            for (const module of modules) {
+              if (!module.billing) module.billing = billingFor(module.title, module.path, prices);
+            }
+          }
+          for (const profile of group) {
+            const matched = matchDocNote(profile, modules, notes[profile.profileId]);
+            if (matched) {
+              notes[profile.profileId] = matched;
+              changed = true;
+            }
+            const billed = fillBillingNote(profile, notes[profile.profileId], prices);
+            if (!billed) continue;
+            notes[profile.profileId] = billed;
+            changed = true;
+          }
+        }
+      };
+
+      await Promise.all([applyModelNotes(), applyDocNotes()]);
       if (changed) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
       notesRefreshAt = Date.now();
       return changed;

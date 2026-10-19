@@ -1,7 +1,7 @@
 import { seedScope } from "./seed";
 import { pagePermissionEnforced } from "../auth/pageAccess";
 import { applyWorkbenchAction } from "../runtime/applyAction";
-import { fillProtocolNotes, type AiapiOutcome } from "../aiapi/runtime";
+import { fillProtocolNotes, refreshPublishedNotes, type AiapiOutcome } from "../aiapi/runtime";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
@@ -1292,7 +1292,10 @@ export async function persistListAiapiFields(): Promise<AiapiFieldValue[]> {
 
 export async function persistGetAiapiReadModel(accountUid: string): Promise<AiapiReadModel> {
   const authorized = await persistHasAiapiPermission(accountUid);
-  if (authorized) await fillProtocolNotes();
+  if (authorized) {
+    await fillProtocolNotes();
+    await refreshPublishedNotes();
+  }
   const fields = authorized ? await persistListAiapiFields() : [];
   return {
     projectionUid: AIAPI_PROJECTION,
