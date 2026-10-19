@@ -148,7 +148,9 @@ export function messagesForThread(
   const scoped = records.filter((row) => row.thread === thread);
   if (scoped.length) return scoped;
   const unscoped = records.filter((row) => !row.thread).map((row) => ({ ...row, thread }));
-  const extra = usableMessage(fallbackAssistant ?? undefined);
+  const extra = parseNotebookRecords(fallbackAssistant ?? null).length
+    ? ""
+    : usableMessage(fallbackAssistant ?? undefined);
   if (extra && extra !== unscoped[unscoped.length - 1]?.text) {
     return [...unscoped, { thread, role: "assistant", text: extra }];
   }
@@ -175,6 +177,147 @@ export function lastAssistantText(raw: string | null, thread: string, fallback?:
   return "";
 }
 
+export type CoreNotebookStatus = "CURRENT" | "STALE";
+
+export type CoreNotebookRecord = {
+  thread: string;
+  version: number;
+  status: CoreNotebookStatus;
+  coveredCount: number;
+  sourceHash: string;
+  body: string;
+};
+
+function sourceHash(parts: string[]): string {
+  let hash = 2166136261;
+  const joined = parts.join("\u0001");
+  for (let index = 0; index < joined.length; index += 1) {
+    hash ^= joined.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, "0");
+}
+
+export function parseNotebookRecords(raw: string | null): CoreNotebookRecord[] {
+  if (!raw || STATUS_TOKENS.has(raw)) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return [];
+    const payload = parsed as { kind?: unknown; records?: unknown };
+    if (payload.kind !== "NOTEBOOK" || !Array.isArray(payload.records)) return [];
+    const records: CoreNotebookRecord[] = [];
+    for (const item of payload.records) {
+      if (!item || typeof item !== "object") continue;
+      const rec = item as {
+        thread?: unknown;
+        version?: unknown;
+        status?: unknown;
+        coveredCount?: unknown;
+        sourceHash?: unknown;
+        body?: unknown;
+      };
+      const thread = typeof rec.thread === "string" ? rec.thread.trim() : "";
+      const body = typeof rec.body === "string" ? rec.body.trim() : "";
+      const hash = typeof rec.sourceHash === "string" ? rec.sourceHash.trim() : "";
+      const version = typeof rec.version === "number" && Number.isFinite(rec.version) ? rec.version : 0;
+      const coveredCount =
+        typeof rec.coveredCount === "number" && Number.isFinite(rec.coveredCount) ? rec.coveredCount : 0;
+      if (!thread || !body || !hash || version < 1) continue;
+      records.push({
+        thread,
+        version,
+        status: rec.status === "STALE" ? "STALE" : "CURRENT",
+        coveredCount,
+        sourceHash: hash,
+        body: body.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
+      });
+    }
+    return records;
+  } catch {
+    return [];
+  }
+}
+
+export function notebookTextForThread(raw: string | null, thread: string): string {
+  if (!thread) return "";
+  const match = parseNotebookRecords(raw).find((row) => row.thread === thread && row.status === "CURRENT");
+  return match?.body ?? "";
+}
+
+function coveredForNotebook(records: CoreMessageRecord[], mode: "overflow" | "record"): CoreMessageRecord[] {
+  if (mode === "overflow") {
+    const prior = records.length ? records.slice(0, -1) : [];
+    if (prior.length > CONVERSATION_RECENT_HISTORY_ROWS) {
+      return prior.slice(0, prior.length - CONVERSATION_RECENT_HISTORY_ROWS);
+    }
+    return [];
+  }
+  return records;
+}
+
+function buildNotebookBody(covered: CoreMessageRecord[], version: number, hash: string): string {
+  const header = [
+    `會議紀錄 版本 ${version}`,
+    "狀態：現行",
+    `涵蓋則數：${covered.length}`,
+    `來源雜湊：${hash}`,
+    "重要引用：",
+  ];
+  const footer = ["共識：—", "分歧：—", "未決問題：—", "後續事項：—"];
+  const headerText = header.join("\n");
+  const footerText = footer.join("\n");
+  const budget = CONVERSATION_STORED_MESSAGE_TEXT_CHARS - headerText.length - footerText.length - 2;
+  const refs: string[] = [];
+  let used = 0;
+  for (let index = 0; index < covered.length; index += 1) {
+    const row = covered[index];
+    const role = row.role === "user" ? "使用者" : "AI";
+    const line = `- 第${index + 1}則（${role}）：${row.text.replace(/\s+/g, " ").trim()}`;
+    const piece = (refs.length ? 1 : 0) + line.length;
+    if (used + piece > Math.max(budget, 0)) break;
+    refs.push(line);
+    used += piece;
+  }
+  if (!refs.length) refs.push("—");
+  return `${headerText}\n${refs.join("\n")}\n${footerText}`.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
+}
+
+function serializeNotebookRecords(records: CoreNotebookRecord[]): string {
+  const payload = JSON.stringify({ kind: "NOTEBOOK", records });
+  if (payload.length <= CONVERSATION_STORED_MESSAGE_TEXT_CHARS) return payload;
+  const shrunk = records.map((row) => ({
+    ...row,
+    body: row.body.slice(0, Math.max(200, Math.floor(CONVERSATION_STORED_MESSAGE_TEXT_CHARS / Math.max(records.length, 1) - 120))),
+  }));
+  return JSON.stringify({ kind: "NOTEBOOK", records: shrunk }).slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
+}
+
+export function refreshAssistantNotebook(
+  current: (uid: string) => string | null,
+  thread: string,
+  records: CoreMessageRecord[],
+  mode: "overflow" | "record" = "overflow",
+): Record<string, string> {
+  if (!thread) return {};
+  const covered = coveredForNotebook(records, mode);
+  if (!covered.length) return {};
+  const hash = sourceHash(covered.map((row) => `${row.role}:${row.text}`));
+  const existing = parseNotebookRecords(current("CORE-01-FLD-ASSISTANT-SUMMARY"));
+  const prior = existing.find((row) => row.thread === thread && row.status === "CURRENT");
+  if (prior && prior.sourceHash === hash) return {};
+  const version = (prior?.version ?? 0) + 1;
+  const next: CoreNotebookRecord = {
+    thread,
+    version,
+    status: "CURRENT",
+    coveredCount: covered.length,
+    sourceHash: hash,
+    body: buildNotebookBody(covered, version, hash),
+  };
+  const others = existing.filter((row) => row.thread !== thread).map((row) => ({ ...row, status: "CURRENT" as const }));
+  return { "CORE-01-FLD-ASSISTANT-SUMMARY": serializeNotebookRecords([...others, next]) };
+}
+
 export function formatCoreChatContext(current: (uid: string) => string | null): string {
   const lines: string[] = [];
   const project = exactName(current("CORE-01-CTL-PROJECT"));
@@ -185,6 +328,8 @@ export function formatCoreChatContext(current: (uid: string) => string | null): 
   if (topic) lines.push(`專題：${topic}`);
   if (workItem) lines.push(`工作項目：${workItem}`);
   if (thread) lines.push(`對話：${thread}`);
+  const notebook = notebookTextForThread(current("CORE-01-FLD-ASSISTANT-SUMMARY"), thread);
+  if (notebook) lines.push(`筆記本：\n${notebook}`);
   return lines.join("\n");
 }
 
@@ -201,7 +346,6 @@ export function appendAssistantMessage(
       ...records,
       { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS) },
     ]),
-    "CORE-01-FLD-ASSISTANT-SUMMARY": text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
   };
 }
 
@@ -434,17 +578,37 @@ export function previewCoreAction(
     let records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
     if (!records.some((row) => row.thread === thread)) {
       records = records.map((row) => (row.thread ? row : { ...row, thread }));
-      const prior = usableMessage(current("CORE-01-FLD-ASSISTANT-SUMMARY") ?? undefined);
+      const priorSummary = current("CORE-01-FLD-ASSISTANT-SUMMARY");
+      const priorNotebook = parseNotebookRecords(priorSummary ?? null);
+      const prior = priorNotebook.length ? "" : usableMessage(priorSummary ?? undefined);
       const scopedMessages = records.filter((row) => row.thread === thread);
       const last = scopedMessages[scopedMessages.length - 1]?.text;
       if (prior && prior !== last && prior !== summary) {
         records = [...records, { thread, role: "assistant", text: prior }];
       }
     }
+    const nextRecords: CoreMessageRecord[] = [...records, { thread, role: "user", text: summary }];
+    const notebookPatch = refreshAssistantNotebook(current, thread, nextRecords, "overflow");
     return {
-      "CORE-01-FLD-MESSAGE": JSON.stringify([...records, { thread, role: "user", text: summary }]),
-      "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
+      "CORE-01-FLD-MESSAGE": JSON.stringify(nextRecords),
+      "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES",
       "CORE-01-BTN-SEND": "sent",
+      ...notebookPatch,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-ASSISTANT-RECORD") {
+    const thread = activeThreadUid(current);
+    if (!thread) return {};
+    const records = messagesForThread(current("CORE-01-FLD-MESSAGE"), thread);
+    if (!records.length) return {};
+    const notebookPatch = refreshAssistantNotebook(current, thread, records, "record");
+    if (!Object.keys(notebookPatch).length) {
+      return { "CORE-01-BTN-ASSISTANT-RECORD": "recorded" };
+    }
+    return {
+      ...notebookPatch,
+      "CORE-01-BTN-ASSISTANT-RECORD": "recorded",
+      "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-VALIDATE") {

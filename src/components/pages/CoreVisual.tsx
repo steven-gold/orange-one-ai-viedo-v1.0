@@ -8,8 +8,8 @@ import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValu
 import {
   activeThreadUid,
   exactName,
-  lastAssistantText,
   messagesForThread,
+  notebookTextForThread,
   previewCoreAction,
   threadScopeReady,
   threadsForCurrentWorkItem,
@@ -205,8 +205,8 @@ export function CoreVisual() {
     const files = [attachment, reference].filter((name): name is string => typeof name === "string" && name.length > 0 && !FILE_STATUS.has(name));
     const payload = [text, ...files].filter(Boolean).join(" · ");
     if (!payload) return;
-    void act("CORE-01-BTN-SEND", payload);
     setDraftMessage("");
+    void act("CORE-01-BTN-SEND", payload);
   }, [act, draftMessage]);
 
   const disabled = false;
@@ -233,21 +233,8 @@ export function CoreVisual() {
     storedActiveThread && threadItems.includes(storedActiveThread) ? storedActiveThread : threadItems[0] ?? null;
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
-  const conversation = messagesForThread(
-    valueOf("CORE-01-FLD-MESSAGE"),
-    activeThread ?? "",
-    valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"),
-  );
-  const assistantSummaryText = lastAssistantText(
-    valueOf("CORE-01-FLD-MESSAGE"),
-    activeThread ?? "",
-    valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"),
-  );
-  const aiReplyText = assistantSummaryText
-    ? isAiUnavailable(assistantSummaryText)
-      ? tx("ai.unavailable")
-      : assistantSummaryText
-    : null;
+  const conversation = messagesForThread(valueOf("CORE-01-FLD-MESSAGE"), activeThread ?? "");
+  const notebookText = notebookTextForThread(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), activeThread ?? "");
   const pickedFileName = (stored: string | null) => (stored && !FILE_STATUS.has(stored) ? stored : "");
   const attachedName = pickedFileName(attachedFile);
   const referenceName = pickedFileName(referenceFile);
@@ -379,7 +366,7 @@ export function CoreVisual() {
             </div>
             <div className={styles.summaryInline}>
               <span className={styles.summaryLabel}>{tx("core.summary_inline")}</span>
-              <p>{aiReplyText ?? tx("core.summary_hint")}</p>
+              <p>{notebookText || tx("core.summary_hint")}</p>
             </div>
             <div data-component-uid="CORE-01-CMP-MESSAGE-MENU" hidden>
               {CORE_MESSAGE_ACTIONS.map((uid) => <span key={uid} data-action-uid={uid} />)}
@@ -391,7 +378,7 @@ export function CoreVisual() {
             <div className={styles.evalGrid}>
               <div className={styles.evalBox} data-component-uid="CORE-01-CMP-SUMMARY" data-control-uid="CORE-01-FLD-ASSISTANT-SUMMARY">
                 <h3>{tx("core.assistant_summary")}</h3>
-                <p>{displayCoreValue(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY"), loading)}</p>
+                <p>{notebookText || displayCoreValue(null, loading)}</p>
                 <span className={styles.meta}>{tx("core.read_only")}</span>
               </div>
               <div className={styles.evalBox} data-component-uid="CORE-01-CMP-EVALUATION" data-control-uid="CORE-01-FLD-EVALUATION">
@@ -452,7 +439,20 @@ export function CoreVisual() {
               <IconButton uid="CORE-01-BTN-REFERENCE" label={tx("core.reference")} icon="reference" onAct={() => referenceRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, referenceName ? styles.active : ""].filter(Boolean).join(" ")} />
               <label className={styles.composerInput}>
                 <span className={styles.srOnly}>{tx("core.message")}</span>
-                <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }} />
+                <textarea
+                  data-control-uid="CORE-01-FLD-MESSAGE"
+                  disabled={disabled}
+                  placeholder={tx("core.message_placeholder")}
+                  value={draftMessage}
+                  rows={3}
+                  onChange={(event) => setDraftMessage(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                      event.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                />
               </label>
               <IconButton uid="CORE-01-BTN-SEND" label={canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>

@@ -79,7 +79,8 @@
 }
 
 .value,
-.composerInput input {
+.composerInput input,
+.composerInput textarea {
   min-height: 18px;
   color: var(--core-text);
   font-size: 13px;
@@ -367,6 +368,10 @@
   background: var(--core-input);
 }
 
+.summaryInline p {
+  white-space: pre-wrap;
+}
+
 .summaryLabel {
   color: var(--core-purple);
   font-size: 13px;
@@ -409,6 +414,7 @@
   font-size: 13px;
   line-height: 18px;
   font-weight: 400;
+  white-space: pre-wrap;
 }
 
 .evalGrid {
@@ -475,9 +481,21 @@ button.evalBox {
 .runtime { flex-direction: row; flex-wrap: wrap; min-height: 40px; }
 .runtimeBtn { flex: 1; min-width: 0; }
 
-.composer { flex-direction: row; min-height: 40px; flex-wrap: wrap; }
-.composerInput { flex: 1; min-width: 160px; min-height: 40px; }
+.composer { flex-direction: row; min-height: 40px; flex-wrap: wrap; align-items: flex-end; }
+.composerInput { flex: 1; min-width: 160px; min-height: 72px; }
 .composerInput input { font-size: 13px; line-height: 18px; }
+.composerInput textarea {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  max-height: 160px;
+  resize: vertical;
+  white-space: pre-wrap;
+  overflow: auto;
+  text-overflow: unset;
+  font: inherit;
+  color: inherit;
+}
 .btnSend { min-width: 88px; }
 .composerFiles {
   margin: 8px 0 0;
