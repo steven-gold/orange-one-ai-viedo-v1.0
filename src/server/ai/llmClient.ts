@@ -158,7 +158,7 @@ export async function generatePageReply(
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
   }
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
-  const recent = history.slice(-24).filter((row) => row.content.trim().length > 0);
+  const recent = history.filter((row) => row.content.trim().length > 0);
   let lastError: AiProviderError | null = null;
   for (const config of configs) {
     const messages: ChatMessage[] = [

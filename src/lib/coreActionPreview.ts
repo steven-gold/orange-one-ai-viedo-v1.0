@@ -39,10 +39,14 @@ function usableName(value: string | undefined): string {
   return name.slice(0, 80);
 }
 
+export const CONVERSATION_RECENT_HISTORY_ROWS = 30;
+export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = 2200;
+export const CONVERSATION_STORED_MESSAGE_TEXT_CHARS = 4000;
+
 function usableMessage(value: string | undefined): string {
   const text = value?.trim();
   if (!text || STATUS_TOKENS.has(text)) return "";
-  return text.slice(0, 8000);
+  return text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
 }
 
 export function isPlaceholderName(value: string | null | undefined): boolean {
@@ -124,7 +128,7 @@ export function parseMessageRecords(raw: string | null): CoreMessageRecord[] {
       records.push({
         thread: typeof rec.thread === "string" ? rec.thread.trim() : "",
         role,
-        text: text.slice(0, 8000),
+        text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
       });
     }
     return records;
@@ -149,6 +153,18 @@ export function messagesForThread(
     return [...unscoped, { thread, role: "assistant", text: extra }];
   }
   return unscoped;
+}
+
+export function recentHistoryPayload(
+  records: CoreMessageRecord[],
+): Array<{ role: CoreMessageRole; content: string }> {
+  return records
+    .slice(-CONVERSATION_RECENT_HISTORY_ROWS)
+    .map((row) => ({
+      role: row.role,
+      content: row.text.slice(0, CONVERSATION_RECENT_HISTORY_TEXT_CHARS),
+    }))
+    .filter((row) => row.content.trim().length > 0);
 }
 
 export function lastAssistantText(raw: string | null, thread: string, fallback?: string | null): string {
@@ -181,8 +197,11 @@ export function appendAssistantMessage(
   if (!thread || !text) return {};
   const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
   return {
-    "CORE-01-FLD-MESSAGE": JSON.stringify([...records, { thread, role: "assistant", text: text.slice(0, 8000) }]),
-    "CORE-01-FLD-ASSISTANT-SUMMARY": text.slice(0, 8000),
+    "CORE-01-FLD-MESSAGE": JSON.stringify([
+      ...records,
+      { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS) },
+    ]),
+    "CORE-01-FLD-ASSISTANT-SUMMARY": text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
   };
 }
 

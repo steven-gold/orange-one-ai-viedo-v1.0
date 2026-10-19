@@ -8,6 +8,7 @@ import {
   formatCoreChatContext,
   messagesForThread,
   previewCoreAction,
+  recentHistoryPayload,
 } from "@/lib/coreActionPreview";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
@@ -228,9 +229,7 @@ export async function applyWorkbenchAction(
       const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
       const current = (uid: string) => cache.get(uid) ?? null;
       const thread = activeThreadUid(current);
-      const history = messagesForThread(current("CORE-01-FLD-MESSAGE"), thread)
-        .slice(0, -1)
-        .map((row) => ({ role: row.role, content: row.text }));
+      const history = recentHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread).slice(0, -1));
       const context = formatCoreChatContext(current);
       let reply = AI_UNAVAILABLE_ZH;
       try {
