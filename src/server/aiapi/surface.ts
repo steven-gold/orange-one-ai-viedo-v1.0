@@ -207,7 +207,9 @@ function apiHostsFromPage(page: URL, html: string): string[] {
       hosts.add(host);
       continue;
     }
-    if (/^(api|openapi|gateway)[.-]/.test(host)) hosts.add(host);
+    if (/^(api|openapi|gateway)[.-]/.test(host) || /(^|[.-])(ai-models|ai-api-gateway)([.-]|$)/.test(host)) {
+      hosts.add(host);
+    }
   }
   return Array.from(hosts);
 }
@@ -219,6 +221,7 @@ function baseCandidates(host: string): string[] {
     `https://${host}/api/v1`,
     `https://${host}/api`,
     `https://${host}/openai/v1`,
+    `https://${host}/api/openai/v1`,
   ];
 }
 
@@ -239,6 +242,8 @@ export async function resolveApiBase(input: string, secret: string): Promise<Bas
   candidates.add(`${origin}/v1`);
   candidates.add(`${origin}/api/v1`);
   candidates.add(`${origin}/api`);
+  candidates.add(`${origin}/api/openai/v1`);
+  candidates.add(`${origin}/openai/v1`);
 
   let denied = false;
   for (const base of candidates) {

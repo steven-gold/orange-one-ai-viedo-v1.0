@@ -585,9 +585,11 @@ export function AiapiVisual() {
         setNotice(
           imported > 0
             ? { key: "aiapi.notice-created-modules", count: imported }
-            : successKey
-              ? { key: successKey }
-              : null,
+            : successKey === "aiapi.notice-created"
+              ? { key: "aiapi.notice-refreshed" }
+              : successKey
+                ? { key: successKey }
+                : null,
         );
       } else {
         setNotice({ key: noticeKeyForCode(result.code) });

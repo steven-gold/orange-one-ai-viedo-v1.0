@@ -486,7 +486,7 @@ async function importModules(
       // Re-submitting the same catalogue refreshes the published metadata even
       // though no new profile is created.
       const existing = byFingerprint.get(fingerprint);
-      if (existing) {
+      if (existing && JSON.stringify(notes[existing.profileId] ?? {}) !== JSON.stringify(note)) {
         notes[existing.profileId] = note;
         notesChanged = true;
       }
@@ -500,7 +500,10 @@ async function importModules(
   }
 
   if (!imported.length) {
-    if (notesChanged) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+    if (notesChanged) {
+      await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+      return { ok: true, imported: 0 };
+    }
     return { ok: false, code: "AIAPI_PROFILE_DUPLICATE" };
   }
 

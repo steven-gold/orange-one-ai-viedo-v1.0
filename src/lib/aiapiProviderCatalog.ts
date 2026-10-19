@@ -167,12 +167,19 @@ export const AIAPI_PROVIDER_REGISTRY: readonly ProviderRegistryEntry[] = [
     providerName: "長亭百智雲",
     adapterType: "openai",
     baseUrl: "https://ai-models.app.baizhi.cloud/api/v1",
+    baseUrls: [
+      "https://ai-models.app.baizhi.cloud/api/v1",
+      "https://ai-models.app.baizhi.cloud/api/openai/v1",
+      "https://ai-api-gateway.app.baizhi.cloud/api/v1",
+      "https://ai-api-gateway.app.baizhi.cloud/api/openai/v1",
+    ],
     authStyle: "bearer",
+    authStyles: ["bearer", "api-key", "x-api-key"],
     modelsPath: "/models",
     verifyPath: "/models",
     verifyMethod: "GET",
     keyPrefixes: [],
-    docs: "https://baizhi.cloud/landing/api-gateway",
+    docs: "https://baizhi.cloud/landing/model-square",
   },
 ] as const;
 

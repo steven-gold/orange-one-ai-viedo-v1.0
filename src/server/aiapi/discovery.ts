@@ -197,6 +197,8 @@ export async function listProviderModels(
   const bases = verified ? [verified.baseUrl] : baseVariants(entry);
   const headerVariants = verified ? [verified.headers] : authHeaderVariants(entry, secret);
   let denied = false;
+  let timedOut = false;
+  let reached = false;
   for (const base of bases) {
     for (const headers of headerVariants) {
       const url = `${trimBase(base)}${entry.modelsPath}`;
@@ -206,6 +208,7 @@ export async function listProviderModels(
           { method: "GET", headers: { accept: "application/json", ...headers } },
           timeoutMs,
         );
+        reached = true;
         if (status === 401 || status === 403) {
           denied = true;
           continue;
@@ -215,12 +218,13 @@ export async function listProviderModels(
         if (!models.length) continue;
         return { ok: true, models };
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") continue;
-        continue;
+        if (error instanceof Error && error.name === "AbortError") timedOut = true;
       }
     }
   }
-  return { ok: false, code: denied ? "AIAPI_PROVIDER_KEY_INVALID" : "AIAPI_PROVIDER_HTTP_ERROR" };
+  if (denied) return { ok: false, code: "AIAPI_PROVIDER_KEY_INVALID" };
+  if (!reached) return { ok: false, code: timedOut ? "AIAPI_PROVIDER_TIMEOUT" : "AIAPI_PROVIDER_UNREACHABLE" };
+  return { ok: false, code: "AIAPI_PROVIDER_HTTP_ERROR" };
 }
 
 /**
@@ -281,19 +285,60 @@ export function parseDocsIndex(markdown: string): DocLink[] {
 
 export type DocOperation = Omit<DiscoveredModule, "moduleId" | "capability" | "source">;
 
+function isBoilerplate(text: string): boolean {
+  return /^(Note:|Source:|Locale:|Current Tab:|Sibling Tabs:|This content is optimized|Fetch the complete)/i.test(
+    text,
+  );
+}
+
+function firstParagraph(text: string): string {
+  const parts: string[] = [];
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      if (parts.length) break;
+      continue;
+    }
+    if (/^#{1,6}\s/.test(trimmed) || /^[>|`-]/.test(trimmed) || /^\|/.test(trimmed) || /^---+$/.test(trimmed)) {
+      if (parts.length) break;
+      continue;
+    }
+    if (isBoilerplate(trimmed)) continue;
+    parts.push(trimmed);
+    if (parts.join(" ").length >= 80) break;
+  }
+  return parts.join(" ").slice(0, 400);
+}
+
 /**
- * Providers put the human description of an operation in a "Description"
- * blockquote. Reading only that keeps table rows and schema noise out.
+ * Prefer the vendor Overview, then the first real paragraph, then a Description
+ * that is not a "Note:" callout. Query-task notes must not become the module
+ * positioning text.
  */
 function docDescription(markdown: string): string {
-  const sections = markdown.split(/^#{2,4}\s+/m);
-  const section = sections.find((part) => /^Description\b/i.test(part));
-  const scope = section ? section.replace(/^Description[^\n]*\n/, "") : markdown.slice(0, 1200);
-  for (const line of scope.split("\n")) {
+  const overview = markdown.split(/^##\s+/m).find((part) => /^Overview\b/i.test(part));
+  if (overview) {
+    const para = firstParagraph(overview.replace(/^Overview[^\n]*\n/, ""));
+    if (para.length >= 20) return para;
+  }
+  const afterTitle = markdown.replace(/^[\s\S]*?^#\s+[^\n]+\n/, "");
+  const para = firstParagraph(afterTitle);
+  if (para.length >= 20) return para;
+  return sectionDescription(markdown);
+}
+
+function sectionDescription(section: string): string {
+  const desc = section.split(/^#{2,4}\s+/m).find((part) => /^Description\b/i.test(part));
+  if (!desc) return "";
+  const body = desc.replace(/^Description[^\n]*\n/, "");
+  const para = firstParagraph(body);
+  if (para.length >= 20) return para;
+  for (const line of body.split("\n")) {
     const quoted = /^>\s*(.+)$/.exec(line.trim());
     if (!quoted) continue;
     const text = quoted[1].replace(/^Note:\s*/i, "").trim();
-    if (text.length >= 20) return text.slice(0, 400);
+    if (isBoilerplate(text) || text.length < 80 || /querying async tasks only/i.test(text)) continue;
+    return text.slice(0, 400);
   }
   return "";
 }
@@ -303,8 +348,9 @@ function docInputHint(markdown: string): string {
   const sections = markdown.split(/^#{2,4}\s+/m);
   const parts: string[] = [];
   for (const section of sections) {
-    const name = /^(Body|Query|Path) Params\b/i.exec(section)?.[1];
-    if (!name) continue;
+    const heading = /^(Request Body|Body Params|Query Params|Path Params)\b/i.exec(section)?.[1];
+    if (!heading) continue;
+    const label = /request body/i.test(heading) ? "Body" : heading.replace(/ Params/i, "");
     const required: string[] = [];
     for (const line of section.split("\n")) {
       const cells = line.split("|").map((cell) => cell.trim());
@@ -313,43 +359,159 @@ function docInputHint(markdown: string): string {
       const isRequired = /^yes$/i.test(cells[3] ?? "");
       if (field && isRequired) required.push(field);
     }
-    if (required.length) parts.push(`${name}: ${required.join(", ")}`);
+    if (required.length) parts.push(`${label}: ${required.join(", ")}`);
   }
   return parts.join(" · ").slice(0, 300);
 }
 
+function docOutputHint(section: string): string {
+  if (/outputs[\s\S]{0,80}url|url[\s\S]{0,80}outputs/i.test(section)) {
+    return "outputs[].url（type=image）";
+  }
+  if (/Method:\s*`POST`/i.test(section) && /task_id/i.test(section)) return "data.task_id";
+  return "";
+}
+
+function docTags(markdown: string): string {
+  const match = /suitable for ([^.]+)/i.exec(markdown);
+  return match ? match[1].replace(/\s+/g, " ").trim().slice(0, 200) : "";
+}
+
+function docRestrictions(markdown: string): string {
+  const bits: string[] = [];
+  const longest = /longest side must not exceed (\d+\s*px)/i.exec(markdown);
+  const shortest = /shortest side must be greater than (\d+\s*px)/i.exec(markdown);
+  const size = /file size must not exceed (\d+\s*MB)/i.exec(markdown);
+  const formats = /Supported formats:\s*([^.]+)/i.exec(markdown);
+  if (formats) bits.push(formats[1].trim());
+  if (longest) bits.push(`最長邊 ≤ ${longest[1]}`);
+  if (shortest) bits.push(`最短邊 > ${shortest[1]}`);
+  if (size) bits.push(`檔案 ≤ ${size[1]}`);
+  return bits.join("；").slice(0, 240);
+}
+
+function isCreateSection(heading: string): boolean {
+  return /create|submit|generat/i.test(heading) || heading === "";
+}
+
 /**
  * One documented page can describe several calls (create, query, list), so
- * every Method/Path pair on the page becomes its own module.
+ * every Method/Path pair on the page becomes its own module. Metadata is taken
+ * from the section that declares that call, not from a later query-task note.
  */
 export function parseDocPage(markdown: string, title: string): DocOperation[] {
   const heading = /^#\s+(.+)$/m.exec(markdown)?.[1]?.trim() ?? title;
-  const description = docDescription(markdown);
-  const inputHint = docInputHint(markdown);
+  const pageDescription = docDescription(markdown);
+  const pageTags = docTags(markdown);
+  const pageRestrictions = docRestrictions(markdown);
   const operations: DocOperation[] = [];
   const seen = new Set<string>();
-  const pair = /Method:\s*`(GET|POST|PUT|PATCH|DELETE)`[\s\S]{0,160}?Path:\s*`(\/[^`\s]*)`/gi;
-  for (const match of markdown.matchAll(pair)) {
-    const method = match[1].toUpperCase();
-    const path = match[2];
-    const key = `${method} ${path}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    operations.push({
-      title: heading,
-      method,
-      path,
-      docs: "",
-      contextWindow: "",
-      billing: "",
-      description,
-      inputHint,
-      outputHint: "",
-      restrictions: "",
-      tags: "",
-    });
+  const queryPaths: string[] = [];
+  const sections = markdown.split(/^(?=##\s+)/m);
+  for (const section of sections) {
+    const sectionTitle = /^##\s+(.+)$/m.exec(section)?.[1]?.trim() ?? "";
+    const pair = /Method:\s*`(GET|POST|PUT|PATCH|DELETE)`[\s\S]{0,160}?Path:\s*`(\/[^`\s]*)`/gi;
+    const localDesc = sectionDescription(section);
+    const description = isCreateSection(sectionTitle)
+      ? pageDescription || localDesc
+      : localDesc;
+    const inputHint = docInputHint(section);
+    const outputHint = docOutputHint(section);
+    for (const match of section.matchAll(pair)) {
+      const method = match[1].toUpperCase();
+      const path = match[2];
+      const key = `${method} ${path}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (method === "GET") queryPaths.push(path);
+      const create = isCreateSection(sectionTitle);
+      operations.push({
+        title: heading,
+        method,
+        path,
+        docs: "",
+        contextWindow: "",
+        billing: "",
+        description: description,
+        inputHint,
+        outputHint,
+        restrictions: create ? pageRestrictions : "",
+        tags: create ? pageTags : "",
+      });
+    }
+  }
+  const queryPath = queryPaths[0] ?? "";
+  for (const operation of operations) {
+    if (operation.method !== "POST") continue;
+    if (queryPath) {
+      operation.outputHint = `建立任務後以 GET ${queryPath}?task_ids= 查詢結果`;
+    } else if (!operation.outputHint) {
+      operation.outputHint = "data.task_id";
+    }
   }
   return operations;
+}
+
+/**
+ * Reads the vendor's own pricing tables. A row is kept only when it names a
+ * product and a published unit price; nothing is estimated.
+ */
+export function parsePricingTables(markdown: string): { name: string; billing: string }[] {
+  const rows: { name: string; billing: string }[] = [];
+  let headers: string[] = [];
+  for (const line of markdown.split("\n")) {
+    if (!line.includes("|")) continue;
+    const cells = line
+      .split("|")
+      .map((cell) => cell.trim())
+      .filter((_, index, all) => index > 0 && index < all.length - 1);
+    if (!cells.length || cells.every((cell) => /^[-:]+$/.test(cell))) continue;
+    if (cells.some((cell) => /^price\b/i.test(cell)) || /^(model|solution)$/i.test(cells[0] ?? "")) {
+      headers = cells;
+      continue;
+    }
+    if (!headers.length) continue;
+    const name = cells[0] ?? "";
+    if (!name) continue;
+    const methodIndex = headers.findIndex((header) => /billing type/i.test(header));
+    const featureIndex = headers.findIndex((header) => /features/i.test(header));
+    const method = methodIndex >= 0 ? (cells[methodIndex] ?? "") : "";
+    const features = featureIndex >= 0 ? (cells[featureIndex] ?? "") : "";
+    const prices: string[] = [];
+    headers.forEach((header, index) => {
+      if (index === 0) return;
+      const value = cells[index] ?? "";
+      if (!value || value === "-") return;
+      if (!/^price/i.test(header) && !/units/i.test(value) && !/\$/.test(value)) return;
+      const label = header.replace(/^Price\s*/i, "").replace(/[()]/g, "").trim();
+      prices.push(label && !/^price$/i.test(label) ? `${label} ${value}` : value);
+    });
+    if (!prices.length) continue;
+    const prefix = method && method !== "-" ? `${method}：` : "";
+    const feat = features && features !== "-" ? `（${features}）` : "";
+    rows.push({ name: `${name}${feat}`, billing: `${prefix}${prices.join("；")}`.slice(0, 240) });
+  }
+  return rows;
+}
+
+function billingFor(title: string, path: string, prices: { name: string; billing: string }[]): string {
+  const hay = `${title} ${path}`.toLowerCase().replace(/[-_]/g, " ");
+  let best = "";
+  let score = 0;
+  for (const row of prices) {
+    const name = row.name.toLowerCase().replace(/[-_]/g, " ");
+    const stem = name.replace(/[()（）].*$/, "").trim();
+    let hit = 0;
+    if (hay.includes(stem) || stem.includes(title.toLowerCase())) hit += 5;
+    for (const token of stem.split(/\s+/)) {
+      if (token.length > 2 && hay.includes(token)) hit += 1;
+    }
+    if (hit > score) {
+      score = hit;
+      best = row.billing;
+    }
+  }
+  return score >= 2 ? best : "";
 }
 
 function slugify(value: string): string {
@@ -422,41 +584,50 @@ async function discoverFromDocs(entry: ProviderRegistryEntry): Promise<Discovere
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         const { status, text } = await fetchWithTimeout(link.url, { method: "GET" }, PAGE_TIMEOUT_MS);
-        if (status === 200) {
-          return parseDocPage(text, link.title).map((operation) => ({ ...operation, link }));
-        }
-        if (status < 500) return [];
+        if (status === 200) return { link, text };
+        if (status < 500) return { link, text: "" };
       } catch {
         // retry once, then give up on this page
       }
     }
-    return [];
+    return { link, text: "" };
   });
+
+  const prices: { name: string; billing: string }[] = [];
+  for (const page of pages) {
+    if (!page.text) continue;
+    if (!/\/pricing\//i.test(page.link.url) && !/^#{1,3}\s.*pric/im.test(page.text)) continue;
+    prices.push(...parsePricingTables(page.text));
+  }
 
   const seen = new Set<string>();
   const modules: DiscoveredModule[] = [];
-  for (const page of pages.flat()) {
-    const key = `${page.method} ${page.path}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const capability = capabilityFromModule(page.title, page.path);
-    const moduleId = slugify(`${page.title}-${page.path}`) || `module-${modules.length + 1}`;
-    modules.push({
-      moduleId,
-      title: page.title,
-      capability,
-      method: page.method,
-      path: page.path,
-      docs: page.link.url,
-      source: "operation",
-      contextWindow: "",
-      billing: "",
-      description: page.description,
-      inputHint: page.inputHint,
-      outputHint: page.outputHint,
-      restrictions: page.restrictions,
-      tags: page.tags,
-    });
+  for (const page of pages) {
+    if (!page.text || /\/pricing\//i.test(page.link.url)) continue;
+    for (const operation of parseDocPage(page.text, page.link.title)) {
+      const key = `${operation.method} ${operation.path}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const capability = capabilityFromModule(operation.title, operation.path);
+      const moduleId = slugify(`${operation.title}-${operation.path}`) || `module-${modules.length + 1}`;
+      modules.push({
+        moduleId,
+        title: operation.title,
+        capability,
+        method: operation.method,
+        path: operation.path,
+        docs: page.link.url,
+        source: "operation",
+        contextWindow: "",
+        billing: billingFor(operation.title, operation.path, prices),
+        description: operation.description,
+        inputHint: operation.inputHint,
+        outputHint: operation.outputHint,
+        restrictions: operation.restrictions,
+        tags: operation.tags,
+      });
+      if (modules.length >= MODULE_LIMIT) break;
+    }
     if (modules.length >= MODULE_LIMIT) break;
   }
   return modules;
