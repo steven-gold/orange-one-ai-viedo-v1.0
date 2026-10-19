@@ -1,4 +1,4 @@
-import { exactName, namedList, parseThreadList } from "./coreActionPreview";
+import { exactName, namedList, parseThreadRecords } from "./coreActionPreview";
 import { DASHBOARD_SECTION_SEEDS } from "@/server/domain/dashboard";
 import type { DashboardSectionValue } from "@/server/domain/types";
 
@@ -65,7 +65,7 @@ export function projectDashboardFromCore(current: (uid: string) => string | null
   const topic = named(current("CORE-01-CTL-TOPIC"));
   const projects = namedList(current("CORE-01-BTN-PROJECT-CREATE"), project);
   const topics = namedList(current("CORE-01-BTN-TOPIC-CREATE"), topic);
-  const threads = parseThreadList(current("CORE-01-BTN-NEW-THREAD"));
+  const threads = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD"));
   const review = current("CORE-01-BTN-CORE-REVIEW");
   const work = current("CORE-01-LST-WORK-ITEMS");
   const pkg = named(current("CORE-01-FLD-PACKAGE"));

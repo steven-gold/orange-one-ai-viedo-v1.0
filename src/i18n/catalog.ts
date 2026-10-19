@@ -115,6 +115,7 @@ const catalog = {
   "core.default_blueprint": { "zh-TW": "新藍圖", "zh-CN": "新蓝图", en: "New blueprint" },
   "core.no_threads": { "zh-TW": "尚無對話，請新增", "zh-CN": "尚无对话，请新增", en: "No threads yet" },
   "core.gate-message": { "zh-TW": "需先新增對話並輸入訊息", "zh-CN": "需先新增对话并输入讯息", en: "Create a thread and enter a message first" },
+  "core.gate-thread": { "zh-TW": "需先選定專案與目前工作項目", "zh-CN": "需先选定项目与目前工作项目", en: "Select a project and the current work item first" },
   "core.attached_file": { "zh-TW": "已上傳", "zh-CN": "已上传", en: "Uploaded" },
   "core.reference_file": { "zh-TW": "已引用", "zh-CN": "已引用", en: "Cited" },
   "core.naming": { "zh-TW": "命名權限", "zh-CN": "命名权限", en: "Naming Authority" },

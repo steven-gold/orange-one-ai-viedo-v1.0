@@ -5,7 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
-import { activeThreadUid, exactName, parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
+import { activeThreadUid, exactName, threadScopeReady, threadsForCurrentWorkItem, previewCoreAction } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -169,7 +169,10 @@ export function CoreVisual() {
       const topic = exactName(name);
       if (confirmed && topic) void act("CORE-01-BTN-TOPIC-CREATE", topic);
     }
-    if (dialog === "thread") void act("CORE-01-BTN-NEW-THREAD", name || undefined);
+    if (dialog === "thread") {
+      const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
+      if (threadScopeReady(current)) void act("CORE-01-BTN-NEW-THREAD", name || undefined);
+    }
     if (dialog === "blueprint") void act("CORE-01-BTN-BLUEPRINT-CREATE", name || undefined);
     if (dialog === "rename-project") void act("CORE-01-CTL-PROJECT", name || undefined);
     if (dialog === "rename-topic") {
@@ -214,13 +217,12 @@ export function CoreVisual() {
   const workItems = topicMode ? TOPIC_WORK_ITEMS : PROJECT_WORK_ITEMS;
   const storedWork = valueOf("CORE-01-LST-WORK-ITEMS");
   const activeWorkItem = (workItems as readonly string[]).includes(storedWork ?? "") ? storedWork! : workItems[0];
-  const storedThreads = parseThreadList(valueOf("CORE-01-BTN-NEW-THREAD"));
+  const currentFields = (uid: string) => valueOf(uid);
+  const canCreateThread = threadScopeReady(currentFields);
+  const threadItems = threadsForCurrentWorkItem(currentFields).map((row) => row.title);
   const storedActiveThread = valueOf("CORE-01-LST-THREADS");
-  const threadItems =
-    storedActiveThread && !storedThreads.includes(storedActiveThread) && !["created", "selected"].includes(storedActiveThread)
-      ? [...storedThreads, storedActiveThread]
-      : storedThreads;
-  const activeThread = storedActiveThread && !["created", "selected"].includes(storedActiveThread) ? storedActiveThread : threadItems[0] ?? null;
+  const activeThread =
+    storedActiveThread && threadItems.includes(storedActiveThread) ? storedActiveThread : threadItems[0] ?? null;
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
   const sentMessage = valueOf("CORE-01-FLD-MESSAGE");
@@ -301,11 +303,11 @@ export function CoreVisual() {
               </button>
             ))}
           </div>
-          <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-NEW-THREAD" disabled={disabled} onClick={() => openNameDialog("thread")}>{tx("core.new_thread")}</button>
+          <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-NEW-THREAD" disabled={disabled || !canCreateThread} onClick={() => openNameDialog("thread")}>{tx("core.new_thread")}</button>
           <div data-component-uid="CORE-01-CMP-THREADS">
             <div className={styles.threadsLabel}>{tx("core.threads")}</div>
             <div className={styles.threadList} data-control-uid="CORE-01-LST-THREADS">
-              {threadItems.length === 0 ? <p className={styles.threadEmpty}>{tx("core.no_threads")}</p> : null}
+              {threadItems.length === 0 ? <p className={styles.threadEmpty}>{canCreateThread ? tx("core.no_threads") : tx("core.gate-thread")}</p> : null}
               {threadItems.map((threadUid) => {
                 const selected = activeThread === threadUid;
                 return (

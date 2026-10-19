@@ -83,10 +83,75 @@ export function parseThreadList(raw: string | null): string[] {
   return [raw];
 }
 
+const WORK_ITEMS = new Set([
+  "STORY",
+  "CHAPTER",
+  "WORLD_SETTING",
+  "DNA",
+  "BLUEPRINT",
+  "TOPIC_SCOPE",
+  "PRODUCTION_SCRIPT",
+]);
+
+export type CoreThreadRecord = { title: string; workItem: string };
+
+export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
+  if (!raw || raw === "created") return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      const title = usableName(raw);
+      return title ? [{ title, workItem: "" }] : [];
+    }
+    const records: CoreThreadRecord[] = [];
+    for (const item of parsed) {
+      if (typeof item === "string") {
+        const title = usableName(item);
+        if (title) records.push({ title, workItem: "" });
+        continue;
+      }
+      if (!item || typeof item !== "object") continue;
+      const rec = item as { title?: unknown; workItem?: unknown };
+      const title = typeof rec.title === "string" ? usableName(rec.title) : "";
+      if (!title) continue;
+      records.push({
+        title,
+        workItem: typeof rec.workItem === "string" && WORK_ITEMS.has(rec.workItem) ? rec.workItem : "",
+      });
+    }
+    return records;
+  } catch {
+    const title = usableName(raw);
+    return title ? [{ title, workItem: "" }] : [];
+  }
+}
+
+export function currentWorkItem(current: (uid: string) => string | null): string {
+  const stored = current("CORE-01-LST-WORK-ITEMS") ?? "";
+  if (WORK_ITEMS.has(stored)) return stored;
+  if (!exactName(current("CORE-01-CTL-PROJECT"))) return "";
+  const topicMode =
+    current("CORE-01-FLD-PAGE-MODE") === "TOPIC_PRODUCTION" && Boolean(exactName(current("CORE-01-CTL-TOPIC")));
+  return topicMode ? "TOPIC_SCOPE" : "STORY";
+}
+
+export function threadScopeReady(current: (uid: string) => string | null): boolean {
+  return Boolean(exactName(current("CORE-01-CTL-PROJECT")) && currentWorkItem(current));
+}
+
+export function threadsForCurrentWorkItem(current: (uid: string) => string | null): CoreThreadRecord[] {
+  const workItem = currentWorkItem(current);
+  if (!workItem) return [];
+  return parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).filter((row) => row.workItem === workItem);
+}
+
 export function activeThreadUid(current: (uid: string) => string | null): string {
+  const scoped = threadsForCurrentWorkItem(current);
   const stored = current("CORE-01-LST-THREADS");
-  if (stored && !["created", "selected"].includes(stored)) return stored;
-  return parseThreadList(current("CORE-01-BTN-NEW-THREAD"))[0] ?? "";
+  if (stored && !["created", "selected"].includes(stored) && scoped.some((row) => row.title === stored)) {
+    return stored;
+  }
+  return scoped[0]?.title ?? "";
 }
 
 export function hasSendableMessage(nextValue?: string, stored?: string | null): boolean {
@@ -235,12 +300,16 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-THREAD-CREATE") {
-    const list = parseThreadList(current("CORE-01-BTN-NEW-THREAD"));
-    const title = namedValue(nextValue, `對話 ${list.length + 1}`);
-    const nextList = [...list, title];
+    if (!threadScopeReady(current)) return {};
+    const workItem = currentWorkItem(current);
+    const records = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD"));
+    const scoped = records.filter((row) => row.workItem === workItem);
+    const title = namedValue(nextValue, `對話 ${scoped.length + 1}`);
+    const exists = records.some((row) => row.title === title && row.workItem === workItem);
+    const nextRecords = exists ? records : [...records, { title, workItem }];
     return {
       "CORE-01-LST-THREADS": title,
-      "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextList),
+      "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextRecords),
     };
   }
   if (actionUid === "CORE-01-ACT-SEND") {
@@ -376,10 +445,25 @@ export function previewCoreAction(
     return { "CORE-01-FLD-LOCK-REVIEW": namedValue(nextValue, current("CORE-01-FLD-LOCK-REVIEW") || "ready") };
   }
   if (actionUid === "CORE-01-ACT-WORK-ITEM-SELECT") {
-    return { "CORE-01-LST-WORK-ITEMS": nextValue ?? current("CORE-01-LST-WORK-ITEMS") ?? "STORY" };
+    const nextWork = nextValue ?? current("CORE-01-LST-WORK-ITEMS") ?? "STORY";
+    if (!WORK_ITEMS.has(nextWork)) return {};
+    const matching = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).filter((row) => row.workItem === nextWork);
+    const stored = current("CORE-01-LST-THREADS");
+    const keep = stored && matching.some((row) => row.title === stored) ? stored : matching[0]?.title ?? "";
+    return {
+      "CORE-01-LST-WORK-ITEMS": nextWork,
+      "CORE-01-LST-THREADS": keep,
+    };
   }
   if (actionUid === "CORE-01-ACT-THREAD-SELECT") {
-    return { "CORE-01-LST-THREADS": nextValue ?? current("CORE-01-LST-THREADS") ?? "selected" };
+    const workItem = currentWorkItem(current);
+    if (!workItem) return {};
+    const title = exactName(nextValue) || exactName(current("CORE-01-LST-THREADS"));
+    if (!title) return {};
+    const match = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).some(
+      (row) => row.title === title && row.workItem === workItem,
+    );
+    return match ? { "CORE-01-LST-THREADS": title } : {};
   }
   if (controlUid === "CORE-01-FLD-RUNTIME-STAGE") {
     return { "CORE-01-FLD-RUNTIME-STAGE": nextValue || current("CORE-01-FLD-RUNTIME-STAGE") || "AI_RESPONSES" };
