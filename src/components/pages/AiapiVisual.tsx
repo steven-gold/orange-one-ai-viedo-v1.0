@@ -19,7 +19,7 @@ import {
   endpointForModel,
   prefixCandidates,
 } from "@/lib/aiapiProviderCatalog";
-import { displayAiapiAdapter, displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
+import { displayAiapiAdapter, displayAiapiCapability, displayAiapiStatus, displayAiapiTimeout, displayAiapiValue } from "./aiapiFormat";
 import {
   AIAPI_CONTROL_ACTIONS,
   AIAPI_PRO_DESC_FIELDS,
@@ -344,7 +344,7 @@ function ModalForm({
             <option value="">—</option>
             {Array.from(new Set([...AIAPI_CAPABILITIES, value].filter(Boolean))).map((capability) => (
               <option key={capability} value={capability}>
-                {capability}
+                {displayAiapiCapability(capability, t)}
               </option>
             ))}
           </select>
@@ -613,7 +613,7 @@ export function AiapiVisual() {
 
   const disabled = !authorized && !loading;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
-  const tx = (key: TranslationKey) => t(key);
+  const tx = (key: TranslationKey, params?: Record<string, string | number>) => t(key, params);
   const dash = displayAiapiValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(AIAPI_VISIBLE_CONTROLS), []);
 
@@ -764,11 +764,11 @@ export function AiapiVisual() {
   const profileRow = (profile: AiapiProfile) => [
     displayAiapiValue(profile.providerName || profile.providerId, loading),
     displayAiapiValue(profile.modelName || profile.modelId, loading),
-    displayAiapiValue(profile.capabilityType, loading),
+    displayAiapiCapability(profile.capabilityType, tx, loading),
     displayAiapiAdapter(profile.adapterType, tx, loading),
     displayAiapiValue(profile.baseUrl, loading),
     displayAiapiValue(profile.endpointPath, loading),
-    displayAiapiValue(profile.timeoutSeconds, loading),
+    displayAiapiTimeout(profile.timeoutSeconds, tx, loading),
     displayAiapiStatus(profile.enabled ? "ENABLED" : "DISABLED", tx, loading),
     displayAiapiStatus(profile.credentialSet ? "SET" : "NOT_SET", tx, loading),
     lastTestCell(profile),
@@ -784,7 +784,7 @@ export function AiapiVisual() {
       case "AIAPI-01-PROFILE-GRP-ADAPTER":
         return displayAiapiAdapter(selected.adapterType, tx, loading);
       case "AIAPI-01-PROFILE-GRP-CAPABILITY":
-        return displayAiapiValue(selected.capabilityType, loading);
+        return displayAiapiCapability(selected.capabilityType, tx, loading);
       case "AIAPI-01-PROFILE-GRP-DATA-CONTEXT":
         return displayAiapiValue(selected.endpointPath, loading);
       case "AIAPI-01-PROFILE-GRP-STATUS":
@@ -803,17 +803,18 @@ export function AiapiVisual() {
       case "AIAPI-01-PRO-DESC-IDENTITY":
         return profileValue(profileIdentity(selected));
       case "AIAPI-01-PRO-DESC-CAPABILITIES":
-        return profileValue(profileCapabilities(selected).join(" / "));
+        return displayAiapiCapability(profileCapabilities(selected).join(" / "), tx, loading);
       case "AIAPI-01-PRO-DESC-INPUT":
         return profileValue(selected.requestTemplate || note.inputHint || "");
       case "AIAPI-01-PRO-DESC-OUTPUT":
         return profileValue(selected.responseTextPath || note.outputHint || "");
       case "AIAPI-01-PRO-DESC-LIMITS":
-        return profileValue(
-          [selected.timeoutSeconds ? `${selected.timeoutSeconds}s` : "", selected.maxContext]
-            .filter(Boolean)
-            .join(" / "),
-        );
+        return [
+          selected.timeoutSeconds ? displayAiapiTimeout(selected.timeoutSeconds, tx, loading) : "",
+          selected.maxContext ? profileValue(selected.maxContext) : "",
+        ]
+          .filter(Boolean)
+          .join("／") || dash;
       case "AIAPI-01-PRO-DESC-ENDPOINT":
         return profileValue([selected.baseUrl, selected.endpointPath, selected.httpMethod].filter(Boolean).join(" · "));
       case "AIAPI-01-PRO-DESC-AUTH":
@@ -827,7 +828,7 @@ export function AiapiVisual() {
       case "AIAPI-01-FLD-OV-PROVIDER":
         return profileValue(selected.providerName || selected.providerId);
       case "AIAPI-01-FLD-OV-CAPABILITY":
-        return profileValue(selected.capabilityType);
+        return displayAiapiCapability(selected.capabilityType, tx, loading);
       case "AIAPI-01-FLD-OV-HEALTH":
         return selected.lastTest
           ? displayAiapiStatus(selected.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN", tx, loading)

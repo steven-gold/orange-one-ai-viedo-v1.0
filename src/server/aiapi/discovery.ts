@@ -175,27 +175,51 @@ export function parseModels(payload: unknown): ProviderModel[] {
     const item = row as {
       id?: unknown;
       name?: unknown;
+      display_name?: unknown;
       owned_by?: unknown;
+      ownedBy?: unknown;
       description?: unknown;
+      desc?: unknown;
+      info?: unknown;
       supportedGenerationMethods?: unknown;
       context_length?: unknown;
       context_window?: unknown;
       max_context_length?: unknown;
-      pricing?: { prompt?: unknown; completion?: unknown };
+      max_tokens?: unknown;
+      max_input_tokens?: unknown;
+      pricing?: { prompt?: unknown; completion?: unknown; input?: unknown; output?: unknown };
     };
     const methods = Array.isArray(item.supportedGenerationMethods) ? item.supportedGenerationMethods : [];
     if (methods.length && !methods.includes("generateContent")) continue;
     const raw = typeof item.id === "string" ? item.id : typeof item.name === "string" ? item.name : "";
     const id = raw.trim().replace(/^models\//, "");
     if (!id) continue;
-    const context = item.context_length ?? item.context_window ?? item.max_context_length;
-    const prompt = item.pricing?.prompt;
-    const description = typeof item.description === "string" ? item.description.trim().slice(0, 400) : "";
-    const ownedBy = typeof item.owned_by === "string" ? item.owned_by.trim().slice(0, 80) : "";
+    const context = item.context_length ?? item.context_window ?? item.max_context_length ?? item.max_tokens ?? item.max_input_tokens;
+    const pricing = item.pricing;
+    const prompt = pricing?.prompt ?? pricing?.input;
+    const completion = pricing?.completion ?? pricing?.output;
+    const descriptionRaw = [item.description, item.desc, item.info, item.display_name].find(
+      (value) => typeof value === "string" && value.trim(),
+    );
+    const description = typeof descriptionRaw === "string" ? descriptionRaw.trim().slice(0, 400) : "";
+    const ownedRaw = item.owned_by ?? item.ownedBy;
+    const ownedBy = typeof ownedRaw === "string" ? ownedRaw.trim().slice(0, 80) : "";
+    const contextWindow =
+      typeof context === "number" && Number.isFinite(context)
+        ? String(context)
+        : typeof context === "string" && context.trim()
+          ? context.trim()
+          : "";
+    const billing =
+      typeof prompt === "string" && prompt && prompt !== "0"
+        ? `prompt ${prompt} / completion ${String(completion ?? "")}`
+        : typeof prompt === "number"
+          ? `prompt ${prompt} / completion ${String(completion ?? "")}`
+          : "";
     models.push({
       id,
-      contextWindow: typeof context === "number" ? String(context) : "",
-      billing: typeof prompt === "string" && prompt !== "0" ? `prompt ${prompt} / completion ${String(item.pricing?.completion ?? "")}` : "",
+      contextWindow,
+      billing,
       description,
       ownedBy,
     });

@@ -24,6 +24,52 @@ export function displayAiapiAdapter(
   return key ? t(key) : displayBoundValue(value, loading);
 }
 
+const CAPABILITY_KEYS: Record<string, TranslationKey> = {
+  chat: "aiapi.cap-chat",
+  correction: "aiapi.cap-correction",
+  "video-generation": "aiapi.cap-video-generation",
+  "text-to-video": "aiapi.cap-text-to-video",
+  "image-to-video": "aiapi.cap-image-to-video",
+  "image-generation": "aiapi.cap-image-generation",
+  "audio-generation": "aiapi.cap-audio-generation",
+  embedding: "aiapi.cap-embedding",
+  moderation: "aiapi.cap-moderation",
+  transcription: "aiapi.cap-transcription",
+  operation: "aiapi.cap-operation",
+  "element-management": "aiapi.cap-element-management",
+  billing: "aiapi.cap-billing",
+};
+
+export function displayAiapiCapability(
+  value: string | null | undefined,
+  t: (key: TranslationKey) => string,
+  loading = false,
+): string {
+  const parts = (value ?? "")
+    .split(/[/,]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (!parts.length) return displayBoundValue(null, loading);
+  return parts
+    .map((part) => {
+      const key = CAPABILITY_KEYS[part.toLowerCase()];
+      return key ? t(key) : part;
+    })
+    .join("／");
+}
+
+export function displayAiapiTimeout(
+  value: string | null | undefined,
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string,
+  loading = false,
+): string {
+  const token = (value ?? "").trim();
+  if (!token) return displayBoundValue(null, loading);
+  const seconds = token.replace(/s$/i, "").trim();
+  if (!/^\d+(\.\d+)?$/.test(seconds)) return displayBoundValue(value, loading);
+  return t("aiapi.timeout-seconds", { seconds });
+}
+
 const STATUS_KEYS: Record<string, TranslationKey> = {
   ENABLED: "aiapi.status-enabled",
   DISABLED: "aiapi.status-disabled",

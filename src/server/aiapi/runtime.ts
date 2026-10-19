@@ -691,16 +691,28 @@ export async function refreshPublishedNotes(): Promise<boolean> {
         for (const [providerId, group] of byProvider) {
           const entry = registryEntry(providerId);
           if (!entry?.modelsPath) continue;
-          const secret = await getAiapiCredential(group[0].profileId);
-          if (!secret) continue;
-          const listed = await listProviderModels(entry, secret, 6000, {
-            baseUrl: group[0].baseUrl,
-            headers: { authorization: `Bearer ${secret}` },
-          });
-          if (!listed.ok) continue;
+          const seen = new Set<string>();
+          const bases = [...new Set(group.map((profile) => profile.baseUrl.trim()).filter(Boolean))];
+          let listed: Awaited<ReturnType<typeof listProviderModels>> | null = null;
+          for (const profile of group) {
+            const secret = await getAiapiCredential(profile.profileId);
+            if (!secret || seen.has(secret)) continue;
+            seen.add(secret);
+            for (const baseUrl of bases.length ? bases : [entry.baseUrl]) {
+              const result = await listProviderModels(entry, secret, 6000, {
+                baseUrl,
+                headers: { authorization: `Bearer ${secret}` },
+              });
+              if (!result.ok) continue;
+              listed = result;
+              break;
+            }
+            if (listed?.ok) break;
+          }
+          if (!listed?.ok) continue;
           const byId = new Map(listed.models.map((model) => [model.id, model] as const));
           for (const profile of group) {
-            const model = byId.get(profile.modelId);
+            const model = byId.get(profile.modelId) ?? byId.get(profile.modelName);
             if (!model) continue;
             const current = notes[profile.profileId] ?? {};
             const next = {
