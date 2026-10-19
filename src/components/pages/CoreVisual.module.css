@@ -308,15 +308,37 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-.userMessage {
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 220px;
   margin-top: 10px;
+  overflow: auto;
+}
+
+.userMessage,
+.assistantMessage {
   padding: 10px 14px;
   border-radius: 12px;
-  background: var(--core-input);
   border: 1px solid var(--core-border);
 }
 
-.userMessage p {
+.userMessage {
+  align-self: flex-end;
+  max-width: 86%;
+  background: var(--core-input);
+}
+
+.assistantMessage {
+  align-self: flex-start;
+  max-width: 86%;
+  background: #121833;
+  border-color: rgba(139, 92, 255, 0.22);
+}
+
+.userMessage p,
+.assistantMessage p {
   margin: 6px 0 0;
   color: var(--core-secondary);
   font-size: 13px;

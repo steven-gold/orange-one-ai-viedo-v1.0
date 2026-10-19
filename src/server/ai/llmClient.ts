@@ -1,6 +1,6 @@
 import { getSqlClient } from "../db/client";
 import { getAiapiCredential } from "../db/aiapiCredential";
-import { eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
+import { AIAPI_PROMPT_TEMPLATE_TOKEN, eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
 
 export type AiPageUid = "core" | "asset" | "video";
 
@@ -16,6 +16,7 @@ export interface ProviderConfig {
   provider: string;
   credential: string;
   timeoutMs: number;
+  promptTemplate: string;
 }
 
 function clean(value: string | null | undefined): string {
@@ -41,7 +42,28 @@ function toProviderConfig(profile: AiapiProfile, credential: string): ProviderCo
   const timeoutSeconds = Number.parseInt(clean(profile.timeoutSeconds), 10);
   const timeoutMs = Number.isFinite(timeoutSeconds) && timeoutSeconds > 0 ? timeoutSeconds * 1000 : 20000;
 
-  return { url: `${base}${endpoint}`, model, provider, credential, timeoutMs };
+  return {
+    url: `${base}${endpoint}`,
+    model,
+    provider,
+    credential,
+    timeoutMs,
+    promptTemplate: clean(profile.promptTemplate),
+  };
+}
+
+const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
+  core: "你是 ACPOS 核心製作助理。以繁體中文、精簡且可執行地回覆使用者在專案／專題對話中的需求。請延續同一條對話的上下文，不要忽略使用者剛說的內容。",
+  asset: "你是 ACPOS 素材製作助理。以繁體中文回覆素材修正需求，輸出可直接套用的修正內容。",
+  video: "你是 ACPOS 影片剪輯助理。以繁體中文回覆鏡頭修正需求，輸出可直接套用的修正內容。",
+};
+
+function systemPromptFor(page: AiPageUid, template: string): string {
+  const instruction = SYSTEM_PROMPTS[page];
+  if (template.includes(AIAPI_PROMPT_TEMPLATE_TOKEN)) {
+    return template.split(AIAPI_PROMPT_TEMPLATE_TOKEN).join(instruction);
+  }
+  return instruction;
 }
 
 export async function resolveProviderConfigs(capability: string): Promise<ProviderConfig[]> {
@@ -125,19 +147,30 @@ export async function callChat(messages: ChatMessage[], capability: string): Pro
   throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
 }
 
-const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
-  core: "你是 ACPOS 核心製作助理。以繁體中文、精簡且可執行地回覆使用者在專案／專題對話中的需求。",
-  asset: "你是 ACPOS 素材製作助理。以繁體中文回覆素材修正需求，輸出可直接套用的修正內容。",
-  video: "你是 ACPOS 影片剪輯助理。以繁體中文回覆鏡頭修正需求，輸出可直接套用的修正內容。",
-};
-
-export async function generatePageReply(page: AiPageUid, prompt: string, context?: string): Promise<string> {
+export async function generatePageReply(
+  page: AiPageUid,
+  prompt: string,
+  context?: string,
+  history: ChatMessage[] = [],
+): Promise<string> {
+  const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
+  if (!configs.length) {
+    throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
+  }
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
-  return callChat(
-    [
-      { role: "system", content: SYSTEM_PROMPTS[page] },
+  const recent = history.slice(-24).filter((row) => row.content.trim().length > 0);
+  let lastError: AiProviderError | null = null;
+  for (const config of configs) {
+    const messages: ChatMessage[] = [
+      { role: "system", content: systemPromptFor(page, config.promptTemplate) },
+      ...recent,
       { role: "user", content: user },
-    ],
-    AI_CAPABILITY_BY_PAGE[page],
-  );
+    ];
+    try {
+      return await callProvider(config, messages);
+    } catch (error) {
+      lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
+    }
+  }
+  throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
 }

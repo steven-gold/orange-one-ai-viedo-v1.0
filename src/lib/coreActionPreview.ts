@@ -39,6 +39,12 @@ function usableName(value: string | undefined): string {
   return name.slice(0, 80);
 }
 
+function usableMessage(value: string | undefined): string {
+  const text = value?.trim();
+  if (!text || STATUS_TOKENS.has(text)) return "";
+  return text.slice(0, 8000);
+}
+
 export function isPlaceholderName(value: string | null | undefined): boolean {
   const name = value?.trim() ?? "";
   return PLACEHOLDER_NAMES.has(name);
@@ -94,6 +100,91 @@ const WORK_ITEMS = new Set([
 ]);
 
 export type CoreThreadRecord = { title: string; workItem: string };
+
+export type CoreMessageRole = "user" | "assistant";
+
+export type CoreMessageRecord = { thread: string; role: CoreMessageRole; text: string };
+
+export function parseMessageRecords(raw: string | null): CoreMessageRecord[] {
+  if (!raw || raw === "sent" || STATUS_TOKENS.has(raw)) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      const text = usableMessage(raw);
+      return text ? [{ thread: "", role: "user", text }] : [];
+    }
+    const records: CoreMessageRecord[] = [];
+    for (const item of parsed) {
+      if (!item || typeof item !== "object") continue;
+      const rec = item as { thread?: unknown; role?: unknown; text?: unknown };
+      const text = typeof rec.text === "string" ? rec.text.trim() : "";
+      if (!text) continue;
+      const role = rec.role === "assistant" ? "assistant" : rec.role === "user" ? "user" : null;
+      if (!role) continue;
+      records.push({
+        thread: typeof rec.thread === "string" ? rec.thread.trim() : "",
+        role,
+        text: text.slice(0, 8000),
+      });
+    }
+    return records;
+  } catch {
+    const text = usableMessage(raw);
+    return text ? [{ thread: "", role: "user", text }] : [];
+  }
+}
+
+export function messagesForThread(
+  raw: string | null,
+  thread: string,
+  fallbackAssistant?: string | null,
+): CoreMessageRecord[] {
+  if (!thread) return [];
+  const records = parseMessageRecords(raw);
+  const scoped = records.filter((row) => row.thread === thread);
+  if (scoped.length) return scoped;
+  const unscoped = records.filter((row) => !row.thread).map((row) => ({ ...row, thread }));
+  const extra = usableMessage(fallbackAssistant ?? undefined);
+  if (extra && extra !== unscoped[unscoped.length - 1]?.text) {
+    return [...unscoped, { thread, role: "assistant", text: extra }];
+  }
+  return unscoped;
+}
+
+export function lastAssistantText(raw: string | null, thread: string, fallback?: string | null): string {
+  const records = messagesForThread(raw, thread, fallback);
+  for (let index = records.length - 1; index >= 0; index -= 1) {
+    if (records[index].role === "assistant") return records[index].text;
+  }
+  return "";
+}
+
+export function formatCoreChatContext(current: (uid: string) => string | null): string {
+  const lines: string[] = [];
+  const project = exactName(current("CORE-01-CTL-PROJECT"));
+  const topic = exactName(current("CORE-01-CTL-TOPIC"));
+  const workItem = currentWorkItem(current);
+  const thread = activeThreadUid(current);
+  if (project) lines.push(`專案：${project}`);
+  if (topic) lines.push(`專題：${topic}`);
+  if (workItem) lines.push(`工作項目：${workItem}`);
+  if (thread) lines.push(`對話：${thread}`);
+  return lines.join("\n");
+}
+
+export function appendAssistantMessage(
+  current: (uid: string) => string | null,
+  thread: string,
+  reply: string,
+): Record<string, string> {
+  const text = reply.trim();
+  if (!thread || !text) return {};
+  const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
+  return {
+    "CORE-01-FLD-MESSAGE": JSON.stringify([...records, { thread, role: "assistant", text: text.slice(0, 8000) }]),
+    "CORE-01-FLD-ASSISTANT-SUMMARY": text.slice(0, 8000),
+  };
+}
 
 export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
   if (!raw || raw === "created") return [];
@@ -155,7 +246,7 @@ export function activeThreadUid(current: (uid: string) => string | null): string
 }
 
 export function hasSendableMessage(nextValue?: string, stored?: string | null): boolean {
-  return Boolean(usableName(nextValue) || usableName(stored ?? undefined));
+  return Boolean(usableMessage(nextValue) || usableMessage(stored ?? undefined));
 }
 
 export function statusFromAction(actionUid: string): string {
@@ -313,15 +404,26 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-SEND") {
-    if (!activeThreadUid(current) || !hasSendableMessage(nextValue)) return {};
-    const message = namedValue(nextValue, current("CORE-01-FLD-MESSAGE") || "已送出");
+    const thread = activeThreadUid(current);
+    if (!thread || !hasSendableMessage(nextValue)) return {};
+    const message = usableMessage(nextValue);
+    if (!message) return {};
     const attachment = usableName(current("CORE-01-BTN-ATTACHMENT") ?? undefined);
     const reference = usableName(current("CORE-01-BTN-REFERENCE") ?? undefined);
     const files = [attachment, reference].filter(Boolean);
     const summary = files.length ? `${message} · ${files.join("、")}` : message;
+    let records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
+    if (!records.some((row) => row.thread === thread)) {
+      records = records.map((row) => (row.thread ? row : { ...row, thread }));
+      const prior = usableMessage(current("CORE-01-FLD-ASSISTANT-SUMMARY") ?? undefined);
+      const scopedMessages = records.filter((row) => row.thread === thread);
+      const last = scopedMessages[scopedMessages.length - 1]?.text;
+      if (prior && prior !== last && prior !== summary) {
+        records = [...records, { thread, role: "assistant", text: prior }];
+      }
+    }
     return {
-      "CORE-01-FLD-MESSAGE": summary,
-      "CORE-01-FLD-ASSISTANT-SUMMARY": summary,
+      "CORE-01-FLD-MESSAGE": JSON.stringify([...records, { thread, role: "user", text: summary }]),
       "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
       "CORE-01-BTN-SEND": "sent",
     };

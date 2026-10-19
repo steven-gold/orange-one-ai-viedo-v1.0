@@ -2,7 +2,13 @@ import { AI_UNAVAILABLE_ZH, ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESP
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
-import { previewCoreAction } from "@/lib/coreActionPreview";
+import {
+  activeThreadUid,
+  appendAssistantMessage,
+  formatCoreChatContext,
+  messagesForThread,
+  previewCoreAction,
+} from "@/lib/coreActionPreview";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
@@ -216,7 +222,24 @@ export async function applyWorkbenchAction(
     const written = await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
     if (actionUid === "CORE-01-ACT-SEND" && written) {
       const prompt = promptFromValue(nextValue);
-      await writeGeneratedReply(FIELD_TABLE.core, ["CORE-01-FLD-ASSISTANT-SUMMARY"], "core", prompt, "");
+      const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+        `SELECT control_uid, value_text FROM ${FIELD_TABLE.core}`,
+      );
+      const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+      const current = (uid: string) => cache.get(uid) ?? null;
+      const thread = activeThreadUid(current);
+      const history = messagesForThread(current("CORE-01-FLD-MESSAGE"), thread)
+        .slice(0, -1)
+        .map((row) => ({ role: row.role, content: row.text }));
+      const context = formatCoreChatContext(current);
+      let reply = AI_UNAVAILABLE_ZH;
+      try {
+        if (prompt) reply = await generatePageReply("core", prompt, context, history);
+      } catch {
+        reply = AI_UNAVAILABLE_ZH;
+      }
+      const patch = appendAssistantMessage(current, thread, reply);
+      for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
     }
     return;
   }
