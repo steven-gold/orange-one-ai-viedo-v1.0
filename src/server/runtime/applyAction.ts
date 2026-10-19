@@ -188,7 +188,7 @@ async function applyProjectedAction(
   actionUid: string,
   nextValue?: string,
   seed?: Record<string, string>,
-): Promise<void> {
+): Promise<boolean> {
   const cache = new Map<string, string | null>();
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     `SELECT control_uid, value_text FROM ${table}`,
@@ -196,9 +196,11 @@ async function applyProjectedAction(
   for (const row of rows) cache.set(row.control_uid, row.value_text === "" ? null : row.value_text);
   for (const [uid, value] of Object.entries(seed ?? {})) cache.set(uid, value);
   const patch = preview(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
+  const keys = Object.keys(patch);
   for (const [uid, value] of Object.entries(patch)) {
     await writeField(table, uid, value);
   }
+  return keys.length > 0;
 }
 
 export async function applyWorkbenchAction(
@@ -211,8 +213,8 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "core") {
-    await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
-    if (actionUid === "CORE-01-ACT-SEND") {
+    const written = await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
+    if (actionUid === "CORE-01-ACT-SEND" && written) {
       const prompt = promptFromValue(nextValue);
       await writeGeneratedReply(FIELD_TABLE.core, ["CORE-01-FLD-ASSISTANT-SUMMARY"], "core", prompt, "");
     }

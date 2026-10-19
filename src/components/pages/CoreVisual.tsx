@@ -5,7 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
-import { exactName, parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
+import { activeThreadUid, exactName, parseThreadList, previewCoreAction } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -186,9 +186,11 @@ export function CoreVisual() {
   }, [act]);
 
   const sendMessage = useCallback(() => {
+    const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
+    if (!activeThreadUid(current)) return;
     const text = draftMessage.trim();
-    const attachment = fieldsRef.current.find((row) => row.controlUid === "CORE-01-BTN-ATTACHMENT")?.value;
-    const reference = fieldsRef.current.find((row) => row.controlUid === "CORE-01-BTN-REFERENCE")?.value;
+    const attachment = current("CORE-01-BTN-ATTACHMENT");
+    const reference = current("CORE-01-BTN-REFERENCE");
     const files = [attachment, reference].filter((name): name is string => typeof name === "string" && name.length > 0 && !FILE_STATUS.has(name));
     const payload = [text, ...files].filter(Boolean).join(" · ");
     if (!payload) return;
@@ -233,6 +235,7 @@ export function CoreVisual() {
   const pickedFileName = (stored: string | null) => (stored && !FILE_STATUS.has(stored) ? stored : "");
   const attachedName = pickedFileName(attachedFile);
   const referenceName = pickedFileName(referenceFile);
+  const canSend = Boolean(activeThread) && Boolean(draftMessage.trim() || attachedName || referenceName);
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -435,7 +438,7 @@ export function CoreVisual() {
                 <span className={styles.srOnly}>{tx("core.message")}</span>
                 <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }} />
               </label>
-              <IconButton uid="CORE-01-BTN-SEND" label={tx("core.send")} icon="send" onAct={() => sendMessage()} disabled={disabled} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+              <IconButton uid="CORE-01-BTN-SEND" label={canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>
             {attachedName || referenceName ? (
               <p className={styles.composerFiles}>

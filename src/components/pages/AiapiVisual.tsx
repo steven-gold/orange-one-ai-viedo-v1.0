@@ -262,15 +262,6 @@ function Btn({
   );
 }
 
-function Field({ uid, label, value }: { uid: string; label: string; value: string }) {
-  return (
-    <div className={styles.metric} data-control-uid={uid}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
-
 function Kv({ uid, label, value }: { uid: string; label: string; value: string }) {
   return (
     <div className={styles.kvRow} data-control-uid={uid}>
@@ -895,7 +886,7 @@ export function AiapiVisual() {
       data-page-uid="admin:AIAPI-01"
       data-page-state={pageState}
       data-ui-view={view}
-      data-component-count="12"
+      data-component-count="10"
       data-control-count={visibleUids.size}
       aria-label={tx("aiapi.title")}
     >
@@ -934,7 +925,7 @@ export function AiapiVisual() {
         ))}
       </nav>
 
-      {view === "overview" || view === "provider_api" ? (
+      {view === "provider_api" ? (
         <div className={styles.toolbar} data-component-uid="AIAPI-01-CMP-QUICK-ACTIONS">
           <div className={styles.actions}>
             <Btn
@@ -981,37 +972,6 @@ export function AiapiVisual() {
       ) : null}
 
       <div className={styles.cols}>
-        {view === "overview" ? (
-          <section className={styles.workspace} data-section-uid="AIAPI-01-SEC-03" data-component-uid="AIAPI-01-CMP-OVERVIEW">
-            <h2>{tx("aiapi.overview-title")}</h2>
-            <p className={styles.note}>{tx("aiapi.overview-hint")}</p>
-            <div className={styles.statusBar}>
-              <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-PROVIDER">
-                <span>{tx("aiapi.ov-provider")}</span>
-                <strong>{selectedField("AIAPI-01-FLD-OV-PROVIDER")}</strong>
-              </div>
-              <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-ROUTE">
-                <span>{tx("aiapi.ov-route")}</span>
-                <strong>{show("AIAPI-01-FLD-OV-ROUTE")}</strong>
-              </div>
-              <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-CAPABILITY">
-                <span>{tx("aiapi.ov-capability")}</span>
-                <strong>{selectedField("AIAPI-01-FLD-OV-CAPABILITY")}</strong>
-              </div>
-              <div className={styles.statusItem} data-control-uid="AIAPI-01-FLD-OV-JOB">
-                <span>{tx("aiapi.ov-job")}</span>
-                <strong>{show("AIAPI-01-FLD-OV-JOB")}</strong>
-              </div>
-            </div>
-            <div className={styles.metricGrid}>
-              <Field uid="AIAPI-01-FLD-OV-COST" label={tx("aiapi.ov-cost")} value={show("AIAPI-01-FLD-OV-COST")} />
-              <Field uid="AIAPI-01-FLD-OV-HEALTH" label={tx("aiapi.ov-health")} value={selectedField("AIAPI-01-FLD-OV-HEALTH")} />
-              <Field uid="AIAPI-01-FLD-OV-INCIDENT" label={tx("aiapi.ov-incident")} value={show("AIAPI-01-FLD-OV-INCIDENT")} />
-              <Field uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={show("AIAPI-01-FLD-OPS-QUEUE")} />
-            </div>
-          </section>
-        ) : null}
-
         {view === "provider_api" ? (
           <section className={styles.workspace} data-section-uid="AIAPI-01-SEC-04" data-component-uid="AIAPI-01-CMP-PROVIDER">
             <h2>{tx("aiapi.provider-title")}</h2>
@@ -1222,32 +1182,16 @@ export function AiapiVisual() {
                 />
               </div>
             </div>
-          </section>
-        ) : null}
-
-        {view === "operations" ? (
-          <section className={styles.workspace} data-section-uid="AIAPI-01-SEC-08" data-component-uid="AIAPI-01-CMP-OPERATIONS">
-            <h2>{tx("aiapi.ops-title")}</h2>
-            <p className={styles.note}>{tx("aiapi.ops-hint")}</p>
-            <div className={styles.duo}>
-              <div className={styles.card}>
-                <h3>{tx("aiapi.job-title")}</h3>
-                <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-JOB-ID" label={tx("aiapi.field-job-id")} value={show("AIAPI-01-FLD-JOB-ID")} />
-                  <Kv uid="AIAPI-01-FLD-JOB-STATUS" label={tx("aiapi.field-job-status")} value={show("AIAPI-01-FLD-JOB-STATUS")} />
-                  <Kv uid="AIAPI-01-FLD-ATTEMPT-ID" label={tx("aiapi.field-attempt-id")} value={show("AIAPI-01-FLD-ATTEMPT-ID")} />
-                  <Kv uid="AIAPI-01-FLD-CALLBACK" label={tx("aiapi.field-callback")} value={show("AIAPI-01-FLD-CALLBACK")} />
-                  <Kv uid="AIAPI-01-FLD-ARTIFACT" label={tx("aiapi.field-artifact")} value={show("AIAPI-01-FLD-ARTIFACT")} />
-                </div>
-              </div>
-              <div className={styles.card}>
-                <h3>{tx("aiapi.budget-title")}</h3>
-                <div className={styles.kvList}>
-                  <Kv uid="AIAPI-01-FLD-OV-COST" label={tx("aiapi.ov-cost")} value={show("AIAPI-01-FLD-OV-COST")} />
-                  <Kv uid="AIAPI-01-FLD-OPS-COST" label={tx("aiapi.ops-cost")} value={show("AIAPI-01-FLD-OPS-COST")} />
-                  <Kv uid="AIAPI-01-FLD-OPS-INCIDENT" label={tx("aiapi.ops-incident")} value={show("AIAPI-01-FLD-OPS-INCIDENT")} />
-                  <Kv uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={show("AIAPI-01-FLD-OPS-QUEUE")} />
-                </div>
+            <div className={styles.card}>
+              <h3>{tx("aiapi.job-title")}</h3>
+              <p className={styles.note}>{hasDecision ? tx("aiapi.ops-hint") : tx("aiapi.empty-operations")}</p>
+              <div className={styles.kvList}>
+                <Kv uid="AIAPI-01-FLD-JOB-ID" label={tx("aiapi.field-job-id")} value={show("AIAPI-01-FLD-JOB-ID")} />
+                <Kv uid="AIAPI-01-FLD-JOB-STATUS" label={tx("aiapi.field-job-status")} value={show("AIAPI-01-FLD-JOB-STATUS")} />
+                <Kv uid="AIAPI-01-FLD-ATTEMPT-ID" label={tx("aiapi.field-attempt-id")} value={show("AIAPI-01-FLD-ATTEMPT-ID")} />
+                <Kv uid="AIAPI-01-FLD-CALLBACK" label={tx("aiapi.field-callback")} value={show("AIAPI-01-FLD-CALLBACK")} />
+                <Kv uid="AIAPI-01-FLD-ARTIFACT" label={tx("aiapi.field-artifact")} value={show("AIAPI-01-FLD-ARTIFACT")} />
+                <Kv uid="AIAPI-01-FLD-OPS-QUEUE" label={tx("aiapi.ops-queue")} value={show("AIAPI-01-FLD-OPS-QUEUE")} />
               </div>
             </div>
           </section>
@@ -1298,16 +1242,12 @@ export function AiapiVisual() {
         />
       ) : null}
 
-      {view === "overview" || view === "provider_api" ? null : <div data-component-uid="AIAPI-01-CMP-QUICK-ACTIONS" hidden />}
-      {view === "overview" ? null : <div data-component-uid="AIAPI-01-CMP-OVERVIEW" hidden />}
+      {view === "provider_api" ? null : <div data-component-uid="AIAPI-01-CMP-QUICK-ACTIONS" hidden />}
       {view === "provider_api" ? null : <div data-component-uid="AIAPI-01-CMP-PROVIDER" hidden />}
       {view === "provider_api" ? null : <div data-component-uid="AIAPI-01-CMP-PROFILE-FORM" hidden />}
       {view === "routing_test" ? null : <div data-component-uid="AIAPI-01-CMP-ROUTING" hidden />}
-      {view === "operations" ? null : <div data-component-uid="AIAPI-01-CMP-OPERATIONS" hidden />}
-      {view === "routing_test" || view === "operations" ? null : (
-        <div data-component-uid="AIAPI-01-CMP-OPS-RAIL" hidden />
-      )}
-      {view === "overview" || view === "provider_api" ? null : (
+      {view === "routing_test" ? null : <div data-component-uid="AIAPI-01-CMP-OPS-RAIL" hidden />}
+      {view === "provider_api" ? null : (
         <div data-component-uid="AIAPI-01-PANEL-API-PROFESSIONAL-DESCRIPTION" hidden />
       )}
       {drawerUid ? null : <div data-component-uid="AIAPI-01-CMP-DRAWER" hidden />}
@@ -1339,7 +1279,7 @@ function ProfessionalRail({
   onModal: (uid: string) => void;
   onAct: (uid: string) => Promise<boolean>;
 }) {
-  if (view === "overview" || view === "provider_api") {
+  if (view === "provider_api") {
     return (
       <aside className={styles.rail} data-section-uid="AIAPI-01-SEC-05" data-component-uid="AIAPI-01-PANEL-API-PROFESSIONAL-DESCRIPTION">
         <h2>{t("aiapi.panel-title")}</h2>

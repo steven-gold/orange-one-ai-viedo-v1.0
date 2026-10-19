@@ -1,16 +1,9 @@
 export const AIAPI_VISIBLE_CONTROLS = [
-  "AIAPI-01-BTN-TAB-OVERVIEW",
   "AIAPI-01-BTN-TAB-PROVIDER",
   "AIAPI-01-BTN-TAB-ROUTING",
-  "AIAPI-01-BTN-TAB-OPERATIONS",
   "AIAPI-01-FLD-SEARCH",
   "AIAPI-01-FLD-OV-PROVIDER",
-  "AIAPI-01-FLD-OV-ROUTE",
   "AIAPI-01-FLD-OV-CAPABILITY",
-  "AIAPI-01-FLD-OV-JOB",
-  "AIAPI-01-FLD-OV-COST",
-  "AIAPI-01-FLD-OV-HEALTH",
-  "AIAPI-01-FLD-OV-INCIDENT",
   "AIAPI-01-PROFILE-GRP-IDENTITY",
   "AIAPI-01-PROFILE-GRP-CONNECTION",
   "AIAPI-01-PROFILE-GRP-ADAPTER",
@@ -40,8 +33,6 @@ export const AIAPI_VISIBLE_CONTROLS = [
   "AIAPI-01-FLD-OPS-HEALTH",
   "AIAPI-01-FLD-OPS-CREDENTIAL",
   "AIAPI-01-FLD-OPS-QUEUE",
-  "AIAPI-01-FLD-OPS-COST",
-  "AIAPI-01-FLD-OPS-INCIDENT",
   "AIAPI-01-FLD-OPS-QUARANTINE",
   "AIAPI-01-FLD-JOB-ID",
   "AIAPI-01-FLD-JOB-STATUS",
@@ -68,18 +59,11 @@ export const AIAPI_VISIBLE_CONTROLS = [
 ] as const;
 
 export const AIAPI_CONTROL_ACTIONS: Record<string, string> = {
-  "AIAPI-01-BTN-TAB-OVERVIEW": "AIAPI-01-ACT-VIEW-OVERVIEW",
   "AIAPI-01-BTN-TAB-PROVIDER": "AIAPI-01-ACT-VIEW-PROVIDER",
   "AIAPI-01-BTN-TAB-ROUTING": "AIAPI-01-ACT-VIEW-ROUTING",
-  "AIAPI-01-BTN-TAB-OPERATIONS": "AIAPI-01-ACT-VIEW-OPERATIONS",
   "AIAPI-01-FLD-SEARCH": "searchProjection",
   "AIAPI-01-FLD-OV-PROVIDER": "getUiProjection",
-  "AIAPI-01-FLD-OV-ROUTE": "getUiProjection",
   "AIAPI-01-FLD-OV-CAPABILITY": "getUiProjection",
-  "AIAPI-01-FLD-OV-JOB": "getUiProjection",
-  "AIAPI-01-FLD-OV-COST": "getUiProjection",
-  "AIAPI-01-FLD-OV-HEALTH": "getUiProjection",
-  "AIAPI-01-FLD-OV-INCIDENT": "getUiProjection",
   "AIAPI-01-PROFILE-GRP-IDENTITY": "getProviderModelProfile",
   "AIAPI-01-PROFILE-GRP-CONNECTION": "getProviderModelProfile",
   "AIAPI-01-PROFILE-GRP-ADAPTER": "getProviderModelProfile",
@@ -109,8 +93,6 @@ export const AIAPI_CONTROL_ACTIONS: Record<string, string> = {
   "AIAPI-01-FLD-OPS-HEALTH": "getUiProjection",
   "AIAPI-01-FLD-OPS-CREDENTIAL": "getUiProjection",
   "AIAPI-01-FLD-OPS-QUEUE": "getUiProjection",
-  "AIAPI-01-FLD-OPS-COST": "getUiProjection",
-  "AIAPI-01-FLD-OPS-INCIDENT": "getUiProjection",
   "AIAPI-01-FLD-OPS-QUARANTINE": "getProviderQuarantine",
   "AIAPI-01-FLD-JOB-ID": "getUiProjection",
   "AIAPI-01-FLD-JOB-STATUS": "getUiProjection",
@@ -137,13 +119,11 @@ export const AIAPI_CONTROL_ACTIONS: Record<string, string> = {
 };
 
 export const AIAPI_VIEWS = [
-  { uid: "AIAPI-01-BTN-TAB-OVERVIEW", key: "overview", labelKey: "aiapi.tab-overview" as const },
   { uid: "AIAPI-01-BTN-TAB-PROVIDER", key: "provider_api", labelKey: "aiapi.tab-provider" as const },
   { uid: "AIAPI-01-BTN-TAB-ROUTING", key: "routing_test", labelKey: "aiapi.tab-routing" as const },
-  { uid: "AIAPI-01-BTN-TAB-OPERATIONS", key: "operations", labelKey: "aiapi.tab-operations" as const },
 ] as const;
 
-export type AiapiView = "overview" | "provider_api" | "routing_test" | "operations";
+export type AiapiView = "provider_api" | "routing_test";
 
 export const AIAPI_TABLE_COLUMNS = [
   "aiapi.col-provider",

@@ -83,6 +83,16 @@ export function parseThreadList(raw: string | null): string[] {
   return [raw];
 }
 
+export function activeThreadUid(current: (uid: string) => string | null): string {
+  const stored = current("CORE-01-LST-THREADS");
+  if (stored && !["created", "selected"].includes(stored)) return stored;
+  return parseThreadList(current("CORE-01-BTN-NEW-THREAD"))[0] ?? "";
+}
+
+export function hasSendableMessage(nextValue?: string, stored?: string | null): boolean {
+  return Boolean(usableName(nextValue) || usableName(stored ?? undefined));
+}
+
 export function statusFromAction(actionUid: string): string {
   const token = actionUid.split("-").pop() ?? actionUid;
   const map: Record<string, string> = {
@@ -234,6 +244,7 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-SEND") {
+    if (!activeThreadUid(current) || !hasSendableMessage(nextValue)) return {};
     const message = namedValue(nextValue, current("CORE-01-FLD-MESSAGE") || "已送出");
     const attachment = usableName(current("CORE-01-BTN-ATTACHMENT") ?? undefined);
     const reference = usableName(current("CORE-01-BTN-REFERENCE") ?? undefined);
