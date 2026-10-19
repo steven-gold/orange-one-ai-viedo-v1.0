@@ -1,4 +1,4 @@
-import { capabilityFromModule } from "@/lib/aiapiProviderCatalog";
+import { capabilityFromModule, protocolHints } from "@/lib/aiapiProviderCatalog";
 
 /**
  * A provider surface is whatever the provider itself publishes about its own
@@ -290,7 +290,9 @@ function parseSurfaceModels(payload: unknown): SurfaceModel[] {
     const prompt = (item.pricing as { prompt?: unknown } | undefined)?.prompt;
     const tags = Array.isArray(item.tags)
       ? item.tags.filter((tag): tag is string => typeof tag === "string").join(", ")
-      : "";
+      : typeof item.owned_by === "string"
+        ? item.owned_by.trim()
+        : "";
     models.push({
       id: rawId,
       title: typeof item.display_name === "string" && item.display_name.trim() ? item.display_name.trim() : rawId,
@@ -600,6 +602,7 @@ export function surfaceModules(surface: ProviderSurface): SurfaceModule[] {
     const path = isChat ? absolute(expandEndpoint(chatPath, model.id)) : absolute(surface.mediaEndpoint);
     if (!path) continue;
     const adapterType = isChat ? adapterForEndpoint(path, model.apiFormat) : "http-json";
+    const hints = protocolHints(adapterType, capability);
     modules.push({
       moduleId: `model-${model.id}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-").slice(0, 60),
       title: model.title,
@@ -613,9 +616,9 @@ export function surfaceModules(surface: ProviderSurface): SurfaceModule[] {
       contextWindow: model.contextWindow,
       billing: model.billing,
       description: model.description,
-      inputHint: model.inputHint,
+      inputHint: model.inputHint || hints.inputHint,
       outputHint: isChat
-        ? CHAT_OUTPUT[adapterType] ?? ""
+        ? hints.outputHint || CHAT_OUTPUT[adapterType] || ""
         : surface.mediaStatusPath
           ? `建立任務後以 GET ${surface.mediaStatusPath} 查詢結果`
           : "",

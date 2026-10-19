@@ -19,7 +19,7 @@ import {
   endpointForModel,
   prefixCandidates,
 } from "@/lib/aiapiProviderCatalog";
-import { displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
+import { displayAiapiAdapter, displayAiapiStatus, displayAiapiValue } from "./aiapiFormat";
 import {
   AIAPI_CONTROL_ACTIONS,
   AIAPI_PRO_DESC_FIELDS,
@@ -544,6 +544,7 @@ export function AiapiVisual() {
   const [busy, setBusy] = useState(false);
 
   const knownProfileIds = useRef<Set<string>>(new Set());
+  const notesRefreshTick = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -571,6 +572,13 @@ export function AiapiVisual() {
       controller.abort();
     };
   }, [tick]);
+
+  useEffect(() => {
+    if (loading || error || notesRefreshTick.current) return;
+    notesRefreshTick.current = true;
+    const timer = window.setTimeout(() => setTick((n) => n + 1), 20000);
+    return () => window.clearTimeout(timer);
+  }, [loading, error]);
 
   const act = useCallback(async (controlUid: string, value?: string, successKey?: TranslationKey) => {
     const actionUid = AIAPI_CONTROL_ACTIONS[controlUid];
@@ -757,7 +765,7 @@ export function AiapiVisual() {
     displayAiapiValue(profile.providerName || profile.providerId, loading),
     displayAiapiValue(profile.modelName || profile.modelId, loading),
     displayAiapiValue(profile.capabilityType, loading),
-    displayAiapiValue(profile.adapterType, loading),
+    displayAiapiAdapter(profile.adapterType, tx, loading),
     displayAiapiValue(profile.baseUrl, loading),
     displayAiapiValue(profile.endpointPath, loading),
     displayAiapiValue(profile.timeoutSeconds, loading),
@@ -774,7 +782,7 @@ export function AiapiVisual() {
       case "AIAPI-01-PROFILE-GRP-CONNECTION":
         return displayAiapiValue(selected.baseUrl, loading);
       case "AIAPI-01-PROFILE-GRP-ADAPTER":
-        return displayAiapiValue(selected.adapterType, loading);
+        return displayAiapiAdapter(selected.adapterType, tx, loading);
       case "AIAPI-01-PROFILE-GRP-CAPABILITY":
         return displayAiapiValue(selected.capabilityType, loading);
       case "AIAPI-01-PROFILE-GRP-DATA-CONTEXT":

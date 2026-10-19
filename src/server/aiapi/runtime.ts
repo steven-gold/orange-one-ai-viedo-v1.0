@@ -15,12 +15,23 @@ import {
   AIAPI_PROVIDER_REGISTRY,
   prefixCandidates,
   promptTemplateForProvider,
+  protocolHints,
   registryEntry,
 } from "@/lib/aiapiProviderCatalog";
 import { mirrorProfile } from "@/lib/aiapiActionPreview";
 import { getAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
-import { identifyProvider } from "./discovery";
+import {
+  billingFor,
+  cachedDocs,
+  discoverFromDocs,
+  identifyProvider,
+  listProviderModels,
+  parseDocsIndex,
+  parsePricingTables,
+  parsePublishedPage,
+  readMarkdown,
+} from "./discovery";
 import { adapterForEndpoint, fetchSurface, resolveApiBase, surfaceModules } from "./surface";
 
 export interface AiapiOutcome {
@@ -472,21 +483,12 @@ async function importModules(
       seq,
     };
     const fingerprint = profileFingerprint(candidate);
-    const note = {
-      description: module.description ?? "",
-      inputHint: module.inputHint ?? "",
-      outputHint: module.outputHint ?? "",
-      restrictions: module.restrictions ?? "",
-      tags: module.tags ?? "",
-      billing: module.billing ?? "",
-      docs: module.docs ?? "",
-      source: module.source,
-    };
+    const note = notePayload(module);
     if (known.has(fingerprint)) {
       // Re-submitting the same catalogue refreshes the published metadata even
       // though no new profile is created.
       const existing = byFingerprint.get(fingerprint);
-      if (existing && JSON.stringify(notes[existing.profileId] ?? {}) !== JSON.stringify(note)) {
+      if (existing && notesDiffer(notes[existing.profileId], note)) {
         notes[existing.profileId] = note;
         notesChanged = true;
       }
@@ -528,6 +530,218 @@ async function loadNotes(): Promise<Record<string, Record<string, string>>> {
   } catch {
     return {};
   }
+}
+
+function notePayload(module: ImportModule): Record<string, string> {
+  const hints = protocolHints(module.adapterType, module.capability);
+  return {
+    description: module.description ?? "",
+    inputHint: module.inputHint || hints.inputHint,
+    outputHint: module.outputHint || hints.outputHint,
+    restrictions: module.restrictions ?? "",
+    tags: module.tags ?? "",
+    billing: module.billing ?? "",
+    docs: module.docs ?? "",
+    source: module.source,
+  };
+}
+
+function notesDiffer(current: Record<string, string> | undefined, next: Record<string, string>): boolean {
+  return JSON.stringify(current ?? {}) !== JSON.stringify(next);
+}
+
+function fillProtocolNote(profile: AiapiProfile, current: Record<string, string> | undefined): Record<string, string> | null {
+  const hints = protocolHints(profile.adapterType, profile.capabilityType);
+  const next = {
+    description: current?.description ?? "",
+    inputHint: current?.inputHint || hints.inputHint,
+    outputHint: current?.outputHint || hints.outputHint,
+    restrictions: current?.restrictions ?? "",
+    tags: current?.tags ?? "",
+    billing: current?.billing ?? "",
+    docs: current?.docs ?? "",
+    source: current?.source ?? "",
+  };
+  return notesDiffer(current, next) ? next : null;
+}
+
+function matchDocNote(
+  profile: AiapiProfile,
+  modules: readonly { title: string; method: string; path: string; description: string; inputHint: string; outputHint: string; restrictions: string; tags: string; billing: string; docs: string }[],
+  current: Record<string, string> | undefined,
+): Record<string, string> | null {
+  const path = profile.endpointPath.trim();
+  const title = profile.modelName.trim().toLowerCase();
+  const hit =
+    modules.find((module) => module.path === path && module.method === profile.httpMethod) ??
+    modules.find((module) => module.title.trim().toLowerCase() === title);
+  if (!hit) return null;
+  const next = {
+    description: hit.description || current?.description || "",
+    inputHint: hit.inputHint || current?.inputHint || "",
+    outputHint: hit.outputHint || current?.outputHint || "",
+    restrictions: hit.restrictions || current?.restrictions || "",
+    tags: hit.tags || current?.tags || "",
+    billing: hit.billing || current?.billing || "",
+    docs: hit.docs || current?.docs || "",
+    source: current?.source || "operation",
+  };
+  return notesDiffer(current, next) ? next : null;
+}
+
+let notesRefreshInFlight: Promise<boolean> | null = null;
+let notesRefreshAt = 0;
+const NOTES_REFRESH_TTL_MS = 15 * 60 * 1000;
+
+/** Protocol fields the vendor already published; no network. */
+export async function fillProtocolNotes(): Promise<boolean> {
+  const profiles = await loadProfiles();
+  if (!profiles.length) return false;
+  const notes = await loadNotes();
+  let changed = false;
+  for (const profile of profiles) {
+    const filled = fillProtocolNote(profile, notes[profile.profileId]);
+    if (!filled) continue;
+    notes[profile.profileId] = filled;
+    changed = true;
+  }
+  if (changed) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+  return changed;
+}
+
+async function readMany(urls: readonly string[], limit: number, deadline: number): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(limit, urls.length) }, async () => {
+    while (cursor < urls.length && Date.now() < deadline) {
+      const url = urls[cursor];
+      cursor += 1;
+      const text = await readMarkdown(url, 4000);
+      if (text) out.set(url, text);
+    }
+  });
+  await Promise.all(workers);
+  return out;
+}
+
+/**
+ * Re-reads the provider's own published metadata with the stored key (or the
+ * public docs index) and writes any changed notes. Opening the page is enough;
+ * the same key does not need to be pasted again.
+ */
+export async function refreshPublishedNotes(): Promise<boolean> {
+  if (notesRefreshInFlight) return notesRefreshInFlight;
+  if (notesRefreshAt && Date.now() - notesRefreshAt < NOTES_REFRESH_TTL_MS) return false;
+  notesRefreshInFlight = (async () => {
+    try {
+      const profiles = await loadProfiles();
+      if (!profiles.length) return false;
+      const notes = await loadNotes();
+      let changed = false;
+
+      for (const profile of profiles) {
+        const filled = fillProtocolNote(profile, notes[profile.profileId]);
+        if (filled) {
+          notes[profile.profileId] = filled;
+          changed = true;
+        }
+      }
+      if (changed) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+
+      const byProvider = new Map<string, AiapiProfile[]>();
+      for (const profile of profiles) {
+        const list = byProvider.get(profile.providerId) ?? [];
+        list.push(profile);
+        byProvider.set(profile.providerId, list);
+      }
+
+      for (const [providerId, group] of byProvider) {
+        const entry = registryEntry(providerId);
+        if (!entry?.modelsPath) continue;
+        const secret = await getAiapiCredential(group[0].profileId);
+        if (!secret) continue;
+        const listed = await listProviderModels(entry, secret, 8000, {
+          baseUrl: group[0].baseUrl,
+          headers: { authorization: `Bearer ${secret}` },
+        });
+        if (!listed.ok) continue;
+        const byId = new Map(listed.models.map((model) => [model.id, model] as const));
+        for (const profile of group) {
+          const model = byId.get(profile.modelId);
+          if (!model) continue;
+          const current = notes[profile.profileId] ?? {};
+          const next = {
+            description: current.description || model.description || "",
+            inputHint: current.inputHint || "",
+            outputHint: current.outputHint || "",
+            restrictions: current.restrictions || "",
+            tags: current.tags || model.ownedBy || "",
+            billing: current.billing || model.billing || "",
+            docs: current.docs || entry.docs || "",
+            source: current.source || "model",
+          };
+          if (!notesDiffer(current, next)) continue;
+          notes[profile.profileId] = next;
+          changed = true;
+        }
+      }
+      if (changed) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+
+      for (const [providerId, group] of byProvider) {
+        const entry = registryEntry(providerId);
+        if (!entry?.docsIndex) continue;
+        const cached = cachedDocs(entry);
+        const modules = cached ? [...cached] : [];
+        if (!cached) {
+          const docUrls = [
+            ...new Set(
+              group
+                .map((profile) => notes[profile.profileId]?.docs ?? "")
+                .filter((url) => /^https?:\/\//i.test(url) && /\.md($|\?)/i.test(url)),
+            ),
+          ];
+          const pages = await readMany(docUrls, 8, Date.now() + 25_000);
+          for (const profile of group) {
+            const url = notes[profile.profileId]?.docs ?? "";
+            const markdown = pages.get(url);
+            if (!markdown) continue;
+            modules.push(...parsePublishedPage(markdown, profile.modelName, url));
+          }
+          const index = await readMarkdown(entry.docsIndex);
+          const pricingLinks = parseDocsIndex(index).filter((link) => /\/pricing\//i.test(link.url));
+          const pricePages = await readMany(
+            pricingLinks.map((link) => link.url),
+            4,
+            Date.now() + 12_000,
+          );
+          const prices: { name: string; billing: string }[] = [];
+          for (const markdown of pricePages.values()) prices.push(...parsePricingTables(markdown));
+          for (const module of modules) {
+            if (!module.billing) module.billing = billingFor(module.title, module.path, prices);
+          }
+          if (!modules.length) {
+            modules.push(...(await discoverFromDocs(entry, 20_000)));
+          }
+        }
+        if (!modules.length) continue;
+        for (const profile of group) {
+          const next = matchDocNote(profile, modules, notes[profile.profileId]);
+          if (!next) continue;
+          notes[profile.profileId] = next;
+          changed = true;
+        }
+      }
+
+      if (changed) await writeFields({ [AIAPI_PROFILE_NOTES_UID]: JSON.stringify(notes) });
+      notesRefreshAt = Date.now();
+      return changed;
+    } catch {
+      return false;
+    } finally {
+      notesRefreshInFlight = null;
+    }
+  })();
+  return notesRefreshInFlight;
 }
 
 function hostProviderId(baseUrl: string): string {

@@ -1,11 +1,13 @@
 import { createHmac } from "node:crypto";
 import type { ProviderRegistryEntry } from "@/lib/aiapiProviderCatalog";
-import { capabilityFromModule, endpointForModel } from "@/lib/aiapiProviderCatalog";
+import { capabilityFromModule, endpointForModel, protocolHints } from "@/lib/aiapiProviderCatalog";
 
 export interface ProviderModel {
   id: string;
   contextWindow?: string;
   billing?: string;
+  description?: string;
+  ownedBy?: string;
 }
 
 export type ModelDiscovery =
@@ -44,6 +46,18 @@ const PAGE_LIMIT = 60;
 const VERIFY_TIMEOUT_MS = 5000;
 const PAGE_TIMEOUT_MS = 9000;
 const CONCURRENCY = 4;
+const DOCS_CACHE_TTL_MS = 15 * 60 * 1000;
+
+const docsCache = new Map<string, { at: number; modules: DiscoveredModule[] }>();
+
+export function cachedDocs(entry: ProviderRegistryEntry): DiscoveredModule[] | null {
+  const key = entry.docsIndex ?? "";
+  if (!key) return null;
+  const hit = docsCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > DOCS_CACHE_TTL_MS) return null;
+  return hit.modules;
+}
 
 function trimBase(baseUrl: string): string {
   return baseUrl.trim().replace(/\/+$/, "");
@@ -161,6 +175,8 @@ export function parseModels(payload: unknown): ProviderModel[] {
     const item = row as {
       id?: unknown;
       name?: unknown;
+      owned_by?: unknown;
+      description?: unknown;
       supportedGenerationMethods?: unknown;
       context_length?: unknown;
       context_window?: unknown;
@@ -174,10 +190,14 @@ export function parseModels(payload: unknown): ProviderModel[] {
     if (!id) continue;
     const context = item.context_length ?? item.context_window ?? item.max_context_length;
     const prompt = item.pricing?.prompt;
+    const description = typeof item.description === "string" ? item.description.trim().slice(0, 400) : "";
+    const ownedBy = typeof item.owned_by === "string" ? item.owned_by.trim().slice(0, 80) : "";
     models.push({
       id,
       contextWindow: typeof context === "number" ? String(context) : "",
       billing: typeof prompt === "string" && prompt !== "0" ? `prompt ${prompt} / completion ${String(item.pricing?.completion ?? "")}` : "",
+      description,
+      ownedBy,
     });
   }
   return models;
@@ -494,7 +514,7 @@ export function parsePricingTables(markdown: string): { name: string; billing: s
   return rows;
 }
 
-function billingFor(title: string, path: string, prices: { name: string; billing: string }[]): string {
+export function billingFor(title: string, path: string, prices: { name: string; billing: string }[]): string {
   const hay = `${title} ${path}`.toLowerCase().replace(/[-_]/g, " ");
   let best = "";
   let score = 0;
@@ -548,6 +568,7 @@ async function discoverFromModels(
     const derived = capabilityFromModule(model.id, "");
     const capability = derived === "operation" ? "chat" : derived;
     const id = slugify(model.id) || "model";
+    const hints = protocolHints(entry.adapterType, capability);
     return {
       moduleId: id,
       title: model.id,
@@ -558,17 +579,53 @@ async function discoverFromModels(
       source: "model" as const,
       contextWindow: model.contextWindow ?? "",
       billing: model.billing ?? "",
-      description: "",
-      inputHint: "",
-      outputHint: "",
+      description: model.description ?? "",
+      inputHint: hints.inputHint,
+      outputHint: hints.outputHint,
       restrictions: "",
-      tags: "",
+      tags: model.ownedBy ?? "",
     };
   });
 }
 
-async function discoverFromDocs(entry: ProviderRegistryEntry): Promise<DiscoveredModule[]> {
+export async function readMarkdown(url: string, timeoutMs = PAGE_TIMEOUT_MS): Promise<string> {
+  try {
+    const { status, text } = await fetchWithTimeout(url, { method: "GET" }, timeoutMs);
+    return status === 200 ? text : "";
+  } catch {
+    return "";
+  }
+}
+
+export function parsePublishedPage(
+  markdown: string,
+  title: string,
+  url: string,
+): DiscoveredModule[] {
+  return parseDocPage(markdown, title).map((operation) => ({
+    moduleId: slugify(`${operation.title}-${operation.path}`) || "module",
+    title: operation.title,
+    capability: capabilityFromModule(operation.title, operation.path),
+    method: operation.method,
+    path: operation.path,
+    docs: url,
+    source: "operation" as const,
+    contextWindow: "",
+    billing: "",
+    description: operation.description,
+    inputHint: operation.inputHint,
+    outputHint: operation.outputHint,
+    restrictions: operation.restrictions,
+    tags: operation.tags,
+  }));
+}
+
+export async function discoverFromDocs(
+  entry: ProviderRegistryEntry,
+  deadlineMs = 0,
+): Promise<DiscoveredModule[]> {
   if (!entry.docsIndex) return [];
+  const deadline = deadlineMs > 0 ? Date.now() + deadlineMs : 0;
   let index: string;
   try {
     const { status, text } = await fetchWithTimeout(entry.docsIndex, { method: "GET" }, PAGE_TIMEOUT_MS);
@@ -577,8 +634,12 @@ async function discoverFromDocs(entry: ProviderRegistryEntry): Promise<Discovere
   } catch {
     return [];
   }
+  const cached = !deadline ? cachedDocs(entry) : null;
+  if (cached) return cached;
+
   const links = parseDocsIndex(index).slice(0, PAGE_LIMIT);
   const pages = await mapLimit(links, CONCURRENCY, async (link) => {
+    if (deadline && Date.now() >= deadline) return { link, text: "" };
     // Providers rate limit or reset connections under parallel scraping; one
     // retry keeps a slow page from silently dropping its modules.
     for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -629,6 +690,10 @@ async function discoverFromDocs(entry: ProviderRegistryEntry): Promise<Discovere
       if (modules.length >= MODULE_LIMIT) break;
     }
     if (modules.length >= MODULE_LIMIT) break;
+  }
+  const truncated = Boolean(deadline && Date.now() >= deadline && pages.some((page) => !page.text));
+  if (!truncated && entry.docsIndex) {
+    docsCache.set(entry.docsIndex, { at: Date.now(), modules });
   }
   return modules;
 }

@@ -245,6 +245,30 @@ export function promptTemplateForProvider(): string {
   return AIAPI_PROMPT_TEMPLATE_TOKEN;
 }
 
+/**
+ * Request / response fields of the protocol the provider itself publishes as
+ * compatible. This is not a brand binding: a 長亭百智雲 key stays a 長亭百智雲
+ * key even when the host path is `/api/openai/v1`.
+ */
+export function protocolHints(
+  adapterType: string,
+  capability: string,
+): { inputHint: string; outputHint: string } {
+  const family = adapterType.trim().toLowerCase();
+  const kind = capability.trim().toLowerCase();
+  if (kind !== "chat" && kind !== "correction") return { inputHint: "", outputHint: "" };
+  if (family === "gemini") {
+    return { inputHint: "contents[].parts[].text", outputHint: "candidates[0].content.parts[].text" };
+  }
+  if (family === "anthropic") {
+    return { inputHint: "messages[].role, messages[].content", outputHint: "content[].text" };
+  }
+  if (family === "openai") {
+    return { inputHint: "messages[].role, messages[].content", outputHint: "choices[0].message.content" };
+  }
+  return { inputHint: "", outputHint: "" };
+}
+
 const MODULE_CAPABILITY_RULES: ReadonlyArray<{ capability: string; pattern: RegExp }> = [
   { capability: "embedding", pattern: /(embed|vector|rerank)/i },
   { capability: "moderation", pattern: /(moderation|guard)/i },
