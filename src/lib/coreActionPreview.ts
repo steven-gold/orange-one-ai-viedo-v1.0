@@ -43,6 +43,22 @@ export const CONVERSATION_RECENT_HISTORY_ROWS = 30;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = 2200;
 export const CONVERSATION_STORED_MESSAGE_TEXT_CHARS = 4000;
 
+const AI_MODE_TOKENS = new Set(["SINGLE", "MULTI"]);
+
+export function assignedAiRouteLabel(value: string | null | undefined): string {
+  const text = (value ?? "").trim();
+  if (!text || AI_MODE_TOKENS.has(text) || STATUS_TOKENS.has(text) || PLACEHOLDER_NAMES.has(text)) return "";
+  return text;
+}
+
+export function assignedAiRouteReady(current: (uid: string) => string | null): boolean {
+  return Boolean(assignedAiRouteLabel(current("CORE-01-FLD-ASSIGNED-AI")));
+}
+
+export function isMultiAiMode(current: (uid: string) => string | null): boolean {
+  return current("CORE-01-BTN-MULTI-AI") === "active";
+}
+
 function usableMessage(value: string | undefined): string {
   const text = value?.trim();
   if (!text || STATUS_TOKENS.has(text)) return "";
@@ -659,7 +675,7 @@ export function resolveComposerTokens(
   const thread = activeThreadUid(current);
   const messages = messagesForThread(current("CORE-01-FLD-MESSAGE"), thread);
   const threads = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD"));
-  const multi = current("CORE-01-FLD-ASSIGNED-AI") === "MULTI" || current("CORE-01-BTN-MULTI-AI") === "active";
+  const multi = isMultiAiMode(current);
   const tokens: CoreResolvedToken[] = [];
   COMPOSER_TOKEN.lastIndex = 0;
   let match: RegExpExecArray | null = COMPOSER_TOKEN.exec(text);
@@ -834,6 +850,7 @@ export function previewCoreAction(
   current: (uid: string) => string | null,
   nextValue?: string,
 ): Record<string, string> {
+  if (controlUid === "CORE-01-FLD-ASSIGNED-AI") return {};
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
     const project = namedValue(nextValue, "新專案");
     const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
@@ -923,14 +940,13 @@ export function previewCoreAction(
     return {
       "CORE-01-BTN-SINGLE-AI": "active",
       "CORE-01-BTN-MULTI-AI": "idle",
-      "CORE-01-FLD-ASSIGNED-AI": "SINGLE",
     };
   }
   if (actionUid === "CORE-01-ACT-AI-MODE-MULTI") {
+    if (!assignedAiRouteReady(current)) return {};
     return {
       "CORE-01-BTN-MULTI-AI": "active",
       "CORE-01-BTN-SINGLE-AI": "idle",
-      "CORE-01-FLD-ASSIGNED-AI": "MULTI",
     };
   }
   if (actionUid === "CORE-01-ACT-THREAD-CREATE") {
@@ -958,6 +974,7 @@ export function previewCoreAction(
     if (!message) return {};
     const tokens = resolveComposerTokens(message, current);
     if (composerHasBlockingToken(tokens)) return {};
+    if (!tokens.some((row) => row.kind === "TARGET_ASSISTANT") && !assignedAiRouteReady(current)) return {};
     if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) {
       const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
       const nextRecords = ensureMessageIdentity([...records, { thread, role: "user", text: message, seq: 0, ref: "" }]);

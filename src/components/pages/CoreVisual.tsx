@@ -7,6 +7,7 @@ import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
 import {
   activeThreadUid,
+  assignedAiRouteReady,
   composerHasBlockingToken,
   exactName,
   messagesForThread,
@@ -72,6 +73,8 @@ function Field({
   loading,
   onAct,
   disabled,
+  readonly = false,
+  hint,
 }: {
   uid: string;
   label: string;
@@ -79,7 +82,18 @@ function Field({
   loading: boolean;
   onAct: (uid: string) => void;
   disabled: boolean;
+  readonly?: boolean;
+  hint?: string;
 }) {
+  if (readonly) {
+    return (
+      <div className={`${styles.field} ${styles.fieldReadonly}`} data-control-uid={uid}>
+        <span className={styles.label}>{label}</span>
+        <span className={styles.value}>{displayCoreValue(value, loading)}</span>
+        {hint ? <span className={styles.meta}>{hint}</span> : null}
+      </div>
+    );
+  }
   return (
     <button type="button" className={styles.field} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
       <span className={styles.label}>{label}</span>
@@ -130,6 +144,10 @@ export function CoreVisual() {
           setFields((prev) => {
             const map = new Map(prev.map((row) => [row.controlUid, row.value]));
             for (const row of model.fields) {
+              if (row.controlUid === "CORE-01-FLD-ASSIGNED-AI") {
+                map.set(row.controlUid, row.value);
+                continue;
+              }
               if (row.value != null && row.value !== "") map.set(row.controlUid, row.value);
             }
             return CORE_VISIBLE_CONTROLS.map((controlUid) => ({
@@ -228,7 +246,9 @@ export function CoreVisual() {
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUid(current)) return;
     const text = draftMessage.trim();
-    if (composerHasBlockingToken(resolveComposerTokens(text, current))) return;
+    const tokens = resolveComposerTokens(text, current);
+    if (composerHasBlockingToken(tokens)) return;
+    if (!tokens.some((row) => row.kind === "TARGET_ASSISTANT") && !assignedAiRouteReady(current)) return;
     const attachment = current("CORE-01-BTN-ATTACHMENT");
     const reference = current("CORE-01-BTN-REFERENCE");
     const files = [attachment, reference].filter((name): name is string => typeof name === "string" && name.length > 0 && !FILE_STATUS.has(name));
@@ -308,8 +328,13 @@ export function CoreVisual() {
             : resume
               ? "core.resume.unverified"
               : "core.resume.missing";
-  const parserBlocked = composerHasBlockingToken(resolveComposerTokens(draftMessage, currentFields));
-  const canSend = Boolean(activeThread) && Boolean(draftMessage.trim() || attachedName || referenceName) && !parserBlocked;
+  const composerTokens = resolveComposerTokens(draftMessage, currentFields);
+  const parserBlocked = composerHasBlockingToken(composerTokens);
+  const routeReady = assignedAiRouteReady(currentFields);
+  const assistantTarget = composerTokens.some((row) => row.kind === "TARGET_ASSISTANT");
+  const hasDraft = Boolean(draftMessage.trim() || attachedName || referenceName);
+  const routeBlocked = hasDraft && !assistantTarget && !routeReady;
+  const canSend = Boolean(activeThread) && hasDraft && !parserBlocked && !routeBlocked;
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -331,8 +356,8 @@ export function CoreVisual() {
           ? tx("core.default_blueprint")
           : tx("core.default_project");
   const activeStage = valueOf("CORE-01-FLD-RUNTIME-STAGE") ?? "AI_RESPONSES";
-  const singleActive = valueOf("CORE-01-BTN-SINGLE-AI") === "active" || valueOf("CORE-01-FLD-ASSIGNED-AI") === "SINGLE";
-  const multiActive = !singleActive;
+  const multiActive = valueOf("CORE-01-BTN-MULTI-AI") === "active";
+  const singleActive = !multiActive;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const workLabel = (item: string) => (WORK_ITEM_KEYS[item] ? tx(WORK_ITEM_KEYS[item]) : displayCoreValue(item, false));
   const currentWorkLabel = workLabel(activeWorkItem);
@@ -409,8 +434,8 @@ export function CoreVisual() {
               </div>
               <div className={styles.headerControls}>
                 <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />
-                <IconButton uid="CORE-01-BTN-MULTI-AI" label={tx("core.multi_ai")} icon="multi-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
-                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} />
+                <IconButton uid="CORE-01-BTN-MULTI-AI" label={routeReady ? tx("core.multi_ai") : tx("core.route_blocked")} icon="multi-ai" onAct={act} disabled={disabled || !routeReady} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
+                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} readonly hint={tx("core.assigned_ai_hint")} />
                 <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
               </div>
             </div>
@@ -550,9 +575,10 @@ export function CoreVisual() {
                   }}
                 />
               </label>
-              <IconButton uid="CORE-01-BTN-SEND" label={parserBlocked ? tx("core.parser_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+              <IconButton uid="CORE-01-BTN-SEND" label={parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>
             {parserBlocked ? <p className={styles.error} role="alert">{tx("core.parser_blocked")}</p> : null}
+            {routeBlocked ? <p className={styles.error} role="alert">{tx("core.route_blocked")}</p> : null}
             {attachedName || referenceName ? (
               <p className={styles.composerFiles}>
                 {attachedName ? `${tx("core.attached_file")} ${attachedName}` : null}

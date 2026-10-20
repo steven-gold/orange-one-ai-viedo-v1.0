@@ -251,6 +251,7 @@ const catalog = {
   "core.downstream_edit": { "zh-TW": "剪輯", "zh-CN": "剪辑", en: "Edit" },
   "sg02.state-review": { "zh-TW": "審查中", "zh-CN": "审查中", en: "Review" },
   "core.assigned_ai_hint": { "zh-TW": "由 Shared Router 解析", "zh-CN": "由 Shared Router 解析", en: "由 Shared Router 解析" },
+  "core.route_blocked": { "zh-TW": "指定 AI 組合路由不可用", "zh-CN": "指定 AI 组合路由不可用", en: "Assigned AI route is unavailable" },
   "core.page_mode_project": { "zh-TW": "專案核心", "zh-CN": "项目核心", en: "Project Core" },
   "core.page_mode_topic": { "zh-TW": "專題製作", "zh-CN": "专题制作", en: "Topic Production" },
   "core.read_only": { "zh-TW": "唯讀", "zh-CN": "只读", en: "Read-only" },

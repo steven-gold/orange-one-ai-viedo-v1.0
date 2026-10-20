@@ -16,7 +16,7 @@ import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { generatePageReply } from "../ai/llmClient";
+import { assignedAiRouteSnapshot, generatePageReply } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -222,7 +222,15 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "core") {
-    const written = await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
+    const assigned = await assignedAiRouteSnapshot().catch(() => "");
+    const written = await applyProjectedAction(
+      FIELD_TABLE.core,
+      previewCoreAction,
+      controlUid,
+      actionUid,
+      nextValue,
+      { "CORE-01-FLD-ASSIGNED-AI": assigned },
+    );
     const analyze = actionUid === "CORE-01-ACT-MSG-ANALYZE";
     if ((actionUid === "CORE-01-ACT-SEND" || analyze) && written) {
       const prompt = analyze

@@ -81,6 +81,14 @@ export async function resolveProviderConfigs(capability: string): Promise<Provid
   return configs;
 }
 
+export async function assignedAiRouteSnapshot(capability = AI_CAPABILITY_BY_PAGE.core): Promise<string> {
+  const configs = await resolveProviderConfigs(capability);
+  return configs
+    .map((config) => [config.provider, config.model].filter((part) => part.trim()).join(" / "))
+    .filter(Boolean)
+    .join("、");
+}
+
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
   content: string;

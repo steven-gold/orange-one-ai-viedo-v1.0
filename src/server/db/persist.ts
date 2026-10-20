@@ -6,6 +6,7 @@ import { resolveAssetInbound } from "@/lib/assetInbound";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
+import { assignedAiRouteSnapshot } from "../ai/llmClient";
 import { ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
 import { AIAPI_REGISTRY_UID, readProfiles, serializeProfiles } from "@/lib/aiapiProfiles";
 import { AIAPI_EXTRA_PROJECTION_KEYS } from "@/lib/aiapiActionPreview";
@@ -396,7 +397,11 @@ export async function persistListCoreFields(): Promise<CoreFieldValue[]> {
 export async function persistGetCoreReadModel(accountUid: string): Promise<CoreReadModel> {
   const authorized = await persistHasCorePermission(accountUid);
   const fields = authorized ? await persistListCoreFields() : [];
-  const byUid = new Map(fields.map((row) => [row.controlUid, row.value]));
+  const assigned = authorized ? await assignedAiRouteSnapshot().catch(() => "") : "";
+  const projected = fields.map((row) =>
+    row.controlUid === "CORE-01-FLD-ASSIGNED-AI" ? { ...row, value: assigned || null } : row,
+  );
+  const byUid = new Map(projected.map((row) => [row.controlUid, row.value]));
   const project = namedCoreValue(byUid.get("CORE-01-CTL-PROJECT"));
   const topic = namedCoreValue(byUid.get("CORE-01-CTL-TOPIC"));
   const confirmed =
@@ -411,7 +416,7 @@ export async function persistGetCoreReadModel(accountUid: string): Promise<CoreR
     chainUid: CORE_CHAIN,
     authorized,
     pageMode,
-    fields,
+    fields: projected,
   };
 }
 
