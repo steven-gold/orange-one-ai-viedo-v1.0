@@ -691,6 +691,10 @@ button.evalBox {
   gap: 8px;
 }
 
+.scriptDialog {
+  width: min(560px, calc(100% - 32px));
+}
+
 @container core (max-width: 1180px) {
   .body {
     grid-template-columns: minmax(200px, 0.9fr) minmax(0, 2.2fr) minmax(220px, 0.9fr);

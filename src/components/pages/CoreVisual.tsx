@@ -8,8 +8,10 @@ import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValu
 import {
   activeThreadUid,
   assignedAiRouteReady,
+  canonicalScriptRef,
   composerHasBlockingToken,
   exactName,
+  parseCanonicalScript,
   messagesForThread,
   notebookTextForThread,
   previewCoreAction,
@@ -113,6 +115,7 @@ export function CoreVisual() {
   const [draftMessage, setDraftMessage] = useState("");
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
+  const [scriptOpen, setScriptOpen] = useState(false);
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
   const referenceRef = useRef<HTMLInputElement>(null);
@@ -299,7 +302,8 @@ export function CoreVisual() {
       valueOf("CORE-01-BTN-PROJECT-LOCK") === projectName);
   const topicBlocked = valueOf("CORE-01-FLD-RUNTIME-STAGE") === "TOPIC_LINEAGE_BLOCKED" && !projectIsConfirmed;
   const blueprintName = exactName(valueOf("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(valueOf("CORE-01-FLD-PACKAGE"));
-  const scriptName = exactName(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
+  const scriptProjection = parseCanonicalScript(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
+  const scriptName = canonicalScriptRef(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
   const topicMode = projectIsConfirmed && Boolean(topicName);
   const workItems = topicMode ? TOPIC_WORK_ITEMS : PROJECT_WORK_ITEMS;
   const storedWork = valueOf("CORE-01-LST-WORK-ITEMS");
@@ -628,9 +632,9 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.topic_scope")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-TOPIC-SCOPE"), loading)}</span></div>
             <div className={styles.kv} data-control-uid="CORE-01-FLD-PACKAGE"><span>{tx("core.blueprint_label")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-PACKAGE"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.dna_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(scriptName, loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.naming")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-NAMING-AUTHORITY"), loading)}</span></div>
-            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled || !scriptName} onClick={() => void act("CORE-01-BTN-CANONICAL-SCRIPT")}>{tx("core.view_canonical")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled || !scriptName} onClick={() => setScriptOpen(true)}>{tx("core.view_canonical")}</button>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-DOWNSTREAM" hidden={!topicMode}>
             <h3>{tx("core.downstream")}</h3>
@@ -649,6 +653,27 @@ export function CoreVisual() {
           </section>
         </aside>
       </div>
+      {scriptOpen ? (
+        <div className={styles.dialogScrim} role="presentation" onClick={() => setScriptOpen(false)}>
+          <section className={`${styles.dialog} ${styles.scriptDialog}`} onClick={(event) => event.stopPropagation()}>
+            <h2>{tx("core.canonical_script")}</h2>
+            <p className={styles.meta}>{tx("core.canonical_readonly")}</p>
+            <div className={styles.kv}><span>{tx("core.canonical_id")}</span><span>{displayCoreValue(scriptProjection?.canonical_script_id, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_version")}</span><span>{displayCoreValue(scriptProjection?.version || scriptName, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_project")}</span><span>{displayCoreValue(scriptProjection?.project_id, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_topic")}</span><span>{displayCoreValue(scriptProjection?.topic_id, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_blueprint")}</span><span>{displayCoreValue(scriptProjection?.blueprint_ref, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_topic_scope")}</span><span>{displayCoreValue(scriptProjection?.topic_scope_ref, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_canon")}</span><span>{displayCoreValue(scriptProjection?.canon_refs, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_dna")}</span><span>{displayCoreValue(scriptProjection?.dna_ref, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_candidate")}</span><span>{displayCoreValue(scriptProjection?.source_candidate_ref, false)}</span></div>
+            <div className={styles.kv}><span>{tx("core.canonical_hash")}</span><span>{displayCoreValue(scriptProjection?.hash, false)}</span></div>
+            <div className={styles.dialogActions}>
+              <button type="button" className={styles.btn} onClick={() => setScriptOpen(false)}>{tx("core.close")}</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
       {dialog ? (
         <div className={styles.dialogScrim} role="presentation" onClick={() => setDialog(null)}>
           <form

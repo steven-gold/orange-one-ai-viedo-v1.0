@@ -311,6 +311,84 @@ function sourceHash(parts: string[]): string {
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
+export type CanonicalScriptProjection = {
+  kind: "CANONICAL_SCRIPT";
+  canonical_script_id: string;
+  version: string;
+  project_id: string;
+  topic_id: string;
+  blueprint_ref: string;
+  topic_scope_ref: string;
+  canon_refs: string;
+  dna_ref: string;
+  source_candidate_ref: string;
+  hash: string;
+};
+
+export function parseCanonicalScript(raw: string | null | undefined): CanonicalScriptProjection | undefined {
+  if (!raw || STATUS_TOKENS.has(raw)) return undefined;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return undefined;
+    const rec = parsed as Record<string, unknown>;
+    if (rec.kind !== "CANONICAL_SCRIPT") return undefined;
+    const version = typeof rec.version === "string" ? rec.version.trim() : "";
+    const hash = typeof rec.hash === "string" ? rec.hash.trim() : "";
+    if (!version || !hash) return undefined;
+    const text = (key: string) => (typeof rec[key] === "string" ? String(rec[key]).trim() : "");
+    return {
+      kind: "CANONICAL_SCRIPT",
+      canonical_script_id: text("canonical_script_id"),
+      version,
+      project_id: text("project_id"),
+      topic_id: text("topic_id"),
+      blueprint_ref: text("blueprint_ref"),
+      topic_scope_ref: text("topic_scope_ref"),
+      canon_refs: text("canon_refs"),
+      dna_ref: text("dna_ref"),
+      source_candidate_ref: text("source_candidate_ref"),
+      hash,
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+export function canonicalScriptRef(value: string | null | undefined): string {
+  const parsed = parseCanonicalScript(value);
+  if (parsed) return parsed.version;
+  return exactName(value);
+}
+
+export function serializeCanonicalScript(script: CanonicalScriptProjection): string {
+  return JSON.stringify(script);
+}
+
+export function buildCanonicalScript(current: (uid: string) => string | null): CanonicalScriptProjection | undefined {
+  const project = exactName(current("CORE-01-CTL-PROJECT"));
+  const topic = exactName(current("CORE-01-CTL-TOPIC"));
+  const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
+  if (!project || !topic || !candidate || !projectConfirmed(current)) return undefined;
+  const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+  const topicScope = exactName(current("CORE-01-FLD-TOPIC-SCOPE")) || topic;
+  const dna = exactName(current("CORE-01-BTN-DNA-LOCK"));
+  const canon = [project, topic, blueprint, dna].filter(Boolean).join("、");
+  const hash = sourceHash([project, topic, topicScope, blueprint, dna, candidate, canon]);
+  return {
+    kind: "CANONICAL_SCRIPT",
+    canonical_script_id: `CS-${hash}`,
+    version: `CSV-${hash}`,
+    project_id: project,
+    topic_id: topic,
+    blueprint_ref: blueprint,
+    topic_scope_ref: topicScope,
+    canon_refs: canon,
+    dna_ref: dna,
+    source_candidate_ref: candidate,
+    hash,
+  };
+}
+
 export function parseNotebookRecords(raw: string | null): CoreNotebookRecord[] {
   if (!raw || STATUS_TOKENS.has(raw)) return [];
   try {
@@ -441,6 +519,8 @@ export function formatCoreChatContext(current: (uid: string) => string | null): 
   if (topic) lines.push(`專題：${topic}`);
   if (workItem) lines.push(`工作項目：${workItem}`);
   if (thread) lines.push(`對話：${thread}`);
+  const script = canonicalScriptRef(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+  if (script) lines.push(`正式腳本：${script}`);
   const notebook = notebookTextForThread(current("CORE-01-FLD-ASSISTANT-SUMMARY"), thread);
   if (notebook) lines.push(`筆記本：\n${notebook}`);
   return lines.join("\n");
@@ -540,7 +620,7 @@ export function contextFingerprint(current: (uid: string) => string | null): str
     currentWorkItem(current),
     exactName(current("CORE-01-BTN-DNA-LOCK")),
     exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")),
-    exactName(current("CORE-01-BTN-CANONICAL-SCRIPT")),
+    canonicalScriptRef(current("CORE-01-BTN-CANONICAL-SCRIPT")),
     current("CORE-01-BTN-PROJECT-CONFIRM") ?? "",
     current("CORE-01-BTN-PROJECT-LOCK") ?? "",
   ]);
@@ -954,6 +1034,7 @@ export function previewCoreAction(
       "CORE-01-CTL-TOPIC": "",
       "CORE-01-BTN-TOPIC-CREATE": "[]",
       "CORE-01-FLD-TOPIC-SCOPE": "",
+      "CORE-01-BTN-CANONICAL-SCRIPT": "",
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
@@ -1146,14 +1227,25 @@ export function previewCoreAction(
     return {
       "CORE-01-FLD-VERSION-STATE": candidate,
       "CORE-01-BTN-CANDIDATE-CREATE": "created",
+      "CORE-01-FLD-RUNTIME-STAGE": "CANDIDATE",
     };
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT") {
+    const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
+    if (!candidate) return {};
+    const patched = (uid: string) => (uid === "CORE-01-BTN-CANDIDATE-CONFIRM" ? "confirmed" : current(uid));
+    const script = buildCanonicalScript(patched);
     return {
       "CORE-01-BTN-CANDIDATE-CONFIRM": "confirmed",
       "CORE-01-FLD-LOCK-REVIEW": "ready",
-      "CORE-01-FLD-HUMAN-DECISION": "confirmed",
+      "CORE-01-FLD-HUMAN-DECISION": current("CORE-01-FLD-HUMAN-DECISION") || "confirmed",
+      ...(script
+        ? { "CORE-01-BTN-CANONICAL-SCRIPT": serializeCanonicalScript(script) }
+        : {}),
     };
+  }
+  if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
+    return {};
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-CREATE") {
     const blueprint = namedValue(nextValue, current("CORE-01-BTN-BLUEPRINT-CREATE") || "新藍圖");
@@ -1197,15 +1289,7 @@ export function previewCoreAction(
       "CORE-01-BTN-BLUEPRINT-CREATE": exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || blueprint,
     };
   }
-  if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
-    const script = exactName(nextValue) || exactName(current("CORE-01-BTN-CANONICAL-SCRIPT"));
-    if (!script) return {};
-    const pkg = exactName(current("CORE-01-FLD-PACKAGE"));
-    return {
-      "CORE-01-BTN-CANONICAL-SCRIPT": script,
-      ...(pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {}),
-    };
-  }
+
   if (actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT") {
     return {
       "CORE-01-BTN-CORE-REVIEW": "sent",
