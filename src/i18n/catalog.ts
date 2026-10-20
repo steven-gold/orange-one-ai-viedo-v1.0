@@ -144,6 +144,13 @@ const catalog = {
   "core.assistant_record": { "zh-TW": "助理紀錄", "zh-CN": "助理记录", en: "Assistant Record" },
   "core.messages": { "zh-TW": "訊息工作區", "zh-CN": "讯息工作区", en: "Message Workspace" },
   "core.right_click_only": { "zh-TW": "僅允許右鍵操作", "zh-CN": "仅允许右键操作", en: "Right-click actions only" },
+  "core.menu.quote": { "zh-TW": "引用此訊息", "zh-CN": "引用此讯息", en: "Quote this message" },
+  "core.menu.continue": { "zh-TW": "繼續討論此主題", "zh-CN": "继续讨论此主题", en: "Continue this topic" },
+  "core.menu.analyze": { "zh-TW": "分析此內容", "zh-CN": "分析此内容", en: "Analyze this content" },
+  "core.menu.decision": { "zh-TW": "加入決策清單", "zh-CN": "加入决策清单", en: "Add to decision list" },
+  "core.menu.branch": { "zh-TW": "建立分支討論", "zh-CN": "建立分支讨论", en: "Create a branch" },
+  "core.menu.copy": { "zh-TW": "複製此訊息", "zh-CN": "复制此讯息", en: "Copy this message" },
+  "core.parser_blocked": { "zh-TW": "引用無效或有歧義，請改用精確編號", "zh-CN": "引用无效或有歧义，请改用精确编号", en: "The reference is invalid or ambiguous. Use the exact canonical id." },
   "core.ai_response_n": { "zh-TW": "AI 回應", "zh-CN": "AI 回应", en: "AI Response" },
   "core.ai_placeholder": {
     "zh-TW": "目前脈絡中的 AI 回應內容",

@@ -103,11 +103,58 @@ const WORK_ITEMS = new Set([
   "PRODUCTION_SCRIPT",
 ]);
 
-export type CoreThreadRecord = { title: string; workItem: string };
+export type CoreThreadRecord = {
+  title: string;
+  workItem: string;
+  parentThread?: string;
+  sourceRef?: string;
+  branchRef?: string;
+  convRef?: string;
+};
 
 export type CoreMessageRole = "user" | "assistant";
 
-export type CoreMessageRecord = { thread: string; role: CoreMessageRole; text: string };
+export type CoreMessageRecord = { thread: string; role: CoreMessageRole; text: string; seq: number; ref: string };
+
+function padRef(prefix: string, seq: number): string {
+  return `${prefix}-${String(seq).padStart(6, "0")}`;
+}
+
+function refSeq(raw: string | undefined, prefixes: string[]): number {
+  if (!raw) return 0;
+  for (const prefix of prefixes) {
+    if (raw.startsWith(prefix)) {
+      const num = Number.parseInt(raw.slice(prefix.length).replace(/^0+/, "") || "0", 10);
+      return Number.isFinite(num) ? num : 0;
+    }
+  }
+  return 0;
+}
+
+export function ensureMessageIdentity(records: CoreMessageRecord[]): CoreMessageRecord[] {
+  const aiMax = new Map<string, number>();
+  const userMax = new Map<string, number>();
+  for (const row of records) {
+    if (row.role === "assistant") {
+      const seq = row.seq || refSeq(row.ref, ["#AI-"]);
+      aiMax.set(row.thread, Math.max(aiMax.get(row.thread) ?? 0, seq));
+    } else {
+      const seq = row.seq || refSeq(row.ref, ["#MSG-"]);
+      userMax.set(row.thread, Math.max(userMax.get(row.thread) ?? 0, seq));
+    }
+  }
+  return records.map((row) => {
+    if (row.ref && row.seq) return row;
+    if (row.role === "assistant") {
+      const seq = row.seq || (aiMax.get(row.thread) ?? 0) + 1;
+      aiMax.set(row.thread, seq);
+      return { ...row, seq, ref: row.ref || padRef("#AI", seq) };
+    }
+    const seq = row.seq || (userMax.get(row.thread) ?? 0) + 1;
+    userMax.set(row.thread, seq);
+    return { ...row, seq, ref: row.ref || padRef("#MSG", seq) };
+  });
+}
 
 export function parseMessageRecords(raw: string | null): CoreMessageRecord[] {
   if (!raw || raw === "sent" || STATUS_TOKENS.has(raw)) return [];
@@ -115,26 +162,30 @@ export function parseMessageRecords(raw: string | null): CoreMessageRecord[] {
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) {
       const text = usableMessage(raw);
-      return text ? [{ thread: "", role: "user", text }] : [];
+      return text ? ensureMessageIdentity([{ thread: "", role: "user", text, seq: 0, ref: "" }]) : [];
     }
     const records: CoreMessageRecord[] = [];
     for (const item of parsed) {
       if (!item || typeof item !== "object") continue;
-      const rec = item as { thread?: unknown; role?: unknown; text?: unknown };
+      const rec = item as { thread?: unknown; role?: unknown; text?: unknown; seq?: unknown; ref?: unknown };
       const text = typeof rec.text === "string" ? rec.text.trim() : "";
       if (!text) continue;
       const role = rec.role === "assistant" ? "assistant" : rec.role === "user" ? "user" : null;
       if (!role) continue;
+      const seq = typeof rec.seq === "number" && Number.isFinite(rec.seq) ? rec.seq : 0;
+      const ref = typeof rec.ref === "string" ? rec.ref.trim() : "";
       records.push({
         thread: typeof rec.thread === "string" ? rec.thread.trim() : "",
         role,
         text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
+        seq,
+        ref,
       });
     }
-    return records;
+    return ensureMessageIdentity(records);
   } catch {
     const text = usableMessage(raw);
-    return text ? [{ thread: "", role: "user", text }] : [];
+    return text ? ensureMessageIdentity([{ thread: "", role: "user", text, seq: 0, ref: "" }]) : [];
   }
 }
 
@@ -152,7 +203,7 @@ export function messagesForThread(
     ? ""
     : usableMessage(fallbackAssistant ?? undefined);
   if (extra && extra !== unscoped[unscoped.length - 1]?.text) {
-    return [...unscoped, { thread, role: "assistant", text: extra }];
+    return ensureMessageIdentity([...unscoped, { thread, role: "assistant", text: extra, seq: 0, ref: "" }]);
   }
   return unscoped;
 }
@@ -342,11 +393,35 @@ export function appendAssistantMessage(
   if (!thread || !text) return {};
   const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
   return {
-    "CORE-01-FLD-MESSAGE": JSON.stringify([
-      ...records,
-      { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS) },
-    ]),
+    "CORE-01-FLD-MESSAGE": JSON.stringify(
+      ensureMessageIdentity([
+        ...records,
+        { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS), seq: 0, ref: "" },
+      ]),
+    ),
   };
+}
+
+function ensureThreadIdentity(records: CoreThreadRecord[]): CoreThreadRecord[] {
+  let convMax = 0;
+  let branchMax = 0;
+  for (const row of records) {
+    convMax = Math.max(convMax, refSeq(row.convRef, ["#CONV-"]));
+    branchMax = Math.max(branchMax, refSeq(row.branchRef, ["#BR-"]));
+  }
+  return records.map((row) => {
+    let convRef = row.convRef;
+    let branchRef = row.branchRef;
+    if (!convRef) {
+      convMax += 1;
+      convRef = padRef("#CONV", convMax);
+    }
+    if (row.parentThread && !branchRef) {
+      branchMax += 1;
+      branchRef = padRef("#BR", branchMax);
+    }
+    return { ...row, convRef, ...(branchRef ? { branchRef } : {}) };
+  });
 }
 
 export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
@@ -355,7 +430,7 @@ export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) {
       const title = usableName(raw);
-      return title ? [{ title, workItem: "" }] : [];
+      return title ? ensureThreadIdentity([{ title, workItem: "" }]) : [];
     }
     const records: CoreThreadRecord[] = [];
     for (const item of parsed) {
@@ -365,18 +440,29 @@ export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
         continue;
       }
       if (!item || typeof item !== "object") continue;
-      const rec = item as { title?: unknown; workItem?: unknown };
+      const rec = item as {
+        title?: unknown;
+        workItem?: unknown;
+        parentThread?: unknown;
+        sourceRef?: unknown;
+        branchRef?: unknown;
+        convRef?: unknown;
+      };
       const title = typeof rec.title === "string" ? usableName(rec.title) : "";
       if (!title) continue;
       records.push({
         title,
         workItem: typeof rec.workItem === "string" && WORK_ITEMS.has(rec.workItem) ? rec.workItem : "",
+        parentThread: typeof rec.parentThread === "string" ? rec.parentThread.trim() : undefined,
+        sourceRef: typeof rec.sourceRef === "string" ? rec.sourceRef.trim() : undefined,
+        branchRef: typeof rec.branchRef === "string" ? rec.branchRef.trim() : undefined,
+        convRef: typeof rec.convRef === "string" ? rec.convRef.trim() : undefined,
       });
     }
-    return records;
+    return ensureThreadIdentity(records);
   } catch {
     const title = usableName(raw);
-    return title ? [{ title, workItem: "" }] : [];
+    return title ? ensureThreadIdentity([{ title, workItem: "" }]) : [];
   }
 }
 
@@ -410,6 +496,175 @@ export function activeThreadUid(current: (uid: string) => string | null): string
 
 export function hasSendableMessage(nextValue?: string, stored?: string | null): boolean {
   return Boolean(usableMessage(nextValue) || usableMessage(stored ?? undefined));
+}
+
+export type CoreTokenKind =
+  | "TARGET_PARTICIPANT"
+  | "TARGET_ALL_PARTICIPANTS"
+  | "TARGET_ASSISTANT"
+  | "MESSAGE_REF"
+  | "ASSISTANT_REF"
+  | "CONVERSATION_REF"
+  | "BRANCH_REF"
+  | "PARSER_ERROR"
+  | "AMBIGUOUS_REF";
+
+export type CoreResolvedToken = {
+  raw: string;
+  kind: CoreTokenKind;
+  canonical: string;
+};
+
+const COMPOSER_TOKEN = /(@全部AI|@助理|@[ABC]|#AI-\d+|#AST-\d+|#CONV-\d+|#BR-\d+|#MSG-\d+|#\d+)/gu;
+
+function assistantRefForThread(current: (uid: string) => string | null, thread: string): string {
+  const notes = parseNotebookRecords(current("CORE-01-FLD-ASSISTANT-SUMMARY"));
+  const match = notes.find((row) => row.thread === thread);
+  return match ? padRef("#AST", match.version) : "";
+}
+
+function shortNumber(raw: string): string {
+  const digits = raw.replace(/\D/g, "").replace(/^0+/, "") || "0";
+  return digits;
+}
+
+export function resolveComposerTokens(
+  text: string,
+  current: (uid: string) => string | null,
+): CoreResolvedToken[] {
+  const thread = activeThreadUid(current);
+  const messages = messagesForThread(current("CORE-01-FLD-MESSAGE"), thread);
+  const threads = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD"));
+  const multi = current("CORE-01-FLD-ASSIGNED-AI") === "MULTI" || current("CORE-01-BTN-MULTI-AI") === "active";
+  const tokens: CoreResolvedToken[] = [];
+  COMPOSER_TOKEN.lastIndex = 0;
+  let match: RegExpExecArray | null = COMPOSER_TOKEN.exec(text);
+  while (match) {
+    const raw = match[0];
+    if (raw === "@A" || raw === "@B" || raw === "@C") {
+      tokens.push(
+        multi
+          ? { raw, kind: "TARGET_PARTICIPANT", canonical: raw }
+          : { raw, kind: "PARSER_ERROR", canonical: "" },
+      );
+    } else if (raw === "@全部AI") {
+      tokens.push({ raw, kind: "TARGET_ALL_PARTICIPANTS", canonical: raw });
+    } else if (raw === "@助理") {
+      tokens.push({ raw, kind: "TARGET_ASSISTANT", canonical: raw });
+    } else if (raw.startsWith("#AST-")) {
+      const ast = assistantRefForThread(current, thread);
+      tokens.push(
+        ast && ast === padRef("#AST", Number.parseInt(raw.slice(5).replace(/^0+/, "") || "0", 10) || 0)
+          ? { raw, kind: "ASSISTANT_REF", canonical: ast }
+          : { raw, kind: "PARSER_ERROR", canonical: "" },
+      );
+    } else if (raw.startsWith("#CONV-")) {
+      const hit = threads.find((row) => row.convRef === padRef("#CONV", Number.parseInt(raw.slice(6).replace(/^0+/, "") || "0", 10) || 0));
+      tokens.push(hit?.convRef ? { raw, kind: "CONVERSATION_REF", canonical: hit.convRef } : { raw, kind: "PARSER_ERROR", canonical: "" });
+    } else if (raw.startsWith("#BR-")) {
+      const hit = threads.find((row) => row.branchRef === padRef("#BR", Number.parseInt(raw.slice(4).replace(/^0+/, "") || "0", 10) || 0));
+      tokens.push(hit?.branchRef ? { raw, kind: "BRANCH_REF", canonical: hit.branchRef } : { raw, kind: "PARSER_ERROR", canonical: "" });
+    } else {
+      const num = shortNumber(raw);
+      const prefix = raw.startsWith("#AI-") ? "#AI" : raw.startsWith("#MSG-") ? "#MSG" : "";
+      const hits = prefix
+        ? messages.filter((row) => row.ref === padRef(prefix, Number.parseInt(num, 10) || 0))
+        : messages.filter((row) => shortNumber(row.ref) === num);
+      if (hits.length === 1) {
+        tokens.push({ raw, kind: "MESSAGE_REF", canonical: hits[0].ref });
+      } else if (hits.length > 1) {
+        tokens.push({ raw, kind: "AMBIGUOUS_REF", canonical: "" });
+      } else {
+        tokens.push({ raw, kind: "PARSER_ERROR", canonical: "" });
+      }
+    }
+    match = COMPOSER_TOKEN.exec(text);
+  }
+  return tokens;
+}
+
+export function composerHasBlockingToken(tokens: CoreResolvedToken[]): boolean {
+  return tokens.some((row) => row.kind === "PARSER_ERROR" || row.kind === "AMBIGUOUS_REF");
+}
+
+export function quoteInsertText(ref: string): string {
+  return ref ? `${ref} ` : "";
+}
+
+export type CoreMessageActionPayload = {
+  actionUid: string;
+  messageRef?: string;
+};
+
+export function parseMessageActionPayload(nextValue?: string): CoreMessageActionPayload {
+  const text = (nextValue ?? "").trim();
+  if (!text) return { actionUid: "" };
+  if (text.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(text) as { actionUid?: unknown; messageRef?: unknown };
+      return {
+        actionUid: typeof parsed.actionUid === "string" ? parsed.actionUid : "",
+        messageRef: typeof parsed.messageRef === "string" ? parsed.messageRef : undefined,
+      };
+    } catch {
+      return { actionUid: "" };
+    }
+  }
+  return { actionUid: "", messageRef: text };
+}
+
+function findThreadMessage(
+  current: (uid: string) => string | null,
+  messageRef?: string,
+): CoreMessageRecord | null {
+  const thread = activeThreadUid(current);
+  if (!thread || !messageRef) return null;
+  const tokens = resolveComposerTokens(messageRef, current);
+  const resolved = tokens.find((row) => row.kind === "MESSAGE_REF")?.canonical ?? messageRef;
+  return messagesForThread(current("CORE-01-FLD-MESSAGE"), thread).find((row) => row.ref === resolved) ?? null;
+}
+
+export function previewMessageAction(
+  actionUid: string,
+  current: (uid: string) => string | null,
+  messageRef?: string,
+): Record<string, string> {
+  const thread = activeThreadUid(current);
+  if (!thread) return {};
+  const message = findThreadMessage(current, messageRef);
+  if (!message) return {};
+  if (actionUid === "CORE-01-ACT-MSG-QUOTE" || actionUid === "CORE-01-ACT-MSG-CONTINUE" || actionUid === "CORE-01-ACT-MSG-COPY") {
+    return {};
+  }
+  if (actionUid === "CORE-01-ACT-MSG-ANALYZE") {
+    const prompt = `分析此內容 ${message.ref}`;
+    return previewCoreAction("CORE-01-BTN-SEND", "CORE-01-ACT-SEND", current, prompt);
+  }
+  if (actionUid === "CORE-01-ACT-MSG-DECISION") {
+    const existing = usableMessage(current("CORE-01-FLD-HUMAN-DECISION") ?? undefined);
+    const next = existing && existing !== "confirmed" && existing !== "recorded"
+      ? (existing.includes(message.ref) ? existing : `${existing}、${message.ref}`)
+      : message.ref;
+    return {
+      "CORE-01-FLD-HUMAN-DECISION": next,
+      "CORE-01-FLD-RUNTIME-STAGE": "HUMAN_DECISION",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-MSG-BRANCH") {
+    const records = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD"));
+    const workItem = currentWorkItem(current);
+    const scoped = records.filter((row) => row.workItem === workItem);
+    const title = namedValue(undefined, `分支 ${scoped.length + 1}`);
+    const nextRecords = ensureThreadIdentity([
+      ...records,
+      { title, workItem, parentThread: thread, sourceRef: message.ref },
+    ]);
+    return {
+      "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextRecords),
+      "CORE-01-LST-THREADS": title,
+    };
+  }
+  return {};
 }
 
 export function statusFromAction(actionUid: string): string {
@@ -560,17 +815,40 @@ export function previewCoreAction(
     const scoped = records.filter((row) => row.workItem === workItem);
     const title = namedValue(nextValue, `對話 ${scoped.length + 1}`);
     const exists = records.some((row) => row.title === title && row.workItem === workItem);
-    const nextRecords = exists ? records : [...records, { title, workItem }];
+    const nextRecords = ensureThreadIdentity(exists ? records : [...records, { title, workItem }]);
     return {
       "CORE-01-LST-THREADS": title,
       "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextRecords),
     };
+  }
+  if (actionUid.startsWith("CORE-01-ACT-MSG-")) {
+    const payload = parseMessageActionPayload(nextValue);
+    return previewMessageAction(actionUid, current, payload.messageRef || nextValue);
   }
   if (actionUid === "CORE-01-ACT-SEND") {
     const thread = activeThreadUid(current);
     if (!thread || !hasSendableMessage(nextValue)) return {};
     const message = usableMessage(nextValue);
     if (!message) return {};
+    const tokens = resolveComposerTokens(message, current);
+    if (composerHasBlockingToken(tokens)) return {};
+    if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) {
+      const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
+      const nextRecords = ensureMessageIdentity([...records, { thread, role: "user", text: message, seq: 0, ref: "" }]);
+      const notebookPatch = refreshAssistantNotebook(
+        (uid) => (uid === "CORE-01-FLD-MESSAGE" ? JSON.stringify(nextRecords) : current(uid)),
+        thread,
+        messagesForThread(JSON.stringify(nextRecords), thread),
+        "record",
+      );
+      return {
+        "CORE-01-FLD-MESSAGE": JSON.stringify(nextRecords),
+        "CORE-01-BTN-SEND": "sent",
+        "CORE-01-BTN-ASSISTANT-RECORD": "recorded",
+        "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
+        ...notebookPatch,
+      };
+    }
     const attachment = usableName(current("CORE-01-BTN-ATTACHMENT") ?? undefined);
     const reference = usableName(current("CORE-01-BTN-REFERENCE") ?? undefined);
     const files = [attachment, reference].filter(Boolean);
@@ -584,10 +862,10 @@ export function previewCoreAction(
       const scopedMessages = records.filter((row) => row.thread === thread);
       const last = scopedMessages[scopedMessages.length - 1]?.text;
       if (prior && prior !== last && prior !== summary) {
-        records = [...records, { thread, role: "assistant", text: prior }];
+        records = [...records, { thread, role: "assistant", text: prior, seq: 0, ref: "" }];
       }
     }
-    const nextRecords: CoreMessageRecord[] = [...records, { thread, role: "user", text: summary }];
+    const nextRecords = ensureMessageIdentity([...records, { thread, role: "user", text: summary, seq: 0, ref: "" }]);
     const notebookPatch = refreshAssistantNotebook(current, thread, nextRecords, "overflow");
     return {
       "CORE-01-FLD-MESSAGE": JSON.stringify(nextRecords),

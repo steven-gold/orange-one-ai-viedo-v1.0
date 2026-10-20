@@ -7,8 +7,10 @@ import {
   appendAssistantMessage,
   formatCoreChatContext,
   messagesForThread,
+  parseMessageActionPayload,
   previewCoreAction,
   recentHistoryPayload,
+  resolveComposerTokens,
 } from "@/lib/coreActionPreview";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
@@ -221,13 +223,18 @@ export async function applyWorkbenchAction(
   }
   if (page === "core") {
     const written = await applyProjectedAction(FIELD_TABLE.core, previewCoreAction, controlUid, actionUid, nextValue);
-    if (actionUid === "CORE-01-ACT-SEND" && written) {
-      const prompt = promptFromValue(nextValue);
+    const analyze = actionUid === "CORE-01-ACT-MSG-ANALYZE";
+    if ((actionUid === "CORE-01-ACT-SEND" || analyze) && written) {
+      const prompt = analyze
+        ? `分析此內容 ${parseMessageActionPayload(nextValue).messageRef ?? ""}`.trim()
+        : promptFromValue(nextValue);
       const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
         `SELECT control_uid, value_text FROM ${FIELD_TABLE.core}`,
       );
       const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
       const current = (uid: string) => cache.get(uid) ?? null;
+      const tokens = resolveComposerTokens(prompt, current);
+      if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) return;
       const thread = activeThreadUid(current);
       const history = recentHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread).slice(0, -1));
       const context = formatCoreChatContext(current);

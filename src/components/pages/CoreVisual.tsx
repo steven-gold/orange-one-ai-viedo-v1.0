@@ -7,17 +7,19 @@ import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
 import {
   activeThreadUid,
+  composerHasBlockingToken,
   exactName,
   messagesForThread,
   notebookTextForThread,
   previewCoreAction,
+  quoteInsertText,
+  resolveComposerTokens,
   threadScopeReady,
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
-  CORE_MESSAGE_ACTIONS,
   CORE_VISIBLE_CONTROLS,
   PROJECT_WORK_ITEMS,
   TOPIC_WORK_ITEMS,
@@ -47,6 +49,15 @@ const RUNTIME_STAGES: { id: string; key: TranslationKey }[] = [
   { id: "CORE_EVALUATION", key: "core.stage.core_evaluation" },
   { id: "HUMAN_DECISION", key: "core.stage.human_decision" },
   { id: "CANDIDATE", key: "core.stage.candidate" },
+];
+
+const MESSAGE_MENU: { uid: string; actionUid: string; key: TranslationKey }[] = [
+  { uid: "CORE-01-MENU-QUOTE", actionUid: "CORE-01-ACT-MSG-QUOTE", key: "core.menu.quote" },
+  { uid: "CORE-01-MENU-CONTINUE", actionUid: "CORE-01-ACT-MSG-CONTINUE", key: "core.menu.continue" },
+  { uid: "CORE-01-MENU-ANALYZE", actionUid: "CORE-01-ACT-MSG-ANALYZE", key: "core.menu.analyze" },
+  { uid: "CORE-01-MENU-DECISION", actionUid: "CORE-01-ACT-MSG-DECISION", key: "core.menu.decision" },
+  { uid: "CORE-01-MENU-BRANCH", actionUid: "CORE-01-ACT-MSG-BRANCH", key: "core.menu.branch" },
+  { uid: "CORE-01-MENU-COPY", actionUid: "CORE-01-ACT-MSG-COPY", key: "core.menu.copy" },
 ];
 
 function emptyFields(): CoreFieldValue[] {
@@ -86,10 +97,26 @@ export function CoreVisual() {
   const [dialogName, setDialogName] = useState("");
   const [draftMessage, setDraftMessage] = useState("");
   const [tick, setTick] = useState(0);
+  const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
   const referenceRef = useRef<HTMLInputElement>(null);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    if (!menu) return;
+    const close = () => setMenu(null);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    const timer = window.setTimeout(() => window.addEventListener("click", close), 0);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("click", close);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menu]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -155,7 +182,7 @@ export function CoreVisual() {
     applyPatch(patch);
     try {
       await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
-      if (actionUid === "CORE-01-ACT-SEND") setTick((value) => value + 1);
+      if (actionUid === "CORE-01-ACT-SEND" || actionUid === "CORE-01-ACT-MSG-ANALYZE") setTick((value) => value + 1);
     } catch {
       // Optimistic projection stays visible when the write path is unbound.
     }
@@ -200,6 +227,7 @@ export function CoreVisual() {
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUid(current)) return;
     const text = draftMessage.trim();
+    if (composerHasBlockingToken(resolveComposerTokens(text, current))) return;
     const attachment = current("CORE-01-BTN-ATTACHMENT");
     const reference = current("CORE-01-BTN-REFERENCE");
     const files = [attachment, reference].filter((name): name is string => typeof name === "string" && name.length > 0 && !FILE_STATUS.has(name));
@@ -208,6 +236,36 @@ export function CoreVisual() {
     setDraftMessage("");
     void act("CORE-01-BTN-SEND", payload);
   }, [act, draftMessage]);
+
+  const insertQuote = useCallback((ref: string, prefix = "") => {
+    const piece = quoteInsertText(ref);
+    if (!piece && !prefix) return;
+    setDraftMessage((prev) => {
+      const lead = prefix && !prev.includes(prefix) ? `${prefix} ` : "";
+      if (!prev) return `${lead}${piece}`.trimStart();
+      const gap = /[\s\n]$/.test(prev) ? "" : " ";
+      return `${lead}${prev}${gap}${piece}`;
+    });
+  }, []);
+
+  const runMessageAction = useCallback((actionUid: string, messageRef: string, text: string) => {
+    setMenu(null);
+    if (actionUid === "CORE-01-ACT-MSG-QUOTE") {
+      insertQuote(messageRef);
+      return;
+    }
+    if (actionUid === "CORE-01-ACT-MSG-CONTINUE") {
+      insertQuote(messageRef, "繼續討論");
+      return;
+    }
+    if (actionUid === "CORE-01-ACT-MSG-COPY") {
+      void navigator.clipboard?.writeText(text);
+      return;
+    }
+    const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
+    if (!controlUid) return;
+    void act(controlUid, JSON.stringify({ actionUid, messageRef }));
+  }, [act, insertQuote]);
 
   const disabled = false;
   const tx = (key: TranslationKey) => t(key);
@@ -238,7 +296,8 @@ export function CoreVisual() {
   const pickedFileName = (stored: string | null) => (stored && !FILE_STATUS.has(stored) ? stored : "");
   const attachedName = pickedFileName(attachedFile);
   const referenceName = pickedFileName(referenceFile);
-  const canSend = Boolean(activeThread) && Boolean(draftMessage.trim() || attachedName || referenceName);
+  const parserBlocked = composerHasBlockingToken(resolveComposerTokens(draftMessage, currentFields));
+  const canSend = Boolean(activeThread) && Boolean(draftMessage.trim() || attachedName || referenceName) && !parserBlocked;
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -272,7 +331,7 @@ export function CoreVisual() {
       data-page-uid="CORE-01"
       data-page-state={pageState}
       data-component-count="17"
-      data-control-count="44"
+      data-control-count="50"
       aria-label={tx("core.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
@@ -355,10 +414,16 @@ export function CoreVisual() {
               ) : (
                 conversation.map((row, index) => (
                   <article
-                    key={`${row.role}-${index}`}
+                    key={row.ref || `${row.role}-${index}`}
                     className={row.role === "user" ? styles.userMessage : styles.assistantMessage}
+                    onContextMenu={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      if (!row.ref) return;
+                      setMenu({ x: event.clientX, y: event.clientY, ref: row.ref, text: row.text });
+                    }}
                   >
-                    <div className={styles.bubbleRole}>{row.role === "user" ? tx("core.user_message") : tx("core.ai_response_n")}</div>
+                    <div className={styles.bubbleRole}>{row.role === "user" ? tx("core.user_message") : tx("core.ai_response_n")} {row.ref}</div>
                     <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
                   </article>
                 ))
@@ -368,8 +433,26 @@ export function CoreVisual() {
               <span className={styles.summaryLabel}>{tx("core.summary_inline")}</span>
               <p>{notebookText || tx("core.summary_hint")}</p>
             </div>
-            <div data-component-uid="CORE-01-CMP-MESSAGE-MENU" hidden>
-              {CORE_MESSAGE_ACTIONS.map((uid) => <span key={uid} data-action-uid={uid} />)}
+            <div
+              className={menu ? styles.messageMenu : styles.messageMenuHidden}
+              data-component-uid="CORE-01-CMP-MESSAGE-MENU"
+              hidden={!menu}
+              style={menu ? { left: menu.x, top: menu.y } : undefined}
+              onClick={(event) => event.stopPropagation()}
+            >
+              {MESSAGE_MENU.map((item) => (
+                <button
+                  key={item.uid}
+                  type="button"
+                  className={styles.menuItem}
+                  data-control-uid={item.uid}
+                  data-action-uid={item.actionUid}
+                  disabled={disabled || !menu}
+                  onClick={() => menu && runMessageAction(item.actionUid, menu.ref, menu.text)}
+                >
+                  {tx(item.key)}
+                </button>
+              ))}
             </div>
           </section>
 
@@ -454,8 +537,9 @@ export function CoreVisual() {
                   }}
                 />
               </label>
-              <IconButton uid="CORE-01-BTN-SEND" label={canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+              <IconButton uid="CORE-01-BTN-SEND" label={parserBlocked ? tx("core.parser_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>
+            {parserBlocked ? <p className={styles.error} role="alert">{tx("core.parser_blocked")}</p> : null}
             {attachedName || referenceName ? (
               <p className={styles.composerFiles}>
                 {attachedName ? `${tx("core.attached_file")} ${attachedName}` : null}
