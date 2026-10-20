@@ -1,4 +1,11 @@
 import { namedValue, parseThreadList, statusFromAction } from "./coreActionPreview";
+import {
+  buildCorrectionCandidate,
+  parseCorrectionScript,
+  serializeCorrectionScript,
+  sourceMatches,
+  withCorrectionStatus,
+} from "./correctionScript";
 
 export { parseThreadList };
 
@@ -39,6 +46,14 @@ function inboundReady(current: (uid: string) => string | null): boolean {
       named(current("ASSET-01-FLD-BLUEPRINT")) &&
       named(current("ASSET-01-FLD-DNA")) &&
       named(current("ASSET-01-FLD-SCRIPT")),
+  );
+}
+
+function exactSource(current: (uid: string) => string | null): string {
+  return (
+    named(current("ASSET-01-FLD-OUTPUT-ID")) ||
+    named(current("ASSET-01-FLD-MANIFEST")) ||
+    named(current("ASSET-01-FLD-SCRIPT"))
   );
 }
 
@@ -183,22 +198,48 @@ export function previewAssetAction(
   if (actionUid === "ASSET-01-ACT-CORRECTION-OPEN") {
     return {
       "ASSET-01-BTN-CORRECTION-OPEN": "open",
-      "ASSET-01-TXT-CORRECTION-REQUEST": keepName(nextValue, current("ASSET-01-TXT-CORRECTION-REQUEST"), "請修正此素材"),
+      "ASSET-01-BTN-MODIFY": "open",
+      "ASSET-01-TXT-CORRECTION-REQUEST": keepName(nextValue, current("ASSET-01-TXT-CORRECTION-REQUEST"), ""),
     };
   }
   if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") {
+    const request = keepName(nextValue, current("ASSET-01-TXT-CORRECTION-REQUEST"), "");
+    const source = exactSource(current);
+    const candidate = buildCorrectionCandidate({
+      department: "ASSET",
+      exact_source_version: source,
+      target_scope: named(current("ASSET-01-CTL-LAYER-PROPERTIES")) || source,
+      requested_delta: request,
+      expected_output_kind: "PatchVersion",
+    });
+    if (!candidate) return {};
     return {
+      "ASSET-01-BTN-CORRECTION-OPEN": "open",
+      "ASSET-01-BTN-MODIFY": "open",
       "ASSET-01-BTN-CORRECTION-GENERATE": "created",
-      "ASSET-01-TXT-CORRECTION-REQUEST": keepName(nextValue, current("ASSET-01-TXT-CORRECTION-REQUEST"), "請修正此素材"),
+      "ASSET-01-BTN-CORRECTION-APPROVE": "idle",
+      "ASSET-01-BTN-CORRECTION-EXECUTE": "idle",
+      "ASSET-01-TXT-CORRECTION-REQUEST": request,
+      "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(candidate),
     };
   }
   if (actionUid === "ASSET-01-ACT-CORRECTION-APPROVE") {
-    return { "ASSET-01-BTN-CORRECTION-APPROVE": "approved" };
+    const source = exactSource(current);
+    const candidate = parseCorrectionScript(current("ASSET-01-FLD-CORRECTION-RESPONSE"));
+    if (!sourceMatches(candidate, source) || candidate?.status !== "CANDIDATE") return {};
+    return {
+      "ASSET-01-BTN-CORRECTION-APPROVE": "approved",
+      "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withCorrectionStatus(candidate, "APPROVED")),
+    };
   }
   if (actionUid === "ASSET-01-ACT-CORRECTION-EXECUTE") {
+    const source = exactSource(current);
+    const candidate = parseCorrectionScript(current("ASSET-01-FLD-CORRECTION-RESPONSE"));
+    if (!sourceMatches(candidate, source) || candidate?.status !== "APPROVED") return {};
     return {
       "ASSET-01-BTN-CORRECTION-EXECUTE": "running",
       "ASSET-01-FLD-TASK-STATUS": "running",
+      "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DOC-CREATE") {

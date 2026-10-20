@@ -1,4 +1,11 @@
 import { exactName, namedValue, statusFromAction } from "./coreActionPreview";
+import {
+  buildCorrectionCandidate,
+  parseCorrectionScript,
+  serializeCorrectionScript,
+  sourceMatches,
+  withCorrectionStatus,
+} from "./correctionScript";
 
 function named(value: string | null | undefined): string {
   return exactName(value);
@@ -24,6 +31,15 @@ function inboundReady(current: (uid: string) => string | null): boolean {
       named(current("VIDEO-01-FLD-DNA-REFS")) &&
       named(current("VIDEO-01-FLD-SCRIPT-SECTION")) &&
       named(current("VIDEO-01-FLD-ASSET-REFS")),
+  );
+}
+
+function exactSource(current: (uid: string) => string | null): string {
+  return (
+    named(current("VIDEO-01-FLD-VIDEO-VERSION")) ||
+    named(current("VIDEO-01-FLD-CURRENT-VERSION")) ||
+    named(current("VIDEO-01-FLD-CANDIDATE-VERSION")) ||
+    named(current("VIDEO-01-FLD-SCRIPT-SECTION"))
   );
 }
 
@@ -139,7 +155,7 @@ export function previewVideoAction(
   if (actionUid === "VIDEO-01-ACT-CORRECTION-OPEN") {
     return {
       "VIDEO-01-BTN-MODIFY": "open",
-      "VIDEO-01-FLD-SCENE": keep(undefined, current("VIDEO-01-FLD-SCENE"), "當前場景"),
+      "VIDEO-01-FLD-SCENE": keep(undefined, current("VIDEO-01-FLD-SCENE"), ""),
     };
   }
   if (actionUid === "VIDEO-01-ACT-VERSION-LOCK") {
@@ -174,21 +190,51 @@ export function previewVideoAction(
     return { [controlUid]: keep(nextValue, current(controlUid), named(current("VIDEO-01-FLD-SCENE")) || "當前場景") };
   }
   if (actionUid === "VIDEO-01-ACT-CORRECTION-REQUEST-SET") {
-    return { "VIDEO-01-TXT-CORRECTION": keep(nextValue, current("VIDEO-01-TXT-CORRECTION"), "請修正此鏡頭") };
+    const request = namedValue(nextValue, named(current("VIDEO-01-TXT-CORRECTION")));
+    return request ? { "VIDEO-01-TXT-CORRECTION": request } : {};
   }
   if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE") {
+    const request = namedValue(nextValue, named(current("VIDEO-01-TXT-CORRECTION")));
+    const source = exactSource(current);
+    const scope =
+      named(current("VIDEO-01-FLD-SHOT")) ||
+      named(current("VIDEO-01-FLD-SCENE")) ||
+      named(current("VIDEO-01-CTL-SHOT-SELECT")) ||
+      source;
+    const candidate = buildCorrectionCandidate({
+      department: "VIDEO",
+      exact_source_version: source,
+      target_scope: scope,
+      requested_delta: request,
+      expected_output_kind: "OutputVersion",
+    });
+    if (!candidate) return {};
     return {
+      "VIDEO-01-BTN-MODIFY": "open",
       "VIDEO-01-BTN-GEN-CORRECTION": "created",
-      "VIDEO-01-TXT-CORRECTION": keep(nextValue, current("VIDEO-01-TXT-CORRECTION"), "請修正此鏡頭"),
+      "VIDEO-01-BTN-APPROVE-CORRECTION": "idle",
+      "VIDEO-01-BTN-EXEC-CORRECTION": "idle",
+      "VIDEO-01-TXT-CORRECTION": request,
+      "VIDEO-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(candidate),
     };
   }
   if (actionUid === "VIDEO-01-ACT-CORRECTION-APPROVE") {
-    return { "VIDEO-01-BTN-APPROVE-CORRECTION": "approved" };
+    const source = exactSource(current);
+    const candidate = parseCorrectionScript(current("VIDEO-01-FLD-CORRECTION-RESPONSE"));
+    if (!sourceMatches(candidate, source) || candidate?.status !== "CANDIDATE") return {};
+    return {
+      "VIDEO-01-BTN-APPROVE-CORRECTION": "approved",
+      "VIDEO-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withCorrectionStatus(candidate, "APPROVED")),
+    };
   }
   if (actionUid === "VIDEO-01-ACT-CORRECTION-EXECUTE") {
+    const source = exactSource(current);
+    const candidate = parseCorrectionScript(current("VIDEO-01-FLD-CORRECTION-RESPONSE"));
+    if (!sourceMatches(candidate, source) || candidate?.status !== "APPROVED") return {};
     return {
       "VIDEO-01-BTN-EXEC-CORRECTION": "running",
       "VIDEO-01-FLD-TASK-STATE": "running",
+      "VIDEO-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
     };
   }
   if (actionUid === "VIDEO-01-ACT-FINDING-CREATE") {

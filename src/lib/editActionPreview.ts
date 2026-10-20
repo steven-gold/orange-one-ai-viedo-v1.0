@@ -1,4 +1,11 @@
 import { exactName, namedValue, statusFromAction } from "./coreActionPreview";
+import {
+  buildCorrectionCandidate,
+  parseCorrectionScript,
+  serializeCorrectionScript,
+  sourceMatches,
+  withCorrectionStatus,
+} from "./correctionScript";
 
 function named(value: string | null | undefined): string {
   return exactName(value);
@@ -33,6 +40,15 @@ function standaloneReady(current: (uid: string) => string | null): boolean {
 
 function sourceReady(current: (uid: string) => string | null): boolean {
   return isStandalone(current) ? standaloneReady(current) : inboundReady(current);
+}
+
+function exactSource(current: (uid: string) => string | null): string {
+  return (
+    named(current("EDIT-01-FLD-SOURCE-VERSION")) ||
+    named(current("EDIT-01-LBL-CURRENT-SCRIPT-SECTION")) ||
+    named(current("EDIT-01-LST-IMPORT-QUEUE")) ||
+    named(current("EDIT-01-LST-MEDIA"))
+  );
 }
 
 const READONLY_ACTIONS = new Set([
@@ -230,6 +246,49 @@ export function previewEditAction(
     return {
       "EDIT-01-BTN-STAGE-MODIFY": "returned",
       "EDIT-01-LBL-PAGE-STATE": "editing",
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-API-INSTRUCTION-SET") {
+    const request = namedValue(nextValue, named(current("EDIT-01-FLD-API-INSTRUCTION")));
+    return request ? { "EDIT-01-FLD-API-INSTRUCTION": request } : {};
+  }
+  if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE") {
+    const request = namedValue(nextValue, named(current("EDIT-01-FLD-API-INSTRUCTION")));
+    const source = exactSource(current);
+    const candidate = buildCorrectionCandidate({
+      department: "EDIT",
+      exact_source_version: source,
+      target_scope: named(current("EDIT-01-FLD-API-SCOPE")) || source,
+      requested_delta: request,
+      expected_output_kind: "CompositionVersion",
+    });
+    if (!candidate) return {};
+    return {
+      "EDIT-01-BTN-STAGE-MODIFY": "returned",
+      "EDIT-01-BTN-CORR-GENERATE": "created",
+      "EDIT-01-BTN-CORR-APPROVE": "idle",
+      "EDIT-01-BTN-CORR-EXECUTE": "idle",
+      "EDIT-01-FLD-API-INSTRUCTION": request,
+      "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(candidate),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-APPROVE") {
+    const source = exactSource(current);
+    const candidate = parseCorrectionScript(current("EDIT-01-PNL-API-CANDIDATE"));
+    if (!sourceMatches(candidate, source) || candidate?.status !== "CANDIDATE") return {};
+    return {
+      "EDIT-01-BTN-CORR-APPROVE": "approved",
+      "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(withCorrectionStatus(candidate, "APPROVED")),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-CORRECTION-EXECUTE") {
+    const source = exactSource(current);
+    const candidate = parseCorrectionScript(current("EDIT-01-PNL-API-CANDIDATE"));
+    if (!sourceMatches(candidate, source) || candidate?.status !== "APPROVED") return {};
+    return {
+      "EDIT-01-BTN-CORR-EXECUTE": "running",
+      "EDIT-01-LBL-PAGE-STATE": "running",
+      "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
     };
   }
   if (actionUid === "EDIT-01-ACT-EVAL-RECHECK-SELECTED" || actionUid === "EDIT-01-ACT-EVAL-RECHECK-FULL") {

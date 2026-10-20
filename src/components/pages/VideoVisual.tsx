@@ -14,6 +14,7 @@ import {
 import { VIDEO_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
 import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
+import { parseCorrectionScript } from "@/lib/correctionScript";
 import { displayVideoValue } from "./videoFormat";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
@@ -179,12 +180,12 @@ export function VideoVisual() {
     [fields],
   );
 
-  const correctionResponseRaw = valueOf(VIDEO_CORRECTION_RESPONSE_UID);
-  const correctionResponse = correctionResponseRaw
-    ? isAiUnavailable(correctionResponseRaw)
+  const correctionCandidate = parseCorrectionScript(valueOf(VIDEO_CORRECTION_RESPONSE_UID));
+  const correctionBody = correctionCandidate?.script_body
+    ? isAiUnavailable(correctionCandidate.script_body)
       ? t("ai.unavailable")
-      : correctionResponseRaw
-    : null;
+      : correctionCandidate.script_body
+    : "";
 
   const applyPatch = useCallback((patch: Record<string, string>) => {
     setFields((prev) => {
@@ -223,7 +224,11 @@ export function VideoVisual() {
   const evaluated = valueOf("VIDEO-01-BTN-EVALUATE") === "evaluated";
   const confirmed = valueOf("VIDEO-01-BTN-CONFIRM") === "confirmed";
   const locked = valueOf("VIDEO-01-BTN-LOCK") === "locked";
+  const correctionOpen = valueOf("VIDEO-01-BTN-MODIFY") === "open";
   const disabled = !inboundReady;
+  const generateDisabled = disabled || !correctionDraft.trim();
+  const approveDisabled = disabled || correctionCandidate?.status !== "CANDIDATE";
+  const executeDisabled = disabled || correctionCandidate?.status !== "APPROVED";
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const dash = displayVideoValue(null, loading);
@@ -399,7 +404,7 @@ export function VideoVisual() {
       </section>
 
       <div className={styles.lower}>
-        <section className={styles.panel} data-component-uid="VIDEO-01-CMP-CORRECTION-SCOPE">
+        <section className={styles.panel} data-component-uid="VIDEO-01-CMP-CORRECTION-SCOPE" hidden={!correctionOpen}>
           <h3 className={styles.sub}>{tx("video.correction_scope")}</h3>
           <div className={styles.scopeRow}>
             {VIDEO_SCOPE_FIELDS.map(([uid, key]) => (
@@ -409,11 +414,11 @@ export function VideoVisual() {
           </div>
         </section>
 
-        <section className={styles.panel} data-component-uid="VIDEO-01-CMP-AI-REVISION">
+        <section className={styles.panel} data-component-uid="VIDEO-01-CMP-AI-REVISION" hidden={!correctionOpen}>
           <h3 className={styles.sub}>{tx("video.ai_revision")}</h3>
           <div className={styles.composer}>
             <span className={styles.label}>{tx("video.source_script")}</span>
-            <span className={styles.value}>{dash}</span>
+            <span className={styles.value}>{displayVideoValue(correctionCandidate?.exact_source_version, loading)}</span>
           </div>
           <label className={styles.composer}>
             <span className={styles.label}>{tx("video.correction_request")}</span>
@@ -421,13 +426,23 @@ export function VideoVisual() {
           </label>
           <div className={styles.aiResponse} data-ai-response-uid={VIDEO_CORRECTION_RESPONSE_UID} aria-live="polite">
             <span className={styles.label}>{tx("video.correction_response")}</span>
-            <p>{correctionResponse ?? tx("video.correction_response_placeholder")}</p>
+            {correctionCandidate ? (
+              <>
+                <p>{tx("video.correction_status")}: {displayVideoValue(correctionCandidate.status, false)}</p>
+                <p>{tx("video.correction_source")}: {displayVideoValue(correctionCandidate.exact_source_version, false)}</p>
+                <p>{tx("video.correction_scope_value")}: {displayVideoValue(correctionCandidate.target_scope, false)}</p>
+                <p>{tx("video.correction_preserve")}: {displayVideoValue(correctionCandidate.preserve_constraints, false)}</p>
+                <p>{correctionBody || tx("video.correction_response_placeholder")}</p>
+              </>
+            ) : (
+              <p>{tx("video.correction_response_placeholder")}</p>
+            )}
           </div>
           <div className={styles.corrActions}>
-            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION", correctionDraft.trim() || undefined)}>{tx("video.correction_generate")}</button>
-            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXEC-CORRECTION" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-EXEC-CORRECTION")}>{tx("video.correction_execute")}</button>
-            <IconButton uid="VIDEO-01-BTN-COMPARE-CORRECTION" label={tx("video.correction_compare")} icon="compare" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={generateDisabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION", correctionDraft.trim() || undefined)}>{tx("video.correction_generate")}</button>
+            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={approveDisabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXEC-CORRECTION" disabled={executeDisabled} onClick={() => void act("VIDEO-01-BTN-EXEC-CORRECTION")}>{tx("video.correction_execute")}</button>
+            <IconButton uid="VIDEO-01-BTN-COMPARE-CORRECTION" label={tx("video.correction_compare")} icon="compare" onAct={act} disabled={disabled || correctionCandidate?.status !== "EXECUTED"} className={`${styles.btn} ${styles.iconBtn}`} />
           </div>
         </section>
 

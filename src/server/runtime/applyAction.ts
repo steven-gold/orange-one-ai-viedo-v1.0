@@ -2,6 +2,7 @@ import { AI_UNAVAILABLE_ZH, ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESP
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
+import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
 import {
   activeThreadUid,
   appendAssistantMessage,
@@ -146,20 +147,21 @@ function promptFromValue(raw?: string): string {
   return text;
 }
 
-async function writeGeneratedReply(
+async function fillCorrectionScriptBody(
   table: string,
-  targetUids: string[],
-  page: "core" | "asset" | "video",
+  uid: string,
+  page: "asset" | "video",
   prompt: string,
-  context: string,
 ): Promise<void> {
-  if (!prompt) return;
+  const candidate = parseCorrectionScript(await readField(table, uid));
+  if (!candidate || candidate.status !== "CANDIDATE") return;
+  let body = "";
   try {
-    const reply = await generatePageReply(page, prompt, context);
-    for (const uid of targetUids) await writeField(table, uid, reply);
+    if (prompt) body = await generatePageReply(page, prompt, "");
   } catch {
-    for (const uid of targetUids) await writeField(table, uid, AI_UNAVAILABLE_ZH);
+    body = AI_UNAVAILABLE_ZH;
   }
+  await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
 }
 
 async function credentialFromValue(raw?: string): Promise<string> {
@@ -297,10 +299,10 @@ export async function applyWorkbenchAction(
       "ASSET-01-FLD-SCRIPT": inbound.script,
       "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
     });
-    await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
-    if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") {
+    const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
-      await writeGeneratedReply(FIELD_TABLE.asset, [ASSET_CORRECTION_RESPONSE_UID], "asset", prompt, "");
+      await fillCorrectionScriptBody(FIELD_TABLE.asset, ASSET_CORRECTION_RESPONSE_UID, "asset", prompt);
     }
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
@@ -335,10 +337,10 @@ export async function applyWorkbenchAction(
       "VIDEO-01-FLD-RIGHTS": inbound.rights,
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
     });
-    await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
-    if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE") {
+    const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
-      await writeGeneratedReply(FIELD_TABLE.video, [VIDEO_CORRECTION_RESPONSE_UID], "video", prompt, "");
+      await fillCorrectionScriptBody(FIELD_TABLE.video, VIDEO_CORRECTION_RESPONSE_UID, "video", prompt);
     }
     if (actionUid === "VIDEO-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");

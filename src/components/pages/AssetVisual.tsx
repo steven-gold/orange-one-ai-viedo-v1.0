@@ -7,6 +7,7 @@ import { ASSET_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
+import { parseCorrectionScript } from "@/lib/correctionScript";
 import { displayAssetValue } from "./assetFormat";
 import {
   ASSET_BINDING_FIELDS,
@@ -148,12 +149,12 @@ export function AssetVisual() {
     [fields],
   );
 
-  const correctionResponseRaw = valueOf(ASSET_CORRECTION_RESPONSE_UID);
-  const correctionResponse = correctionResponseRaw
-    ? isAiUnavailable(correctionResponseRaw)
+  const correctionCandidate = parseCorrectionScript(valueOf(ASSET_CORRECTION_RESPONSE_UID));
+  const correctionBody = correctionCandidate?.script_body
+    ? isAiUnavailable(correctionCandidate.script_body)
       ? t("ai.unavailable")
-      : correctionResponseRaw
-    : null;
+      : correctionCandidate.script_body
+    : "";
 
   const applyPatch = useCallback((patch: Record<string, string>) => {
     setFields((prev) => {
@@ -217,7 +218,12 @@ export function AssetVisual() {
   const evaluated = valueOf("ASSET-01-BTN-EVALUATE") === "evaluated";
   const confirmed = valueOf("ASSET-01-BTN-CONFIRM") === "confirmed";
   const locked = valueOf("ASSET-01-BTN-LOCK") === "locked";
+  const correctionOpen =
+    valueOf("ASSET-01-BTN-CORRECTION-OPEN") === "open" || valueOf("ASSET-01-BTN-MODIFY") === "open";
   const disabled = !inboundReady;
+  const generateDisabled = disabled || !correctionDraft.trim();
+  const approveDisabled = disabled || correctionCandidate?.status !== "CANDIDATE";
+  const executeDisabled = disabled || correctionCandidate?.status !== "APPROVED";
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const modeValue = valueOf("ASSET-01-CTL-MODE");
@@ -427,13 +433,13 @@ export function AssetVisual() {
       </div>
 
       <div className={styles.lower}>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-CORRECTION">
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-CORRECTION" hidden={!correctionOpen}>
           <h3 className={styles.sub}>{tx("asset.correction")}</h3>
           <div className={styles.toolbar}>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-OPEN" disabled={disabled} onClick={submitCorrection}>{tx("asset.correction_open")}</button>
-            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-GENERATE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-GENERATE", correctionDraft.trim() || undefined)}>{tx("asset.correction_generate")}</button>
-            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-APPROVE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-APPROVE")}>{tx("asset.correction_approve")}</button>
-            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-EXECUTE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-EXECUTE")}>{tx("asset.correction_execute")}</button>
+            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-GENERATE" disabled={generateDisabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-GENERATE", correctionDraft.trim() || undefined)}>{tx("asset.correction_generate")}</button>
+            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-APPROVE" disabled={approveDisabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-APPROVE")}>{tx("asset.correction_approve")}</button>
+            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-EXECUTE" disabled={executeDisabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-EXECUTE")}>{tx("asset.correction_execute")}</button>
           </div>
           <label className={styles.composerInput}>
             <span className={styles.label}>{tx("asset.correction_request")}</span>
@@ -446,7 +452,17 @@ export function AssetVisual() {
           </label>
           <div className={styles.aiResponse} data-ai-response-uid={ASSET_CORRECTION_RESPONSE_UID} aria-live="polite">
             <span className={styles.label}>{tx("asset.correction_response")}</span>
-            <p>{correctionResponse ?? tx("asset.correction_response_placeholder")}</p>
+            {correctionCandidate ? (
+              <>
+                <p>{tx("asset.correction_status")}: {displayAssetValue(correctionCandidate.status, false)}</p>
+                <p>{tx("asset.correction_source")}: {displayAssetValue(correctionCandidate.exact_source_version, false)}</p>
+                <p>{tx("asset.correction_scope")}: {displayAssetValue(correctionCandidate.target_scope, false)}</p>
+                <p>{tx("asset.correction_preserve")}: {displayAssetValue(correctionCandidate.preserve_constraints, false)}</p>
+                <p>{correctionBody || tx("asset.correction_response_placeholder")}</p>
+              </>
+            ) : (
+              <p>{tx("asset.correction_response_placeholder")}</p>
+            )}
           </div>
         </section>
         <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-STACK">

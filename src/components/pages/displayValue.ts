@@ -47,6 +47,7 @@ const STATUS_LABEL: Record<string, string> = {
   view: "預覽",
   attach: "已附加",
   candidate: "已建立",
+  EXECUTED: "已執行",
   return: "已退回",
   AUTO: "自動",
   MANUAL: "手動",

@@ -12,6 +12,7 @@ import {
 } from "@/lib/client";
 import { resolveEditInbound, type EditInbound } from "@/lib/editInbound";
 import { previewEditAction } from "@/lib/editActionPreview";
+import { parseCorrectionScript } from "@/lib/correctionScript";
 import { displayEditValue } from "./editFormat";
 import { EDIT_CONTROL_ACTIONS, EDIT_VISIBLE_CONTROLS } from "./editControls";
 import { Icon, type IconName } from "@/components/ui/Icon";
@@ -129,6 +130,7 @@ export function EditVisual() {
   const [authorized, setAuthorized] = useState(true);
   const [fields, setFields] = useState<EditFieldValue[]>(emptyFields);
   const [inbound, setInbound] = useState<EditInbound>(EMPTY_INBOUND);
+  const [correctionDraft, setCorrectionDraft] = useState("");
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
 
@@ -184,6 +186,11 @@ export function EditVisual() {
     };
   }, []);
 
+  useEffect(() => {
+    const value = fields.find((row) => row.controlUid === "EDIT-01-FLD-API-INSTRUCTION")?.value;
+    if (value) setCorrectionDraft(value);
+  }, [fields]);
+
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
     [fields],
@@ -213,7 +220,7 @@ export function EditVisual() {
       if (!Object.keys(patch).length) return;
       applyPatch(patch);
       try {
-        await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+        await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
       } catch {
         // Optimistic projection stays visible when the write path is unbound.
       }
@@ -225,6 +232,11 @@ export function EditVisual() {
   const standalone = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD";
   const inboundReady = inbound.ready;
   const disabled = !(standalone || inboundReady);
+  const correctionOpen = v("EDIT-01-BTN-STAGE-MODIFY") === "returned";
+  const correctionCandidate = parseCorrectionScript(v("EDIT-01-PNL-API-CANDIDATE"));
+  const generateDisabled = disabled || !correctionOpen || !correctionDraft.trim();
+  const approveDisabled = disabled || !correctionOpen || correctionCandidate?.status !== "CANDIDATE";
+  const executeDisabled = disabled || !correctionOpen || correctionCandidate?.status !== "APPROVED";
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayEditValue(null, loading);
@@ -408,22 +420,41 @@ export function EditVisual() {
       </div>
 
       <div className={styles.lower}>
-        <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-API">
+        <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-API" hidden={!correctionOpen}>
           <h3 className={styles.sub}>{tx("edit.api")}</h3>
           <Field uid="EDIT-01-FLD-API-SCOPE" label={tx("edit.fld-api-scope")} value={v("EDIT-01-FLD-API-SCOPE")} loading={loading} onAct={act} disabled={disabled} />
           <label className={styles.composer}>
             <span className={styles.label}>{tx("edit.fld-api-instruction")}</span>
-            <textarea data-control-uid="EDIT-01-FLD-API-INSTRUCTION" disabled={disabled} defaultValue="" placeholder={tx("edit.correction_hint")} onBlur={() => void act("EDIT-01-FLD-API-INSTRUCTION")} />
+            <textarea
+              data-control-uid="EDIT-01-FLD-API-INSTRUCTION"
+              disabled={disabled}
+              value={correctionDraft}
+              placeholder={tx("edit.correction_hint")}
+              onChange={(event) => setCorrectionDraft(event.target.value)}
+              onBlur={() => void act("EDIT-01-FLD-API-INSTRUCTION", correctionDraft.trim() || undefined)}
+            />
           </label>
           <Field uid="EDIT-01-FLD-API-MODEL" label={tx("edit.fld-api-model")} value={v("EDIT-01-FLD-API-MODEL")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-API-PROVIDER" label={tx("edit.fld-api-provider")} value={v("EDIT-01-FLD-API-PROVIDER")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-LBL-API-JOB" label={tx("edit.lbl-api-job")} value={v("EDIT-01-LBL-API-JOB")} loading={loading} onAct={act} disabled={disabled} readonly />
-          <div className={styles.previewSm} data-control-uid="EDIT-01-PNL-API-CANDIDATE">{dash}</div>
+          <div className={styles.previewSm} data-control-uid="EDIT-01-PNL-API-CANDIDATE">
+            {correctionCandidate ? (
+              <>
+                <p>{tx("edit.correction_status")}: {displayEditValue(correctionCandidate.status, false)}</p>
+                <p>{tx("edit.correction_source")}: {displayEditValue(correctionCandidate.exact_source_version, false)}</p>
+                <p>{tx("edit.correction_scope_value")}: {displayEditValue(correctionCandidate.target_scope, false)}</p>
+                <p>{tx("edit.correction_preserve")}: {displayEditValue(correctionCandidate.preserve_constraints, false)}</p>
+                <p>{displayEditValue(correctionCandidate.requested_delta, false)}</p>
+              </>
+            ) : (
+              dash
+            )}
+          </div>
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-CORR-GENERATE" label={tx("edit.btn-corr-generate")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-CORR-APPROVE" label={tx("edit.btn-corr-approve")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-CORR-EXECUTE" label={tx("edit.btn-corr-execute")} onAct={act} disabled={disabled} primary />
-            <Btn uid="EDIT-01-BTN-API-COMPARE" label={tx("edit.btn-api-compare")} onAct={act} disabled={disabled} icon="compare" />
+            <button type="button" className={styles.btn} data-control-uid="EDIT-01-BTN-CORR-GENERATE" disabled={generateDisabled} onClick={() => void act("EDIT-01-BTN-CORR-GENERATE", correctionDraft.trim() || undefined)}>{tx("edit.btn-corr-generate")}</button>
+            <Btn uid="EDIT-01-BTN-CORR-APPROVE" label={tx("edit.btn-corr-approve")} onAct={act} disabled={approveDisabled} />
+            <Btn uid="EDIT-01-BTN-CORR-EXECUTE" label={tx("edit.btn-corr-execute")} onAct={act} disabled={executeDisabled} primary />
+            <Btn uid="EDIT-01-BTN-API-COMPARE" label={tx("edit.btn-api-compare")} onAct={act} disabled={disabled || correctionCandidate?.status !== "EXECUTED"} icon="compare" />
             <Btn uid="EDIT-01-BTN-API-APPLY" label={tx("edit.btn-api-apply")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-API-DISCARD" label={tx("edit.btn-api-discard")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-API-CANCEL" label={tx("edit.btn-api-cancel")} onAct={act} disabled={disabled} />
