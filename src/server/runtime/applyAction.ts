@@ -5,18 +5,21 @@ import { resolveAssetInbound } from "@/lib/assetInbound";
 import {
   activeThreadUid,
   appendAssistantMessage,
+  appendAssistantMessages,
   formatCoreChatContext,
+  isMultiAiMode,
   messagesForThread,
   parseMessageActionPayload,
   previewCoreAction,
   recentHistoryPayload,
   resolveComposerTokens,
+  targetedParticipantAliases,
 } from "@/lib/coreActionPreview";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { assignedAiRouteSnapshot, generatePageReply } from "../ai/llmClient";
+import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -246,13 +249,33 @@ export async function applyWorkbenchAction(
       const thread = activeThreadUid(current);
       const history = recentHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread).slice(0, -1));
       const context = formatCoreChatContext(current);
+      if (isMultiAiMode(current)) {
+        const aliases = targetedParticipantAliases(tokens, current);
+        let replies: Array<{ alias: string; text: string }> = aliases.map((alias) => ({ alias, text: "" }));
+        try {
+          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases);
+        } catch {
+          replies = aliases.map((alias) => ({ alias, text: "" }));
+        }
+        const patch = appendAssistantMessages(
+          current,
+          thread,
+          replies.map((row) => ({
+            text: row.text.trim() || AI_UNAVAILABLE_ZH,
+            alias: row.alias,
+            at: new Date().toISOString(),
+          })),
+        );
+        for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
+        return;
+      }
       let reply = AI_UNAVAILABLE_ZH;
       try {
         if (prompt) reply = await generatePageReply("core", prompt, context, history);
       } catch {
         reply = AI_UNAVAILABLE_ZH;
       }
-      const patch = appendAssistantMessage(current, thread, reply);
+      const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString());
       for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
     }
     return;

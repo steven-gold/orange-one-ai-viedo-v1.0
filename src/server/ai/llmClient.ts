@@ -182,3 +182,39 @@ export async function generatePageReply(
   }
   throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
 }
+
+export type IndependentReply = { alias: string; text: string };
+
+export async function generateIndependentPageReplies(
+  page: AiPageUid,
+  prompt: string,
+  context: string | undefined,
+  history: ChatMessage[],
+  aliases: string[],
+): Promise<IndependentReply[]> {
+  const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
+  if (!configs.length) {
+    throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
+  }
+  const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
+  const recent = history.filter((row) => row.content.trim().length > 0);
+  const replies: IndependentReply[] = [];
+  for (const [index, alias] of aliases.entries()) {
+    const config = configs[index];
+    if (!config) {
+      replies.push({ alias, text: "" });
+      continue;
+    }
+    const messages: ChatMessage[] = [
+      { role: "system", content: systemPromptFor(page, config.promptTemplate) },
+      ...recent,
+      { role: "user", content: user },
+    ];
+    try {
+      replies.push({ alias, text: await callProvider(config, messages) });
+    } catch {
+      replies.push({ alias, text: "" });
+    }
+  }
+  return replies;
+}

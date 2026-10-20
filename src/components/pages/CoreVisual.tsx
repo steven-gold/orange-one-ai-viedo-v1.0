@@ -461,7 +461,12 @@ export function CoreVisual() {
                       setMenu({ x: event.clientX, y: event.clientY, ref: row.ref, text: row.text });
                     }}
                   >
-                    <div className={styles.bubbleRole}>{row.role === "user" ? tx("core.user_message") : tx("core.ai_response_n")} {row.ref}</div>
+                    <div className={styles.bubbleRole}>
+                      {row.role === "user" ? tx("core.user_message") : tx("core.ai_response_n")}
+                      {row.alias ? ` @${row.alias}` : ""}
+                      {row.ref ? ` ${row.ref}` : ""}
+                      {row.at ? ` ${row.at}` : ""}
+                    </div>
                     <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
                   </article>
                 ))

@@ -59,6 +59,16 @@ export function isMultiAiMode(current: (uid: string) => string | null): boolean 
   return current("CORE-01-BTN-MULTI-AI") === "active";
 }
 
+export const MULTI_AI_ALIASES = ["A", "B", "C"] as const;
+
+export function assignedParticipantAliases(current: (uid: string) => string | null): string[] {
+  const parts = assignedAiRouteLabel(current("CORE-01-FLD-ASSIGNED-AI"))
+    .split("、")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return MULTI_AI_ALIASES.slice(0, Math.min(parts.length, MULTI_AI_ALIASES.length));
+}
+
 function usableMessage(value: string | undefined): string {
   const text = value?.trim();
   if (!text || STATUS_TOKENS.has(text)) return "";
@@ -146,7 +156,15 @@ export type CoreThreadRecord = {
 
 export type CoreMessageRole = "user" | "assistant";
 
-export type CoreMessageRecord = { thread: string; role: CoreMessageRole; text: string; seq: number; ref: string };
+export type CoreMessageRecord = {
+  thread: string;
+  role: CoreMessageRole;
+  text: string;
+  seq: number;
+  ref: string;
+  alias?: string;
+  at?: string;
+};
 
 function padRef(prefix: string, seq: number): string {
   return `${prefix}-${String(seq).padStart(6, "0")}`;
@@ -199,19 +217,31 @@ export function parseMessageRecords(raw: string | null): CoreMessageRecord[] {
     const records: CoreMessageRecord[] = [];
     for (const item of parsed) {
       if (!item || typeof item !== "object") continue;
-      const rec = item as { thread?: unknown; role?: unknown; text?: unknown; seq?: unknown; ref?: unknown };
+      const rec = item as {
+        thread?: unknown;
+        role?: unknown;
+        text?: unknown;
+        seq?: unknown;
+        ref?: unknown;
+        alias?: unknown;
+        at?: unknown;
+      };
       const text = typeof rec.text === "string" ? rec.text.trim() : "";
       if (!text) continue;
       const role = rec.role === "assistant" ? "assistant" : rec.role === "user" ? "user" : null;
       if (!role) continue;
       const seq = typeof rec.seq === "number" && Number.isFinite(rec.seq) ? rec.seq : 0;
       const ref = typeof rec.ref === "string" ? rec.ref.trim() : "";
+      const alias = typeof rec.alias === "string" ? rec.alias.trim() : "";
+      const at = typeof rec.at === "string" ? rec.at.trim() : "";
       records.push({
         thread: typeof rec.thread === "string" ? rec.thread.trim() : "",
         role,
         text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
         seq,
         ref,
+        ...(alias ? { alias } : {}),
+        ...(at ? { at } : {}),
       });
     }
     return ensureMessageIdentity(records);
@@ -420,19 +450,61 @@ export function appendAssistantMessage(
   current: (uid: string) => string | null,
   thread: string,
   reply: string,
+  alias?: string,
+  at?: string,
 ): Record<string, string> {
   const text = reply.trim();
   if (!thread || !text) return {};
   const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
   const nextMessages = ensureMessageIdentity([
     ...records,
-    { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS), seq: 0, ref: "" },
+    {
+      thread,
+      role: "assistant",
+      text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
+      seq: 0,
+      ref: "",
+      ...(alias ? { alias } : {}),
+      ...(at ? { at } : {}),
+    },
   ]);
   const patched = (uid: string) => (uid === "CORE-01-FLD-MESSAGE" ? JSON.stringify(nextMessages) : current(uid));
   return {
     "CORE-01-FLD-MESSAGE": JSON.stringify(nextMessages),
     ...persistResumeOnThreads(patched, thread, "RESPONSE"),
   };
+}
+
+export function appendAssistantMessages(
+  current: (uid: string) => string | null,
+  thread: string,
+  replies: Array<{ text: string; alias?: string; at?: string }>,
+): Record<string, string> {
+  if (!thread || !replies.length) return {};
+  let records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
+  let lastPatch: Record<string, string> = {};
+  for (const reply of replies) {
+    const text = reply.text.trim();
+    if (!text) continue;
+    records = ensureMessageIdentity([
+      ...records,
+      {
+        thread,
+        role: "assistant",
+        text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
+        seq: 0,
+        ref: "",
+        ...(reply.alias ? { alias: reply.alias } : {}),
+        ...(reply.at ? { at: reply.at } : {}),
+      },
+    ]);
+    const patched = (uid: string) => (uid === "CORE-01-FLD-MESSAGE" ? JSON.stringify(records) : current(uid));
+    lastPatch = {
+      "CORE-01-FLD-MESSAGE": JSON.stringify(records),
+      ...persistResumeOnThreads(patched, thread, "RESPONSE"),
+    };
+  }
+  return lastPatch;
 }
 
 const RESUME_STATUSES = new Set<CoreResumeStatus>(["CURRENT", "HISTORICAL", "STALE", "UNVERIFIED", "BLOCKED"]);
@@ -655,6 +727,20 @@ export type CoreResolvedToken = {
   canonical: string;
 };
 
+export function targetedParticipantAliases(
+  tokens: CoreResolvedToken[],
+  current: (uid: string) => string | null,
+): string[] {
+  const aliases = assignedParticipantAliases(current);
+  if (!aliases.length) return [];
+  const named = tokens
+    .filter((row) => row.kind === "TARGET_PARTICIPANT")
+    .map((row) => row.canonical.replace(/^@/, ""))
+    .filter((alias) => aliases.includes(alias));
+  if (tokens.some((row) => row.kind === "TARGET_ALL_PARTICIPANTS") || named.length === 0) return aliases;
+  return aliases.filter((alias) => named.includes(alias));
+}
+
 const COMPOSER_TOKEN = /(@全部AI|@助理|@[ABC]|#AI-\d+|#AST-\d+|#CONV-\d+|#BR-\d+|#MSG-\d+|#\d+)/gu;
 
 function assistantRefForThread(current: (uid: string) => string | null, thread: string): string {
@@ -682,8 +768,9 @@ export function resolveComposerTokens(
   while (match) {
     const raw = match[0];
     if (raw === "@A" || raw === "@B" || raw === "@C") {
+      const alias = raw.slice(1);
       tokens.push(
-        multi
+        multi && assignedParticipantAliases(current).includes(alias)
           ? { raw, kind: "TARGET_PARTICIPANT", canonical: raw }
           : { raw, kind: "PARSER_ERROR", canonical: "" },
       );
