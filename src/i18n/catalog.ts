@@ -151,6 +151,12 @@ const catalog = {
   "core.menu.branch": { "zh-TW": "建立分支討論", "zh-CN": "建立分支讨论", en: "Create a branch" },
   "core.menu.copy": { "zh-TW": "複製此訊息", "zh-CN": "复制此讯息", en: "Copy this message" },
   "core.parser_blocked": { "zh-TW": "引用無效或有歧義，請改用精確編號", "zh-CN": "引用无效或有歧义，请改用精确编号", en: "The reference is invalid or ambiguous. Use the exact canonical id." },
+  "core.resume.current": { "zh-TW": "現行脈絡", "zh-CN": "现行脉络", en: "Current context" },
+  "core.resume.stale": { "zh-TW": "脈絡已過期", "zh-CN": "脉络已过期", en: "Context is stale" },
+  "core.resume.historical": { "zh-TW": "歷史檢視", "zh-CN": "历史检视", en: "Historical view" },
+  "core.resume.blocked": { "zh-TW": "續作已阻擋", "zh-CN": "续作已阻挡", en: "Resume is blocked" },
+  "core.resume.unverified": { "zh-TW": "續作指標未驗證", "zh-CN": "续作指标未验证", en: "Resume pointer unverified" },
+  "core.resume.missing": { "zh-TW": "尚無續作指標", "zh-CN": "尚无续作指标", en: "No resume pointer" },
   "core.ai_response_n": { "zh-TW": "AI 回應", "zh-CN": "AI 回应", en: "AI Response" },
   "core.ai_placeholder": {
     "zh-TW": "目前脈絡中的 AI 回應內容",

@@ -14,6 +14,7 @@ import {
   previewCoreAction,
   quoteInsertText,
   resolveComposerTokens,
+  resolveResumePointer,
   threadScopeReady,
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
@@ -286,9 +287,7 @@ export function CoreVisual() {
   const currentFields = (uid: string) => valueOf(uid);
   const canCreateThread = threadScopeReady(currentFields);
   const threadItems = threadsForCurrentWorkItem(currentFields).map((row) => row.title);
-  const storedActiveThread = valueOf("CORE-01-LST-THREADS");
-  const activeThread =
-    storedActiveThread && threadItems.includes(storedActiveThread) ? storedActiveThread : threadItems[0] ?? null;
+  const activeThread = activeThreadUid(currentFields) || null;
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
   const conversation = messagesForThread(valueOf("CORE-01-FLD-MESSAGE"), activeThread ?? "");
@@ -296,6 +295,19 @@ export function CoreVisual() {
   const pickedFileName = (stored: string | null) => (stored && !FILE_STATUS.has(stored) ? stored : "");
   const attachedName = pickedFileName(attachedFile);
   const referenceName = pickedFileName(referenceFile);
+  const resume = resolveResumePointer(currentFields, activeThread ?? undefined);
+  const resumeStatusKey: TranslationKey =
+    resume?.stale_resolution_status === "STALE"
+      ? "core.resume.stale"
+      : resume?.stale_resolution_status === "HISTORICAL"
+        ? "core.resume.historical"
+        : resume?.stale_resolution_status === "BLOCKED"
+          ? "core.resume.blocked"
+          : resume?.stale_resolution_status === "CURRENT"
+            ? "core.resume.current"
+            : resume
+              ? "core.resume.unverified"
+              : "core.resume.missing";
   const parserBlocked = composerHasBlockingToken(resolveComposerTokens(draftMessage, currentFields));
   const canSend = Boolean(activeThread) && Boolean(draftMessage.trim() || attachedName || referenceName) && !parserBlocked;
   const dialogTitleKey: TranslationKey =
@@ -393,6 +405,7 @@ export function CoreVisual() {
               <div>
                 <div className={styles.label}>{tx("core.conv_header")}</div>
                 <strong>{currentWorkLabel}</strong>
+                <div className={styles.meta}>{tx(resumeStatusKey)}{resume?.conversation_id ? ` ${resume.conversation_id}` : ""}</div>
               </div>
               <div className={styles.headerControls}>
                 <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />

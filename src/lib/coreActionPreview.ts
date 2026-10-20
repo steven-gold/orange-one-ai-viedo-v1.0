@@ -103,6 +103,21 @@ const WORK_ITEMS = new Set([
   "PRODUCTION_SCRIPT",
 ]);
 
+export type CoreResumeStatus = "CURRENT" | "HISTORICAL" | "STALE" | "UNVERIFIED" | "BLOCKED";
+
+export type CoreResumePointer = {
+  conversation_id: string;
+  thread_id: string;
+  branch_id_optional: string;
+  last_visible_server_sequence: number;
+  context_snapshot_ref: string;
+  context_fingerprint: string;
+  extension_uid: string;
+  scope_owner_ref: string;
+  resume_reason: string;
+  stale_resolution_status: CoreResumeStatus;
+};
+
 export type CoreThreadRecord = {
   title: string;
   workItem: string;
@@ -110,6 +125,7 @@ export type CoreThreadRecord = {
   sourceRef?: string;
   branchRef?: string;
   convRef?: string;
+  resume?: CoreResumePointer;
 };
 
 export type CoreMessageRole = "user" | "assistant";
@@ -392,13 +408,115 @@ export function appendAssistantMessage(
   const text = reply.trim();
   if (!thread || !text) return {};
   const records = parseMessageRecords(current("CORE-01-FLD-MESSAGE"));
+  const nextMessages = ensureMessageIdentity([
+    ...records,
+    { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS), seq: 0, ref: "" },
+  ]);
+  const patched = (uid: string) => (uid === "CORE-01-FLD-MESSAGE" ? JSON.stringify(nextMessages) : current(uid));
   return {
-    "CORE-01-FLD-MESSAGE": JSON.stringify(
-      ensureMessageIdentity([
-        ...records,
-        { thread, role: "assistant", text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS), seq: 0, ref: "" },
-      ]),
-    ),
+    "CORE-01-FLD-MESSAGE": JSON.stringify(nextMessages),
+    ...persistResumeOnThreads(patched, thread, "RESPONSE"),
+  };
+}
+
+const RESUME_STATUSES = new Set<CoreResumeStatus>(["CURRENT", "HISTORICAL", "STALE", "UNVERIFIED", "BLOCKED"]);
+
+function parseResumePointer(raw: unknown): CoreResumePointer | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const rec = raw as Record<string, unknown>;
+  const conversation_id = typeof rec.conversation_id === "string" ? rec.conversation_id.trim() : "";
+  const thread_id = typeof rec.thread_id === "string" ? rec.thread_id.trim() : "";
+  if (!conversation_id || !thread_id) return undefined;
+  const status = typeof rec.stale_resolution_status === "string" ? rec.stale_resolution_status : "";
+  return {
+    conversation_id,
+    thread_id,
+    branch_id_optional: typeof rec.branch_id_optional === "string" ? rec.branch_id_optional.trim() : "",
+    last_visible_server_sequence:
+      typeof rec.last_visible_server_sequence === "number" && Number.isFinite(rec.last_visible_server_sequence)
+        ? rec.last_visible_server_sequence
+        : 0,
+    context_snapshot_ref: typeof rec.context_snapshot_ref === "string" ? rec.context_snapshot_ref.trim() : "",
+    context_fingerprint: typeof rec.context_fingerprint === "string" ? rec.context_fingerprint.trim() : "",
+    extension_uid: typeof rec.extension_uid === "string" ? rec.extension_uid.trim() : "CORE-01",
+    scope_owner_ref: typeof rec.scope_owner_ref === "string" ? rec.scope_owner_ref.trim() : "",
+    resume_reason: typeof rec.resume_reason === "string" ? rec.resume_reason.trim() : "",
+    stale_resolution_status: RESUME_STATUSES.has(status as CoreResumeStatus) ? (status as CoreResumeStatus) : "UNVERIFIED",
+  };
+}
+
+export function contextFingerprint(current: (uid: string) => string | null): string {
+  return sourceHash([
+    exactName(current("CORE-01-CTL-PROJECT")),
+    exactName(current("CORE-01-CTL-TOPIC")),
+    currentWorkItem(current),
+    exactName(current("CORE-01-BTN-DNA-LOCK")),
+    exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")),
+    exactName(current("CORE-01-BTN-CANONICAL-SCRIPT")),
+    current("CORE-01-BTN-PROJECT-CONFIRM") ?? "",
+    current("CORE-01-BTN-PROJECT-LOCK") ?? "",
+  ]);
+}
+
+export function contextSnapshotRef(current: (uid: string) => string | null): string {
+  const project = exactName(current("CORE-01-CTL-PROJECT")) || "UNBOUND";
+  const topic = exactName(current("CORE-01-CTL-TOPIC")) || "NONE";
+  const work = currentWorkItem(current) || "NONE";
+  return `SNAP:${project}/${topic}/${work}`;
+}
+
+function lastVisibleSequence(current: (uid: string) => string | null, thread: string): number {
+  const messages = messagesForThread(current("CORE-01-FLD-MESSAGE"), thread);
+  return messages.reduce((max, row) => Math.max(max, row.seq || 0), 0);
+}
+
+export function buildResumePointer(
+  current: (uid: string) => string | null,
+  thread: CoreThreadRecord,
+  reason: string,
+  status: CoreResumeStatus = "CURRENT",
+): CoreResumePointer {
+  return {
+    conversation_id: thread.convRef || "",
+    thread_id: thread.title,
+    branch_id_optional: thread.branchRef || "",
+    last_visible_server_sequence: lastVisibleSequence(current, thread.title),
+    context_snapshot_ref: contextSnapshotRef(current),
+    context_fingerprint: contextFingerprint(current),
+    extension_uid: "CORE-01",
+    scope_owner_ref: exactName(current("CORE-01-CTL-PROJECT")),
+    resume_reason: reason,
+    stale_resolution_status: status,
+  };
+}
+
+export function persistResumeOnThreads(
+  current: (uid: string) => string | null,
+  threadTitle: string,
+  reason: string,
+  records?: CoreThreadRecord[],
+): Record<string, string> {
+  const identified = ensureThreadIdentity(records ?? parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")));
+  const next = identified.map((row) =>
+    row.title === threadTitle ? { ...row, resume: buildResumePointer(current, row, reason) } : row,
+  );
+  return { "CORE-01-BTN-NEW-THREAD": JSON.stringify(next) };
+}
+
+export function resolveResumePointer(
+  current: (uid: string) => string | null,
+  threadTitle?: string,
+): CoreResumePointer | null {
+  const title = threadTitle || activeThreadUid(current);
+  if (!title) return null;
+  const thread = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).find((row) => row.title === title);
+  if (!thread?.resume) return null;
+  const fingerprint = contextFingerprint(current);
+  const drifted = Boolean(thread.resume.context_fingerprint && thread.resume.context_fingerprint !== fingerprint);
+  return {
+    ...thread.resume,
+    context_snapshot_ref: contextSnapshotRef(current),
+    stale_resolution_status: drifted ? "STALE" : thread.resume.stale_resolution_status,
   };
 }
 
@@ -447,9 +565,11 @@ export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
         sourceRef?: unknown;
         branchRef?: unknown;
         convRef?: unknown;
+        resume?: unknown;
       };
       const title = typeof rec.title === "string" ? usableName(rec.title) : "";
       if (!title) continue;
+      const resume = parseResumePointer(rec.resume);
       records.push({
         title,
         workItem: typeof rec.workItem === "string" && WORK_ITEMS.has(rec.workItem) ? rec.workItem : "",
@@ -457,6 +577,7 @@ export function parseThreadRecords(raw: string | null): CoreThreadRecord[] {
         sourceRef: typeof rec.sourceRef === "string" ? rec.sourceRef.trim() : undefined,
         branchRef: typeof rec.branchRef === "string" ? rec.branchRef.trim() : undefined,
         convRef: typeof rec.convRef === "string" ? rec.convRef.trim() : undefined,
+        ...(resume ? { resume } : {}),
       });
     }
     return ensureThreadIdentity(records);
@@ -491,7 +612,10 @@ export function activeThreadUid(current: (uid: string) => string | null): string
   if (stored && !["created", "selected"].includes(stored) && scoped.some((row) => row.title === stored)) {
     return stored;
   }
-  return scoped[0]?.title ?? "";
+  if (scoped.length === 1) return scoped[0].title;
+  const resumed = scoped.filter((row) => row.resume?.conversation_id && row.resume.thread_id === row.title);
+  if (resumed.length === 1) return resumed[0].title;
+  return "";
 }
 
 export function hasSendableMessage(nextValue?: string, stored?: string | null): boolean {
@@ -659,9 +783,10 @@ export function previewMessageAction(
       ...records,
       { title, workItem, parentThread: thread, sourceRef: message.ref },
     ]);
+    const patched = (uid: string) => (uid === "CORE-01-LST-THREADS" ? title : current(uid));
     return {
-      "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextRecords),
       "CORE-01-LST-THREADS": title,
+      ...persistResumeOnThreads(patched, title, "BRANCH", nextRecords),
     };
   }
   return {};
@@ -816,9 +941,10 @@ export function previewCoreAction(
     const title = namedValue(nextValue, `對話 ${scoped.length + 1}`);
     const exists = records.some((row) => row.title === title && row.workItem === workItem);
     const nextRecords = ensureThreadIdentity(exists ? records : [...records, { title, workItem }]);
+    const patched = (uid: string) => (uid === "CORE-01-LST-THREADS" ? title : current(uid));
     return {
       "CORE-01-LST-THREADS": title,
-      "CORE-01-BTN-NEW-THREAD": JSON.stringify(nextRecords),
+      ...persistResumeOnThreads(patched, title, "CREATE", nextRecords),
     };
   }
   if (actionUid.startsWith("CORE-01-ACT-MSG-")) {
@@ -841,12 +967,14 @@ export function previewCoreAction(
         messagesForThread(JSON.stringify(nextRecords), thread),
         "record",
       );
+      const patched = (uid: string) => (uid === "CORE-01-FLD-MESSAGE" ? JSON.stringify(nextRecords) : current(uid));
       return {
         "CORE-01-FLD-MESSAGE": JSON.stringify(nextRecords),
         "CORE-01-BTN-SEND": "sent",
         "CORE-01-BTN-ASSISTANT-RECORD": "recorded",
         "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
         ...notebookPatch,
+        ...persistResumeOnThreads(patched, thread, "ASSISTANT"),
       };
     }
     const attachment = usableName(current("CORE-01-BTN-ATTACHMENT") ?? undefined);
@@ -867,11 +995,13 @@ export function previewCoreAction(
     }
     const nextRecords = ensureMessageIdentity([...records, { thread, role: "user", text: summary, seq: 0, ref: "" }]);
     const notebookPatch = refreshAssistantNotebook(current, thread, nextRecords, "overflow");
+    const patched = (uid: string) => (uid === "CORE-01-FLD-MESSAGE" ? JSON.stringify(nextRecords) : current(uid));
     return {
       "CORE-01-FLD-MESSAGE": JSON.stringify(nextRecords),
       "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES",
       "CORE-01-BTN-SEND": "sent",
       ...notebookPatch,
+      ...persistResumeOnThreads(patched, thread, "SEND"),
     };
   }
   if (actionUid === "CORE-01-ACT-ASSISTANT-RECORD") {
@@ -887,6 +1017,7 @@ export function previewCoreAction(
       ...notebookPatch,
       "CORE-01-BTN-ASSISTANT-RECORD": "recorded",
       "CORE-01-FLD-RUNTIME-STAGE": "ASSISTANT_SUMMARY",
+      ...persistResumeOnThreads(current, thread, "ASSISTANT_RECORD"),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-VALIDATE") {
@@ -1012,10 +1143,23 @@ export function previewCoreAction(
     if (!WORK_ITEMS.has(nextWork)) return {};
     const matching = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).filter((row) => row.workItem === nextWork);
     const stored = current("CORE-01-LST-THREADS");
-    const keep = stored && matching.some((row) => row.title === stored) ? stored : matching[0]?.title ?? "";
+    const keep =
+      stored && matching.some((row) => row.title === stored)
+        ? stored
+        : matching.filter((row) => row.resume).length === 1
+          ? matching.find((row) => row.resume)!.title
+          : matching.length === 1
+            ? matching[0].title
+            : "";
+    const patched = (uid: string) => {
+      if (uid === "CORE-01-LST-WORK-ITEMS") return nextWork;
+      if (uid === "CORE-01-LST-THREADS") return keep;
+      return current(uid);
+    };
     return {
       "CORE-01-LST-WORK-ITEMS": nextWork,
       "CORE-01-LST-THREADS": keep,
+      ...(keep ? persistResumeOnThreads(patched, keep, "WORK_ITEM") : {}),
     };
   }
   if (actionUid === "CORE-01-ACT-THREAD-SELECT") {
@@ -1023,10 +1167,15 @@ export function previewCoreAction(
     if (!workItem) return {};
     const title = exactName(nextValue) || exactName(current("CORE-01-LST-THREADS"));
     if (!title) return {};
-    const match = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).some(
+    const match = parseThreadRecords(current("CORE-01-BTN-NEW-THREAD")).find(
       (row) => row.title === title && row.workItem === workItem,
     );
-    return match ? { "CORE-01-LST-THREADS": title } : {};
+    if (!match) return {};
+    const patched = (uid: string) => (uid === "CORE-01-LST-THREADS" ? title : current(uid));
+    return {
+      "CORE-01-LST-THREADS": title,
+      ...persistResumeOnThreads(patched, title, "SELECT"),
+    };
   }
   if (controlUid === "CORE-01-FLD-RUNTIME-STAGE") {
     return { "CORE-01-FLD-RUNTIME-STAGE": nextValue || current("CORE-01-FLD-RUNTIME-STAGE") || "AI_RESPONSES" };
