@@ -20,6 +20,7 @@ import {
   EDIT_CONVERSATION_HIDDEN,
   activeThreadUidFor,
   composerHasBlockingToken,
+  composerTokenTone,
   messageExceedsStoredLimit,
   messagesForThread,
   notebookTextForThread,
@@ -637,6 +638,16 @@ export function EditVisual() {
             />
             <IconButton uid="EDIT-01-BTN-SEND" label={tooLong ? tx("edit.message_too_long") : parserBlocked ? tx("edit.parser_blocked") : canSend ? tx("edit.send") : tx("edit.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
+          {composerTokens.length ? (
+            <div className={styles.tokenRow} aria-live="polite">
+              {composerTokens.map((token, index) => (
+                <span key={`${token.raw}-${index}`} className={composerTokenTone(token.kind) === "ok" ? styles.tokenOk : composerTokenTone(token.kind) === "ambiguous" ? styles.tokenAmbiguous : styles.tokenError} data-token-kind={token.kind}>
+                  {token.canonical || token.raw}
+                  {token.kind === "AMBIGUOUS_REF" ? ` ${tx("edit.token_ambiguous")}` : token.kind === "PARSER_ERROR" ? ` ${tx("edit.token_invalid")}` : token.canonical && token.canonical !== token.raw ? ` ${tx("edit.token_resolved")}` : ""}
+                </span>
+              ))}
+            </div>
+          ) : null}
           {tooLong ? <p className={styles.error} role="alert">{tx("edit.message_too_long")}</p> : null}
           {parserBlocked ? <p className={styles.error} role="alert">{tx("edit.parser_blocked")}</p> : null}
           <Field uid="EDIT-01-FLD-API-MODEL" label={tx("edit.fld-api-model")} value={v("EDIT-01-FLD-API-MODEL")} loading={loading} onAct={act} disabled={disabled} />

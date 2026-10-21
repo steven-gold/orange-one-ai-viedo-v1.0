@@ -16,9 +16,11 @@ import {
   assignedAiRouteLabel as kernelAssignedAiRouteLabel,
   buildResumePointerFor,
   composerHasBlockingToken as kernelComposerHasBlockingToken,
+  composerTokenTone as kernelComposerTokenTone,
   conversationAssignedAiReady,
   conversationFingerprint,
   conversationIsMultiAi,
+  conversationMultiRouteReady,
   conversationParticipantAliases,
   conversationSnapshotRef,
   exactName as kernelExactName,
@@ -65,6 +67,7 @@ export const parseThreadList = kernelParseThreadList;
 export const MULTI_AI_ALIASES = KERNEL_MULTI_AI_ALIASES;
 export const quoteInsertText = kernelQuoteInsertText;
 export const composerHasBlockingToken = kernelComposerHasBlockingToken;
+export const composerTokenTone = kernelComposerTokenTone;
 export const parseMessageActionPayload = kernelParseMessageActionPayload;
 export const hasSendableMessage = kernelHasSendableMessage;
 export const messageExceedsStoredLimit = kernelMessageExceedsStoredLimit;
@@ -123,6 +126,10 @@ const WORK_ITEMS = new Set([
 
 export function assignedAiRouteReady(current: (uid: string) => string | null): boolean {
   return conversationAssignedAiReady(CORE_CONVERSATION, current);
+}
+
+export function assignedMultiRouteReady(current: (uid: string) => string | null): boolean {
+  return conversationMultiRouteReady(CORE_CONVERSATION, current);
 }
 
 export function isMultiAiMode(current: (uid: string) => string | null): boolean {
@@ -445,7 +452,6 @@ export function previewCoreAction(
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
       ...(pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {}),
-      "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
     };
   }
@@ -493,7 +499,6 @@ export function previewCoreAction(
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
-      "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
     };
   }
@@ -510,7 +515,7 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-AI-MODE-MULTI") {
-    if (!assignedAiRouteReady(current)) return {};
+    if (!assignedMultiRouteReady(current)) return {};
     return {
       "CORE-01-BTN-MULTI-AI": "active",
       "CORE-01-BTN-SINGLE-AI": "idle",

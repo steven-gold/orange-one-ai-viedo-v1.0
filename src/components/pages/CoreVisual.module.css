@@ -572,6 +572,45 @@ button.evalBox {
   overflow-wrap: anywhere;
 }
 
+.tokenRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+
+.tokenOk,
+.tokenError,
+.tokenAmbiguous {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+}
+
+.tokenOk {
+  border: 1px solid var(--core-border-active);
+  color: var(--core-text);
+  background: rgba(139, 92, 255, 0.16);
+}
+
+.tokenError {
+  border: 1px solid var(--core-danger);
+  color: var(--core-danger);
+  background: rgba(255, 107, 122, 0.12);
+}
+
+.tokenAmbiguous {
+  border: 1px solid #e0b04a;
+  color: #e0b04a;
+  background: rgba(224, 176, 74, 0.12);
+}
+
 .rail { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .railBlock {
   padding: 12px;

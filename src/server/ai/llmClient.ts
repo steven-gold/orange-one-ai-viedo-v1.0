@@ -228,9 +228,15 @@ export async function generateIndependentPageReplies(
   }
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
   const recent = history.filter((row) => row.content.trim().length > 0);
+  if (aliases.length > configs.length) {
+    throw new AiProviderError(
+      "AI_PROVIDER_MULTI_SHORT",
+      `Multi needs ${aliases.length} ${AI_CAPABILITY_BY_PAGE[page]} providers; ${configs.length} ready`,
+    );
+  }
   const replies: IndependentReply[] = [];
   for (const [index, alias] of aliases.entries()) {
-    const config = configs[index] ?? configs[0];
+    const config = configs[index];
     if (!config) {
       replies.push({ alias, text: "", route: "" });
       continue;

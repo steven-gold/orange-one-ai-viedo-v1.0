@@ -87,11 +87,30 @@ export function conversationAssignedAiReady(bindings: ConversationBindings, curr
   return Boolean(assignedAiRouteLabel(current(bindings.assignedAiUid)));
 }
 
+export function assignedAiRouteParts(value: string | null | undefined): string[] {
+  const label = assignedAiRouteLabel(value);
+  if (!label) return [];
+  const seen = new Set<string>();
+  const parts: string[] = [];
+  for (const part of label.split("、")) {
+    const item = part.trim();
+    if (!item || seen.has(item)) continue;
+    seen.add(item);
+    parts.push(item);
+  }
+  return parts;
+}
+
 export function conversationIsMultiAi(bindings: ConversationBindings, current: CurrentFn): boolean {
   return Boolean(bindings.multiAiUid && current(bindings.multiAiUid) === "active");
 }
 
 export const MULTI_AI_ALIASES = ["A", "B", "C"] as const;
+
+export function conversationMultiRouteReady(bindings: ConversationBindings, current: CurrentFn): boolean {
+  if (!bindings.assignedAiUid) return false;
+  return assignedAiRouteParts(current(bindings.assignedAiUid)).length >= MULTI_AI_ALIASES.length;
+}
 
 export function conversationParticipantAliases(bindings: ConversationBindings, current: CurrentFn): string[] {
   if (!conversationIsMultiAi(bindings, current)) return [];
@@ -983,6 +1002,12 @@ export function composerHasBlockingToken(tokens: ConversationResolvedToken[]): b
   return tokens.some((row) => row.kind === "PARSER_ERROR" || row.kind === "AMBIGUOUS_REF");
 }
 
+export function composerTokenTone(kind: ConversationTokenKind): "ok" | "error" | "ambiguous" {
+  if (kind === "PARSER_ERROR") return "error";
+  if (kind === "AMBIGUOUS_REF") return "ambiguous";
+  return "ok";
+}
+
 export function quoteInsertText(ref: string): string {
   return ref ? `${ref} ` : "";
 }
@@ -1108,6 +1133,13 @@ export function previewConversationSend(
   const tokens = resolveComposerTokensFor(bindings, message, current);
   if (composerHasBlockingToken(tokens)) return {};
   if (!tokens.some((row) => row.kind === "TARGET_ASSISTANT") && !conversationAssignedAiReady(bindings, current)) {
+    return {};
+  }
+  if (
+    !tokens.some((row) => row.kind === "TARGET_ASSISTANT") &&
+    conversationIsMultiAi(bindings, current) &&
+    !conversationMultiRouteReady(bindings, current)
+  ) {
     return {};
   }
   if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) {

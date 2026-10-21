@@ -8,6 +8,8 @@ import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValu
 import {
   activeThreadUid,
   assignedAiRouteReady,
+  assignedMultiRouteReady,
+  composerTokenTone,
   canonicalScriptRef,
   composerHasBlockingToken,
   exactName,
@@ -261,6 +263,7 @@ export function CoreVisual() {
     const tokens = resolveComposerTokens(text, current);
     if (composerHasBlockingToken(tokens)) return;
     if (!tokens.some((row) => row.kind === "TARGET_ASSISTANT") && !assignedAiRouteReady(current)) return;
+    if (!tokens.some((row) => row.kind === "TARGET_ASSISTANT") && current("CORE-01-BTN-MULTI-AI") === "active" && !assignedMultiRouteReady(current)) return;
     const attachment = current("CORE-01-BTN-ATTACHMENT");
     const reference = current("CORE-01-BTN-REFERENCE");
     const files = [attachment, reference].filter((name): name is string => typeof name === "string" && name.length > 0 && !FILE_STATUS.has(name));
@@ -314,7 +317,7 @@ export function CoreVisual() {
   const scriptProjection = parseCanonicalScript(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
   const scriptName = canonicalScriptRef(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
   const topicMode = projectIsConfirmed && Boolean(topicName);
-  const workItems = topicMode ? TOPIC_WORK_ITEMS : PROJECT_WORK_ITEMS;
+  const workItems = topicMode ? [...PROJECT_WORK_ITEMS, ...TOPIC_WORK_ITEMS] : PROJECT_WORK_ITEMS;
   const storedWork = valueOf("CORE-01-LST-WORK-ITEMS");
   const activeWorkItem = (workItems as readonly string[]).includes(storedWork ?? "") ? storedWork! : workItems[0];
   const currentFields = (uid: string) => valueOf(uid);
@@ -345,10 +348,13 @@ export function CoreVisual() {
   const parserBlocked = composerHasBlockingToken(composerTokens);
   const tooLong = messageExceedsStoredLimit(draftMessage);
   const routeReady = assignedAiRouteReady(currentFields);
+  const multiReady = assignedMultiRouteReady(currentFields);
   const assistantTarget = composerTokens.some((row) => row.kind === "TARGET_ASSISTANT");
   const hasDraft = Boolean(draftMessage.trim() || attachedName || referenceName);
+  const multiActive = valueOf("CORE-01-BTN-MULTI-AI") === "active" && multiReady;
   const routeBlocked = hasDraft && !assistantTarget && !routeReady;
-  const canSend = Boolean(activeThread) && hasDraft && !parserBlocked && !routeBlocked && !tooLong;
+  const multiBlocked = hasDraft && !assistantTarget && valueOf("CORE-01-BTN-MULTI-AI") === "active" && !multiReady;
+  const canSend = Boolean(activeThread) && hasDraft && !parserBlocked && !routeBlocked && !multiBlocked && !tooLong;
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -370,7 +376,6 @@ export function CoreVisual() {
           ? tx("core.default_blueprint")
           : tx("core.default_project");
   const activeStage = valueOf("CORE-01-FLD-RUNTIME-STAGE") ?? "AI_RESPONSES";
-  const multiActive = valueOf("CORE-01-BTN-MULTI-AI") === "active";
   const singleActive = !multiActive;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const workLabel = (item: string) => (WORK_ITEM_KEYS[item] ? tx(WORK_ITEM_KEYS[item]) : displayCoreValue(item, false));
@@ -448,7 +453,7 @@ export function CoreVisual() {
               </div>
               <div className={styles.headerControls}>
                 <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />
-                <IconButton uid="CORE-01-BTN-MULTI-AI" label={routeReady ? tx("core.multi_ai") : tx("core.route_blocked")} icon="multi-ai" onAct={act} disabled={disabled || !routeReady} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
+                <IconButton uid="CORE-01-BTN-MULTI-AI" label={multiReady ? tx("core.multi_ai") : tx("core.multi_route_blocked")} icon="multi-ai" onAct={act} disabled={disabled || !multiReady} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
                 <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} readonly hint={tx("core.assigned_ai_hint")} />
                 <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
               </div>
@@ -597,11 +602,22 @@ export function CoreVisual() {
                   }}
                 />
               </label>
-              <IconButton uid="CORE-01-BTN-SEND" label={tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+              <IconButton uid="CORE-01-BTN-SEND" label={tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : multiBlocked ? tx("core.multi_route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>
+            {composerTokens.length ? (
+              <div className={styles.tokenRow} aria-live="polite">
+                {composerTokens.map((token, index) => (
+                  <span key={`${token.raw}-${index}`} className={composerTokenTone(token.kind) === "ok" ? styles.tokenOk : composerTokenTone(token.kind) === "ambiguous" ? styles.tokenAmbiguous : styles.tokenError} data-token-kind={token.kind}>
+                    {token.canonical || token.raw}
+                    {token.kind === "AMBIGUOUS_REF" ? ` ${tx("core.token_ambiguous")}` : token.kind === "PARSER_ERROR" ? ` ${tx("core.token_invalid")}` : token.canonical && token.canonical !== token.raw ? ` ${tx("core.token_resolved")}` : ""}
+                  </span>
+                ))}
+              </div>
+            ) : null}
             {tooLong ? <p className={styles.error} role="alert">{tx("core.message_too_long")}</p> : null}
             {parserBlocked ? <p className={styles.error} role="alert">{tx("core.parser_blocked")}</p> : null}
             {routeBlocked ? <p className={styles.error} role="alert">{tx("core.route_blocked")}</p> : null}
+            {multiBlocked ? <p className={styles.error} role="alert">{tx("core.multi_route_blocked")}</p> : null}
             {attachedName || referenceName ? (
               <p className={styles.composerFiles}>
                 {attachedName ? `${tx("core.attached_file")} ${attachedName}` : null}

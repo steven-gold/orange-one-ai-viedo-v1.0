@@ -20,6 +20,7 @@ import {
   VIDEO_CONVERSATION_HIDDEN,
   activeThreadUidFor,
   composerHasBlockingToken,
+  composerTokenTone,
   messageExceedsStoredLimit,
   messagesForThread,
   notebookTextForThread,
@@ -611,6 +612,16 @@ export function VideoVisual() {
             />
             <IconButton uid="VIDEO-01-BTN-SEND" label={tooLong ? tx("video.message_too_long") : parserBlocked ? tx("video.parser_blocked") : canSend ? tx("video.send") : tx("video.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
+          {composerTokens.length ? (
+            <div className={styles.tokenRow} aria-live="polite">
+              {composerTokens.map((token, index) => (
+                <span key={`${token.raw}-${index}`} className={composerTokenTone(token.kind) === "ok" ? styles.tokenOk : composerTokenTone(token.kind) === "ambiguous" ? styles.tokenAmbiguous : styles.tokenError} data-token-kind={token.kind}>
+                  {token.canonical || token.raw}
+                  {token.kind === "AMBIGUOUS_REF" ? ` ${tx("video.token_ambiguous")}` : token.kind === "PARSER_ERROR" ? ` ${tx("video.token_invalid")}` : token.canonical && token.canonical !== token.raw ? ` ${tx("video.token_resolved")}` : ""}
+                </span>
+              ))}
+            </div>
+          ) : null}
           {tooLong ? <p className={styles.error} role="alert">{tx("video.message_too_long")}</p> : null}
           {parserBlocked ? <p className={styles.error} role="alert">{tx("video.parser_blocked")}</p> : null}
           <div className={styles.aiResponse} data-ai-response-uid={VIDEO_CORRECTION_RESPONSE_UID} aria-live="polite">
