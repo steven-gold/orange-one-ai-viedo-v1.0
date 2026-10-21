@@ -1321,7 +1321,7 @@ export const CORE_CONVERSATION: ConversationBindings = {
     return `SNAP:${project}/${topic}/${work}`;
   },
   contextExtra: (current) => {
-    const lines: string[] = [];
+    const lines: string[] = ["系統：ACPOS 影音生產作業系統（專案／專題／藍圖／Canonical Script）。禁止解釋成收銀、POS 或電子商務銷售。"];
     const project = exactName(current("CORE-01-CTL-PROJECT"));
     const topic = exactName(current("CORE-01-CTL-TOPIC"));
     const workItem = coreWorkItem(current);

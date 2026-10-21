@@ -54,14 +54,23 @@ function toProviderConfig(profile: AiapiProfile, credential: string): ProviderCo
 }
 
 const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
-  core: "你是 ACPOS 核心製作助理。以繁體中文、精簡且可執行地回覆使用者在專案／專題對話中的需求。請延續同一條對話的上下文，不要忽略使用者剛說的內容。",
-  asset: "你是 ACPOS 素材製作助理。以繁體中文回覆素材修正需求，輸出可直接套用的修正內容。",
-  video: "你是 ACPOS 影片剪輯助理。以繁體中文回覆鏡頭修正需求，輸出可直接套用的修正內容。",
-  edit: "你是 ACPOS 後期剪輯助理。以繁體中文回覆語意修正需求，輸出可直接套用的修正內容。",
+  core: [
+    "你是 ACPOS 影音生產作業系統的 CORE 分析型 AI。",
+    "ACPOS 處理專案、專題、藍圖、Canonical Script、素材、影片與剪輯。",
+    "禁止把 ACPOS 解釋成收銀機、POS、電子商務銷售或任何零售結帳系統。",
+    "禁止自稱會議秘書、核心設計助理，或再問使用者在哪個專案、哪個模組。",
+    "脈絡區若已有專案／專題／工作項目／正式腳本，直接沿用。",
+    "以繁體中文精簡作答，延續本則剛送出的內容，只產出分析與候選，不把回覆當成正式腳本。",
+  ].join(""),
+  asset: "你是 ACPOS 素材部門的修正分析型 AI。以繁體中文產出可套用的素材修正內容。禁止解釋成收銀或 POS。",
+  video: "你是 ACPOS 影片部門的修正分析型 AI。以繁體中文產出可套用的鏡頭修正內容。禁止解釋成收銀或 POS。",
+  edit: "你是 ACPOS 剪輯部門的修正分析型 AI。以繁體中文產出可套用的語意修正內容。禁止解釋成收銀或 POS。",
 };
 
-function systemPromptFor(page: AiPageUid, template: string): string {
-  const instruction = SYSTEM_PROMPTS[page];
+function systemPromptFor(page: AiPageUid, template: string, alias?: string): string {
+  const instruction = alias
+    ? `${SYSTEM_PROMPTS[page]}你是本場次 Multi 參與者 @${alias}。必須獨立作答，提出與其他參與者不同的觀點、理由或風險，禁止複述或同文。`
+    : SYSTEM_PROMPTS[page];
   if (template.includes(AIAPI_PROMPT_TEMPLATE_TOKEN)) {
     return template.split(AIAPI_PROMPT_TEMPLATE_TOKEN).join(instruction);
   }
@@ -115,7 +124,7 @@ async function assertKillSwitchOff(): Promise<void> {
   }
 }
 
-async function callProvider(config: ProviderConfig, messages: ChatMessage[]): Promise<string> {
+async function callProvider(config: ProviderConfig, messages: ChatMessage[], temperature = 0.2): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), config.timeoutMs);
   try {
@@ -125,7 +134,7 @@ async function callProvider(config: ProviderConfig, messages: ChatMessage[]): Pr
         "content-type": "application/json",
         authorization: `Bearer ${config.credential}`,
       },
-      body: JSON.stringify({ model: config.model, messages, temperature: 0.2 }),
+      body: JSON.stringify({ model: config.model, messages, temperature }),
       signal: controller.signal,
       cache: "no-store",
     });
@@ -214,18 +223,27 @@ export async function generateIndependentPageReplies(
   const recent = history.filter((row) => row.content.trim().length > 0);
   const replies: IndependentReply[] = [];
   for (const [index, alias] of aliases.entries()) {
-    const config = configs[index];
+    const config = configs[index] ?? configs[0];
     if (!config) {
       replies.push({ alias, text: "" });
       continue;
     }
+    const prior = replies
+      .filter((row) => row.text.trim())
+      .map((row) => `@${row.alias}：${row.text.trim().slice(0, 400)}`)
+      .join("\n");
+    const independentUser = [
+      user,
+      `[本則由參與者 @${alias} 獨立作答。必須提出與其他參與者不同的觀點、理由或風險，禁止複述或同文。]`,
+      prior ? `[其他參與者已說過，請勿重複]\n${prior}` : "",
+    ].filter(Boolean).join("\n\n");
     const messages: ChatMessage[] = [
-      { role: "system", content: systemPromptFor(page, config.promptTemplate) },
+      { role: "system", content: systemPromptFor(page, config.promptTemplate, alias) },
       ...recent,
-      { role: "user", content: user },
+      { role: "user", content: independentUser },
     ];
     try {
-      replies.push({ alias, text: await callProvider(config, messages) });
+      replies.push({ alias, text: await callProvider(config, messages, 0.8) });
     } catch {
       replies.push({ alias, text: "" });
     }

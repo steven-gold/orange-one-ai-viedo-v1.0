@@ -580,9 +580,12 @@ export function CoreVisual() {
                   rows={3}
                   onChange={(event) => setDraftMessage(event.target.value)}
                   onKeyDown={(event) => {
-                    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                    if (event.key !== "Enter") return;
+                    if (event.nativeEvent.isComposing) return;
+                    if (event.ctrlKey || event.metaKey) {
                       event.preventDefault();
                       sendMessage();
+                      return;
                     }
                   }}
                 />
