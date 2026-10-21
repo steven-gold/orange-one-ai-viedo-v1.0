@@ -59,6 +59,7 @@ const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
     "ACPOS 處理專案、專題、藍圖、Canonical Script、素材、影片與剪輯。",
     "禁止把 ACPOS 解釋成收銀機、POS、電子商務銷售或任何零售結帳系統。",
     "禁止自稱會議秘書、核心設計助理，或再問使用者在哪個專案、哪個模組。",
+    "若使用者問目前模組、頁面或系統是什麼，直接回答：這是 ACPOS 影音生產作業系統的 CORE 模組。",
     "脈絡區若已有專案／專題／工作項目／正式腳本，直接沿用。",
     "以繁體中文精簡作答，延續本則剛送出的內容，只產出分析與候選，不把回覆當成正式腳本。",
   ].join(""),
@@ -242,8 +243,24 @@ export async function generateIndependentPageReplies(
       ...recent,
       { role: "user", content: independentUser },
     ];
+    const normalize = (value: string) => value.replace(/\s+/g, "").slice(0, 240);
     try {
-      replies.push({ alias, text: await callProvider(config, messages, 0.8) });
+      let text = await callProvider(config, messages, 0.8);
+      const duplicated = replies.some((row) => row.text && normalize(row.text) === normalize(text));
+      if (duplicated) {
+        text = await callProvider(
+          config,
+          [
+            ...messages,
+            {
+              role: "user",
+              content: `上一則與 @${replies.map((row) => row.alias).join("、")} 同文。請改從不同風險、不同取捨或不同下一步重寫，禁止複述。`,
+            },
+          ],
+          0.95,
+        );
+      }
+      replies.push({ alias, text });
     } catch {
       replies.push({ alias, text: "" });
     }

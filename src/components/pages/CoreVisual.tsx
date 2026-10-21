@@ -120,7 +120,14 @@ export function CoreVisual() {
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
   const referenceRef = useRef<HTMLInputElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    const node = timelineRef.current;
+    if (!node) return;
+    node.scrollTop = node.scrollHeight;
+  }, [fields, tick]);
 
   useEffect(() => {
     if (!menu) return;
@@ -453,7 +460,7 @@ export function CoreVisual() {
               <h2 className={styles.title}>{tx("core.messages")}</h2>
               <span>{tx("core.right_click_only")}</span>
             </div>
-            <div className={styles.timeline}>
+            <div className={styles.timeline} ref={timelineRef}>
               {conversation.length === 0 ? (
                 <p className={styles.threadEmpty}>{tx("core.conversation_empty")}</p>
               ) : (
@@ -585,7 +592,6 @@ export function CoreVisual() {
                     if (event.ctrlKey || event.metaKey) {
                       event.preventDefault();
                       sendMessage();
-                      return;
                     }
                   }}
                 />

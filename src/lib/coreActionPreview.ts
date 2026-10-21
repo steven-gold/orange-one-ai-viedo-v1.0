@@ -661,6 +661,9 @@ export function previewCoreAction(
   if (controlUid === "CORE-01-FLD-RUNTIME-STAGE") {
     return { "CORE-01-FLD-RUNTIME-STAGE": nextValue || current("CORE-01-FLD-RUNTIME-STAGE") || "AI_RESPONSES" };
   }
+  if (controlUid === "CORE-01-FLD-MESSAGE" || controlUid === "CORE-01-FLD-ASSISTANT-SUMMARY") {
+    return {};
+  }
   const existing = current(controlUid);
   if (!nextValue && existing && !STATUS_TOKENS.has(existing) && actionUid.includes("-SELECT")) {
     return { [controlUid]: existing };

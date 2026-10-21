@@ -14,8 +14,9 @@
   --core-ok: #50d890;
   min-width: 0;
   min-height: calc(100vh - 84px);
+  height: calc(100vh - 84px);
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 12px;
   padding: 16px;
   color: var(--core-text);
@@ -99,6 +100,25 @@
   min-width: 0;
 }
 
+.composerInput textarea {
+  min-height: 54px;
+  max-height: 160px;
+  color: var(--core-text);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  white-space: pre-wrap;
+  overflow: auto;
+  text-overflow: unset;
+  min-width: 0;
+  width: 100%;
+  resize: vertical;
+}
+
 .btn {
   height: 40px;
   padding: 0 14px;
@@ -146,6 +166,7 @@
   gap: 16px;
   min-height: 0;
   min-width: 0;
+  height: 100%;
 }
 
 .nav,
@@ -248,6 +269,8 @@
   flex-direction: column;
   gap: 12px;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .convHeader {
@@ -255,7 +278,11 @@
 }
 
 .messages {
-  min-height: 420px;
+  min-height: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .composerBar[data-component-uid="CORE-01-CMP-COMPOSER"] {
@@ -316,9 +343,13 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 220px;
+  flex: 1 1 auto;
+  min-height: 180px;
+  max-height: min(52vh, 560px);
   margin-top: 10px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 .userMessage,
@@ -518,9 +549,9 @@ button.evalBox {
 .runtimeBtn { flex: 1; min-width: 0; }
 
 .composer { flex-direction: row; min-height: 40px; flex-wrap: wrap; align-items: flex-end; }
-.composerInput { flex: 1; min-width: 160px; min-height: 72px; }
+.composerInput { flex: 1; min-width: 160px; min-height: 72px; cursor: text; }
 .composerInput input { font-size: 13px; line-height: 18px; }
-.composerInput textarea {
+.composerBar .composerInput textarea {
   display: block;
   width: 100%;
   min-height: 54px;

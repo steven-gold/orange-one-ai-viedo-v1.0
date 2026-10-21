@@ -239,10 +239,7 @@ export function parseMessageRecords(raw: string | null): ConversationMessageReco
   if (!raw || raw === "sent" || STATUS_TOKENS.has(raw)) return [];
   try {
     const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) {
-      const text = usableMessage(raw);
-      return text ? ensureMessageIdentity([{ thread: "", role: "user", text, seq: 0, ref: "" }]) : [];
-    }
+    if (!Array.isArray(parsed)) return [];
     const records: ConversationMessageRecord[] = [];
     for (const item of parsed) {
       if (!item || typeof item !== "object") continue;
@@ -275,6 +272,8 @@ export function parseMessageRecords(raw: string | null): ConversationMessageReco
     }
     return ensureMessageIdentity(records);
   } catch {
+    const trimmed = raw.trim();
+    if (trimmed.startsWith("[") || trimmed.startsWith("{")) return [];
     const text = usableMessage(raw);
     return text ? ensureMessageIdentity([{ thread: "", role: "user", text, seq: 0, ref: "" }]) : [];
   }
@@ -288,15 +287,15 @@ export function messagesForThread(
   if (!thread) return [];
   const records = parseMessageRecords(raw);
   const scoped = records.filter((row) => row.thread === thread);
-  if (scoped.length) return scoped;
   const unscoped = records.filter((row) => !row.thread).map((row) => ({ ...row, thread }));
+  const merged = scoped.length ? [...unscoped, ...scoped] : unscoped;
   const extra = parseNotebookRecords(fallbackAssistant ?? null).length
     ? ""
     : usableMessage(fallbackAssistant ?? undefined);
-  if (extra && extra !== unscoped[unscoped.length - 1]?.text) {
-    return ensureMessageIdentity([...unscoped, { thread, role: "assistant", text: extra, seq: 0, ref: "" }]);
+  if (extra && extra !== merged[merged.length - 1]?.text) {
+    return ensureMessageIdentity([...merged, { thread, role: "assistant", text: extra, seq: 0, ref: "" }]);
   }
-  return unscoped;
+  return merged;
 }
 
 export function recentHistoryPayload(
@@ -522,7 +521,7 @@ function buildNotebookBody(
   for (let index = 0; index < rows.length; index += 1) {
     const row = rows[index];
     const role = row.role === "user" ? "使用者" : "AI";
-    const line = `- ${row.ref || `第${index + 1}則`}（${role}）：${row.text.replace(/\s+/g, " ").trim()}`;
+    const line = `- ${row.ref || `第${index + 1}則`}（${role}）`;
     const piece = (refs.length ? 1 : 0) + line.length;
     if (used + piece > Math.max(budget, 0)) break;
     refs.push(line);
@@ -1137,9 +1136,10 @@ export function previewConversationSend(
   }
   const files = (bindings.attachmentUids ?? []).map((uid) => exactName(current(uid))).filter(Boolean);
   const payload = files.length ? `${message} · ${files.join("、")}` : message;
-  let records = parseMessageRecords(current(bindings.messageUid));
-  if (!records.some((row) => row.thread === thread)) {
-    records = records.map((row) => (row.thread ? row : { ...row, thread }));
+  let records = parseMessageRecords(current(bindings.messageUid)).map((row) =>
+    row.thread ? row : { ...row, thread },
+  );
+  if (!records.some((row) => row.thread === thread && row.role === "assistant")) {
     const priorSummary = current(bindings.notebookUid);
     const priorNotebook = parseNotebookRecords(priorSummary ?? null);
     const prior = priorNotebook.length ? "" : usableMessage(priorSummary ?? undefined);
@@ -1297,7 +1297,6 @@ export const CORE_CONVERSATION: ConversationBindings = {
   scopeOwnerUid: "CORE-01-CTL-PROJECT",
   humanDecisionUid: "CORE-01-FLD-HUMAN-DECISION",
   runtimeStageUid: "CORE-01-FLD-RUNTIME-STAGE",
-  composerUid: "CORE-01-FLD-MESSAGE",
   resolveWorkItem: coreWorkItem,
   scopeReady: (current) => Boolean(exactName(current("CORE-01-CTL-PROJECT")) && coreWorkItem(current)),
   strictWorkItem: true,
