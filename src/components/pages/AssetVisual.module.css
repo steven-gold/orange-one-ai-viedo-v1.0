@@ -443,9 +443,13 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 220px;
+  flex: 1 1 auto;
+  min-height: 180px;
+  max-height: min(52vh, 560px);
   margin-top: 10px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 .userMessage,
@@ -570,6 +574,9 @@
   min-height: 54px;
   max-height: 160px;
   resize: vertical;
+  white-space: pre-wrap;
+  overflow: auto;
+  text-overflow: unset;
 }
 
 .btnSend {

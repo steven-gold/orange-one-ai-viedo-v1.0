@@ -297,6 +297,7 @@ export async function applyWorkbenchAction(
         `SELECT control_uid, value_text FROM ${FIELD_TABLE.core}`,
       );
       const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+      if (assigned) cache.set("CORE-01-FLD-ASSIGNED-AI", assigned);
       const current = (uid: string) => cache.get(uid) ?? null;
       const tokens = resolveComposerTokens(prompt, current);
       if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) return;

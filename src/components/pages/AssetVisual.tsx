@@ -112,7 +112,14 @@ export function AssetVisual() {
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const fieldsRef = useRef(fields);
+  const timelineRef = useRef<HTMLDivElement>(null);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    const node = timelineRef.current;
+    if (!node) return;
+    node.scrollTop = node.scrollHeight;
+  }, [fields, tick]);
 
   useEffect(() => {
     if (!menu) return;
@@ -175,11 +182,6 @@ export function AssetVisual() {
       controller.abort();
     };
   }, [tick]);
-
-  useEffect(() => {
-    const value = fields.find((row) => row.controlUid === "ASSET-01-TXT-CORRECTION-REQUEST")?.value;
-    if (value) setCorrectionDraft(value);
-  }, [fields]);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
@@ -553,7 +555,7 @@ export function AssetVisual() {
             <h2 className={styles.title}>{tx("asset.messages")}</h2>
             <span>{tx("asset.right_click_only")}</span>
           </div>
-          <div className={styles.messageTimeline}>
+          <div className={styles.messageTimeline} ref={timelineRef}>
             {conversation.length === 0 ? (
               <p className={styles.threadEmpty}>{tx("asset.conversation_empty")}</p>
             ) : (
@@ -614,7 +616,9 @@ export function AssetVisual() {
                 rows={3}
                 onChange={(event) => setCorrectionDraft(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                  if (event.key !== "Enter") return;
+                  if (event.nativeEvent.isComposing) return;
+                  if (event.ctrlKey || event.metaKey) {
                     event.preventDefault();
                     sendMessage();
                   }

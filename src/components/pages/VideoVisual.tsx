@@ -133,7 +133,14 @@ export function VideoVisual() {
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const fieldsRef = useRef(fields);
+  const timelineRef = useRef<HTMLDivElement>(null);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    const node = timelineRef.current;
+    if (!node) return;
+    node.scrollTop = node.scrollHeight;
+  }, [fields, tick]);
 
   useEffect(() => {
     if (!menu) return;
@@ -206,11 +213,6 @@ export function VideoVisual() {
       controller.abort();
     };
   }, [tick]);
-
-  useEffect(() => {
-    const value = fields.find((row) => row.controlUid === "VIDEO-01-TXT-CORRECTION")?.value;
-    if (value) setCorrectionDraft(value);
-  }, [fields]);
 
   const valueOf = useCallback(
     (controlUid: string) => fields.find((row) => row.controlUid === controlUid)?.value ?? null,
@@ -538,7 +540,7 @@ export function VideoVisual() {
             <h2 className={styles.title}>{tx("video.messages")}</h2>
             <span>{tx("video.right_click_only")}</span>
           </div>
-          <div className={styles.messageTimeline}>
+          <div className={styles.messageTimeline} ref={timelineRef}>
             {conversation.length === 0 ? (
               <p className={styles.threadEmpty}>{tx("video.conversation_empty")}</p>
             ) : (
@@ -598,7 +600,9 @@ export function VideoVisual() {
               rows={3}
               onChange={(event) => setCorrectionDraft(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                if (event.key !== "Enter") return;
+                if (event.nativeEvent.isComposing) return;
+                if (event.ctrlKey || event.metaKey) {
                   event.preventDefault();
                   sendMessage();
                 }

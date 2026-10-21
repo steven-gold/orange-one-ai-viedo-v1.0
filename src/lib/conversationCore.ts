@@ -94,12 +94,8 @@ export function conversationIsMultiAi(bindings: ConversationBindings, current: C
 export const MULTI_AI_ALIASES = ["A", "B", "C"] as const;
 
 export function conversationParticipantAliases(bindings: ConversationBindings, current: CurrentFn): string[] {
-  if (!bindings.assignedAiUid) return [];
-  const parts = assignedAiRouteLabel(current(bindings.assignedAiUid))
-    .split("、")
-    .map((part) => part.trim())
-    .filter(Boolean);
-  return MULTI_AI_ALIASES.slice(0, Math.min(parts.length, MULTI_AI_ALIASES.length));
+  if (!conversationIsMultiAi(bindings, current)) return [];
+  return [...MULTI_AI_ALIASES];
 }
 
 export function messageExceedsStoredLimit(value: string | undefined): boolean {
