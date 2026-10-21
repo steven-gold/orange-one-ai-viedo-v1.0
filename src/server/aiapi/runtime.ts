@@ -584,7 +584,7 @@ function fillBillingNote(
   prices: readonly { name: string; billing: string }[],
 ): Record<string, string> | null {
   if (current?.billing || !prices.length) return null;
-  const billing = billingFor(profile.modelName, profile.endpointPath, prices);
+  const billing = billingFor(profile.modelName, profile.endpointPath, [...prices]);
   if (!billing) return null;
   const next = {
     description: current?.description ?? "",
@@ -737,7 +737,8 @@ export async function refreshPublishedNotes(): Promise<boolean> {
       const applyDocNotes = async () => {
         for (const [providerId, group] of byProvider) {
           const entry = registryEntry(providerId);
-          if (!entry?.docsIndex) continue;
+          const docsIndex = entry?.docsIndex;
+          if (!docsIndex) continue;
           const cached = cachedDocs(entry);
           const modules = cached ? [...cached] : [];
           const incomplete = group.filter((profile) => noteNeedsDocs(notes[profile.profileId]));
@@ -749,7 +750,7 @@ export async function refreshPublishedNotes(): Promise<boolean> {
             const pageDeadline = Date.now() + 12_000;
             const pagesPromise = readMany(docUrls, 8, pageDeadline);
             const pricesPromise = (async () => {
-              const index = await readMarkdown(entry.docsIndex);
+              const index = await readMarkdown(docsIndex);
               const pricingLinks = parseDocsIndex(index).filter((link) => /\/pricing\//i.test(link.url));
               const pricePages = await readMany(pricingLinks.map((link) => link.url), 4, Date.now() + 8_000);
               const rows: { name: string; billing: string }[] = [];
