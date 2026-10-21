@@ -8,8 +8,10 @@ import {
   buildCorrectionCandidate,
   parseCorrectionScript,
   serializeCorrectionScript,
+  preserveCheckAfterExecute,
   sourceMatches,
   withCorrectionStatus,
+  withPreserveCheck,
 } from "./correctionScript";
 
 export { parseThreadList };
@@ -127,6 +129,8 @@ export function previewAssetAction(
   }
   if (actionUid === "ASSET-01-ACT-FLOW-START") {
     if (!ready) return {};
+    const inboundScript = named(current("ASSET-01-FLD-SCRIPT"));
+    if (!inboundScript) return {};
     const selected = named(current("ASSET-01-FLD-MANIFEST")) || assets[assets.length - 1] || "";
     return {
       "ASSET-01-BTN-EXECUTE": "running",
@@ -135,6 +139,7 @@ export function previewAssetAction(
       "ASSET-01-FLD-STAGE": "running",
       "ASSET-01-CTL-PROJECT": project,
       "ASSET-01-CTL-TOPIC": topic,
+      "ASSET-01-FLD-SCRIPT": inboundScript,
       ...(selected ? { "ASSET-01-FLD-MANIFEST": selected } : {}),
       "ASSET-01-FLD-JOB": "running",
       "ASSET-01-FLD-ROUTE": "ready",
@@ -244,10 +249,17 @@ export function previewAssetAction(
     const source = exactSource(current);
     const candidate = parseCorrectionScript(current("ASSET-01-FLD-CORRECTION-RESPONSE"));
     if (!sourceMatches(candidate, source) || candidate?.status !== "APPROVED") return {};
+    const check = preserveCheckAfterExecute(candidate, source);
+    if (!check.passed) {
+      return {
+        "ASSET-01-BTN-CORRECTION-EXECUTE": "idle",
+        "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
+      };
+    }
     return {
       "ASSET-01-BTN-CORRECTION-EXECUTE": "running",
       "ASSET-01-FLD-TASK-STATUS": "running",
-      "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
+      "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DOC-CREATE") {
@@ -386,6 +398,16 @@ export function previewAssetAction(
     };
     const fallback = fallbacks[controlUid] || "";
     return fallback ? { [controlUid]: fallback } : {};
+  }
+  const inboundOnly = new Set([
+    "ASSET-01-FLD-SCRIPT",
+    "ASSET-01-FLD-BLUEPRINT",
+    "ASSET-01-FLD-DNA",
+    "ASSET-01-FLD-NAMING-AUTHORITY",
+  ]);
+  if (inboundOnly.has(controlUid)) {
+    const existing = named(current(controlUid));
+    return existing ? { [controlUid]: existing } : {};
   }
   const existing = current(controlUid);
   if (!nextValue && named(existing)) return { [controlUid]: existing as string };

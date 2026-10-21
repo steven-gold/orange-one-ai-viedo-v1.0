@@ -13,6 +13,7 @@ import {
   ASSET_CONVERSATION_HIDDEN,
   activeThreadUidFor,
   composerHasBlockingToken,
+  messageExceedsStoredLimit,
   messagesForThread,
   notebookTextForThread,
   quoteInsertText,
@@ -271,6 +272,7 @@ export function AssetVisual() {
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUidFor(ASSET_CONVERSATION, current)) return;
     const text = correctionDraft.trim();
+    if (messageExceedsStoredLimit(text)) return;
     const tokens = resolveComposerTokensFor(ASSET_CONVERSATION, text, current);
     if (composerHasBlockingToken(tokens)) return;
     if (!text) return;
@@ -314,7 +316,8 @@ export function AssetVisual() {
   const notebookText = notebookTextForThread(valueOf("ASSET-01-FLD-CORRECTION-NOTEBOOK"), activeThread ?? "");
   const composerTokens = resolveComposerTokensFor(ASSET_CONVERSATION, correctionDraft, currentFields);
   const parserBlocked = composerHasBlockingToken(composerTokens);
-  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked;
+  const tooLong = messageExceedsStoredLimit(correctionDraft);
+  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked && !tooLong;
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const modeValue = valueOf("ASSET-01-CTL-MODE");
@@ -618,8 +621,9 @@ export function AssetVisual() {
                 }}
               />
             </label>
-            <IconButton uid="ASSET-01-BTN-SEND" label={parserBlocked ? tx("asset.parser_blocked") : canSend ? tx("asset.send") : tx("asset.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+            <IconButton uid="ASSET-01-BTN-SEND" label={tooLong ? tx("asset.message_too_long") : parserBlocked ? tx("asset.parser_blocked") : canSend ? tx("asset.send") : tx("asset.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
+          {tooLong ? <p className={styles.error} role="alert">{tx("asset.message_too_long")}</p> : null}
           {parserBlocked ? <p className={styles.error} role="alert">{tx("asset.parser_blocked")}</p> : null}
           <div className={styles.aiResponse} data-ai-response-uid={ASSET_CORRECTION_RESPONSE_UID} aria-live="polite">
             <span className={styles.label}>{tx("asset.correction_response")}</span>

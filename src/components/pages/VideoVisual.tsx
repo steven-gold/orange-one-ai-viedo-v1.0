@@ -20,6 +20,7 @@ import {
   VIDEO_CONVERSATION_HIDDEN,
   activeThreadUidFor,
   composerHasBlockingToken,
+  messageExceedsStoredLimit,
   messagesForThread,
   notebookTextForThread,
   quoteInsertText,
@@ -277,6 +278,7 @@ export function VideoVisual() {
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUidFor(VIDEO_CONVERSATION, current)) return;
     const text = correctionDraft.trim();
+    if (messageExceedsStoredLimit(text)) return;
     const tokens = resolveComposerTokensFor(VIDEO_CONVERSATION, text, current);
     if (composerHasBlockingToken(tokens)) return;
     if (!text) return;
@@ -319,7 +321,8 @@ export function VideoVisual() {
   const notebookText = notebookTextForThread(valueOf("VIDEO-01-FLD-CORRECTION-NOTEBOOK"), activeThread ?? "");
   const composerTokens = resolveComposerTokensFor(VIDEO_CONVERSATION, correctionDraft, currentFields);
   const parserBlocked = composerHasBlockingToken(composerTokens);
-  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked;
+  const tooLong = messageExceedsStoredLimit(correctionDraft);
+  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked && !tooLong;
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const dash = displayVideoValue(null, loading);
@@ -601,8 +604,9 @@ export function VideoVisual() {
                 }
               }}
             />
-            <IconButton uid="VIDEO-01-BTN-SEND" label={parserBlocked ? tx("video.parser_blocked") : canSend ? tx("video.send") : tx("video.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+            <IconButton uid="VIDEO-01-BTN-SEND" label={tooLong ? tx("video.message_too_long") : parserBlocked ? tx("video.parser_blocked") : canSend ? tx("video.send") : tx("video.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
+          {tooLong ? <p className={styles.error} role="alert">{tx("video.message_too_long")}</p> : null}
           {parserBlocked ? <p className={styles.error} role="alert">{tx("video.parser_blocked")}</p> : null}
           <div className={styles.aiResponse} data-ai-response-uid={VIDEO_CORRECTION_RESPONSE_UID} aria-live="polite">
             <span className={styles.label}>{tx("video.correction_response")}</span>

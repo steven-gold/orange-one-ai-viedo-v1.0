@@ -8,8 +8,10 @@ import {
   buildCorrectionCandidate,
   parseCorrectionScript,
   serializeCorrectionScript,
+  preserveCheckAfterExecute,
   sourceMatches,
   withCorrectionStatus,
+  withPreserveCheck,
 } from "./correctionScript";
 
 function named(value: string | null | undefined): string {
@@ -94,12 +96,15 @@ export function previewVideoAction(
     return { "VIDEO-01-CTL-MODE": toggleMode(current("VIDEO-01-CTL-MODE")) };
   }
   if (actionUid === "VIDEO-01-ACT-FLOW-START") {
+    const inboundScript = named(current("VIDEO-01-FLD-SCRIPT-SECTION"));
+    if (!inboundScript) return {};
     return {
       "VIDEO-01-BTN-EXECUTE": "running",
       "VIDEO-01-FLD-STATUS": "running",
       "VIDEO-01-FLD-PAGE-STATE": "running",
       "VIDEO-01-FLD-TASK-STATE": "running",
       "VIDEO-01-FLD-JOB-STATE": "running",
+      "VIDEO-01-FLD-SCRIPT-SECTION": inboundScript,
       "VIDEO-01-FLD-ROUTE": keep(undefined, current("VIDEO-01-FLD-ROUTE"), "就緒"),
     };
   }
@@ -239,10 +244,17 @@ export function previewVideoAction(
     const source = exactSource(current);
     const candidate = parseCorrectionScript(current("VIDEO-01-FLD-CORRECTION-RESPONSE"));
     if (!sourceMatches(candidate, source) || candidate?.status !== "APPROVED") return {};
+    const check = preserveCheckAfterExecute(candidate, source);
+    if (!check.passed) {
+      return {
+        "VIDEO-01-BTN-EXEC-CORRECTION": "idle",
+        "VIDEO-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
+      };
+    }
     return {
       "VIDEO-01-BTN-EXEC-CORRECTION": "running",
       "VIDEO-01-FLD-TASK-STATE": "running",
-      "VIDEO-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
+      "VIDEO-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
     };
   }
   if (actionUid === "VIDEO-01-ACT-FINDING-CREATE") {
@@ -271,5 +283,16 @@ export function previewVideoAction(
     return {};
   }
   if (!ready) return {};
+  const inboundOnly = new Set([
+    "VIDEO-01-FLD-SCRIPT-SECTION",
+    "VIDEO-01-FLD-BLUEPRINT-REF",
+    "VIDEO-01-FLD-DNA-REFS",
+    "VIDEO-01-FLD-INSTRUCTION",
+    "VIDEO-01-FLD-ASSET-REFS",
+  ]);
+  if (inboundOnly.has(controlUid)) {
+    const existing = named(current(controlUid));
+    return existing ? { [controlUid]: existing } : {};
+  }
   return { [controlUid]: nextValue ?? statusFromAction(actionUid) };
 }

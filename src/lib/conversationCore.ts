@@ -102,10 +102,15 @@ export function conversationParticipantAliases(bindings: ConversationBindings, c
   return MULTI_AI_ALIASES.slice(0, Math.min(parts.length, MULTI_AI_ALIASES.length));
 }
 
+export function messageExceedsStoredLimit(value: string | undefined): boolean {
+  return (value?.trim().length ?? 0) > CONVERSATION_STORED_MESSAGE_TEXT_CHARS;
+}
+
 function usableMessage(value: string | undefined): string {
   const text = value?.trim();
   if (!text || STATUS_TOKENS.has(text)) return "";
-  return text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
+  if (text.length > CONVERSATION_STORED_MESSAGE_TEXT_CHARS) return "";
+  return text;
 }
 
 export function isPlaceholderName(value: string | null | undefined): boolean {
@@ -400,24 +405,124 @@ function coveredForNotebook(records: ConversationMessageRecord[], mode: "overflo
   return records;
 }
 
-function buildNotebookBody(covered: ConversationMessageRecord[], version: number, hash: string): string {
+export const ASSISTANT_OPERATIONS = [
+  "MEETING_RECORD",
+  "MESSAGE_RECORD",
+  "SCOPE_SUMMARY",
+  "DISCUSSION_NODE",
+  "BRANCH_CREATE_ON_REQUEST",
+  "BRANCH_SUMMARY",
+  "CONSENSUS_LIST",
+  "DISAGREEMENT_LIST",
+  "OPEN_QUESTIONS",
+  "FOLLOW_UPS",
+  "SOURCE_INDEX",
+  "IMPORTANT_REF_INDEX",
+  "MEETING_SUMMARY",
+  "CONFIRMED_CONCLUSION_RECORD",
+  "MEMORY_PROJECTION_REFRESH",
+  "CROSS_AI_COORDINATION",
+] as const;
+
+export type AssistantOperation = (typeof ASSISTANT_OPERATIONS)[number];
+
+export type AssistantIntent = {
+  operation: AssistantOperation;
+  refs: string[];
+};
+
+const ASSISTANT_VERB_MAP: ReadonlyArray<{ op: AssistantOperation; pattern: RegExp }> = [
+  { op: "MEMORY_PROJECTION_REFRESH", pattern: /整理筆記本|刷新記憶|MEMORY_PROJECTION_REFRESH/u },
+  { op: "MEETING_SUMMARY", pattern: /會議摘要|會末摘要|MEETING_SUMMARY/u },
+  { op: "BRANCH_CREATE_ON_REQUEST", pattern: /開分支|建立分支|BRANCH_CREATE_ON_REQUEST/u },
+  { op: "BRANCH_SUMMARY", pattern: /分支摘要|BRANCH_SUMMARY/u },
+  { op: "CONFIRMED_CONCLUSION_RECORD", pattern: /已確認結論|結論引用|CONFIRMED_CONCLUSION_RECORD/u },
+  { op: "CROSS_AI_COORDINATION", pattern: /協調|CROSS_AI_COORDINATION/u },
+  { op: "IMPORTANT_REF_INDEX", pattern: /重要引用|IMPORTANT_REF_INDEX/u },
+  { op: "SOURCE_INDEX", pattern: /來源索引|來源|SOURCE_INDEX/u },
+  { op: "OPEN_QUESTIONS", pattern: /未決|問題清單|OPEN_QUESTIONS/u },
+  { op: "FOLLOW_UPS", pattern: /後續|待辦|FOLLOW_UPS/u },
+  { op: "CONSENSUS_LIST", pattern: /共識|CONSENSUS_LIST/u },
+  { op: "DISAGREEMENT_LIST", pattern: /分歧|衝突|DISAGREEMENT_LIST/u },
+  { op: "DISCUSSION_NODE", pattern: /討論節點|DISCUSSION_NODE/u },
+  { op: "SCOPE_SUMMARY", pattern: /範圍摘要|摘要|SCOPE_SUMMARY/u },
+  { op: "MESSAGE_RECORD", pattern: /紀錄|記錄|MESSAGE_RECORD|MEETING_RECORD/u },
+];
+
+export function parseAssistantIntent(text: string, tokens: ConversationResolvedToken[]): AssistantIntent {
+  const refs = tokens
+    .filter((row) =>
+      row.kind === "MESSAGE_REF" ||
+      row.kind === "ASSISTANT_REF" ||
+      row.kind === "CONVERSATION_REF" ||
+      row.kind === "BRANCH_REF",
+    )
+    .map((row) => row.canonical)
+    .filter(Boolean);
+  const body = text.replace(/@助理/gu, "").trim();
+  for (const row of ASSISTANT_VERB_MAP) {
+    if (row.pattern.test(body)) {
+      const operation = row.op === "MESSAGE_RECORD" && !refs.length ? "MEETING_RECORD" : row.op;
+      return { operation, refs };
+    }
+  }
+  return { operation: refs.length ? "MESSAGE_RECORD" : "MEETING_RECORD", refs };
+}
+
+function citedLine(refs: string[]): string {
+  return refs.length ? refs.join("、") : "—";
+}
+
+function buildNotebookBody(
+  covered: ConversationMessageRecord[],
+  version: number,
+  hash: string,
+  intent?: AssistantIntent,
+  extra?: { confirmedRefs?: string[]; aliases?: string[] },
+): string {
+  const operation = intent?.operation ?? "MEETING_RECORD";
+  const exactRefs = citedLine(intent?.refs ?? []);
+  const confirmed = citedLine(extra?.confirmedRefs ?? []);
+  const aliases = extra?.aliases?.length ? extra.aliases.join("、") : "—";
+  const cited = intent?.refs ?? [];
+  const consensus = operation === "CONSENSUS_LIST" ? (cited.length ? `${citedLine(cited)}（待人工確認）` : "—") : "—";
+  const disagreement = operation === "DISAGREEMENT_LIST" ? citedLine(cited) : "—";
+  const openQuestions = operation === "OPEN_QUESTIONS" ? citedLine(cited) : "—";
+  const followUps = operation === "FOLLOW_UPS" ? citedLine(cited) : "—";
+  const sourceIndex = operation === "SOURCE_INDEX" || operation === "IMPORTANT_REF_INDEX" ? citedLine(cited) : exactRefs;
+  const confirmedLine = operation === "CONFIRMED_CONCLUSION_RECORD" ? confirmed : "—";
   const header = [
     `會議紀錄 版本 ${version}`,
+    `秘書動作：${operation}`,
     "狀態：現行",
     `涵蓋則數：${covered.length}`,
     `來源雜湊：${hash}`,
+    `精確引用：${exactRefs}`,
+    `參與者別名：${aliases}`,
     "重要引用：",
   ];
-  const footer = ["共識：—", "分歧：—", "未決問題：—", "後續事項：—"];
+  const footer = [
+    `共識：${consensus}`,
+    `分歧：${disagreement}`,
+    `未決問題：${openQuestions}`,
+    `已確認結論引用：${confirmedLine}`,
+    `後續事項：${followUps}`,
+    `來源證據引用：${sourceIndex}`,
+    operation === "CROSS_AI_COORDINATION" ? `協調對象：${aliases}` : "",
+  ].filter(Boolean);
   const headerText = header.join("\n");
   const footerText = footer.join("\n");
   const budget = CONVERSATION_STORED_MESSAGE_TEXT_CHARS - headerText.length - footerText.length - 2;
   const refs: string[] = [];
   let used = 0;
-  for (let index = 0; index < covered.length; index += 1) {
-    const row = covered[index];
+  const preferred = intent?.refs.length
+    ? covered.filter((row) => intent.refs.includes(row.ref))
+    : covered;
+  const rows = preferred.length ? preferred : covered;
+  for (let index = 0; index < rows.length; index += 1) {
+    const row = rows[index];
     const role = row.role === "user" ? "使用者" : "AI";
-    const line = `- 第${index + 1}則（${role}）：${row.text.replace(/\s+/g, " ").trim()}`;
+    const line = `- ${row.ref || `第${index + 1}則`}（${role}）：${row.text.replace(/\s+/g, " ").trim()}`;
     const piece = (refs.length ? 1 : 0) + line.length;
     if (used + piece > Math.max(budget, 0)) break;
     refs.push(line);
@@ -437,17 +542,33 @@ function serializeNotebookRecords(records: ConversationNotebookRecord[]): string
   return JSON.stringify({ kind: "NOTEBOOK", records: shrunk }).slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
 }
 
+function confirmedRefsFrom(bindings: ConversationBindings, current: CurrentFn): string[] {
+  if (!bindings.humanDecisionUid) return [];
+  const raw = usableMessage(current(bindings.humanDecisionUid) ?? undefined);
+  if (!raw) return [];
+  return raw.split(/[、,\s]+/u).map((part) => part.trim()).filter((part) => part.startsWith("#"));
+}
+
 export function refreshAssistantNotebookFor(
   bindings: ConversationBindings,
   current: CurrentFn,
   thread: string,
   records: ConversationMessageRecord[],
   mode: "overflow" | "record" = "overflow",
+  intent?: AssistantIntent,
 ): Record<string, string> {
   if (!thread) return {};
   const covered = coveredForNotebook(records, mode);
   if (!covered.length) return {};
-  const hash = sourceHash(covered.map((row) => `${row.role}:${row.text}`));
+  const confirmedRefs = confirmedRefsFrom(bindings, current);
+  const aliases = conversationParticipantAliases(bindings, current);
+  const hash = sourceHash([
+    intent?.operation ?? "MEETING_RECORD",
+    ...(intent?.refs ?? []),
+    ...confirmedRefs,
+    ...aliases,
+    ...covered.map((row) => `${row.role}:${row.ref}:${row.text}`),
+  ]);
   const existing = parseNotebookRecords(current(bindings.notebookUid));
   const prior = existing.find((row) => row.thread === thread && row.status === "CURRENT");
   if (prior && prior.sourceHash === hash) return {};
@@ -458,7 +579,7 @@ export function refreshAssistantNotebookFor(
     status: "CURRENT",
     coveredCount: covered.length,
     sourceHash: hash,
-    body: buildNotebookBody(covered, version, hash),
+    body: buildNotebookBody(covered, version, hash, intent, { confirmedRefs, aliases }),
   };
   const others = existing.filter((row) => row.thread !== thread).map((row) => ({ ...row, status: "CURRENT" as const }));
   return { [bindings.notebookUid]: serializeNotebookRecords([...others, next]) };
@@ -960,7 +1081,8 @@ export function previewAssistantRecordFor(
   if (!thread) return {};
   const records = messagesForThread(current(bindings.messageUid), thread);
   if (!records.length) return {};
-  const notebookPatch = refreshAssistantNotebookFor(bindings, current, thread, records, "record");
+  const intent: AssistantIntent = { operation: "MEETING_RECORD", refs: [] };
+  const notebookPatch = refreshAssistantNotebookFor(bindings, current, thread, records, "record", intent);
   if (!Object.keys(notebookPatch).length) {
     return { [bindings.assistantUid]: "recorded" };
   }
@@ -987,16 +1109,22 @@ export function previewConversationSend(
     return {};
   }
   if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) {
+    const intent = parseAssistantIntent(message, tokens);
     const records = parseMessageRecords(current(bindings.messageUid));
     const nextRecords = ensureMessageIdentity([...records, { thread, role: "user", text: message, seq: 0, ref: "" }]);
+    const patched = (uid: string) => (uid === bindings.messageUid ? JSON.stringify(nextRecords) : current(uid));
     const notebookPatch = refreshAssistantNotebookFor(
       bindings,
-      (uid) => (uid === bindings.messageUid ? JSON.stringify(nextRecords) : current(uid)),
+      patched,
       thread,
       messagesForThread(JSON.stringify(nextRecords), thread),
       "record",
+      intent,
     );
-    const patched = (uid: string) => (uid === bindings.messageUid ? JSON.stringify(nextRecords) : current(uid));
+    const branchPatch =
+      intent.operation === "BRANCH_CREATE_ON_REQUEST" && intent.refs[0]
+        ? previewMessageActionFor(bindings, `${bindings.prefix}-ACT-MSG-BRANCH`, current, intent.refs[0])
+        : {};
     return {
       [bindings.messageUid]: JSON.stringify(nextRecords),
       [bindings.sendUid]: "sent",
@@ -1004,6 +1132,7 @@ export function previewConversationSend(
       ...(bindings.runtimeStageUid ? { [bindings.runtimeStageUid]: "ASSISTANT_SUMMARY" } : {}),
       ...notebookPatch,
       ...persistResumeOnThreadsFor(bindings, patched, thread, "ASSISTANT"),
+      ...branchPatch,
     };
   }
   const files = (bindings.attachmentUids ?? []).map((uid) => exactName(current(uid))).filter(Boolean);

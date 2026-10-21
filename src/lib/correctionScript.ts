@@ -131,3 +131,39 @@ export function withCorrectionBody(
 ): CorrectionScriptCandidate {
   return { ...candidate, script_body: scriptBody.trim().slice(0, 4000) };
 }
+
+export type PreserveCheckResult = {
+  passed: boolean;
+  detail: string;
+};
+
+export function preserveCheckAfterExecute(
+  candidate: CorrectionScriptCandidate | undefined,
+  sourceAfter: string,
+): PreserveCheckResult {
+  if (!candidate) return { passed: false, detail: "無修正候選" };
+  if (candidate.status !== "APPROVED" && candidate.status !== "EXECUTED") {
+    return { passed: false, detail: "未核准不得執行" };
+  }
+  if (!sourceAfter || candidate.exact_source_version !== sourceAfter) {
+    return { passed: false, detail: "來源版本不符，禁止套用" };
+  }
+  if (!candidate.target_scope.trim()) {
+    return { passed: false, detail: "修正範圍未解到有界身份" };
+  }
+  if (candidate.fallback_policy !== "BLOCK") {
+    return { passed: false, detail: "保留失敗必須阻擋" };
+  }
+  return { passed: true, detail: "來源不可變，未指明內容預設保留" };
+}
+
+export function withPreserveCheck(
+  candidate: CorrectionScriptCandidate,
+  check: PreserveCheckResult,
+): CorrectionScriptCandidate {
+  return {
+    ...candidate,
+    status: check.passed ? "EXECUTED" : candidate.status,
+    acceptance_checks: check.passed ? `執行後檢查通過：${check.detail}` : `執行後檢查阻擋：${check.detail}`,
+  };
+}

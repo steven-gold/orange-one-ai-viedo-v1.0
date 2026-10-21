@@ -20,6 +20,7 @@ import {
   EDIT_CONVERSATION_HIDDEN,
   activeThreadUidFor,
   composerHasBlockingToken,
+  messageExceedsStoredLimit,
   messagesForThread,
   notebookTextForThread,
   quoteInsertText,
@@ -292,6 +293,7 @@ export function EditVisual() {
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUidFor(EDIT_CONVERSATION, current)) return;
     const text = correctionDraft.trim();
+    if (messageExceedsStoredLimit(text)) return;
     const tokens = resolveComposerTokensFor(EDIT_CONVERSATION, text, current);
     if (composerHasBlockingToken(tokens)) return;
     if (!text) return;
@@ -346,7 +348,8 @@ export function EditVisual() {
   const notebookText = notebookTextForThread(valueOf("EDIT-01-FLD-CORRECTION-NOTEBOOK"), activeThread ?? "");
   const composerTokens = resolveComposerTokensFor(EDIT_CONVERSATION, correctionDraft, currentFields);
   const parserBlocked = composerHasBlockingToken(composerTokens);
-  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked;
+  const tooLong = messageExceedsStoredLimit(correctionDraft);
+  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked && !tooLong;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayEditValue(null, loading);
@@ -627,8 +630,9 @@ export function EditVisual() {
                 }
               }}
             />
-            <IconButton uid="EDIT-01-BTN-SEND" label={parserBlocked ? tx("edit.parser_blocked") : canSend ? tx("edit.send") : tx("edit.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+            <IconButton uid="EDIT-01-BTN-SEND" label={tooLong ? tx("edit.message_too_long") : parserBlocked ? tx("edit.parser_blocked") : canSend ? tx("edit.send") : tx("edit.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
+          {tooLong ? <p className={styles.error} role="alert">{tx("edit.message_too_long")}</p> : null}
           {parserBlocked ? <p className={styles.error} role="alert">{tx("edit.parser_blocked")}</p> : null}
           <Field uid="EDIT-01-FLD-API-MODEL" label={tx("edit.fld-api-model")} value={v("EDIT-01-FLD-API-MODEL")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-API-PROVIDER" label={tx("edit.fld-api-provider")} value={v("EDIT-01-FLD-API-PROVIDER")} loading={loading} onAct={act} disabled={disabled} />

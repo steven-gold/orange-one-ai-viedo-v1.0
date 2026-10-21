@@ -24,12 +24,14 @@ import {
   exactName as kernelExactName,
   formatConversationContext,
   hasSendableMessage as kernelHasSendableMessage,
+  messageExceedsStoredLimit as kernelMessageExceedsStoredLimit,
   isPlaceholderName as kernelIsPlaceholderName,
   messagesForThread as kernelMessagesForThread,
   MULTI_AI_ALIASES as KERNEL_MULTI_AI_ALIASES,
   namedList as kernelNamedList,
   namedValue as kernelNamedValue,
   notebookTextForThread as kernelNotebookTextForThread,
+  parseAssistantIntent as kernelParseAssistantIntent,
   parseMessageActionPayload as kernelParseMessageActionPayload,
   parseMessageRecords as kernelParseMessageRecords,
   parseNotebookRecords as kernelParseNotebookRecords,
@@ -47,6 +49,7 @@ import {
   threadScopeReadyFor,
   threadsForWorkItem,
   workItemFor,
+  ASSISTANT_OPERATIONS as KERNEL_ASSISTANT_OPERATIONS,
 } from "./conversationCore";
 
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
@@ -64,6 +67,9 @@ export const quoteInsertText = kernelQuoteInsertText;
 export const composerHasBlockingToken = kernelComposerHasBlockingToken;
 export const parseMessageActionPayload = kernelParseMessageActionPayload;
 export const hasSendableMessage = kernelHasSendableMessage;
+export const messageExceedsStoredLimit = kernelMessageExceedsStoredLimit;
+export const parseAssistantIntent = kernelParseAssistantIntent;
+export const ASSISTANT_OPERATIONS = KERNEL_ASSISTANT_OPERATIONS;
 export const recentHistoryPayload = kernelRecentHistoryPayload;
 
 export type CoreResumeStatus = ConversationResumeStatus;

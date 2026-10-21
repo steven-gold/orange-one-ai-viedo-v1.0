@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { QaClientError, fetchQaReadModel, postQaAction, type QaFieldValue } from "@/lib/client";
+import { previewQaAction } from "@/lib/qaActionPreview";
 import { displayQaValue } from "./qaFormat";
 import { QA_CONTROL_ACTIONS, QA_VISIBLE_CONTROLS } from "./qaControls";
 import { Icon, type IconName } from "@/components/ui/Icon";
@@ -107,6 +108,8 @@ export function QaVisual() {
   const [authorized, setAuthorized] = useState(false);
   const [fields, setFields] = useState<QaFieldValue[]>([]);
   const [surface, setSurface] = useState<QaSurface>("AUTO");
+  const fieldsRef = useRef(fields);
+  fieldsRef.current = fields;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -140,18 +143,43 @@ export function QaVisual() {
     [fields],
   );
 
+  const applyPatch = useCallback((patch: Record<string, string>) => {
+    setFields((prev) => {
+      const map = new Map(prev.map((row) => [row.controlUid, row.value]));
+      for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
+      return QA_VISIBLE_CONTROLS.map((controlUid) => ({
+        controlUid,
+        value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
+      }));
+    });
+  }, []);
+
   const act = useCallback(async (controlUid: string) => {
     const actionUid = QA_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
+    const patch = previewQaAction(
+      controlUid,
+      actionUid,
+      (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
+    );
+    if (!Object.keys(patch).length) return;
+    applyPatch(patch);
     try {
       await postQaAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
     setTick((n) => n + 1);
-  }, []);
+  }, [applyPatch]);
 
-  const disabled = !authorized && !loading;
+  const inboundReady = Boolean(
+    valueOf("QA-01-FLD-PROJECT") &&
+      valueOf("QA-01-FLD-TOPIC") &&
+      valueOf("QA-01-FLD-TARGET-OUTPUT") &&
+      valueOf("QA-01-FLD-QA-SCRIPT") &&
+      valueOf("QA-01-FLD-CRITERIA-VERSION"),
+  );
+  const disabled = !inboundReady;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayQaValue(null, loading);
@@ -399,6 +427,9 @@ export function QaVisual() {
       aria-label={tx("qa.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("qa.error")}</div> : null}
+      {!loading && !error && authorized && !inboundReady ? (
+        <div className={styles.error} role="alert">{tx("qa.inbound_blocked")}</div>
+      ) : null}
 
       <section className={`${styles.panel} ${styles.context}`} data-component-uid="QA-01-CMP-CONTEXT">
         <Field uid="QA-01-FLD-PROJECT" label={tx("qa.fld-project")} value={v("QA-01-FLD-PROJECT")} loading={loading} onAct={act} disabled={disabled} />

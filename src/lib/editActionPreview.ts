@@ -8,8 +8,10 @@ import {
   buildCorrectionCandidate,
   parseCorrectionScript,
   serializeCorrectionScript,
+  preserveCheckAfterExecute,
   sourceMatches,
   withCorrectionStatus,
+  withPreserveCheck,
 } from "./correctionScript";
 import {
   buildDialogueTimingBinding,
@@ -244,6 +246,7 @@ export function previewEditAction(
   if (conversation) return conversation;
 
   if (actionUid === "EDIT-01-ACT-FLOW-START-CONTINUE") {
+    if (!standalone && !named(current("EDIT-01-LBL-CURRENT-SCRIPT-SECTION"))) return {};
     return {
       "EDIT-01-BTN-FLOW-START": "running",
       "EDIT-01-LBL-PAGE-STATE": "running",
@@ -302,10 +305,17 @@ export function previewEditAction(
     const source = exactSource(current);
     const candidate = parseCorrectionScript(current("EDIT-01-PNL-API-CANDIDATE"));
     if (!sourceMatches(candidate, source) || candidate?.status !== "APPROVED") return {};
+    const check = preserveCheckAfterExecute(candidate, source);
+    if (!check.passed) {
+      return {
+        "EDIT-01-BTN-CORR-EXECUTE": "idle",
+        "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
+      };
+    }
     return {
       "EDIT-01-BTN-CORR-EXECUTE": "running",
       "EDIT-01-LBL-PAGE-STATE": "running",
-      "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
+      "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
     };
   }
   if (actionUid === "EDIT-01-ACT-VOICE-ASSET-SET") {
@@ -327,7 +337,14 @@ export function previewEditAction(
   }
   if (actionUid === "EDIT-01-ACT-VOICE-APPLY" || actionUid === "EDIT-01-ACT-VOICE-GENERATE" || actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND") {
     const take = named(nextValue) || named(current("EDIT-01-LST-VOICE-TAKES")) || named(current("EDIT-01-FLD-VOICE-ASSET"));
-    const script = actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND" ? named(nextValue) || named(current("EDIT-01-FLD-VOICE-SCRIPT")) : named(current("EDIT-01-FLD-VOICE-SCRIPT"));
+    const inboundScript = named(current("EDIT-01-LBL-CURRENT-SCRIPT-SECTION"));
+    const script =
+      actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND"
+        ? standalone
+          ? named(current("EDIT-01-FLD-VOICE-SCRIPT")) || inboundScript
+          : inboundScript
+        : named(current("EDIT-01-FLD-VOICE-SCRIPT")) || inboundScript;
+    if (actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND" && !standalone && !inboundScript) return {};
     const patched = (uid: string) => {
       if (uid === "EDIT-01-LST-VOICE-TAKES" && take) return take;
       if (uid === "EDIT-01-FLD-VOICE-SCRIPT" && script) return script;
@@ -454,6 +471,15 @@ export function previewEditAction(
     return { "EDIT-01-LBL-PAGE-STATE": "returned" };
   }
 
+  if (
+    !standalone &&
+    (actionUid === "EDIT-01-ACT-MUSIC-ADD" ||
+      actionUid === "EDIT-01-ACT-SFX-ADD" ||
+      actionUid === "EDIT-01-ACT-SUB-IMPORT" ||
+      actionUid === "EDIT-01-ACT-SUB-CREATE")
+  ) {
+    return { [controlUid]: statusFromAction(actionUid) };
+  }
   if (GATED_ACTIONS.has(actionUid)) {
     return { [controlUid]: nextValue ?? statusFromAction(actionUid) };
   }

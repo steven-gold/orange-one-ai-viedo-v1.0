@@ -4,6 +4,7 @@ import { applyWorkbenchAction } from "../runtime/applyAction";
 import { fillProtocolNotes, refreshPublishedNotes, type AiapiOutcome } from "../aiapi/runtime";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
+import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { assignedAiRouteSnapshot } from "../ai/llmClient";
@@ -760,9 +761,53 @@ export async function persistListQaFields(): Promise<QaFieldValue[]> {
   }));
 }
 
+function overlayUpstreamOntoQa(
+  fields: QaFieldValue[],
+  coreFields: CoreFieldValue[],
+  assetFields: AssetFieldValue[],
+  videoFields: VideoFieldValue[],
+  editFields: EditFieldValue[],
+): QaFieldValue[] {
+  const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
+  const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
+  const video = new Map(videoFields.map((row) => [row.controlUid, row.value]));
+  const edit = new Map(editFields.map((row) => [row.controlUid, row.value]));
+  const inbound = resolveQaInbound(
+    (uid) => core.get(uid) ?? null,
+    (uid) => asset.get(uid) ?? null,
+    (uid) => video.get(uid) ?? null,
+    (uid) => edit.get(uid) ?? null,
+  );
+  if (!inbound.ready) {
+    return fields.map((row) => ({ ...row, value: null }));
+  }
+  return fields.map((row) => {
+    if (row.controlUid === "QA-01-FLD-PROJECT") return { ...row, value: inbound.project || null };
+    if (row.controlUid === "QA-01-FLD-TOPIC") return { ...row, value: inbound.topic || null };
+    if (row.controlUid === "QA-01-FLD-QA-TASK") return { ...row, value: inbound.task || row.value };
+    if (row.controlUid === "QA-01-FLD-TARGET-OUTPUT") return { ...row, value: inbound.targetOutput || null };
+    if (row.controlUid === "QA-01-FLD-QA-SCRIPT") return { ...row, value: inbound.scriptView || null };
+    if (row.controlUid === "QA-01-FLD-SCRIPT-HASH") return { ...row, value: inbound.scriptHash || null };
+    if (row.controlUid === "QA-01-FLD-CRITERIA-VERSION") return { ...row, value: inbound.criteriaVersion || null };
+    if (row.controlUid === "QA-01-FLD-CHECKSUM") return { ...row, value: inbound.checksum || null };
+    if (row.controlUid === "QA-01-FLD-RIGHTS") return { ...row, value: inbound.rights || null };
+    if (row.controlUid === "QA-01-FLD-PROVENANCE") return { ...row, value: inbound.provenance || null };
+    if (row.controlUid === "QA-01-FLD-REL-OUTPUTS") return { ...row, value: inbound.targetOutput || row.value };
+    return row;
+  });
+}
+
 export async function persistGetQaReadModel(accountUid: string): Promise<QaReadModel> {
   const authorized = await persistHasQaPermission(accountUid);
-  const fields = authorized ? await persistListQaFields() : [];
+  const fields = authorized
+    ? overlayUpstreamOntoQa(
+        await persistListQaFields(),
+        await persistListCoreFields().catch(() => [] as CoreFieldValue[]),
+        await persistListAssetFields().catch(() => [] as AssetFieldValue[]),
+        await persistListVideoFields().catch(() => [] as VideoFieldValue[]),
+        await persistListEditFields().catch(() => [] as EditFieldValue[]),
+      )
+    : [];
   return {
     projectionUid: QA_PROJECTION,
     pageUid: QA_PAGE_UID,

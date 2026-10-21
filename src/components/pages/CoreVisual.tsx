@@ -11,6 +11,7 @@ import {
   canonicalScriptRef,
   composerHasBlockingToken,
   exactName,
+  messageExceedsStoredLimit,
   parseCanonicalScript,
   messagesForThread,
   notebookTextForThread,
@@ -249,6 +250,7 @@ export function CoreVisual() {
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUid(current)) return;
     const text = draftMessage.trim();
+    if (messageExceedsStoredLimit(text)) return;
     const tokens = resolveComposerTokens(text, current);
     if (composerHasBlockingToken(tokens)) return;
     if (!tokens.some((row) => row.kind === "TARGET_ASSISTANT") && !assignedAiRouteReady(current)) return;
@@ -334,11 +336,12 @@ export function CoreVisual() {
               : "core.resume.missing";
   const composerTokens = resolveComposerTokens(draftMessage, currentFields);
   const parserBlocked = composerHasBlockingToken(composerTokens);
+  const tooLong = messageExceedsStoredLimit(draftMessage);
   const routeReady = assignedAiRouteReady(currentFields);
   const assistantTarget = composerTokens.some((row) => row.kind === "TARGET_ASSISTANT");
   const hasDraft = Boolean(draftMessage.trim() || attachedName || referenceName);
   const routeBlocked = hasDraft && !assistantTarget && !routeReady;
-  const canSend = Boolean(activeThread) && hasDraft && !parserBlocked && !routeBlocked;
+  const canSend = Boolean(activeThread) && hasDraft && !parserBlocked && !routeBlocked && !tooLong;
   const dialogTitleKey: TranslationKey =
     dialog === "rename-topic"
       ? "core.dialog_rename_topic"
@@ -584,8 +587,9 @@ export function CoreVisual() {
                   }}
                 />
               </label>
-              <IconButton uid="CORE-01-BTN-SEND" label={parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+              <IconButton uid="CORE-01-BTN-SEND" label={tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
             </div>
+            {tooLong ? <p className={styles.error} role="alert">{tx("core.message_too_long")}</p> : null}
             {parserBlocked ? <p className={styles.error} role="alert">{tx("core.parser_blocked")}</p> : null}
             {routeBlocked ? <p className={styles.error} role="alert">{tx("core.route_blocked")}</p> : null}
             {attachedName || referenceName ? (

@@ -36,6 +36,8 @@ import {
 } from "@/lib/coreActionPreview";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
+import { previewQaAction } from "@/lib/qaActionPreview";
+import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, type AiPageUid } from "../ai/llmClient";
@@ -251,7 +253,7 @@ async function applyProjectedAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
-  seed?: Record<string, string>,
+  seed?: Record<string, string | null>,
 ): Promise<boolean> {
   const cache = new Map<string, string | null>();
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
@@ -450,6 +452,52 @@ export async function applyWorkbenchAction(
       const version = await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION");
       if (locked === "locked" && version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-EDIT", version);
     }
+    return;
+  }
+  if (page === "qa") {
+    const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_core_field_projection",
+    );
+    const coreByUid = new Map(
+      coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const assetRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_asset_field_projection",
+    );
+    const assetByUid = new Map(
+      assetRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const videoRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_video_field_projection",
+    );
+    const videoByUid = new Map(
+      videoRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const editRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+      "SELECT control_uid, value_text FROM ghsn_edit_field_projection",
+    );
+    const editByUid = new Map(
+      editRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const),
+    );
+    const inbound = resolveQaInbound(
+      (uid) => coreByUid.get(uid) ?? null,
+      (uid) => assetByUid.get(uid) ?? null,
+      (uid) => videoByUid.get(uid) ?? null,
+      (uid) => editByUid.get(uid) ?? null,
+    );
+    const seed: Record<string, string | null> = {
+      "QA-01-FLD-PROJECT": inbound.project || null,
+      "QA-01-FLD-TOPIC": inbound.topic || null,
+      "QA-01-FLD-QA-TASK": inbound.task || null,
+      "QA-01-FLD-TARGET-OUTPUT": inbound.targetOutput || null,
+      "QA-01-FLD-QA-SCRIPT": inbound.scriptView || null,
+      "QA-01-FLD-SCRIPT-HASH": inbound.scriptHash || null,
+      "QA-01-FLD-CRITERIA-VERSION": inbound.criteriaVersion || null,
+      "QA-01-FLD-CHECKSUM": inbound.checksum || null,
+      "QA-01-FLD-RIGHTS": inbound.rights || null,
+      "QA-01-FLD-PROVENANCE": inbound.provenance || null,
+    };
+    await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
     return;
   }
   if (page === "aiapi") {
