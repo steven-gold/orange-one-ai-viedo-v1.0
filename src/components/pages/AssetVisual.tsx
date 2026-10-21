@@ -8,6 +8,17 @@ import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAct
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
 import { parseCorrectionScript } from "@/lib/correctionScript";
+import {
+  ASSET_CONVERSATION,
+  ASSET_CONVERSATION_HIDDEN,
+  activeThreadUidFor,
+  composerHasBlockingToken,
+  messagesForThread,
+  notebookTextForThread,
+  quoteInsertText,
+  resolveComposerTokensFor,
+  threadsForWorkItem,
+} from "@/lib/conversationCore";
 import { displayAssetValue } from "./assetFormat";
 import {
   ASSET_BINDING_FIELDS,
@@ -26,6 +37,15 @@ const DEFAULT_SESSION = "sess-demo-001";
 
 type NameDialogKind = "asset" | "layer" | "layer-doc" | "patch" | "properties" | "mask";
 
+const MESSAGE_MENU: { uid: string; actionUid: string; key: TranslationKey }[] = [
+  { uid: "ASSET-01-MENU-QUOTE", actionUid: "ASSET-01-ACT-MSG-QUOTE", key: "asset.menu.quote" },
+  { uid: "ASSET-01-MENU-CONTINUE", actionUid: "ASSET-01-ACT-MSG-CONTINUE", key: "asset.menu.continue" },
+  { uid: "ASSET-01-MENU-ANALYZE", actionUid: "ASSET-01-ACT-MSG-ANALYZE", key: "asset.menu.analyze" },
+  { uid: "ASSET-01-MENU-DECISION", actionUid: "ASSET-01-ACT-MSG-DECISION", key: "asset.menu.decision" },
+  { uid: "ASSET-01-MENU-BRANCH", actionUid: "ASSET-01-ACT-MSG-BRANCH", key: "asset.menu.branch" },
+  { uid: "ASSET-01-MENU-COPY", actionUid: "ASSET-01-ACT-MSG-COPY", key: "asset.menu.copy" },
+];
+
 const EMPTY_INBOUND: AssetInbound = {
   ready: false,
   project: "",
@@ -38,7 +58,7 @@ const EMPTY_INBOUND: AssetInbound = {
   naming: "",
 };
 
-const CLIENT_FIELDS: string[] = [...ASSET_VISIBLE_CONTROLS, ASSET_CORRECTION_RESPONSE_UID];
+const CLIENT_FIELDS: string[] = [...ASSET_VISIBLE_CONTROLS, ASSET_CORRECTION_RESPONSE_UID, ...ASSET_CONVERSATION_HIDDEN];
 
 function emptyFields(): AssetFieldValue[] {
   return CLIENT_FIELDS.map((controlUid) => ({ controlUid, value: null }));
@@ -89,8 +109,24 @@ export function AssetVisual() {
   const [correctionDraft, setCorrectionDraft] = useState("");
   const [inbound, setInbound] = useState<AssetInbound>(EMPTY_INBOUND);
   const [tick, setTick] = useState(0);
+  const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    if (!menu) return;
+    const close = () => setMenu(null);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    const timer = window.setTimeout(() => window.addEventListener("click", close), 0);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("click", close);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menu]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -180,7 +216,13 @@ export function AssetVisual() {
     applyPatch(patch);
     try {
       await postAssetAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
-      if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") setTick((value) => value + 1);
+      if (
+        actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" ||
+        actionUid === "ASSET-01-ACT-SEND" ||
+        actionUid === "ASSET-01-ACT-MSG-ANALYZE"
+      ) {
+        setTick((value) => value + 1);
+      }
     } catch {
       // Optimistic projection stays visible when the write path is unbound.
     }
@@ -214,6 +256,47 @@ export function AssetVisual() {
     void act("ASSET-01-BTN-CORRECTION-OPEN", text || undefined);
   }, [act, correctionDraft]);
 
+  const insertQuote = useCallback((ref: string, prefix = "") => {
+    const piece = quoteInsertText(ref);
+    if (!piece && !prefix) return;
+    setCorrectionDraft((prev) => {
+      const lead = prefix && !prev.includes(prefix) ? `${prefix} ` : "";
+      if (!prev) return `${lead}${piece}`.trimStart();
+      const gap = /[\s\n]$/.test(prev) ? "" : " ";
+      return `${lead}${prev}${gap}${piece}`;
+    });
+  }, []);
+
+  const sendMessage = useCallback(() => {
+    const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
+    if (!activeThreadUidFor(ASSET_CONVERSATION, current)) return;
+    const text = correctionDraft.trim();
+    const tokens = resolveComposerTokensFor(ASSET_CONVERSATION, text, current);
+    if (composerHasBlockingToken(tokens)) return;
+    if (!text) return;
+    setCorrectionDraft("");
+    void act("ASSET-01-BTN-SEND", text);
+  }, [act, correctionDraft]);
+
+  const runMessageAction = useCallback((actionUid: string, messageRef: string, text: string) => {
+    setMenu(null);
+    if (actionUid === "ASSET-01-ACT-MSG-QUOTE") {
+      insertQuote(messageRef);
+      return;
+    }
+    if (actionUid === "ASSET-01-ACT-MSG-CONTINUE") {
+      insertQuote(messageRef, "繼續討論");
+      return;
+    }
+    if (actionUid === "ASSET-01-ACT-MSG-COPY") {
+      void navigator.clipboard?.writeText(text);
+      return;
+    }
+    const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
+    if (!controlUid) return;
+    void act(controlUid, JSON.stringify({ actionUid, messageRef }));
+  }, [act, insertQuote]);
+
   const inboundReady = inbound.ready;
   const evaluated = valueOf("ASSET-01-BTN-EVALUATE") === "evaluated";
   const confirmed = valueOf("ASSET-01-BTN-CONFIRM") === "confirmed";
@@ -224,6 +307,14 @@ export function AssetVisual() {
   const generateDisabled = disabled || !correctionDraft.trim();
   const approveDisabled = disabled || correctionCandidate?.status !== "CANDIDATE";
   const executeDisabled = disabled || correctionCandidate?.status !== "APPROVED";
+  const currentFields = (uid: string) => valueOf(uid);
+  const threadItems = threadsForWorkItem(ASSET_CONVERSATION, currentFields);
+  const activeThread = activeThreadUidFor(ASSET_CONVERSATION, currentFields) || null;
+  const conversation = messagesForThread(valueOf("ASSET-01-FLD-CORRECTION-MESSAGES"), activeThread ?? "");
+  const notebookText = notebookTextForThread(valueOf("ASSET-01-FLD-CORRECTION-NOTEBOOK"), activeThread ?? "");
+  const composerTokens = resolveComposerTokensFor(ASSET_CONVERSATION, correctionDraft, currentFields);
+  const parserBlocked = composerHasBlockingToken(composerTokens);
+  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked;
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const modeValue = valueOf("ASSET-01-CTL-MODE");
@@ -280,7 +371,7 @@ export function AssetVisual() {
       data-page-uid="ASSET-01"
       data-page-state={pageState}
       data-component-count="16"
-      data-control-count="85"
+      data-control-count="95"
       aria-label={tx("asset.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("asset.error")}</div> : null}
@@ -440,16 +531,96 @@ export function AssetVisual() {
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-GENERATE" disabled={generateDisabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-GENERATE", correctionDraft.trim() || undefined)}>{tx("asset.correction_generate")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-APPROVE" disabled={approveDisabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-APPROVE")}>{tx("asset.correction_approve")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-EXECUTE" disabled={executeDisabled} onClick={() => void act("ASSET-01-BTN-CORRECTION-EXECUTE")}>{tx("asset.correction_execute")}</button>
+            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-NEW-THREAD" disabled={disabled} onClick={() => void act("ASSET-01-BTN-NEW-THREAD")}>{tx("asset.new_thread")}</button>
+            <IconButton uid="ASSET-01-BTN-ASSISTANT" label={tx("asset.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
           </div>
-          <label className={styles.composerInput}>
-            <span className={styles.label}>{tx("asset.correction_request")}</span>
-            <textarea
-              data-control-uid="ASSET-01-TXT-CORRECTION-REQUEST"
-              disabled={disabled}
-              value={correctionDraft}
-              onChange={(event) => setCorrectionDraft(event.target.value)}
-            />
-          </label>
+          <div className={styles.threadsLabel}>{tx("asset.threads")}</div>
+          <div className={styles.threadList} data-control-uid="ASSET-01-LST-THREADS">
+            {threadItems.length === 0 ? <p className={styles.threadEmpty}>{tx("asset.no_threads")}</p> : null}
+            {threadItems.map((row) => {
+              const selected = activeThread === row.title;
+              return (
+                <button key={row.title} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("ASSET-01-LST-THREADS", row.title)}>
+                  <span>{row.title}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className={styles.messagesHead}>
+            <h2 className={styles.title}>{tx("asset.messages")}</h2>
+            <span>{tx("asset.right_click_only")}</span>
+          </div>
+          <div className={styles.messageTimeline}>
+            {conversation.length === 0 ? (
+              <p className={styles.threadEmpty}>{tx("asset.conversation_empty")}</p>
+            ) : (
+              conversation.map((row, index) => (
+                <article
+                  key={row.ref || `${row.role}-${index}`}
+                  className={row.role === "user" ? styles.userMessage : styles.assistantMessage}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (!row.ref) return;
+                    setMenu({ x: event.clientX, y: event.clientY, ref: row.ref, text: row.text });
+                  }}
+                >
+                  <div className={styles.bubbleRole}>
+                    {row.role === "user" ? tx("asset.user_message") : tx("asset.ai_response_n")}
+                    {row.alias ? ` @${row.alias}` : ""}
+                    {row.ref ? ` ${row.ref}` : ""}
+                    {row.at ? ` ${row.at}` : ""}
+                  </div>
+                  <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                </article>
+              ))
+            )}
+          </div>
+          <div className={styles.summaryInline}>
+            <span className={styles.summaryLabel}>{tx("asset.summary_inline")}</span>
+            <p>{notebookText || tx("asset.summary_hint")}</p>
+          </div>
+          <div
+            className={menu ? styles.messageMenu : styles.messageMenuHidden}
+            hidden={!menu}
+            style={menu ? { left: menu.x, top: menu.y } : undefined}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {MESSAGE_MENU.map((item) => (
+              <button
+                key={item.uid}
+                type="button"
+                className={styles.menuItem}
+                data-control-uid={item.uid}
+                data-action-uid={item.actionUid}
+                disabled={disabled || !menu}
+                onClick={() => menu && runMessageAction(item.actionUid, menu.ref, menu.text)}
+              >
+                {tx(item.key)}
+              </button>
+            ))}
+          </div>
+          <div className={styles.composerBar}>
+            <label className={styles.composerInput}>
+              <span className={styles.srOnly}>{tx("asset.correction_request")}</span>
+              <textarea
+                data-control-uid="ASSET-01-TXT-CORRECTION-REQUEST"
+                disabled={disabled}
+                placeholder={tx("asset.correction_request")}
+                value={correctionDraft}
+                rows={3}
+                onChange={(event) => setCorrectionDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                    event.preventDefault();
+                    sendMessage();
+                  }
+                }}
+              />
+            </label>
+            <IconButton uid="ASSET-01-BTN-SEND" label={parserBlocked ? tx("asset.parser_blocked") : canSend ? tx("asset.send") : tx("asset.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+          </div>
+          {parserBlocked ? <p className={styles.error} role="alert">{tx("asset.parser_blocked")}</p> : null}
           <div className={styles.aiResponse} data-ai-response-uid={ASSET_CORRECTION_RESPONSE_UID} aria-live="polite">
             <span className={styles.label}>{tx("asset.correction_response")}</span>
             {correctionCandidate ? (

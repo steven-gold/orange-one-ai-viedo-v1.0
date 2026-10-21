@@ -15,6 +15,17 @@ import { VIDEO_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
 import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { parseCorrectionScript } from "@/lib/correctionScript";
+import {
+  VIDEO_CONVERSATION,
+  VIDEO_CONVERSATION_HIDDEN,
+  activeThreadUidFor,
+  composerHasBlockingToken,
+  messagesForThread,
+  notebookTextForThread,
+  quoteInsertText,
+  resolveComposerTokensFor,
+  threadsForWorkItem,
+} from "@/lib/conversationCore";
 import { displayVideoValue } from "./videoFormat";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
@@ -31,6 +42,15 @@ import styles from "./VideoVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+
+const MESSAGE_MENU: { uid: string; actionUid: string; key: TranslationKey }[] = [
+  { uid: "VIDEO-01-MENU-QUOTE", actionUid: "VIDEO-01-ACT-MSG-QUOTE", key: "video.menu.quote" },
+  { uid: "VIDEO-01-MENU-CONTINUE", actionUid: "VIDEO-01-ACT-MSG-CONTINUE", key: "video.menu.continue" },
+  { uid: "VIDEO-01-MENU-ANALYZE", actionUid: "VIDEO-01-ACT-MSG-ANALYZE", key: "video.menu.analyze" },
+  { uid: "VIDEO-01-MENU-DECISION", actionUid: "VIDEO-01-ACT-MSG-DECISION", key: "video.menu.decision" },
+  { uid: "VIDEO-01-MENU-BRANCH", actionUid: "VIDEO-01-ACT-MSG-BRANCH", key: "video.menu.branch" },
+  { uid: "VIDEO-01-MENU-COPY", actionUid: "VIDEO-01-ACT-MSG-COPY", key: "video.menu.copy" },
+];
 
 const SCORE_IDS: Record<string, TranslationKey> = {
   "VIDEO-01-FLD-SCORE-SCRIPT": "video.score_id_script",
@@ -61,7 +81,7 @@ const EMPTY_INBOUND: VideoInbound = {
   naming: "",
 };
 
-const CLIENT_FIELDS: string[] = [...VIDEO_VISIBLE_CONTROLS, VIDEO_CORRECTION_RESPONSE_UID];
+const CLIENT_FIELDS: string[] = [...VIDEO_VISIBLE_CONTROLS, VIDEO_CORRECTION_RESPONSE_UID, ...VIDEO_CONVERSATION_HIDDEN];
 
 function emptyFields(): VideoFieldValue[] {
   return CLIENT_FIELDS.map((controlUid) => ({ controlUid, value: null }));
@@ -110,8 +130,24 @@ export function VideoVisual() {
   const [compareOn, setCompareOn] = useState(false);
   const [correctionDraft, setCorrectionDraft] = useState("");
   const [tick, setTick] = useState(0);
+  const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    if (!menu) return;
+    const close = () => setMenu(null);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    const timer = window.setTimeout(() => window.addEventListener("click", close), 0);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("click", close);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menu]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -212,13 +248,60 @@ export function VideoVisual() {
       applyPatch(patch);
       try {
         await postVideoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
-        if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE") setTick((value) => value + 1);
+        if (
+          actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE" ||
+          actionUid === "VIDEO-01-ACT-SEND" ||
+          actionUid === "VIDEO-01-ACT-MSG-ANALYZE"
+        ) {
+          setTick((value) => value + 1);
+        }
       } catch {
         // Optimistic projection stays visible when the write path is unbound.
       }
     },
     [applyPatch],
   );
+
+  const insertQuote = useCallback((ref: string, prefix = "") => {
+    const piece = quoteInsertText(ref);
+    if (!piece && !prefix) return;
+    setCorrectionDraft((prev) => {
+      const lead = prefix && !prev.includes(prefix) ? `${prefix} ` : "";
+      if (!prev) return `${lead}${piece}`.trimStart();
+      const gap = /[\s\n]$/.test(prev) ? "" : " ";
+      return `${lead}${prev}${gap}${piece}`;
+    });
+  }, []);
+
+  const sendMessage = useCallback(() => {
+    const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
+    if (!activeThreadUidFor(VIDEO_CONVERSATION, current)) return;
+    const text = correctionDraft.trim();
+    const tokens = resolveComposerTokensFor(VIDEO_CONVERSATION, text, current);
+    if (composerHasBlockingToken(tokens)) return;
+    if (!text) return;
+    setCorrectionDraft("");
+    void act("VIDEO-01-BTN-SEND", text);
+  }, [act, correctionDraft]);
+
+  const runMessageAction = useCallback((actionUid: string, messageRef: string, text: string) => {
+    setMenu(null);
+    if (actionUid === "VIDEO-01-ACT-MSG-QUOTE") {
+      insertQuote(messageRef);
+      return;
+    }
+    if (actionUid === "VIDEO-01-ACT-MSG-CONTINUE") {
+      insertQuote(messageRef, "繼續討論");
+      return;
+    }
+    if (actionUid === "VIDEO-01-ACT-MSG-COPY") {
+      void navigator.clipboard?.writeText(text);
+      return;
+    }
+    const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
+    if (!controlUid) return;
+    void act(controlUid, JSON.stringify({ actionUid, messageRef }));
+  }, [act, insertQuote]);
 
   const inboundReady = inbound.ready;
   const evaluated = valueOf("VIDEO-01-BTN-EVALUATE") === "evaluated";
@@ -229,6 +312,14 @@ export function VideoVisual() {
   const generateDisabled = disabled || !correctionDraft.trim();
   const approveDisabled = disabled || correctionCandidate?.status !== "CANDIDATE";
   const executeDisabled = disabled || correctionCandidate?.status !== "APPROVED";
+  const currentFields = (uid: string) => valueOf(uid);
+  const threadItems = threadsForWorkItem(VIDEO_CONVERSATION, currentFields);
+  const activeThread = activeThreadUidFor(VIDEO_CONVERSATION, currentFields) || null;
+  const conversation = messagesForThread(valueOf("VIDEO-01-FLD-CORRECTION-MESSAGES"), activeThread ?? "");
+  const notebookText = notebookTextForThread(valueOf("VIDEO-01-FLD-CORRECTION-NOTEBOOK"), activeThread ?? "");
+  const composerTokens = resolveComposerTokensFor(VIDEO_CONVERSATION, correctionDraft, currentFields);
+  const parserBlocked = composerHasBlockingToken(composerTokens);
+  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked;
   const tx = (key: TranslationKey) => t(key);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const dash = displayVideoValue(null, loading);
@@ -243,7 +334,7 @@ export function VideoVisual() {
       data-page-uid="VIDEO-01"
       data-page-state={pageState}
       data-component-count="17"
-      data-control-count="85"
+      data-control-count="95"
       aria-label={tx("video.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("video.error")}</div> : null}
@@ -420,10 +511,99 @@ export function VideoVisual() {
             <span className={styles.label}>{tx("video.source_script")}</span>
             <span className={styles.value}>{displayVideoValue(correctionCandidate?.exact_source_version, loading)}</span>
           </div>
-          <label className={styles.composer}>
-            <span className={styles.label}>{tx("video.correction_request")}</span>
-            <textarea data-control-uid="VIDEO-01-TXT-CORRECTION" disabled={disabled} value={correctionDraft} placeholder={tx("video.correction_hint")} onChange={(event) => setCorrectionDraft(event.target.value)} />
-          </label>
+          <div className={styles.corrActions}>
+            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={generateDisabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION", correctionDraft.trim() || undefined)}>{tx("video.correction_generate")}</button>
+            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={approveDisabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXEC-CORRECTION" disabled={executeDisabled} onClick={() => void act("VIDEO-01-BTN-EXEC-CORRECTION")}>{tx("video.correction_execute")}</button>
+            <IconButton uid="VIDEO-01-BTN-COMPARE-CORRECTION" label={tx("video.correction_compare")} icon="compare" onAct={act} disabled={disabled || correctionCandidate?.status !== "EXECUTED"} className={`${styles.btn} ${styles.iconBtn}`} />
+            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-NEW-THREAD" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-NEW-THREAD")}>{tx("video.new_thread")}</button>
+            <IconButton uid="VIDEO-01-BTN-ASSISTANT" label={tx("video.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+          </div>
+          <div className={styles.threadsLabel}>{tx("video.threads")}</div>
+          <div className={styles.threadList} data-control-uid="VIDEO-01-LST-THREADS">
+            {threadItems.length === 0 ? <p className={styles.threadEmpty}>{tx("video.no_threads")}</p> : null}
+            {threadItems.map((row) => {
+              const selected = activeThread === row.title;
+              return (
+                <button key={row.title} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("VIDEO-01-LST-THREADS", row.title)}>
+                  <span>{row.title}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className={styles.messagesHead}>
+            <h2 className={styles.title}>{tx("video.messages")}</h2>
+            <span>{tx("video.right_click_only")}</span>
+          </div>
+          <div className={styles.messageTimeline}>
+            {conversation.length === 0 ? (
+              <p className={styles.threadEmpty}>{tx("video.conversation_empty")}</p>
+            ) : (
+              conversation.map((row, index) => (
+                <article
+                  key={row.ref || `${row.role}-${index}`}
+                  className={row.role === "user" ? styles.userMessage : styles.assistantMessage}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (!row.ref) return;
+                    setMenu({ x: event.clientX, y: event.clientY, ref: row.ref, text: row.text });
+                  }}
+                >
+                  <div className={styles.bubbleRole}>
+                    {row.role === "user" ? tx("video.user_message") : tx("video.ai_response_n")}
+                    {row.alias ? ` @${row.alias}` : ""}
+                    {row.ref ? ` ${row.ref}` : ""}
+                    {row.at ? ` ${row.at}` : ""}
+                  </div>
+                  <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                </article>
+              ))
+            )}
+          </div>
+          <div className={styles.summaryInline}>
+            <span className={styles.summaryLabel}>{tx("video.summary_inline")}</span>
+            <p>{notebookText || tx("video.summary_hint")}</p>
+          </div>
+          <div
+            className={menu ? styles.messageMenu : styles.messageMenuHidden}
+            hidden={!menu}
+            style={menu ? { left: menu.x, top: menu.y } : undefined}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {MESSAGE_MENU.map((item) => (
+              <button
+                key={item.uid}
+                type="button"
+                className={styles.menuItem}
+                data-control-uid={item.uid}
+                data-action-uid={item.actionUid}
+                disabled={disabled || !menu}
+                onClick={() => menu && runMessageAction(item.actionUid, menu.ref, menu.text)}
+              >
+                {tx(item.key)}
+              </button>
+            ))}
+          </div>
+          <div className={`${styles.composer} ${styles.composerBar}`}>
+            <label className={styles.srOnly}>{tx("video.correction_request")}</label>
+            <textarea
+              data-control-uid="VIDEO-01-TXT-CORRECTION"
+              disabled={disabled}
+              value={correctionDraft}
+              placeholder={tx("video.correction_hint")}
+              rows={3}
+              onChange={(event) => setCorrectionDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                  event.preventDefault();
+                  sendMessage();
+                }
+              }}
+            />
+            <IconButton uid="VIDEO-01-BTN-SEND" label={parserBlocked ? tx("video.parser_blocked") : canSend ? tx("video.send") : tx("video.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+          </div>
+          {parserBlocked ? <p className={styles.error} role="alert">{tx("video.parser_blocked")}</p> : null}
           <div className={styles.aiResponse} data-ai-response-uid={VIDEO_CORRECTION_RESPONSE_UID} aria-live="polite">
             <span className={styles.label}>{tx("video.correction_response")}</span>
             {correctionCandidate ? (
@@ -437,12 +617,6 @@ export function VideoVisual() {
             ) : (
               <p>{tx("video.correction_response_placeholder")}</p>
             )}
-          </div>
-          <div className={styles.corrActions}>
-            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-GEN-CORRECTION" disabled={generateDisabled} onClick={() => void act("VIDEO-01-BTN-GEN-CORRECTION", correctionDraft.trim() || undefined)}>{tx("video.correction_generate")}</button>
-            <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-APPROVE-CORRECTION" disabled={approveDisabled} onClick={() => void act("VIDEO-01-BTN-APPROVE-CORRECTION")}>{tx("video.correction_approve")}</button>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXEC-CORRECTION" disabled={executeDisabled} onClick={() => void act("VIDEO-01-BTN-EXEC-CORRECTION")}>{tx("video.correction_execute")}</button>
-            <IconButton uid="VIDEO-01-BTN-COMPARE-CORRECTION" label={tx("video.correction_compare")} icon="compare" onAct={act} disabled={disabled || correctionCandidate?.status !== "EXECUTED"} className={`${styles.btn} ${styles.iconBtn}`} />
           </div>
         </section>
 

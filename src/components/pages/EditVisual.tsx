@@ -13,13 +13,36 @@ import {
 import { resolveEditInbound, type EditInbound } from "@/lib/editInbound";
 import { previewEditAction } from "@/lib/editActionPreview";
 import { parseCorrectionScript } from "@/lib/correctionScript";
+import { dialogueTracksInUse, resolveDialogueTimingBinding } from "@/lib/dialogueTimingBinding";
+import { isAiUnavailable } from "@/lib/aiReply";
+import {
+  EDIT_CONVERSATION,
+  EDIT_CONVERSATION_HIDDEN,
+  activeThreadUidFor,
+  composerHasBlockingToken,
+  messagesForThread,
+  notebookTextForThread,
+  quoteInsertText,
+  resolveComposerTokensFor,
+  threadsForWorkItem,
+} from "@/lib/conversationCore";
 import { displayEditValue } from "./editFormat";
 import { EDIT_CONTROL_ACTIONS, EDIT_VISIBLE_CONTROLS } from "./editControls";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { IconButton } from "@/components/ui/IconButton";
 import styles from "./EditVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
+
+const MESSAGE_MENU: { uid: string; actionUid: string; key: TranslationKey }[] = [
+  { uid: "EDIT-01-MENU-QUOTE", actionUid: "EDIT-01-ACT-MSG-QUOTE", key: "edit.menu.quote" },
+  { uid: "EDIT-01-MENU-CONTINUE", actionUid: "EDIT-01-ACT-MSG-CONTINUE", key: "edit.menu.continue" },
+  { uid: "EDIT-01-MENU-ANALYZE", actionUid: "EDIT-01-ACT-MSG-ANALYZE", key: "edit.menu.analyze" },
+  { uid: "EDIT-01-MENU-DECISION", actionUid: "EDIT-01-ACT-MSG-DECISION", key: "edit.menu.decision" },
+  { uid: "EDIT-01-MENU-BRANCH", actionUid: "EDIT-01-ACT-MSG-BRANCH", key: "edit.menu.branch" },
+  { uid: "EDIT-01-MENU-COPY", actionUid: "EDIT-01-ACT-MSG-COPY", key: "edit.menu.copy" },
+];
 
 const EMPTY_INBOUND: EditInbound = {
   ready: false,
@@ -39,8 +62,10 @@ const EMPTY_INBOUND: EditInbound = {
   mediaRefs: "",
 };
 
+const CLIENT_FIELDS: string[] = [...EDIT_VISIBLE_CONTROLS, ...EDIT_CONVERSATION_HIDDEN];
+
 function emptyFields(): EditFieldValue[] {
-  return EDIT_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+  return CLIENT_FIELDS.map((controlUid) => ({ controlUid, value: null }));
 }
 
 const TRACKS = [
@@ -131,8 +156,25 @@ export function EditVisual() {
   const [fields, setFields] = useState<EditFieldValue[]>(emptyFields);
   const [inbound, setInbound] = useState<EditInbound>(EMPTY_INBOUND);
   const [correctionDraft, setCorrectionDraft] = useState("");
+  const [tick, setTick] = useState(0);
+  const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const fieldsRef = useRef(fields);
   fieldsRef.current = fields;
+
+  useEffect(() => {
+    if (!menu) return;
+    const close = () => setMenu(null);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    const timer = window.setTimeout(() => window.addEventListener("click", close), 0);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("click", close);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menu]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -162,7 +204,7 @@ export function EditVisual() {
           map.set("EDIT-01-LBL-BINDING-FINGERPRINT", resolved.handoffContract);
         }
         setFields(
-          EDIT_VISIBLE_CONTROLS.map((controlUid) => ({
+          CLIENT_FIELDS.map((controlUid) => ({
             controlUid,
             value: map.get(controlUid) ?? null,
           })),
@@ -184,7 +226,7 @@ export function EditVisual() {
       cancelled = true;
       controller.abort();
     };
-  }, []);
+  }, [tick]);
 
   useEffect(() => {
     const value = fields.find((row) => row.controlUid === "EDIT-01-FLD-API-INSTRUCTION")?.value;
@@ -200,7 +242,7 @@ export function EditVisual() {
     setFields((prev) => {
       const map = new Map(prev.map((row) => [row.controlUid, row.value]));
       for (const [uid, value] of Object.entries(patch)) map.set(uid, value);
-      return EDIT_VISIBLE_CONTROLS.map((controlUid) => ({
+      return CLIENT_FIELDS.map((controlUid) => ({
         controlUid,
         value: map.has(controlUid) ? (map.get(controlUid) ?? null) : null,
       }));
@@ -221,12 +263,60 @@ export function EditVisual() {
       applyPatch(patch);
       try {
         await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+        if (
+          actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" ||
+          actionUid === "EDIT-01-ACT-SEND" ||
+          actionUid === "EDIT-01-ACT-MSG-ANALYZE"
+        ) {
+          setTick((value) => value + 1);
+        }
       } catch {
         // Optimistic projection stays visible when the write path is unbound.
       }
     },
     [applyPatch],
   );
+
+  const insertQuote = useCallback((ref: string, prefix = "") => {
+    const piece = quoteInsertText(ref);
+    if (!piece && !prefix) return;
+    setCorrectionDraft((prev) => {
+      const lead = prefix && !prev.includes(prefix) ? `${prefix} ` : "";
+      if (!prev) return `${lead}${piece}`.trimStart();
+      const gap = /[\s\n]$/.test(prev) ? "" : " ";
+      return `${lead}${prev}${gap}${piece}`;
+    });
+  }, []);
+
+  const sendMessage = useCallback(() => {
+    const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
+    if (!activeThreadUidFor(EDIT_CONVERSATION, current)) return;
+    const text = correctionDraft.trim();
+    const tokens = resolveComposerTokensFor(EDIT_CONVERSATION, text, current);
+    if (composerHasBlockingToken(tokens)) return;
+    if (!text) return;
+    setCorrectionDraft("");
+    void act("EDIT-01-BTN-SEND", text);
+  }, [act, correctionDraft]);
+
+  const runMessageAction = useCallback((actionUid: string, messageRef: string, text: string) => {
+    setMenu(null);
+    if (actionUid === "EDIT-01-ACT-MSG-QUOTE") {
+      insertQuote(messageRef);
+      return;
+    }
+    if (actionUid === "EDIT-01-ACT-MSG-CONTINUE") {
+      insertQuote(messageRef, "繼續討論");
+      return;
+    }
+    if (actionUid === "EDIT-01-ACT-MSG-COPY") {
+      void navigator.clipboard?.writeText(text);
+      return;
+    }
+    const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
+    if (!controlUid) return;
+    void act(controlUid, JSON.stringify({ actionUid, messageRef }));
+  }, [act, insertQuote]);
 
   const v = (uid: string) => valueOf(uid);
   const standalone = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD";
@@ -237,6 +327,26 @@ export function EditVisual() {
   const generateDisabled = disabled || !correctionOpen || !correctionDraft.trim();
   const approveDisabled = disabled || !correctionOpen || correctionCandidate?.status !== "CANDIDATE";
   const executeDisabled = disabled || !correctionOpen || correctionCandidate?.status !== "APPROVED";
+  const dialogueBinding = resolveDialogueTimingBinding((uid) => valueOf(uid));
+  const dialogueBlocked = dialogueTracksInUse((uid) => valueOf(uid)) && dialogueBinding.status !== "CURRENT";
+  const dialogueWarnKey =
+    dialogueBinding.status === "CURRENT"
+      ? "edit.dialogue_current"
+      : dialogueBinding.status === "STALE"
+        ? "edit.dialogue_stale"
+        : dialogueBinding.status === "REVERIFY_REQUIRED"
+          ? "edit.dialogue_reverify"
+          : dialogueBinding.status === "MISMATCH"
+            ? "edit.dialogue_mismatch"
+            : "edit.dialogue_unbound";
+  const currentFields = (uid: string) => valueOf(uid);
+  const threadItems = threadsForWorkItem(EDIT_CONVERSATION, currentFields);
+  const activeThread = activeThreadUidFor(EDIT_CONVERSATION, currentFields) || null;
+  const conversation = messagesForThread(valueOf("EDIT-01-FLD-CORRECTION-MESSAGES"), activeThread ?? "");
+  const notebookText = notebookTextForThread(valueOf("EDIT-01-FLD-CORRECTION-NOTEBOOK"), activeThread ?? "");
+  const composerTokens = resolveComposerTokensFor(EDIT_CONVERSATION, correctionDraft, currentFields);
+  const parserBlocked = composerHasBlockingToken(composerTokens);
+  const canSend = Boolean(activeThread) && Boolean(correctionDraft.trim()) && !parserBlocked;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayEditValue(null, loading);
@@ -250,7 +360,7 @@ export function EditVisual() {
       data-page-uid="EDIT-01"
       data-page-state={pageState}
       data-component-count="24"
-      data-control-count="160"
+      data-control-count="170"
       aria-label={tx("edit.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("edit.error")}</div> : null}
@@ -423,17 +533,103 @@ export function EditVisual() {
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-API" hidden={!correctionOpen}>
           <h3 className={styles.sub}>{tx("edit.api")}</h3>
           <Field uid="EDIT-01-FLD-API-SCOPE" label={tx("edit.fld-api-scope")} value={v("EDIT-01-FLD-API-SCOPE")} loading={loading} onAct={act} disabled={disabled} />
-          <label className={styles.composer}>
-            <span className={styles.label}>{tx("edit.fld-api-instruction")}</span>
+          <div className={styles.toolbar}>
+            <button type="button" className={styles.btn} data-control-uid="EDIT-01-BTN-CORR-GENERATE" disabled={generateDisabled} onClick={() => void act("EDIT-01-BTN-CORR-GENERATE", correctionDraft.trim() || undefined)}>{tx("edit.btn-corr-generate")}</button>
+            <Btn uid="EDIT-01-BTN-CORR-APPROVE" label={tx("edit.btn-corr-approve")} onAct={act} disabled={approveDisabled} />
+            <Btn uid="EDIT-01-BTN-CORR-EXECUTE" label={tx("edit.btn-corr-execute")} onAct={act} disabled={executeDisabled} primary />
+            <Btn uid="EDIT-01-BTN-API-COMPARE" label={tx("edit.btn-api-compare")} onAct={act} disabled={disabled || correctionCandidate?.status !== "EXECUTED"} icon="compare" />
+            <Btn uid="EDIT-01-BTN-API-APPLY" label={tx("edit.btn-api-apply")} onAct={act} disabled={disabled} primary />
+            <Btn uid="EDIT-01-BTN-API-DISCARD" label={tx("edit.btn-api-discard")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-API-CANCEL" label={tx("edit.btn-api-cancel")} onAct={act} disabled={disabled} />
+            <button type="button" className={styles.btn} data-control-uid="EDIT-01-BTN-NEW-THREAD" disabled={disabled} onClick={() => void act("EDIT-01-BTN-NEW-THREAD")}>{tx("edit.new_thread")}</button>
+            <IconButton uid="EDIT-01-BTN-ASSISTANT" label={tx("edit.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+          </div>
+          <div className={styles.threadsLabel}>{tx("edit.threads")}</div>
+          <div className={styles.threadList} data-control-uid="EDIT-01-LST-THREADS">
+            {threadItems.length === 0 ? <p className={styles.threadEmpty}>{tx("edit.no_threads")}</p> : null}
+            {threadItems.map((row) => {
+              const selected = activeThread === row.title;
+              return (
+                <button key={row.title} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("EDIT-01-LST-THREADS", row.title)}>
+                  <span>{row.title}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className={styles.messagesHead}>
+            <h2 className={styles.title}>{tx("edit.messages")}</h2>
+            <span>{tx("edit.right_click_only")}</span>
+          </div>
+          <div className={styles.messageTimeline}>
+            {conversation.length === 0 ? (
+              <p className={styles.threadEmpty}>{tx("edit.conversation_empty")}</p>
+            ) : (
+              conversation.map((row, index) => (
+                <article
+                  key={row.ref || `${row.role}-${index}`}
+                  className={row.role === "user" ? styles.userMessage : styles.assistantMessage}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (!row.ref) return;
+                    setMenu({ x: event.clientX, y: event.clientY, ref: row.ref, text: row.text });
+                  }}
+                >
+                  <div className={styles.bubbleRole}>
+                    {row.role === "user" ? tx("edit.user_message") : tx("edit.ai_response_n")}
+                    {row.alias ? ` @${row.alias}` : ""}
+                    {row.ref ? ` ${row.ref}` : ""}
+                    {row.at ? ` ${row.at}` : ""}
+                  </div>
+                  <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                </article>
+              ))
+            )}
+          </div>
+          <div className={styles.summaryInline}>
+            <span className={styles.summaryLabel}>{tx("edit.summary_inline")}</span>
+            <p>{notebookText || tx("edit.summary_hint")}</p>
+          </div>
+          <div
+            className={menu ? styles.messageMenu : styles.messageMenuHidden}
+            hidden={!menu}
+            style={menu ? { left: menu.x, top: menu.y } : undefined}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {MESSAGE_MENU.map((item) => (
+              <button
+                key={item.uid}
+                type="button"
+                className={styles.menuItem}
+                data-control-uid={item.uid}
+                data-action-uid={item.actionUid}
+                disabled={disabled || !menu}
+                onClick={() => menu && runMessageAction(item.actionUid, menu.ref, menu.text)}
+              >
+                {tx(item.key)}
+              </button>
+            ))}
+          </div>
+          <div className={`${styles.composer} ${styles.composerBar}`}>
+            <span className={styles.srOnly}>{tx("edit.fld-api-instruction")}</span>
             <textarea
               data-control-uid="EDIT-01-FLD-API-INSTRUCTION"
               disabled={disabled}
               value={correctionDraft}
               placeholder={tx("edit.correction_hint")}
+              rows={3}
               onChange={(event) => setCorrectionDraft(event.target.value)}
               onBlur={() => void act("EDIT-01-FLD-API-INSTRUCTION", correctionDraft.trim() || undefined)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                  event.preventDefault();
+                  sendMessage();
+                }
+              }}
             />
-          </label>
+            <IconButton uid="EDIT-01-BTN-SEND" label={parserBlocked ? tx("edit.parser_blocked") : canSend ? tx("edit.send") : tx("edit.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+          </div>
+          {parserBlocked ? <p className={styles.error} role="alert">{tx("edit.parser_blocked")}</p> : null}
           <Field uid="EDIT-01-FLD-API-MODEL" label={tx("edit.fld-api-model")} value={v("EDIT-01-FLD-API-MODEL")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-API-PROVIDER" label={tx("edit.fld-api-provider")} value={v("EDIT-01-FLD-API-PROVIDER")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-LBL-API-JOB" label={tx("edit.lbl-api-job")} value={v("EDIT-01-LBL-API-JOB")} loading={loading} onAct={act} disabled={disabled} readonly />
@@ -449,15 +645,6 @@ export function EditVisual() {
             ) : (
               dash
             )}
-          </div>
-          <div className={styles.toolbar}>
-            <button type="button" className={styles.btn} data-control-uid="EDIT-01-BTN-CORR-GENERATE" disabled={generateDisabled} onClick={() => void act("EDIT-01-BTN-CORR-GENERATE", correctionDraft.trim() || undefined)}>{tx("edit.btn-corr-generate")}</button>
-            <Btn uid="EDIT-01-BTN-CORR-APPROVE" label={tx("edit.btn-corr-approve")} onAct={act} disabled={approveDisabled} />
-            <Btn uid="EDIT-01-BTN-CORR-EXECUTE" label={tx("edit.btn-corr-execute")} onAct={act} disabled={executeDisabled} primary />
-            <Btn uid="EDIT-01-BTN-API-COMPARE" label={tx("edit.btn-api-compare")} onAct={act} disabled={disabled || correctionCandidate?.status !== "EXECUTED"} icon="compare" />
-            <Btn uid="EDIT-01-BTN-API-APPLY" label={tx("edit.btn-api-apply")} onAct={act} disabled={disabled} primary />
-            <Btn uid="EDIT-01-BTN-API-DISCARD" label={tx("edit.btn-api-discard")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-API-CANCEL" label={tx("edit.btn-api-cancel")} onAct={act} disabled={disabled} />
           </div>
         </section>
 
@@ -504,7 +691,7 @@ export function EditVisual() {
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-VERSION-SAVE" label={tx("edit.btn-version-save")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-VERSION-RESTORE" label={tx("edit.btn-version-restore")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-VERSION-LOCK" label={tx("edit.btn-version-lock")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-VERSION-LOCK" label={tx("edit.btn-version-lock")} onAct={act} disabled={disabled || dialogueBlocked} />
             <Btn uid="EDIT-01-BTN-VERSION-COMPARE" label={tx("edit.diff")} onAct={act} disabled={disabled} icon="compare" />
           </div>
         </section>
@@ -523,11 +710,11 @@ export function EditVisual() {
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-RENDER-SETTINGS" label={tx("edit.btn-render-settings")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-RENDER-EXECUTE" label={tx("edit.btn-render-execute")} onAct={act} disabled={disabled} primary />
+            <Btn uid="EDIT-01-BTN-RENDER-EXECUTE" label={tx("edit.btn-render-execute")} onAct={act} disabled={disabled || dialogueBlocked} primary />
             <Btn uid="EDIT-01-BTN-RENDER-CANCEL" label={tx("edit.btn-render-cancel")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-OUTPUT-SAVE" label={tx("edit.btn-output-save")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-DOWNLOAD" label={tx("edit.btn-download")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-HANDOFF-2" label={tx("edit.btn-handoff-2")} onAct={act} disabled={disabled} primary />
+            <Btn uid="EDIT-01-BTN-HANDOFF-2" label={tx("edit.btn-handoff-2")} onAct={act} disabled={disabled || dialogueBlocked} primary />
           </div>
         </section>
       </div>
@@ -607,8 +794,8 @@ export function EditVisual() {
             <Btn uid="EDIT-01-BTN-EVAL-JUMP" label={tx("edit.btn-eval-jump")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-EVAL-LOAD-RANGE" label={tx("edit.btn-eval-load-range")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-EVAL-EVIDENCE" label={tx("edit.btn-eval-evidence")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-EVAL-RECHECK-SELECTED" label={tx("edit.btn-eval-recheck-selected")} onAct={act} disabled={disabled} primary />
-            <Btn uid="EDIT-01-BTN-EVAL-RECHECK-FULL" label={tx("edit.btn-eval-recheck-full")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-EVAL-RECHECK-SELECTED" label={tx("edit.btn-eval-recheck-selected")} onAct={act} disabled={disabled || dialogueBlocked} primary />
+            <Btn uid="EDIT-01-BTN-EVAL-RECHECK-FULL" label={tx("edit.btn-eval-recheck-full")} onAct={act} disabled={disabled || dialogueBlocked} />
           </div>
         </section>
 
@@ -635,7 +822,7 @@ export function EditVisual() {
           <h3 className={styles.sub}>{tx("edit.dialogue_binding")}</h3>
           <Field uid="EDIT-01-LBL-LIPSYNC-SYNC-BINDING" label={tx("edit.lbl-lipsync-sync-binding")} value={v("EDIT-01-LBL-LIPSYNC-SYNC-BINDING")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.dialogueCard}>
-            <p className={styles.warn}>{tx("edit.dialogue_warn")}</p>
+            <p className={styles.warn}>{tx(dialogueWarnKey)}</p>
           </div>
         </section>
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-STAGE-EVALUATION">

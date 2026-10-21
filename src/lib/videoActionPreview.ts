@@ -1,5 +1,10 @@
 import { exactName, namedValue, statusFromAction } from "./coreActionPreview";
 import {
+  VIDEO_CONVERSATION,
+  ensureConversationThread,
+  previewConversationAction,
+} from "./conversationCore";
+import {
   buildCorrectionCandidate,
   parseCorrectionScript,
   serializeCorrectionScript,
@@ -82,6 +87,8 @@ export function previewVideoAction(
 ): Record<string, string> {
   const ready = inboundReady(current);
   if (!ready && GATED_ACTIONS.has(actionUid)) return {};
+  const conversation = previewConversationAction(VIDEO_CONVERSATION, controlUid, actionUid, current, nextValue);
+  if (conversation) return ready ? conversation : {};
 
   if (actionUid === "VIDEO-01-ACT-MODE-SET") {
     return { "VIDEO-01-CTL-MODE": toggleMode(current("VIDEO-01-CTL-MODE")) };
@@ -156,6 +163,7 @@ export function previewVideoAction(
     return {
       "VIDEO-01-BTN-MODIFY": "open",
       "VIDEO-01-FLD-SCENE": keep(undefined, current("VIDEO-01-FLD-SCENE"), ""),
+      ...ensureConversationThread(VIDEO_CONVERSATION, current),
     };
   }
   if (actionUid === "VIDEO-01-ACT-VERSION-LOCK") {

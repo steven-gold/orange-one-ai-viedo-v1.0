@@ -1,8 +1,26 @@
-import { AI_UNAVAILABLE_ZH, ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
+import {
+  AI_UNAVAILABLE_ZH,
+  ASSET_CORRECTION_RESPONSE_UID,
+  EDIT_CORRECTION_CANDIDATE_UID,
+  VIDEO_CORRECTION_RESPONSE_UID,
+} from "@/lib/aiReply";
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
+import {
+  ASSET_CONVERSATION,
+  EDIT_CONVERSATION,
+  VIDEO_CONVERSATION,
+  type ConversationBindings,
+  activeThreadUidFor,
+  appendAssistantMessageFor,
+  formatConversationContext,
+  messagesForThread as conversationMessagesForThread,
+  parseMessageActionPayload as parseConversationMessageActionPayload,
+  recentHistoryPayload as conversationRecentHistory,
+  resolveComposerTokensFor,
+} from "@/lib/conversationCore";
 import {
   activeThreadUid,
   appendAssistantMessage,
@@ -20,7 +38,7 @@ import { previewEditAction } from "@/lib/editActionPreview";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply } from "../ai/llmClient";
+import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, type AiPageUid } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -147,10 +165,42 @@ function promptFromValue(raw?: string): string {
   return text;
 }
 
+async function fillConversationReply(
+  table: string,
+  bindings: ConversationBindings,
+  page: AiPageUid,
+  actionUid: string,
+  nextValue?: string,
+): Promise<void> {
+  const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+    `SELECT control_uid, value_text FROM ${table}`,
+  );
+  const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+  const current = (uid: string) => cache.get(uid) ?? null;
+  const analyze = actionUid === `${bindings.prefix}-ACT-MSG-ANALYZE`;
+  const prompt = analyze
+    ? `分析此內容 ${parseConversationMessageActionPayload(nextValue).messageRef ?? ""}`.trim()
+    : promptFromValue(nextValue);
+  const tokens = resolveComposerTokensFor(bindings, prompt, current);
+  if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) return;
+  const thread = activeThreadUidFor(bindings, current);
+  if (!thread) return;
+  const history = conversationRecentHistory(conversationMessagesForThread(current(bindings.messageUid), thread).slice(0, -1));
+  const context = formatConversationContext(bindings, current);
+  let reply = AI_UNAVAILABLE_ZH;
+  try {
+    if (prompt) reply = await generatePageReply(page, prompt, context, history);
+  } catch {
+    reply = AI_UNAVAILABLE_ZH;
+  }
+  const patch = appendAssistantMessageFor(bindings, current, thread, reply, undefined, new Date().toISOString());
+  for (const [uid, value] of Object.entries(patch)) await writeField(table, uid, value);
+}
+
 async function fillCorrectionScriptBody(
   table: string,
   uid: string,
-  page: "asset" | "video",
+  page: "asset" | "video" | "edit",
   prompt: string,
 ): Promise<void> {
   const candidate = parseCorrectionScript(await readField(table, uid));
@@ -300,6 +350,9 @@ export async function applyWorkbenchAction(
       "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
+    if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
+      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue);
+    }
     if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
       await fillCorrectionScriptBody(FIELD_TABLE.asset, ASSET_CORRECTION_RESPONSE_UID, "asset", prompt);
@@ -338,6 +391,9 @@ export async function applyWorkbenchAction(
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
     });
     const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
+    if ((actionUid === "VIDEO-01-ACT-SEND" || actionUid === "VIDEO-01-ACT-MSG-ANALYZE") && written) {
+      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue);
+    }
     if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
       await fillCorrectionScriptBody(FIELD_TABLE.video, VIDEO_CORRECTION_RESPONSE_UID, "video", prompt);
@@ -381,7 +437,14 @@ export async function applyWorkbenchAction(
       "EDIT-01-LBL-BINDING-FINGERPRINT": inbound.handoffContract,
       "EDIT-01-LBL-CURRENT-SCRIPT-SECTION": inbound.script,
     });
-    await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
+    const written = await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
+    if ((actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE") && written) {
+      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue);
+    }
+    if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" && written) {
+      const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-API-INSTRUCTION")) || "";
+      await fillCorrectionScriptBody(FIELD_TABLE.edit, EDIT_CORRECTION_CANDIDATE_UID, "edit", prompt);
+    }
     if (actionUid === "EDIT-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");
       const version = await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION");

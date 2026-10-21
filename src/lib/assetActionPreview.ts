@@ -1,5 +1,10 @@
 import { namedValue, parseThreadList, statusFromAction } from "./coreActionPreview";
 import {
+  ASSET_CONVERSATION,
+  ensureConversationThread,
+  previewConversationAction,
+} from "./conversationCore";
+import {
   buildCorrectionCandidate,
   parseCorrectionScript,
   serializeCorrectionScript,
@@ -107,6 +112,8 @@ export function previewAssetAction(
     "ASSET-01-ACT-HANDOFF",
   ]);
   if (!ready && gated.has(actionUid)) return {};
+  const conversation = previewConversationAction(ASSET_CONVERSATION, controlUid, actionUid, current, nextValue);
+  if (conversation) return ready ? conversation : {};
 
   if (actionUid === "ASSET-01-ACT-PROJECT-SELECT") {
     return project ? { "ASSET-01-CTL-PROJECT": project } : {};
@@ -200,6 +207,7 @@ export function previewAssetAction(
       "ASSET-01-BTN-CORRECTION-OPEN": "open",
       "ASSET-01-BTN-MODIFY": "open",
       "ASSET-01-TXT-CORRECTION-REQUEST": keepName(nextValue, current("ASSET-01-TXT-CORRECTION-REQUEST"), ""),
+      ...ensureConversationThread(ASSET_CONVERSATION, current),
     };
   }
   if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE") {

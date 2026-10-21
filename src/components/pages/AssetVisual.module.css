@@ -394,3 +394,184 @@
 .iconBtn svg {
   display: block;
 }
+
+.threadList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--asset-border);
+  border-radius: 10px;
+  background: var(--asset-surface-2);
+  color: var(--asset-secondary);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.threadEmpty {
+  margin: 0;
+  color: var(--asset-muted);
+  font-size: 12px;
+}
+
+.threadsLabel {
+  color: var(--asset-muted);
+  font-size: 12px;
+}
+
+.messagesHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--asset-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.messageTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 220px;
+  margin-top: 10px;
+  overflow: auto;
+}
+
+.userMessage,
+.assistantMessage {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--asset-border);
+}
+
+.userMessage {
+  align-self: flex-end;
+  max-width: 86%;
+  background: var(--asset-input);
+}
+
+.assistantMessage {
+  align-self: flex-start;
+  max-width: 86%;
+  background: #121833;
+  border-color: rgba(139, 92, 255, 0.22);
+}
+
+.userMessage p,
+.assistantMessage p {
+  margin: 6px 0 0;
+  color: var(--asset-secondary);
+  font-size: 13px;
+  line-height: 18px;
+  white-space: pre-wrap;
+}
+
+.bubbleRole {
+  color: var(--asset-purple);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.messageMenu,
+.messageMenuHidden {
+  position: fixed;
+  z-index: 40;
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid var(--asset-border);
+  border-radius: 10px;
+  background: var(--asset-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.messageMenuHidden {
+  display: none;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: var(--asset-input);
+}
+
+.summaryInline {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--asset-border);
+  border-radius: 10px;
+  background: var(--asset-input);
+}
+
+.summaryInline p {
+  margin: 6px 0 0;
+  white-space: pre-wrap;
+  color: var(--asset-secondary);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.summaryLabel {
+  color: var(--asset-purple);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.composerBar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.composerBar .composerInput {
+  flex: 1;
+  min-width: 160px;
+}
+
+.composerBar .composerInput textarea {
+  min-height: 54px;
+  max-height: 160px;
+  resize: vertical;
+}
+
+.btnSend {
+  min-width: 88px;
+}

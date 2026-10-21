@@ -8,6 +8,11 @@ import { resolveVideoInbound } from "@/lib/videoInbound";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { assignedAiRouteSnapshot } from "../ai/llmClient";
 import { ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
+import {
+  ASSET_CONVERSATION_HIDDEN,
+  EDIT_CONVERSATION_HIDDEN,
+  VIDEO_CONVERSATION_HIDDEN,
+} from "@/lib/conversationCore";
 import { AIAPI_REGISTRY_UID, readProfiles, serializeProfiles } from "@/lib/aiapiProfiles";
 import { AIAPI_EXTRA_PROJECTION_KEYS } from "@/lib/aiapiActionPreview";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
@@ -460,7 +465,7 @@ export async function persistListAssetFields(): Promise<AssetFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_asset_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return [...ASSET_VISIBLE_CONTROLS, ASSET_CORRECTION_RESPONSE_UID].map((controlUid) => ({
+  return [...ASSET_VISIBLE_CONTROLS, ASSET_CORRECTION_RESPONSE_UID, ...ASSET_CONVERSATION_HIDDEN].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -547,7 +552,7 @@ export async function persistListVideoFields(): Promise<VideoFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_video_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return [...VIDEO_VISIBLE_CONTROLS, VIDEO_CORRECTION_RESPONSE_UID].map((controlUid) => ({
+  return [...VIDEO_VISIBLE_CONTROLS, VIDEO_CORRECTION_RESPONSE_UID, ...VIDEO_CONVERSATION_HIDDEN].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -638,7 +643,7 @@ export async function persistListEditFields(): Promise<EditFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_edit_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return EDIT_VISIBLE_CONTROLS.map((controlUid) => ({
+  return [...EDIT_VISIBLE_CONTROLS, ...EDIT_CONVERSATION_HIDDEN].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));

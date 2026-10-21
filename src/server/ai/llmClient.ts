@@ -2,12 +2,13 @@ import { getSqlClient } from "../db/client";
 import { getAiapiCredential } from "../db/aiapiCredential";
 import { AIAPI_PROMPT_TEMPLATE_TOKEN, eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
 
-export type AiPageUid = "core" | "asset" | "video";
+export type AiPageUid = "core" | "asset" | "video" | "edit";
 
 export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
   core: "chat",
   asset: "correction",
   video: "correction",
+  edit: "correction",
 };
 
 export interface ProviderConfig {
@@ -56,6 +57,7 @@ const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
   core: "你是 ACPOS 核心製作助理。以繁體中文、精簡且可執行地回覆使用者在專案／專題對話中的需求。請延續同一條對話的上下文，不要忽略使用者剛說的內容。",
   asset: "你是 ACPOS 素材製作助理。以繁體中文回覆素材修正需求，輸出可直接套用的修正內容。",
   video: "你是 ACPOS 影片剪輯助理。以繁體中文回覆鏡頭修正需求，輸出可直接套用的修正內容。",
+  edit: "你是 ACPOS 後期剪輯助理。以繁體中文回覆語意修正需求，輸出可直接套用的修正內容。",
 };
 
 function systemPromptFor(page: AiPageUid, template: string): string {

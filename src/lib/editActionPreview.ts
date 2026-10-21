@@ -1,11 +1,25 @@
 import { exactName, namedValue, statusFromAction } from "./coreActionPreview";
 import {
+  EDIT_CONVERSATION,
+  ensureConversationThread,
+  previewConversationAction,
+} from "./conversationCore";
+import {
   buildCorrectionCandidate,
   parseCorrectionScript,
   serializeCorrectionScript,
   sourceMatches,
   withCorrectionStatus,
 } from "./correctionScript";
+import {
+  buildDialogueTimingBinding,
+  dialogueBindingAllowsLock,
+  dialogueBindingAllowsRender,
+  dialogueBindingAllowsSyncPass,
+  dialogueBindingPatch,
+  parseDialogueTimingBinding,
+  DIALOGUE_LIPSYNC_BINDING_UID,
+} from "./dialogueTimingBinding";
 
 function named(value: string | null | undefined): string {
   return exactName(value);
@@ -226,6 +240,8 @@ export function previewEditAction(
   }
 
   if (!ready) return {};
+  const conversation = previewConversationAction(EDIT_CONVERSATION, controlUid, actionUid, current, nextValue);
+  if (conversation) return conversation;
 
   if (actionUid === "EDIT-01-ACT-FLOW-START-CONTINUE") {
     return {
@@ -246,6 +262,7 @@ export function previewEditAction(
     return {
       "EDIT-01-BTN-STAGE-MODIFY": "returned",
       "EDIT-01-LBL-PAGE-STATE": "editing",
+      ...ensureConversationThread(EDIT_CONVERSATION, current),
     };
   }
   if (actionUid === "EDIT-01-ACT-API-INSTRUCTION-SET") {
@@ -291,7 +308,95 @@ export function previewEditAction(
       "EDIT-01-PNL-API-CANDIDATE": serializeCorrectionScript(withCorrectionStatus(candidate, "EXECUTED")),
     };
   }
+  if (actionUid === "EDIT-01-ACT-VOICE-ASSET-SET") {
+    const next = named(nextValue);
+    if (!next) return {};
+    const stored = parseDialogueTimingBinding(current(DIALOGUE_LIPSYNC_BINDING_UID));
+    const patched = (uid: string) => (uid === "EDIT-01-FLD-VOICE-ASSET" ? next : current(uid));
+    const identityChanged = Boolean(stored?.voice_segment_ref && stored.voice_segment_ref !== next);
+    const status =
+      identityChanged || stored?.lipsync_target_ref || stored?.subtitle_cue_ref
+        ? "REVERIFY_REQUIRED"
+        : stored?.status === "CURRENT"
+          ? "CURRENT"
+          : "UNBOUND";
+    return {
+      "EDIT-01-FLD-VOICE-ASSET": next,
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-VOICE-APPLY" || actionUid === "EDIT-01-ACT-VOICE-GENERATE" || actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND") {
+    const take = named(nextValue) || named(current("EDIT-01-LST-VOICE-TAKES")) || named(current("EDIT-01-FLD-VOICE-ASSET"));
+    const script = actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND" ? named(nextValue) || named(current("EDIT-01-FLD-VOICE-SCRIPT")) : named(current("EDIT-01-FLD-VOICE-SCRIPT"));
+    const patched = (uid: string) => {
+      if (uid === "EDIT-01-LST-VOICE-TAKES" && take) return take;
+      if (uid === "EDIT-01-FLD-VOICE-SCRIPT" && script) return script;
+      return current(uid);
+    };
+    const stored = parseDialogueTimingBinding(current(DIALOGUE_LIPSYNC_BINDING_UID));
+    const needsReverify = Boolean(named(current("EDIT-01-FLD-LIPSYNC-TARGET")) || named(current("EDIT-01-FLD-SUB-TEXT")) || named(current("EDIT-01-FLD-SUB-TIMECODE")) || stored?.lipsync_target_ref || stored?.subtitle_cue_ref);
+    const status = needsReverify ? "REVERIFY_REQUIRED" : "UNBOUND";
+    return {
+      [controlUid]: nextValue ?? statusFromAction(actionUid),
+      ...(take ? { "EDIT-01-LST-VOICE-TAKES": take } : {}),
+      ...(script ? { "EDIT-01-FLD-VOICE-SCRIPT": script } : {}),
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-LIPSYNC-TARGET-SET") {
+    const target = named(nextValue);
+    if (!target) return {};
+    const voice = named(current("EDIT-01-FLD-VOICE-ASSET")) || named(current("EDIT-01-LST-VOICE-TAKES"));
+    const patched = (uid: string) => (uid === "EDIT-01-FLD-LIPSYNC-TARGET" ? target : current(uid));
+    const status = voice && target !== voice ? "MISMATCH" : "UNBOUND";
+    return {
+      "EDIT-01-FLD-LIPSYNC-TARGET": target,
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-LIPSYNC-EXECUTE" || actionUid === "EDIT-01-ACT-LIPSYNC-RETRY-RANGE") {
+    const voice = named(current("EDIT-01-FLD-VOICE-ASSET")) || named(current("EDIT-01-LST-VOICE-TAKES"));
+    if (!voice) return {};
+    const patched = (uid: string) => (uid === "EDIT-01-FLD-LIPSYNC-TARGET" ? voice : current(uid));
+    return {
+      [controlUid]: statusFromAction(actionUid),
+      "EDIT-01-FLD-LIPSYNC-TARGET": voice,
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, "CURRENT")),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-SUB-API-SYNC" || actionUid === "EDIT-01-ACT-SUB-MANUAL-SYNC") {
+    const cue = named(nextValue) || named(current("EDIT-01-FLD-SUB-TEXT")) || named(current("EDIT-01-FLD-SUB-TIMECODE"));
+    if (!cue) return {};
+    const patched = (uid: string) => (uid === "EDIT-01-FLD-SUB-TEXT" ? named(current("EDIT-01-FLD-SUB-TEXT")) || cue : current(uid));
+    return {
+      [controlUid]: statusFromAction(actionUid),
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, "CURRENT")),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-SUB-TEXT-EDIT") {
+    const text = named(nextValue);
+    if (!text) return {};
+    const stored = parseDialogueTimingBinding(current(DIALOGUE_LIPSYNC_BINDING_UID));
+    const patched = (uid: string) => (uid === "EDIT-01-FLD-SUB-TEXT" ? text : current(uid));
+    const status = stored?.status === "CURRENT" ? "CURRENT" : stored?.status === "UNBOUND" || !stored ? "UNBOUND" : stored.status;
+    return {
+      "EDIT-01-FLD-SUB-TEXT": text,
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
+    };
+  }
+  if (actionUid === "EDIT-01-ACT-SUB-TIMECODE") {
+    const timecode = named(nextValue);
+    if (!timecode) return {};
+    const stored = parseDialogueTimingBinding(current(DIALOGUE_LIPSYNC_BINDING_UID));
+    const patched = (uid: string) => (uid === "EDIT-01-FLD-SUB-TIMECODE" ? timecode : current(uid));
+    const status = stored?.lipsync_target_ref || named(current("EDIT-01-FLD-LIPSYNC-TARGET")) ? "REVERIFY_REQUIRED" : stored?.status === "CURRENT" ? "STALE" : stored?.status ?? "UNBOUND";
+    return {
+      "EDIT-01-FLD-SUB-TIMECODE": timecode,
+      ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
+    };
+  }
   if (actionUid === "EDIT-01-ACT-EVAL-RECHECK-SELECTED" || actionUid === "EDIT-01-ACT-EVAL-RECHECK-FULL") {
+    if (!dialogueBindingAllowsSyncPass(current)) return {};
     return {
       [controlUid]: "rechecked",
       "EDIT-01-LBL-EVAL-SUMMARY": keep(undefined, current("EDIT-01-LBL-EVAL-SUMMARY"), "PASS"),
@@ -307,6 +412,7 @@ export function previewEditAction(
   }
   if (actionUid === "EDIT-01-ACT-VERSION-LOCK") {
     if (current("EDIT-01-BTN-VERSION-SAVE") !== "saved") return {};
+    if (!dialogueBindingAllowsLock(current)) return {};
     return {
       "EDIT-01-BTN-VERSION-LOCK": "locked",
       "EDIT-01-FLD-SOURCE-VERSION": keep(undefined, current("EDIT-01-FLD-SOURCE-VERSION"), "LOCKED"),
@@ -320,6 +426,7 @@ export function previewEditAction(
   }
   if (actionUid === "EDIT-01-ACT-RENDER-START") {
     if (current("EDIT-01-BTN-VERSION-LOCK") !== "locked") return {};
+    if (!dialogueBindingAllowsRender(current)) return {};
     return {
       "EDIT-01-BTN-RENDER-EXECUTE": "running",
       "EDIT-01-LBL-RENDER-JOB": "running",
@@ -337,6 +444,7 @@ export function previewEditAction(
   }
   if (actionUid === "EDIT-01-ACT-HANDOFF") {
     if (current("EDIT-01-BTN-VERSION-LOCK") !== "locked") return {};
+    if (!dialogueBindingAllowsLock(current)) return {};
     return {
       "EDIT-01-BTN-HANDOFF-2": "sent",
       "EDIT-01-LBL-PAGE-STATE": "handed_off",
