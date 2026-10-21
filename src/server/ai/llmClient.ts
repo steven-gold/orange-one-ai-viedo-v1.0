@@ -106,6 +106,15 @@ export class AiProviderError extends Error {
   }
 }
 
+const KILL_SWITCH_UID = "AIAPI-01-FLD-KILL-SWITCH";
+
+async function assertKillSwitchOff(): Promise<void> {
+  const fields = await readAiapiFields();
+  if (fields.get(KILL_SWITCH_UID) === "ON") {
+    throw new AiProviderError("AI_PROVIDER_KILL_SWITCH", "Kill switch is on");
+  }
+}
+
 async function callProvider(config: ProviderConfig, messages: ChatMessage[]): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), config.timeoutMs);
@@ -142,6 +151,7 @@ async function callProvider(config: ProviderConfig, messages: ChatMessage[]): Pr
 }
 
 export async function callChat(messages: ChatMessage[], capability: string): Promise<string> {
+  await assertKillSwitchOff();
   const configs = await resolveProviderConfigs(capability);
   if (!configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${capability} provider with a stored credential`);
@@ -163,6 +173,7 @@ export async function generatePageReply(
   context?: string,
   history: ChatMessage[] = [],
 ): Promise<string> {
+  await assertKillSwitchOff();
   const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
   if (!configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
@@ -194,6 +205,7 @@ export async function generateIndependentPageReplies(
   history: ChatMessage[],
   aliases: string[],
 ): Promise<IndependentReply[]> {
+  await assertKillSwitchOff();
   const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
   if (!configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);

@@ -204,6 +204,8 @@ function buildCall(profile: AiapiProfile, credential: string, instruction: strin
 }
 
 async function callProvider(profile: AiapiProfile, credential: string, instruction: string): Promise<AiapiOutcome & { evidence?: string }> {
+  const fields = await loadFields();
+  if (fields.get("AIAPI-01-FLD-KILL-SWITCH") === "ON") return { ok: false, code: "AIAPI_KILL_SWITCH_ON" };
   const call = buildCall(profile, credential, instruction);
   if (!call) return { ok: false, code: "AIAPI_ADAPTER_UNSUPPORTED" };
   const controller = new AbortController();
