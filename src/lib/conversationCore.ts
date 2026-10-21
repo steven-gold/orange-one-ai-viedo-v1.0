@@ -189,6 +189,7 @@ export type ConversationMessageRecord = {
   ref: string;
   alias?: string;
   at?: string;
+  route?: string;
 };
 
 function padRef(prefix: string, seq: number): string {
@@ -247,6 +248,7 @@ export function parseMessageRecords(raw: string | null): ConversationMessageReco
         ref?: unknown;
         alias?: unknown;
         at?: unknown;
+        route?: unknown;
       };
       const text = typeof rec.text === "string" ? rec.text.trim() : "";
       if (!text) continue;
@@ -256,6 +258,7 @@ export function parseMessageRecords(raw: string | null): ConversationMessageReco
       const ref = typeof rec.ref === "string" ? rec.ref.trim() : "";
       const alias = typeof rec.alias === "string" ? rec.alias.trim() : "";
       const at = typeof rec.at === "string" ? rec.at.trim() : "";
+      const route = typeof rec.route === "string" ? rec.route.trim() : "";
       records.push({
         thread: typeof rec.thread === "string" ? rec.thread.trim() : "",
         role,
@@ -264,6 +267,7 @@ export function parseMessageRecords(raw: string | null): ConversationMessageReco
         ref,
         ...(alias ? { alias } : {}),
         ...(at ? { at } : {}),
+        ...(route ? { route } : {}),
       });
     }
     return ensureMessageIdentity(records);
@@ -600,6 +604,7 @@ export function appendAssistantMessageFor(
   reply: string,
   alias?: string,
   at?: string,
+  route?: string,
 ): Record<string, string> {
   const text = reply.trim();
   if (!thread || !text) return {};
@@ -614,6 +619,7 @@ export function appendAssistantMessageFor(
       ref: "",
       ...(alias ? { alias } : {}),
       ...(at ? { at } : {}),
+      ...(route?.trim() ? { route: route.trim() } : {}),
     },
   ]);
   const patched = (uid: string) => (uid === bindings.messageUid ? JSON.stringify(nextMessages) : current(uid));
@@ -627,7 +633,7 @@ export function appendAssistantMessagesFor(
   bindings: ConversationBindings,
   current: CurrentFn,
   thread: string,
-  replies: Array<{ text: string; alias?: string; at?: string }>,
+  replies: Array<{ text: string; alias?: string; at?: string; route?: string }>,
 ): Record<string, string> {
   if (!thread || !replies.length) return {};
   let records = parseMessageRecords(current(bindings.messageUid));
@@ -645,6 +651,7 @@ export function appendAssistantMessagesFor(
         ref: "",
         ...(reply.alias ? { alias: reply.alias } : {}),
         ...(reply.at ? { at: reply.at } : {}),
+        ...(reply.route?.trim() ? { route: reply.route.trim() } : {}),
       },
     ]);
     const patched = (uid: string) => (uid === bindings.messageUid ? JSON.stringify(records) : current(uid));

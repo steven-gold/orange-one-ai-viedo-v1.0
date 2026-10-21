@@ -190,12 +190,17 @@ async function fillConversationReply(
   const history = conversationRecentHistory(conversationMessagesForThread(current(bindings.messageUid), thread).slice(0, -1));
   const context = formatConversationContext(bindings, current);
   let reply = AI_UNAVAILABLE_ZH;
+  let route = "";
   try {
-    if (prompt) reply = await generatePageReply(page, prompt, context, history);
+    if (prompt) {
+      const generated = await generatePageReply(page, prompt, context, history);
+      reply = generated.text;
+      route = generated.route;
+    }
   } catch {
     reply = AI_UNAVAILABLE_ZH;
   }
-  const patch = appendAssistantMessageFor(bindings, current, thread, reply, undefined, new Date().toISOString());
+  const patch = appendAssistantMessageFor(bindings, current, thread, reply, undefined, new Date().toISOString(), route);
   for (const [uid, value] of Object.entries(patch)) await writeField(table, uid, value);
 }
 
@@ -209,7 +214,7 @@ async function fillCorrectionScriptBody(
   if (!candidate || candidate.status !== "CANDIDATE") return;
   let body = "";
   try {
-    if (prompt) body = await generatePageReply(page, prompt, "");
+    if (prompt) body = (await generatePageReply(page, prompt, "")).text;
   } catch {
     body = AI_UNAVAILABLE_ZH;
   }
@@ -306,11 +311,15 @@ export async function applyWorkbenchAction(
       const context = formatCoreChatContext(current);
       if (isMultiAiMode(current)) {
         const aliases = targetedParticipantAliases(tokens, current);
-        let replies: Array<{ alias: string; text: string }> = aliases.map((alias) => ({ alias, text: "" }));
+        let replies: Array<{ alias: string; text: string; route: string }> = aliases.map((alias) => ({
+          alias,
+          text: "",
+          route: "",
+        }));
         try {
           if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases);
         } catch {
-          replies = aliases.map((alias) => ({ alias, text: "" }));
+          replies = aliases.map((alias) => ({ alias, text: "", route: "" }));
         }
         const patch = appendAssistantMessages(
           current,
@@ -319,18 +328,24 @@ export async function applyWorkbenchAction(
             text: row.text.trim() || AI_UNAVAILABLE_ZH,
             alias: row.alias,
             at: new Date().toISOString(),
+            route: row.route,
           })),
         );
         for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
         return;
       }
       let reply = AI_UNAVAILABLE_ZH;
+      let route = "";
       try {
-        if (prompt) reply = await generatePageReply("core", prompt, context, history);
+        if (prompt) {
+          const generated = await generatePageReply("core", prompt, context, history);
+          reply = generated.text;
+          route = generated.route;
+        }
       } catch {
         reply = AI_UNAVAILABLE_ZH;
       }
-      const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString());
+      const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), route);
       for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
     }
     return;

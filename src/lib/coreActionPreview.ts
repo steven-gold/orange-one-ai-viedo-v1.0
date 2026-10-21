@@ -282,14 +282,15 @@ export function appendAssistantMessage(
   reply: string,
   alias?: string,
   at?: string,
+  route?: string,
 ): Record<string, string> {
-  return appendAssistantMessageFor(CORE_CONVERSATION, current, thread, reply, alias, at);
+  return appendAssistantMessageFor(CORE_CONVERSATION, current, thread, reply, alias, at, route);
 }
 
 export function appendAssistantMessages(
   current: (uid: string) => string | null,
   thread: string,
-  replies: Array<{ text: string; alias?: string; at?: string }>,
+  replies: Array<{ text: string; alias?: string; at?: string; route?: string }>,
 ): Record<string, string> {
   return appendAssistantMessagesFor(CORE_CONVERSATION, current, thread, replies);
 }

@@ -177,12 +177,18 @@ export async function callChat(messages: ChatMessage[], capability: string): Pro
   throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
 }
 
+export function routeLabelFor(config: Pick<ProviderConfig, "provider" | "model">): string {
+  return [config.provider, config.model].filter((part) => part.trim()).join(" / ");
+}
+
+export type PageReply = { text: string; route: string };
+
 export async function generatePageReply(
   page: AiPageUid,
   prompt: string,
   context?: string,
   history: ChatMessage[] = [],
-): Promise<string> {
+): Promise<PageReply> {
   await assertKillSwitchOff();
   const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
   if (!configs.length) {
@@ -198,7 +204,7 @@ export async function generatePageReply(
       { role: "user", content: user },
     ];
     try {
-      return await callProvider(config, messages);
+      return { text: await callProvider(config, messages), route: routeLabelFor(config) };
     } catch (error) {
       lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
     }
@@ -206,7 +212,7 @@ export async function generatePageReply(
   throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
 }
 
-export type IndependentReply = { alias: string; text: string };
+export type IndependentReply = { alias: string; text: string; route: string };
 
 export async function generateIndependentPageReplies(
   page: AiPageUid,
@@ -226,7 +232,7 @@ export async function generateIndependentPageReplies(
   for (const [index, alias] of aliases.entries()) {
     const config = configs[index] ?? configs[0];
     if (!config) {
-      replies.push({ alias, text: "" });
+      replies.push({ alias, text: "", route: "" });
       continue;
     }
     const prior = replies
@@ -260,9 +266,9 @@ export async function generateIndependentPageReplies(
           0.95,
         );
       }
-      replies.push({ alias, text });
+      replies.push({ alias, text, route: routeLabelFor(config) });
     } catch {
-      replies.push({ alias, text: "" });
+      replies.push({ alias, text: "", route: routeLabelFor(config) });
     }
   }
   return replies;

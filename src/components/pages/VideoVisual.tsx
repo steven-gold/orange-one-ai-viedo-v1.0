@@ -558,6 +558,7 @@ export function VideoVisual() {
                   <div className={styles.bubbleRole}>
                     {row.role === "user" ? tx("video.user_message") : tx("video.ai_response_n")}
                     {row.alias ? ` @${row.alias}` : ""}
+                    {row.route ? ` ${row.route}` : ""}
                     {row.ref ? ` ${row.ref}` : ""}
                     {row.at ? ` ${row.at}` : ""}
                   </div>

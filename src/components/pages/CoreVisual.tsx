@@ -478,6 +478,7 @@ export function CoreVisual() {
                     <div className={styles.bubbleRole}>
                       {row.role === "user" ? tx("core.user_message") : tx("core.ai_response_n")}
                       {row.alias ? ` @${row.alias}` : ""}
+                      {row.route ? ` ${row.route}` : ""}
                       {row.ref ? ` ${row.ref}` : ""}
                       {row.at ? ` ${row.at}` : ""}
                     </div>

@@ -583,6 +583,7 @@ export function EditVisual() {
                   <div className={styles.bubbleRole}>
                     {row.role === "user" ? tx("edit.user_message") : tx("edit.ai_response_n")}
                     {row.alias ? ` @${row.alias}` : ""}
+                    {row.route ? ` ${row.route}` : ""}
                     {row.ref ? ` ${row.ref}` : ""}
                     {row.at ? ` ${row.at}` : ""}
                   </div>
