@@ -183,6 +183,7 @@ export async function postCoreAction(
   actionUid: string,
   sessionUid = "sess-demo-001",
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   await fetch("/api/core/action", {
     method: "POST",
@@ -192,6 +193,7 @@ export async function postCoreAction(
       "x-session-uid": sessionUid,
     },
     body: JSON.stringify({ controlUid, actionUid, nextValue }),
+    signal,
   });
 }
 
@@ -314,6 +316,7 @@ export async function postAssetAction(
   actionUid: string,
   sessionUid = "sess-demo-001",
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   await fetch("/api/assets/action", {
     method: "POST",
@@ -323,6 +326,7 @@ export async function postAssetAction(
       "x-session-uid": sessionUid,
     },
     body: JSON.stringify({ controlUid, actionUid, nextValue }),
+    signal,
   });
 }
 
@@ -374,6 +378,7 @@ export async function postVideoAction(
   actionUid: string,
   sessionUid = "sess-demo-001",
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   await fetch("/api/video/action", {
     method: "POST",
@@ -383,6 +388,7 @@ export async function postVideoAction(
       "x-session-uid": sessionUid,
     },
     body: JSON.stringify({ controlUid, actionUid, nextValue }),
+    signal,
   });
 }
 
@@ -434,6 +440,7 @@ export async function postEditAction(
   actionUid: string,
   sessionUid = "sess-demo-001",
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   await fetch("/api/edit/action", {
     method: "POST",
@@ -443,6 +450,7 @@ export async function postEditAction(
       "x-session-uid": sessionUid,
     },
     body: JSON.stringify({ controlUid, actionUid, nextValue }),
+    signal,
   });
 }
 

@@ -127,6 +127,17 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
 }
 
 {
+  const contract = buildTaskContract(SERIES, null, "對話 1");
+  const after = updateContractAfterGeneration(contract, "第1集開頭", { truncated: true, loop: false, stopped: true });
+  assertEqual(after.status, "STOPPED", "stopped status");
+  assertEqual(latestOpenTask([after], "對話 1")?.status, "STOPPED", "stopped remains continuable");
+  const footer = formatDeliveryFooter(after);
+  assert(footer.includes("已停止"), "footer stopped label");
+  assert(footer.includes("可續寫"), "stopped can continue");
+  assertEqual(inferTruncated("有效前綴", "cancelled"), true, "cancelled is truncated");
+}
+
+{
   assertEqual(classifyTaskKind(""), "insufficient", "empty is insufficient");
   assertEqual(classifyTaskKind("什麼是 Canonical Script？"), "knowledge", "knowledge question");
   assertEqual(classifyTaskKind("比較這兩版腳本的風險"), "analysis", "analysis intent");

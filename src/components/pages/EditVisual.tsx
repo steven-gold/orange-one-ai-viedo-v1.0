@@ -161,8 +161,10 @@ export function EditVisual() {
   const [correctionDraft, setCorrectionDraft] = useState("");
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
+  const [generating, setGenerating] = useState(false);
   const fieldsRef = useRef(fields);
   const timelineRef = useRef<HTMLDivElement>(null);
+  const sendAbortRef = useRef<AbortController | null>(null);
   fieldsRef.current = fields;
 
   useEffect(() => {
@@ -266,17 +268,24 @@ export function EditVisual() {
       );
       if (!Object.keys(patch).length) return;
       applyPatch(patch);
+      const generatingTurn = actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE";
+      const refreshTurn =
+        generatingTurn || actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE";
+      const controller = generatingTurn ? new AbortController() : null;
+      if (controller) {
+        sendAbortRef.current = controller;
+        setGenerating(true);
+      }
       try {
-        await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
-        if (
-          actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" ||
-          actionUid === "EDIT-01-ACT-SEND" ||
-          actionUid === "EDIT-01-ACT-MSG-ANALYZE"
-        ) {
-          setTick((value) => value + 1);
-        }
+        await postEditAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue, controller?.signal);
+        if (refreshTurn) setTick((value) => value + 1);
       } catch {
-        // Optimistic projection stays visible when the write path is unbound.
+        if (refreshTurn) setTick((value) => value + 1);
+      } finally {
+        if (controller && sendAbortRef.current === controller) {
+          sendAbortRef.current = null;
+          setGenerating(false);
+        }
       }
     },
     [applyPatch],
@@ -294,6 +303,10 @@ export function EditVisual() {
   }, []);
 
   const sendMessage = useCallback(() => {
+    if (sendAbortRef.current) {
+      sendAbortRef.current.abort();
+      return;
+    }
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUidFor(EDIT_CONVERSATION, current)) return;
     const text = correctionDraft.trim();
@@ -640,7 +653,7 @@ export function EditVisual() {
                 }
               }}
             />
-            <IconButton uid="EDIT-01-BTN-SEND" label={tooLong ? tx("edit.message_too_long") : parserBlocked ? tx("edit.parser_blocked") : canSend ? tx("edit.send") : tx("edit.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+            <IconButton uid="EDIT-01-BTN-SEND" label={generating ? tx("edit.stop") : tooLong ? tx("edit.message_too_long") : parserBlocked ? tx("edit.parser_blocked") : canSend ? tx("edit.send") : tx("edit.gate-message")} icon={generating ? "stop" : "send"} onAct={() => sendMessage()} disabled={generating ? false : disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
           {composerTokens.length ? (
             <div className={styles.tokenRow} aria-live="polite">

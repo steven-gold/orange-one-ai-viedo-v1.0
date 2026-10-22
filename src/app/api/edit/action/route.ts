@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${EDIT_PERMISSION} required`, 403);
     }
-    const eventUid = await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue);
+    const eventUid = await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected edit runtime error", 500);

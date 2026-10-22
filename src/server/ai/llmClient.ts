@@ -222,7 +222,33 @@ async function admitRoute(capability: string): Promise<{ configs: ProviderConfig
   return route;
 }
 
-type ProviderTurn = { content: string; finishReason: string; loopStopped?: boolean };
+type ProviderTurn = { content: string; finishReason: string; loopStopped?: boolean; cancelled?: boolean };
+
+export class GenerationCancelled extends Error {
+  constructor(readonly partial = "") {
+    super("Generation cancelled");
+    this.name = "GenerationCancelled";
+  }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === "AbortError";
+}
+
+function mergeAbort(timeoutMs: number, external?: AbortSignal): { signal: AbortSignal; stop: () => void } {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const onExternal = () => controller.abort();
+  if (external?.aborted) controller.abort();
+  else external?.addEventListener("abort", onExternal);
+  return {
+    signal: controller.signal,
+    stop: () => {
+      clearTimeout(timer);
+      external?.removeEventListener("abort", onExternal);
+    },
+  };
+}
 
 async function readJsonTurn(response: Response): Promise<ProviderTurn> {
   const payload = (await response.json()) as {
@@ -234,7 +260,7 @@ async function readJsonTurn(response: Response): Promise<ProviderTurn> {
   return { content, finishReason: clean(choice?.finish_reason ?? choice?.finishReason) };
 }
 
-async function readSseTurn(response: Response): Promise<ProviderTurn> {
+async function readSseTurn(response: Response, userSignal?: AbortSignal): Promise<ProviderTurn> {
   const body = response.body;
   if (!body) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no stream body");
   const reader = body.getReader();
@@ -274,6 +300,7 @@ async function readSseTurn(response: Response): Promise<ProviderTurn> {
     }
   } catch (error) {
     if (content) {
+      if (userSignal?.aborted) return { content, finishReason: "cancelled", cancelled: true };
       const looped = detectGenerationLoop(content);
       if (looped.loop) return stopLoop(looped.validPrefix);
       return { content, finishReason: finishReason || "stop" };
@@ -317,13 +344,18 @@ async function postProvider(
   });
 }
 
-async function callProvider(config: ProviderConfig, messages: ChatMessage[], temperature = 0.2): Promise<ProviderTurn> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), config.timeoutMs);
+async function callProvider(
+  config: ProviderConfig,
+  messages: ChatMessage[],
+  temperature = 0.2,
+  signal?: AbortSignal,
+): Promise<ProviderTurn> {
+  if (signal?.aborted) throw new GenerationCancelled("");
+  const merged = mergeAbort(config.timeoutMs, signal);
   try {
-    let response = await postProvider(config, messages, temperature, true, controller.signal);
+    let response = await postProvider(config, messages, temperature, true, merged.signal);
     if (!response.ok && (response.status === 400 || response.status === 422)) {
-      response = await postProvider(config, messages, temperature, false, controller.signal);
+      response = await postProvider(config, messages, temperature, false, merged.signal);
     }
     if (!response.ok) {
       const detail = (await response.text().catch(() => "")).slice(0, 200);
@@ -331,17 +363,19 @@ async function callProvider(config: ProviderConfig, messages: ChatMessage[], tem
     }
     const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
     if (contentType.includes("text/event-stream") && response.body) {
-      return await readSseTurn(response);
+      return await readSseTurn(response, signal);
     }
     return await readJsonTurn(response);
   } catch (error) {
     if (error instanceof AiProviderError) throw error;
-    if (error instanceof Error && error.name === "AbortError") {
+    if (error instanceof GenerationCancelled) throw error;
+    if (isAbortError(error)) {
+      if (signal?.aborted) throw new GenerationCancelled("");
       throw new AiProviderError("AI_PROVIDER_TIMEOUT", `Provider call exceeded ${config.timeoutMs}ms`);
     }
     throw new AiProviderError("AI_PROVIDER_UNREACHABLE", error instanceof Error ? error.message : "Provider call failed");
   } finally {
-    clearTimeout(timer);
+    merged.stop();
   }
 }
 
@@ -350,26 +384,35 @@ async function completeTurn(
   messages: ChatMessage[],
   temperature: number,
   contract?: ConversationTaskContract,
+  signal?: AbortSignal,
 ): Promise<{ text: string; truncated: boolean; loop: boolean; finishReason: string }> {
-  const first = await callProvider(config, messages, temperature);
+  const first = await callProvider(config, messages, temperature, signal);
   let text = first.content;
   let finishReason = first.finishReason;
+  if (first.cancelled) throw new GenerationCancelled(text);
   let truncated = inferTruncated(text, finishReason);
   const loopCheck = first.loopStopped ? { loop: true, validPrefix: text, reason: "stream_loop" } : detectGenerationLoop(text);
   if (loopCheck.loop) {
     text = loopCheck.validPrefix.trim();
     truncated = true;
     if (text && MAX_LOOP_REPAIRS > 0) {
-      const repaired = await callProvider(
-        config,
-        [...messages, { role: "assistant", content: text }, { role: "user", content: loopRepairUserMessage() }],
-        temperature,
-      );
-      const merged = mergeContinuation(text, repaired.content);
-      const again = repaired.loopStopped ? { loop: true, validPrefix: merged } : detectGenerationLoop(merged);
-      text = again.loop ? again.validPrefix.trim() || text : merged;
-      finishReason = repaired.finishReason;
-      truncated = again.loop || inferTruncated(text, finishReason);
+      try {
+        const repaired = await callProvider(
+          config,
+          [...messages, { role: "assistant", content: text }, { role: "user", content: loopRepairUserMessage() }],
+          temperature,
+          signal,
+        );
+        if (repaired.cancelled) throw new GenerationCancelled(mergeContinuation(text, repaired.content));
+        const merged = mergeContinuation(text, repaired.content);
+        const again = repaired.loopStopped ? { loop: true, validPrefix: merged } : detectGenerationLoop(merged);
+        text = again.loop ? again.validPrefix.trim() || text : merged;
+        finishReason = repaired.finishReason;
+        truncated = again.loop || inferTruncated(text, finishReason);
+      } catch (error) {
+        if (error instanceof GenerationCancelled) throw new GenerationCancelled(error.partial || text);
+        throw error;
+      }
     }
     return { text, truncated, loop: true, finishReason };
   }
@@ -377,19 +420,26 @@ async function completeTurn(
   while (truncated && continuations < MAX_GENERATION_CONTINUATIONS) {
     continuations += 1;
     const follow = contract ? continuationUserMessage(contract) : "從上次結尾繼續寫，不要重複已寫內容。未完成不得宣稱全部完成。";
-    const next = await callProvider(
-      config,
-      [...messages, { role: "assistant", content: text }, { role: "user", content: follow }],
-      temperature,
-    );
-    text = mergeContinuation(text, next.content);
-    finishReason = next.finishReason;
-    const looped = next.loopStopped ? { loop: true, validPrefix: text } : detectGenerationLoop(text);
-    if (looped.loop) {
-      text = looped.validPrefix.trim() || text;
-      return { text, truncated: true, loop: true, finishReason };
+    try {
+      const next = await callProvider(
+        config,
+        [...messages, { role: "assistant", content: text }, { role: "user", content: follow }],
+        temperature,
+        signal,
+      );
+      if (next.cancelled) throw new GenerationCancelled(mergeContinuation(text, next.content));
+      text = mergeContinuation(text, next.content);
+      finishReason = next.finishReason;
+      const looped = next.loopStopped ? { loop: true, validPrefix: text } : detectGenerationLoop(text);
+      if (looped.loop) {
+        text = looped.validPrefix.trim() || text;
+        return { text, truncated: true, loop: true, finishReason };
+      }
+      truncated = inferTruncated(next.content, next.finishReason);
+    } catch (error) {
+      if (error instanceof GenerationCancelled) throw new GenerationCancelled(error.partial || text);
+      throw error;
     }
-    truncated = inferTruncated(next.content, next.finishReason);
   }
   return { text, truncated, loop: false, finishReason };
 }
@@ -404,6 +454,7 @@ export async function callChat(messages: ChatMessage[], capability: string): Pro
     try {
       return (await completeTurn(config, messages, 0.2)).text;
     } catch (error) {
+      if (error instanceof GenerationCancelled) throw error;
       lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
     }
   }
@@ -421,7 +472,7 @@ export async function generatePageReply(
   prompt: string,
   context?: string,
   history: ChatMessage[] = [],
-  options?: { contract?: ConversationTaskContract; kind?: ConversationTaskKind },
+  options?: { contract?: ConversationTaskContract; kind?: ConversationTaskKind; signal?: AbortSignal },
 ): Promise<PageReply> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
   if (!route.configs.length) {
@@ -438,9 +489,10 @@ export async function generatePageReply(
       { role: "user", content: user },
     ];
     try {
-      const turn = await completeTurn(config, messages, temperature, options?.contract);
+      const turn = await completeTurn(config, messages, temperature, options?.contract, options?.signal);
       return { text: turn.text, route: routeLabelFor(config), truncated: turn.truncated, loop: turn.loop };
     } catch (error) {
+      if (error instanceof GenerationCancelled) throw error;
       lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
     }
   }
@@ -455,6 +507,7 @@ export async function generateIndependentPageReplies(
   context: string | undefined,
   history: ChatMessage[],
   aliases: string[],
+  signal?: AbortSignal,
 ): Promise<IndependentReply[]> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
   if (!route.configs.length) {
@@ -482,9 +535,10 @@ export async function generateIndependentPageReplies(
         { role: "user", content: independentUser },
       ];
       try {
-        const turn = await completeTurn(config, messages, 0.8);
+        const turn = await completeTurn(config, messages, 0.8, undefined, signal);
         return { alias, text: turn.text, route: routeLabelFor(config) };
-      } catch {
+      } catch (error) {
+        if (error instanceof GenerationCancelled) throw error;
         return { alias, text: "", route: routeLabelFor(config) };
       }
     }),

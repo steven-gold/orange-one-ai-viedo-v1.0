@@ -64,7 +64,7 @@ import { previewQaAction } from "@/lib/qaActionPreview";
 import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, type AiPageUid } from "../ai/llmClient";
+import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, type AiPageUid } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -204,7 +204,15 @@ function applyGeneratedContract(
   contract: ConversationTaskContract | null,
   generated: { text: string; truncated?: boolean; loop?: boolean } | null,
   failed: boolean,
+  stopped = false,
 ): { reply: string; nextContract: ConversationTaskContract | null } {
+  if (stopped) {
+    const reply = generated?.text.trim() ?? "";
+    const nextContract = contract
+      ? updateContractAfterGeneration(contract, reply, { truncated: true, loop: false, stopped: true })
+      : null;
+    return { reply, nextContract };
+  }
   let reply = generated?.text.trim() ? generated.text : AI_UNAVAILABLE_ZH;
   let nextContract = contract;
   if (failed) {
@@ -225,13 +233,15 @@ function upsertTask(tasks: ConversationTaskContract[], next: ConversationTaskCon
 }
 
 function attachFooter(text: string, contract: ConversationTaskContract | null): string {
+  const body = text.trim();
+  const fallback = body || (contract?.status === "STOPPED" ? "" : AI_UNAVAILABLE_ZH);
   const annotated = annotateUnverifiedClaims(
-    text.trim() || AI_UNAVAILABLE_ZH,
+    fallback,
     unverifiedExecutionClaims(text, { fileWritten: Boolean(contract?.fileId) }),
   );
   if (!contract || !shouldAttachFooter(contract)) return annotated;
   const footer = formatDeliveryFooter(contract);
-  if (footer && !annotated.includes(footer)) return `${annotated}\n\n${footer}`;
+  if (footer && !annotated.includes(footer)) return annotated ? `${annotated}\n\n${footer}` : footer;
   return annotated;
 }
 
@@ -242,6 +252,7 @@ async function persistGeneratedFile(
   reply: string,
 ): Promise<ConversationTaskContract | null> {
   if (!accountUid || !contract?.needsFile || contract.status === "FAILED") return contract;
+  if (contract.status === "STOPPED" && !reply.trim()) return contract;
   const pageUid = conversationFilePage(page);
   if (!pageUid) return contract;
   try {
@@ -264,6 +275,7 @@ async function fillConversationReply(
   actionUid: string,
   nextValue?: string,
   accountUid?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     `SELECT control_uid, value_text FROM ${table}`,
@@ -283,19 +295,27 @@ async function fillConversationReply(
   const contract = resolveTaskContract(prompt, current(bindings.notebookUid), thread);
   let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
   let failed = false;
+  let stopped = false;
   try {
     if (prompt) {
       generated = await generatePageReply(page, prompt, context, history, {
         contract: contract ?? undefined,
         kind: contract?.kind,
+        signal,
       });
     }
-  } catch {
-    failed = true;
+  } catch (error) {
+    if (error instanceof GenerationCancelled) {
+      generated = { text: error.partial, truncated: true, loop: false, route: "" };
+      stopped = true;
+    } else {
+      failed = true;
+    }
   }
-  const generatedContract = applyGeneratedContract(contract, generated, failed);
+  const generatedContract = applyGeneratedContract(contract, generated, failed, stopped);
   const nextContract = await persistGeneratedFile(accountUid, page, generatedContract.nextContract, generatedContract.reply);
   const reply = attachFooter(generatedContract.reply, nextContract);
+  if (stopped && !reply.trim()) return;
   const patch = appendAssistantMessageFor(
     bindings,
     current,
@@ -317,14 +337,16 @@ async function fillCorrectionScriptBody(
   uid: string,
   page: "asset" | "video" | "edit",
   prompt: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   const candidate = parseCorrectionScript(await readField(table, uid));
   if (!candidate || candidate.status !== "CANDIDATE") return;
   let body = "";
   try {
-    if (prompt) body = (await generatePageReply(page, prompt, "")).text;
-  } catch {
-    body = AI_UNAVAILABLE_ZH;
+    if (prompt) body = (await generatePageReply(page, prompt, "", [], { signal })).text;
+  } catch (error) {
+    if (error instanceof GenerationCancelled) body = error.partial;
+    else body = AI_UNAVAILABLE_ZH;
   }
   await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
 }
@@ -388,6 +410,7 @@ export async function applyWorkbenchAction(
   actionUid: string,
   nextValue?: string,
   accountUid?: string,
+  signal?: AbortSignal,
 ): Promise<AiapiOutcome | void> {
   if (page === "dashboard") {
     return;
@@ -429,16 +452,27 @@ export async function applyWorkbenchAction(
         }));
         let nextContract = contract;
         try {
-          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases);
+          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases, signal);
           if (contract) {
             nextContract = updateContractAfterGeneration(contract, replies.map((row) => row.text).join("\n"), {
               truncated: false,
               loop: false,
             });
           }
-        } catch {
-          replies = aliases.map((alias) => ({ alias, text: "", route: "" }));
-          if (contract) nextContract = { ...contract, status: "FAILED" };
+        } catch (error) {
+          if (error instanceof GenerationCancelled) {
+            replies = aliases.map((alias) => ({ alias, text: error.partial, route: "" }));
+            if (contract) {
+              nextContract = updateContractAfterGeneration(contract, error.partial, {
+                truncated: true,
+                loop: false,
+                stopped: true,
+              });
+            }
+          } else {
+            replies = aliases.map((alias) => ({ alias, text: "", route: "" }));
+            if (contract) nextContract = { ...contract, status: "FAILED" };
+          }
         }
         nextContract = await persistGeneratedFile(
           accountUid,
@@ -465,19 +499,27 @@ export async function applyWorkbenchAction(
       }
       let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
       let failed = false;
+      let stopped = false;
       try {
         if (prompt) {
           generated = await generatePageReply("core", prompt, context, history, {
             contract: contract ?? undefined,
             kind: contract?.kind,
+            signal,
           });
         }
-      } catch {
-        failed = true;
+      } catch (error) {
+        if (error instanceof GenerationCancelled) {
+          generated = { text: error.partial, truncated: true, loop: false, route: "" };
+          stopped = true;
+        } else {
+          failed = true;
+        }
       }
-      const generatedContract = applyGeneratedContract(contract, generated, failed);
+      const generatedContract = applyGeneratedContract(contract, generated, failed, stopped);
       const nextContract = await persistGeneratedFile(accountUid, "core", generatedContract.nextContract, generatedContract.reply);
       const reply = attachFooter(generatedContract.reply, nextContract);
+      if (stopped && !reply.trim()) return;
       const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), generated?.route ?? "");
       const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
       const taskPatch = nextContract
@@ -506,11 +548,11 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid);
+      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid, signal);
     }
     if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
-      await fillCorrectionScriptBody(FIELD_TABLE.asset, ASSET_CORRECTION_RESPONSE_UID, "asset", prompt);
+      await fillCorrectionScriptBody(FIELD_TABLE.asset, ASSET_CORRECTION_RESPONSE_UID, "asset", prompt, signal);
     }
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");
@@ -547,11 +589,11 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "VIDEO-01-ACT-SEND" || actionUid === "VIDEO-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue, accountUid);
+      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue, accountUid, signal);
     }
     if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
-      await fillCorrectionScriptBody(FIELD_TABLE.video, VIDEO_CORRECTION_RESPONSE_UID, "video", prompt);
+      await fillCorrectionScriptBody(FIELD_TABLE.video, VIDEO_CORRECTION_RESPONSE_UID, "video", prompt, signal);
     }
     if (actionUid === "VIDEO-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.video, "VIDEO-01-BTN-LOCK");
@@ -594,11 +636,11 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue, accountUid);
+      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue, accountUid, signal);
     }
     if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-API-INSTRUCTION")) || "";
-      await fillCorrectionScriptBody(FIELD_TABLE.edit, EDIT_CORRECTION_CANDIDATE_UID, "edit", prompt);
+      await fillCorrectionScriptBody(FIELD_TABLE.edit, EDIT_CORRECTION_CANDIDATE_UID, "edit", prompt, signal);
     }
     if (actionUid === "EDIT-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");

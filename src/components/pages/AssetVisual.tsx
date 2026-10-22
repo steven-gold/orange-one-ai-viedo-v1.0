@@ -113,8 +113,10 @@ export function AssetVisual() {
   const [inbound, setInbound] = useState<AssetInbound>(EMPTY_INBOUND);
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
+  const [generating, setGenerating] = useState(false);
   const fieldsRef = useRef(fields);
   const timelineRef = useRef<HTMLDivElement>(null);
+  const sendAbortRef = useRef<AbortController | null>(null);
   fieldsRef.current = fields;
 
   useEffect(() => {
@@ -219,17 +221,24 @@ export function AssetVisual() {
     );
     if (!Object.keys(patch).length) return;
     applyPatch(patch);
+    const generatingTurn = actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE";
+    const refreshTurn =
+      generatingTurn || actionUid === "ASSET-01-ACT-CORRECTION-GENERATE";
+    const controller = generatingTurn ? new AbortController() : null;
+    if (controller) {
+      sendAbortRef.current = controller;
+      setGenerating(true);
+    }
     try {
-      await postAssetAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
-      if (
-        actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" ||
-        actionUid === "ASSET-01-ACT-SEND" ||
-        actionUid === "ASSET-01-ACT-MSG-ANALYZE"
-      ) {
-        setTick((value) => value + 1);
-      }
+      await postAssetAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue, controller?.signal);
+      if (refreshTurn) setTick((value) => value + 1);
     } catch {
-      // Optimistic projection stays visible when the write path is unbound.
+      if (refreshTurn) setTick((value) => value + 1);
+    } finally {
+      if (controller && sendAbortRef.current === controller) {
+        sendAbortRef.current = null;
+        setGenerating(false);
+      }
     }
   }, [applyPatch]);
 
@@ -273,6 +282,10 @@ export function AssetVisual() {
   }, []);
 
   const sendMessage = useCallback(() => {
+    if (sendAbortRef.current) {
+      sendAbortRef.current.abort();
+      return;
+    }
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUidFor(ASSET_CONVERSATION, current)) return;
     const text = correctionDraft.trim();
@@ -631,7 +644,7 @@ export function AssetVisual() {
                 }}
               />
             </label>
-            <IconButton uid="ASSET-01-BTN-SEND" label={tooLong ? tx("asset.message_too_long") : parserBlocked ? tx("asset.parser_blocked") : canSend ? tx("asset.send") : tx("asset.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+            <IconButton uid="ASSET-01-BTN-SEND" label={generating ? tx("asset.stop") : tooLong ? tx("asset.message_too_long") : parserBlocked ? tx("asset.parser_blocked") : canSend ? tx("asset.send") : tx("asset.gate-message")} icon={generating ? "stop" : "send"} onAct={() => sendMessage()} disabled={generating ? false : disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
           </div>
           {composerTokens.length ? (
             <div className={styles.tokenRow} aria-live="polite">

@@ -120,10 +120,12 @@ export function CoreVisual() {
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const [scriptOpen, setScriptOpen] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
   const referenceRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
+  const sendAbortRef = useRef<AbortController | null>(null);
   fieldsRef.current = fields;
 
   useEffect(() => {
@@ -213,11 +215,22 @@ export function CoreVisual() {
     );
     if (!Object.keys(patch).length) return;
     applyPatch(patch);
+    const generatingTurn = actionUid === "CORE-01-ACT-SEND" || actionUid === "CORE-01-ACT-MSG-ANALYZE";
+    const controller = generatingTurn ? new AbortController() : null;
+    if (controller) {
+      sendAbortRef.current = controller;
+      setGenerating(true);
+    }
     try {
-      await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
-      if (actionUid === "CORE-01-ACT-SEND" || actionUid === "CORE-01-ACT-MSG-ANALYZE") setTick((value) => value + 1);
+      await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue, controller?.signal);
+      if (generatingTurn) setTick((value) => value + 1);
     } catch {
-      // Optimistic projection stays visible when the write path is unbound.
+      if (generatingTurn) setTick((value) => value + 1);
+    } finally {
+      if (controller && sendAbortRef.current === controller) {
+        sendAbortRef.current = null;
+        setGenerating(false);
+      }
     }
   }, [applyPatch]);
 
@@ -257,6 +270,10 @@ export function CoreVisual() {
   }, [act]);
 
   const sendMessage = useCallback(() => {
+    if (sendAbortRef.current) {
+      sendAbortRef.current.abort();
+      return;
+    }
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUid(current)) return;
     const text = draftMessage.trim();
@@ -521,7 +538,7 @@ export function CoreVisual() {
                     }}
                   />
                 </label>
-                <IconButton uid="CORE-01-BTN-SEND" label={tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : multiBlocked ? tx("core.multi_route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+                <IconButton uid="CORE-01-BTN-SEND" label={generating ? tx("core.stop") : tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : multiBlocked ? tx("core.multi_route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon={generating ? "stop" : "send"} onAct={() => sendMessage()} disabled={generating ? false : disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
               </div>
               {composerTokens.length ? (
                 <div className={styles.tokenRow} aria-live="polite">

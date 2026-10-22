@@ -260,7 +260,7 @@ export function latestOpenTask(
   const scoped = thread ? tasks.filter((row) => !row.thread || row.thread === thread) : tasks;
   for (let index = scoped.length - 1; index >= 0; index -= 1) {
     const row = scoped[index];
-    if (row.status === "OPEN" || row.status === "PARTIAL") return row;
+    if (row.status === "OPEN" || row.status === "PARTIAL" || row.status === "STOPPED") return row;
   }
   return scoped[scoped.length - 1] ?? null;
 }
@@ -291,7 +291,7 @@ export function formatDeliveryFooter(contract: ConversationTaskContract): string
     contract.completedItems.length ? `已完成：${contract.completedItems.join("；")}` : "",
     contract.pendingItems.length ? `未完成：${contract.pendingItems.join("；")}` : "",
     contract.nextBatch && contract.status !== "COMPLETE" ? `下一合法批次：${contract.nextBatch}` : "",
-    contract.status === "PARTIAL" || contract.status === "OPEN" ? "可續寫；未完成不得視為全部完成。" : "",
+    contract.status === "PARTIAL" || contract.status === "OPEN" || contract.status === "STOPPED" ? "可續寫；未完成不得視為全部完成。" : "",
     contract.fileName ? `成品：${contract.fileName}` : "",
     contract.fileId ? `檔案：${contract.fileId}` : "",
   ];
@@ -335,7 +335,13 @@ function statusLabel(status: ConversationTaskStatus): string {
 }
 
 export function shouldAttachFooter(contract: ConversationTaskContract): boolean {
-  return contract.batched || contract.status === "PARTIAL" || contract.status === "FAILED" || contract.needsFile;
+  return (
+    contract.batched ||
+    contract.status === "PARTIAL" ||
+    contract.status === "FAILED" ||
+    contract.status === "STOPPED" ||
+    contract.needsFile
+  );
 }
 
 export function splitDeliverableChunks(text: string, limit: number): string[] {
@@ -462,7 +468,7 @@ export function annotateUnverifiedClaims(text: string, claims: UnverifiedClaimKi
 
 export function inferTruncated(content: string, finishReason: string): boolean {
   const reason = clean(finishReason).toLowerCase();
-  if (reason === "length" || reason === "max_tokens" || reason === "loop_stopped") return true;
+  if (reason === "length" || reason === "max_tokens" || reason === "loop_stopped" || reason === "cancelled") return true;
   const body = clean(content);
   if (!body) return false;
   if (/[：:、,，]\s*$/u.test(body)) return true;
@@ -494,10 +500,17 @@ export function claimsFullCompletion(text: string, contract: ConversationTaskCon
 export function updateContractAfterGeneration(
   contract: ConversationTaskContract,
   output: string,
-  flags: { truncated: boolean; loop: boolean; failed?: boolean },
+  flags: { truncated: boolean; loop: boolean; failed?: boolean; stopped?: boolean },
 ): ConversationTaskContract {
   if (flags.failed && !clean(output)) {
     return { ...contract, status: "FAILED" };
+  }
+  if (flags.stopped) {
+    return {
+      ...contract,
+      status: "STOPPED",
+      resumeCursor: clean(output).slice(-80) || contract.resumeCursor,
+    };
   }
   if (contract.kind === "question" && !contract.batched) {
     return { ...contract, status: flags.truncated ? "PARTIAL" : "COMPLETE", pendingItems: [], nextBatch: undefined };

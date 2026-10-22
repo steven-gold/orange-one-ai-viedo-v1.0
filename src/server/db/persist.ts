@@ -435,8 +435,9 @@ export async function persistRecordCoreAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<string> {
-  await applyWorkbenchAction("core", controlUid, actionUid, nextValue, accountUid);
+  await applyWorkbenchAction("core", controlUid, actionUid, nextValue, accountUid, signal);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_core_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -522,8 +523,9 @@ export async function persistRecordAssetAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<string> {
-  await applyWorkbenchAction("asset", controlUid, actionUid, nextValue, accountUid);
+  await applyWorkbenchAction("asset", controlUid, actionUid, nextValue, accountUid, signal);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_asset_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -613,8 +615,9 @@ export async function persistRecordVideoAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<string> {
-  await applyWorkbenchAction("video", controlUid, actionUid, nextValue, accountUid);
+  await applyWorkbenchAction("video", controlUid, actionUid, nextValue, accountUid, signal);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_video_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -724,8 +727,9 @@ export async function persistRecordEditAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<string> {
-  await applyWorkbenchAction("edit", controlUid, actionUid, nextValue, accountUid);
+  await applyWorkbenchAction("edit", controlUid, actionUid, nextValue, accountUid, signal);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_edit_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
