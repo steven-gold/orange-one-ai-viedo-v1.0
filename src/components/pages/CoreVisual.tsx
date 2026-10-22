@@ -5,6 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
+import { ConversationFileActions } from "./ConversationFileActions";
 import {
   activeThreadUid,
   assignedAiRouteReady,
@@ -488,6 +489,9 @@ export function CoreVisual() {
                       {row.at ? ` ${row.at}` : ""}
                     </div>
                     <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                    {row.role === "assistant" ? (
+                      <ConversationFileActions text={row.text} accountUid={DEFAULT_ACCOUNT} sessionUid={DEFAULT_SESSION} tx={tx} />
+                    ) : null}
                   </article>
                 ))
               )}

@@ -38,6 +38,8 @@ export type ConversationTaskContract = {
   pendingItems: string[];
   nextBatch?: string;
   resumeCursor?: string;
+  fileId?: string;
+  fileName?: string;
   batchSize: number;
   version: number;
 };
@@ -288,8 +290,35 @@ export function formatDeliveryFooter(contract: ConversationTaskContract): string
     contract.pendingItems.length ? `未完成：${contract.pendingItems.join("；")}` : "",
     contract.nextBatch && contract.status !== "COMPLETE" ? `下一合法批次：${contract.nextBatch}` : "",
     contract.status === "PARTIAL" || contract.status === "OPEN" ? "可續寫；未完成不得視為全部完成。" : "",
+    contract.fileName ? `成品：${contract.fileName}` : "",
+    contract.fileId ? `檔案：${contract.fileId}` : "",
   ];
   return lines.filter(Boolean).join("\n");
+}
+
+export function conversationFileUid(accountUid: string, pageUid: string, taskId: string): string {
+  return `FILE-${hashId([accountUid, pageUid, taskId])}`;
+}
+
+export function fileNameForContract(contract: ConversationTaskContract): string {
+  const qty = contract.quantity ? `${contract.quantity.count}${contract.quantity.unit}` : "";
+  const label = clean(contract.format || contract.goal).replace(/\s+/gu, "").slice(0, 24);
+  const base = `${qty}${label || "成品"}`.replace(/[\\/:*?"<>|#]/gu, "_");
+  return `${base.slice(0, 80)}.txt`;
+}
+
+export function stripDeliveryFooter(text: string): string {
+  const marker = "\n\n狀態：";
+  const index = text.lastIndexOf(marker);
+  if (index >= 0) return text.slice(0, index).trim();
+  return text.trim();
+}
+
+export function parseConversationFileRef(text: string): { fileId: string; fileName: string } | null {
+  const id = /檔案：\s*(FILE-[0-9a-f]+)/u.exec(text);
+  if (!id) return null;
+  const name = /成品：\s*([^\n]+)/u.exec(text);
+  return { fileId: id[1], fileName: clean(name?.[1]) || "成品.txt" };
 }
 
 function statusLabel(status: ConversationTaskStatus): string {

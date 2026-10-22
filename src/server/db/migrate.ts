@@ -351,6 +351,18 @@ const DDL = [
     expires_at TEXT NOT NULL,
     issued_at TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_conversation_file (
+    file_uid TEXT PRIMARY KEY,
+    account_uid TEXT NOT NULL,
+    page_uid TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    thread TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    mime_type TEXT NOT NULL,
+    body_text TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    updated_at TEXT NOT NULL
+  )`,
 ];
 
 export interface MigrationResult {
@@ -390,6 +402,7 @@ const MIGRATION_FILES = [
   "025_reset_aiapi_drafts.sql",
   "026_reset_aiapi_drafts.sql",
   "027_reset_aiapi_registry.sql",
+  "028_conversation_file.sql",
 ];
 
 const RESET_CORE_DRAFTS = [

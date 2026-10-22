@@ -436,7 +436,7 @@ export async function persistRecordCoreAction(
   actionUid: string,
   nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("core", controlUid, actionUid, nextValue);
+  await applyWorkbenchAction("core", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_core_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -523,7 +523,7 @@ export async function persistRecordAssetAction(
   actionUid: string,
   nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("asset", controlUid, actionUid, nextValue);
+  await applyWorkbenchAction("asset", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_asset_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -614,7 +614,7 @@ export async function persistRecordVideoAction(
   actionUid: string,
   nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("video", controlUid, actionUid, nextValue);
+  await applyWorkbenchAction("video", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_video_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -725,7 +725,7 @@ export async function persistRecordEditAction(
   actionUid: string,
   nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("edit", controlUid, actionUid, nextValue);
+  await applyWorkbenchAction("edit", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_edit_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

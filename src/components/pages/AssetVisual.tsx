@@ -21,6 +21,7 @@ import {
   resolveComposerTokensFor,
   threadsForWorkItem,
 } from "@/lib/conversationCore";
+import { ConversationFileActions } from "./ConversationFileActions";
 import { displayAssetValue } from "./assetFormat";
 import {
   ASSET_BINDING_FIELDS,
@@ -579,6 +580,9 @@ export function AssetVisual() {
                     {row.at ? ` ${row.at}` : ""}
                   </div>
                   <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                  {row.role === "assistant" ? (
+                    <ConversationFileActions text={row.text} accountUid={DEFAULT_ACCOUNT} sessionUid={DEFAULT_SESSION} tx={tx} />
+                  ) : null}
                 </article>
               ))
             )}

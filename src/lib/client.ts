@@ -195,6 +195,77 @@ export async function postCoreAction(
   });
 }
 
+export class ConversationFileClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "ConversationFileClientError";
+  }
+}
+
+export type ConversationFilePayload = {
+  fileUid: string;
+  fileName: string;
+  mimeType: string;
+  version: number;
+  updatedAt: string;
+  body: string;
+};
+
+export async function fetchConversationFile(
+  accountUid: string,
+  fileUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<ConversationFilePayload> {
+  const params = new URLSearchParams({ fileUid });
+  const response = await fetch(`/api/conversation-file?${params.toString()}`, {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new ConversationFileClientError(
+      "CONVERSATION_FILE_UNAVAILABLE",
+      `conversation file request failed: ${response.status}`,
+    );
+  }
+  return (await response.json()) as ConversationFilePayload;
+}
+
+export async function downloadConversationFile(
+  accountUid: string,
+  fileUid: string,
+  fileName: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  const params = new URLSearchParams({ fileUid, download: "1" });
+  const response = await fetch(`/api/conversation-file?${params.toString()}`, {
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new ConversationFileClientError(
+      "CONVERSATION_FILE_UNAVAILABLE",
+      `conversation file download failed: ${response.status}`,
+    );
+  }
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = fileName || "成品.txt";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
 export interface AssetFieldValue {
   controlUid: string;
   value: string | null;

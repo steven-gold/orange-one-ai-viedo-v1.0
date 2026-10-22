@@ -23,6 +23,15 @@ import {
   resolveComposerTokensFor,
 } from "@/lib/conversationCore";
 import {
+  attachFileToContract,
+  buildConversationFile,
+  conversationFilePage,
+} from "@/lib/conversationFile";
+import {
+  persistFindConversationFileByTask,
+  persistUpsertConversationFile,
+} from "../db/conversationFileStore";
+import {
   buildTaskContract,
   formatDeliveryFooter,
   latestOpenTask,
@@ -203,10 +212,6 @@ function applyGeneratedContract(
       loop: generated.loop ?? false,
     });
   }
-  if (nextContract && shouldAttachFooter(nextContract)) {
-    const footer = formatDeliveryFooter(nextContract);
-    if (footer && !reply.includes(footer)) reply = `${reply.trim()}\n\n${footer}`;
-  }
   return { reply, nextContract: nextContract ?? null };
 }
 
@@ -223,12 +228,33 @@ function attachFooter(text: string, contract: ConversationTaskContract | null): 
   return body;
 }
 
+async function persistGeneratedFile(
+  accountUid: string | undefined,
+  page: AiPageUid,
+  contract: ConversationTaskContract | null,
+  reply: string,
+): Promise<ConversationTaskContract | null> {
+  if (!accountUid || !contract?.needsFile || contract.status === "FAILED") return contract;
+  const pageUid = conversationFilePage(page);
+  if (!pageUid) return contract;
+  try {
+    const prior = await persistFindConversationFileByTask(accountUid, pageUid, contract.taskId);
+    const file = buildConversationFile(accountUid, pageUid, contract, reply, prior);
+    if (!file) return contract;
+    await persistUpsertConversationFile(file);
+    return attachFileToContract(contract, file);
+  } catch {
+    return contract;
+  }
+}
+
 async function fillConversationReply(
   table: string,
   bindings: ConversationBindings,
   page: AiPageUid,
   actionUid: string,
   nextValue?: string,
+  accountUid?: string,
 ): Promise<void> {
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     `SELECT control_uid, value_text FROM ${table}`,
@@ -258,7 +284,9 @@ async function fillConversationReply(
   } catch {
     failed = true;
   }
-  const { reply, nextContract } = applyGeneratedContract(contract, generated, failed);
+  const generatedContract = applyGeneratedContract(contract, generated, failed);
+  const nextContract = await persistGeneratedFile(accountUid, page, generatedContract.nextContract, generatedContract.reply);
+  const reply = attachFooter(generatedContract.reply, nextContract);
   const patch = appendAssistantMessageFor(
     bindings,
     current,
@@ -350,6 +378,7 @@ export async function applyWorkbenchAction(
   controlUid: string,
   actionUid: string,
   nextValue?: string,
+  accountUid?: string,
 ): Promise<AiapiOutcome | void> {
   if (page === "dashboard") {
     return;
@@ -402,6 +431,12 @@ export async function applyWorkbenchAction(
           replies = aliases.map((alias) => ({ alias, text: "", route: "" }));
           if (contract) nextContract = { ...contract, status: "FAILED" };
         }
+        nextContract = await persistGeneratedFile(
+          accountUid,
+          "core",
+          nextContract,
+          replies.map((row) => row.text).join("\n"),
+        );
         const patch = appendAssistantMessages(
           current,
           thread,
@@ -431,7 +466,9 @@ export async function applyWorkbenchAction(
       } catch {
         failed = true;
       }
-      const { reply, nextContract } = applyGeneratedContract(contract, generated, failed);
+      const generatedContract = applyGeneratedContract(contract, generated, failed);
+      const nextContract = await persistGeneratedFile(accountUid, "core", generatedContract.nextContract, generatedContract.reply);
+      const reply = attachFooter(generatedContract.reply, nextContract);
       const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), generated?.route ?? "");
       const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
       const taskPatch = nextContract
@@ -460,7 +497,7 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue);
+      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid);
     }
     if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
@@ -501,7 +538,7 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "VIDEO-01-ACT-SEND" || actionUid === "VIDEO-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue);
+      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue, accountUid);
     }
     if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
@@ -548,7 +585,7 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue);
+      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue, accountUid);
     }
     if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-API-INSTRUCTION")) || "";

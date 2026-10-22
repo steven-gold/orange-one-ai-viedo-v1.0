@@ -6,8 +6,11 @@ import {
   completedCount,
   detectGenerationLoop,
   formatContractForPrompt,
+  fileNameForContract,
   formatDeliveryFooter,
   inferTruncated,
+  parseConversationFileRef,
+  stripDeliveryFooter,
   isContinueRequest,
   latestOpenTask,
   mergeContinuation,
@@ -40,6 +43,8 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   assert(contract.forbidden.some((row) => row.includes("受眾")), "do not invent audience");
   assert(contract.forbidden.some((row) => row.includes("通用製作建議")), "do not answer with generic advice");
   assertEqual(contract.batched, true, "batched");
+  assertEqual(contract.needsFile, true, "large task needs file");
+  assertEqual(fileNameForContract(contract), "500集分集影片故事大綱.txt", "deliverable file name");
   assertEqual(contract.nextBatch, `第1–${LARGE_TASK_BATCH_ITEMS}集`, "first batch");
   assert(contract.pendingItems.includes("第21–500集") || contract.pendingItems.some((row) => row.includes("500")), "remaining range");
   const prompt = formatContractForPrompt(contract);
@@ -112,6 +117,20 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   const tasks = [buildTaskContract(SERIES, null, "對話 1")];
   const open = latestOpenTask(tasks, "對話 1");
   assert(open, "latest open");
+}
+
+{
+  const contract = buildTaskContract(SERIES);
+  const after = updateContractAfterGeneration(contract, "第1集……", { truncated: false, loop: false });
+  const withFile = { ...after, fileId: "FILE-ab12cd34", fileName: fileNameForContract(after) };
+  const footer = formatDeliveryFooter(withFile);
+  assert(footer.includes("成品：500集分集影片故事大綱.txt"), "footer names the file");
+  assert(footer.includes("檔案：FILE-ab12cd34"), "footer keeps file id");
+  const packed = `第1集正文\n\n${footer}`;
+  assertEqual(stripDeliveryFooter(packed), "第1集正文", "strip footer before file persist");
+  const parsed = parseConversationFileRef(packed);
+  assertEqual(parsed?.fileId, "FILE-ab12cd34", "parse file id");
+  assertEqual(parsed?.fileName, "500集分集影片故事大綱.txt", "parse file name");
 }
 
 console.log("conversationTask.test.ts PASS");

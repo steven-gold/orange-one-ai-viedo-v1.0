@@ -28,6 +28,7 @@ import {
   resolveComposerTokensFor,
   threadsForWorkItem,
 } from "@/lib/conversationCore";
+import { ConversationFileActions } from "./ConversationFileActions";
 import { displayVideoValue } from "./videoFormat";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
@@ -564,6 +565,9 @@ export function VideoVisual() {
                     {row.at ? ` ${row.at}` : ""}
                   </div>
                   <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                  {row.role === "assistant" ? (
+                    <ConversationFileActions text={row.text} accountUid={DEFAULT_ACCOUNT} sessionUid={DEFAULT_SESSION} tx={tx} />
+                  ) : null}
                 </article>
               ))
             )}

@@ -28,6 +28,7 @@ import {
   resolveComposerTokensFor,
   threadsForWorkItem,
 } from "@/lib/conversationCore";
+import { ConversationFileActions } from "./ConversationFileActions";
 import { displayEditValue } from "./editFormat";
 import { EDIT_CONTROL_ACTIONS, EDIT_VISIBLE_CONTROLS } from "./editControls";
 import { Icon, type IconName } from "@/components/ui/Icon";
@@ -589,6 +590,9 @@ export function EditVisual() {
                     {row.at ? ` ${row.at}` : ""}
                   </div>
                   <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
+                  {row.role === "assistant" ? (
+                    <ConversationFileActions text={row.text} accountUid={DEFAULT_ACCOUNT} sessionUid={DEFAULT_SESSION} tx={tx} />
+                  ) : null}
                 </article>
               ))
             )}
