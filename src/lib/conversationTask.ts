@@ -1,6 +1,8 @@
 export const LARGE_TASK_BATCH_ITEMS = 20;
 export const MAX_GENERATION_CONTINUATIONS = 3;
 export const MAX_LOOP_REPAIRS = 1;
+export const STREAM_LOOP_CHECK_MIN_CHARS = 80;
+export const STREAM_LOOP_CHECK_EVERY_CHARS = 32;
 
 export type ConversationTaskKind =
   | "question"
@@ -308,10 +310,14 @@ export function fileNameForContract(contract: ConversationTaskContract): string 
 }
 
 export function stripDeliveryFooter(text: string): string {
+  let body = text.trim();
+  const claim = "\n\n聲明：";
+  const claimIndex = body.lastIndexOf(claim);
+  if (claimIndex >= 0) body = body.slice(0, claimIndex).trim();
   const marker = "\n\n狀態：";
-  const index = text.lastIndexOf(marker);
-  if (index >= 0) return text.slice(0, index).trim();
-  return text.trim();
+  const index = body.lastIndexOf(marker);
+  if (index >= 0) return body.slice(0, index).trim();
+  return body;
 }
 
 export function parseConversationFileRef(text: string): { fileId: string; fileName: string } | null {
@@ -390,9 +396,73 @@ export function detectGenerationLoop(text: string): GenerationMonitor {
   return { loop: false, reason: "", validPrefix: body };
 }
 
+export function shouldCheckStreamLoop(length: number, lastChecked = 0): boolean {
+  if (length < STREAM_LOOP_CHECK_MIN_CHARS) return false;
+  return length - lastChecked >= STREAM_LOOP_CHECK_EVERY_CHARS;
+}
+
+export function splitSseFrames(buffer: string): { frames: string[]; rest: string } {
+  const parts = buffer.split(/\r?\n\r?\n/u);
+  const rest = parts.pop() ?? "";
+  const frames: string[] = [];
+  for (const part of parts) {
+    for (const line of part.split(/\r?\n/u)) {
+      const match = /^data:\s?(.*)$/u.exec(line);
+      if (match) frames.push(match[1]);
+    }
+  }
+  return { frames, rest };
+}
+
+export function parseOpenAiSseFrame(data: string): { delta: string; finishReason: string; done: boolean } {
+  const trimmed = clean(data);
+  if (trimmed === "[DONE]") return { delta: "", finishReason: "", done: true };
+  if (!trimmed) return { delta: "", finishReason: "", done: false };
+  try {
+    const payload = JSON.parse(trimmed) as {
+      choices?: Array<{
+        delta?: { content?: string };
+        message?: { content?: string };
+        finish_reason?: string;
+        finishReason?: string;
+      }>;
+    };
+    const choice = payload.choices?.[0];
+    const raw = choice?.delta?.content ?? choice?.message?.content;
+    return {
+      delta: typeof raw === "string" ? raw : "",
+      finishReason: clean(choice?.finish_reason ?? choice?.finishReason),
+      done: false,
+    };
+  } catch {
+    return { delta: "", finishReason: "", done: false };
+  }
+}
+
+export type UnverifiedClaimKind = "deploy" | "side_effect" | "github" | "file";
+
+export function unverifiedExecutionClaims(
+  text: string,
+  verified: { fileWritten?: boolean } = {},
+): UnverifiedClaimKind[] {
+  const body = clean(text);
+  const found: UnverifiedClaimKind[] = [];
+  if (/已(經)?(成功)?部署(到|至|上線)?/u.test(body)) found.push("deploy");
+  if (/已(經)?(成功)?(刪除|付款|轉帳)/u.test(body)) found.push("side_effect");
+  if (/已(經)?(成功)?(推送|合併).{0,16}(GitHub|分支|main)/u.test(body)) found.push("github");
+  if (!verified.fileWritten && /已(經)?(成功)?(建立|寫入|產生)(檔案|文件)/u.test(body)) found.push("file");
+  return found;
+}
+
+export function annotateUnverifiedClaims(text: string, claims: UnverifiedClaimKind[]): string {
+  const body = text.trim();
+  if (!body || !claims.length) return body;
+  return `${body}\n\n聲明：以上執行結果尚未驗證，僅視為建議或計畫。`;
+}
+
 export function inferTruncated(content: string, finishReason: string): boolean {
   const reason = clean(finishReason).toLowerCase();
-  if (reason === "length" || reason === "max_tokens") return true;
+  if (reason === "length" || reason === "max_tokens" || reason === "loop_stopped") return true;
   const body = clean(content);
   if (!body) return false;
   if (/[：:、,，]\s*$/u.test(body)) return true;

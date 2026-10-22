@@ -75,3 +75,18 @@ export function attachFileToContract(
   if (!file) return contract;
   return { ...contract, fileId: file.fileUid, fileName: file.fileName };
 }
+
+export function conversationFileVerified(
+  expected: ConversationFileRecord,
+  stored: ConversationFileRecord | null,
+): boolean {
+  if (!stored) return false;
+  return (
+    stored.fileUid === expected.fileUid &&
+    stored.accountUid === expected.accountUid &&
+    stored.pageUid === expected.pageUid &&
+    stored.taskId === expected.taskId &&
+    stored.fileName === expected.fileName &&
+    stored.body === expected.body
+  );
+}

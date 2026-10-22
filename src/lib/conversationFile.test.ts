@@ -1,5 +1,5 @@
 import { buildTaskContract, updateContractAfterGeneration } from "./conversationTask";
-import { attachFileToContract, buildConversationFile, mergeFileBody } from "./conversationFile";
+import { attachFileToContract, buildConversationFile, conversationFileVerified, mergeFileBody } from "./conversationFile";
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -36,6 +36,18 @@ const SERIES = "我想用天堂網路遊戲參考，以80年代的網路遊戲�
 {
   const short = buildTaskContract("簡單問題？");
   assertEqual(buildConversationFile("ACC-DEMO", "core", short, "答案。"), null, "short answers stay in chat");
+}
+
+{
+  const contract = updateContractAfterGeneration(buildTaskContract(SERIES, null, "對話 1"), "第1集……", {
+    truncated: false,
+    loop: false,
+  });
+  const file = buildConversationFile("ACC-DEMO", "core", contract, "第1集正文");
+  assert(file, "file exists for verify");
+  assertEqual(conversationFileVerified(file!, file!), true, "read-back matches");
+  assertEqual(conversationFileVerified(file!, { ...file!, body: "缺漏" }), false, "body mismatch fails");
+  assertEqual(conversationFileVerified(file!, null), false, "missing file fails");
 }
 
 console.log("conversationFile.test.ts PASS");

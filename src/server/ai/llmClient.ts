@@ -9,6 +9,9 @@ import {
   inferTruncated,
   loopRepairUserMessage,
   mergeContinuation,
+  parseOpenAiSseFrame,
+  shouldCheckStreamLoop,
+  splitSseFrames,
   temperatureFor,
   type ConversationTaskContract,
   type ConversationTaskKind,
@@ -219,33 +222,118 @@ async function admitRoute(capability: string): Promise<{ configs: ProviderConfig
   return route;
 }
 
-type ProviderTurn = { content: string; finishReason: string };
+type ProviderTurn = { content: string; finishReason: string; loopStopped?: boolean };
+
+async function readJsonTurn(response: Response): Promise<ProviderTurn> {
+  const payload = (await response.json()) as {
+    choices?: Array<{ message?: { content?: string }; finish_reason?: string; finishReason?: string }>;
+  };
+  const choice = payload.choices?.[0];
+  const content = clean(choice?.message?.content);
+  if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
+  return { content, finishReason: clean(choice?.finish_reason ?? choice?.finishReason) };
+}
+
+async function readSseTurn(response: Response): Promise<ProviderTurn> {
+  const body = response.body;
+  if (!body) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no stream body");
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let content = "";
+  let finishReason = "";
+  let lastChecked = 0;
+  const stopLoop = (prefix: string): ProviderTurn => ({
+    content: prefix.trim() || content,
+    finishReason: finishReason || "loop_stopped",
+    loopStopped: true,
+  });
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const split = splitSseFrames(buffer);
+      buffer = split.rest;
+      for (const frame of split.frames) {
+        const parsed = parseOpenAiSseFrame(frame);
+        if (parsed.done) {
+          if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
+          const looped = detectGenerationLoop(content);
+          if (looped.loop) return stopLoop(looped.validPrefix);
+          return { content, finishReason };
+        }
+        if (parsed.delta) content += parsed.delta;
+        if (parsed.finishReason) finishReason = parsed.finishReason;
+        if (shouldCheckStreamLoop(content.length, lastChecked)) {
+          lastChecked = content.length;
+          const looped = detectGenerationLoop(content);
+          if (looped.loop) return stopLoop(looped.validPrefix);
+        }
+      }
+    }
+  } catch (error) {
+    if (content) {
+      const looped = detectGenerationLoop(content);
+      if (looped.loop) return stopLoop(looped.validPrefix);
+      return { content, finishReason: finishReason || "stop" };
+    }
+    throw error;
+  } finally {
+    try {
+      await reader.cancel();
+    } catch {
+      // Stream already closed after abort or natural end.
+    }
+  }
+  const leftover = splitSseFrames(buffer);
+  for (const frame of leftover.frames) {
+    const parsed = parseOpenAiSseFrame(frame);
+    if (parsed.delta) content += parsed.delta;
+    if (parsed.finishReason) finishReason = parsed.finishReason;
+  }
+  if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
+  const looped = detectGenerationLoop(content);
+  if (looped.loop) return stopLoop(looped.validPrefix);
+  return { content, finishReason };
+}
+
+async function postProvider(
+  config: ProviderConfig,
+  messages: ChatMessage[],
+  temperature: number,
+  stream: boolean,
+  signal: AbortSignal,
+): Promise<Response> {
+  return fetch(config.url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${config.credential}`,
+    },
+    body: JSON.stringify({ model: config.model, messages, temperature, stream }),
+    signal,
+    cache: "no-store",
+  });
+}
 
 async function callProvider(config: ProviderConfig, messages: ChatMessage[], temperature = 0.2): Promise<ProviderTurn> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), config.timeoutMs);
   try {
-    const response = await fetch(config.url, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${config.credential}`,
-      },
-      body: JSON.stringify({ model: config.model, messages, temperature }),
-      signal: controller.signal,
-      cache: "no-store",
-    });
+    let response = await postProvider(config, messages, temperature, true, controller.signal);
+    if (!response.ok && (response.status === 400 || response.status === 422)) {
+      response = await postProvider(config, messages, temperature, false, controller.signal);
+    }
     if (!response.ok) {
       const detail = (await response.text().catch(() => "")).slice(0, 200);
       throw new AiProviderError("AI_PROVIDER_HTTP_ERROR", `${config.provider} responded ${response.status}: ${detail}`);
     }
-    const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string }; finish_reason?: string; finishReason?: string }>;
-    };
-    const choice = payload.choices?.[0];
-    const content = clean(choice?.message?.content);
-    if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
-    return { content, finishReason: clean(choice?.finish_reason ?? choice?.finishReason) };
+    const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
+    if (contentType.includes("text/event-stream") && response.body) {
+      return await readSseTurn(response);
+    }
+    return await readJsonTurn(response);
   } catch (error) {
     if (error instanceof AiProviderError) throw error;
     if (error instanceof Error && error.name === "AbortError") {
@@ -267,7 +355,7 @@ async function completeTurn(
   let text = first.content;
   let finishReason = first.finishReason;
   let truncated = inferTruncated(text, finishReason);
-  const loopCheck = detectGenerationLoop(text);
+  const loopCheck = first.loopStopped ? { loop: true, validPrefix: text, reason: "stream_loop" } : detectGenerationLoop(text);
   if (loopCheck.loop) {
     text = loopCheck.validPrefix.trim();
     truncated = true;
@@ -278,7 +366,7 @@ async function completeTurn(
         temperature,
       );
       const merged = mergeContinuation(text, repaired.content);
-      const again = detectGenerationLoop(merged);
+      const again = repaired.loopStopped ? { loop: true, validPrefix: merged } : detectGenerationLoop(merged);
       text = again.loop ? again.validPrefix.trim() || text : merged;
       finishReason = repaired.finishReason;
       truncated = again.loop || inferTruncated(text, finishReason);
@@ -296,7 +384,7 @@ async function completeTurn(
     );
     text = mergeContinuation(text, next.content);
     finishReason = next.finishReason;
-    const looped = detectGenerationLoop(text);
+    const looped = next.loopStopped ? { loop: true, validPrefix: text } : detectGenerationLoop(text);
     if (looped.loop) {
       text = looped.validPrefix.trim() || text;
       return { text, truncated: true, loop: true, finishReason };

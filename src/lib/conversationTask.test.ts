@@ -1,5 +1,8 @@
 import {
   LARGE_TASK_BATCH_ITEMS,
+  STREAM_LOOP_CHECK_EVERY_CHARS,
+  STREAM_LOOP_CHECK_MIN_CHARS,
+  annotateUnverifiedClaims,
   buildTaskContract,
   claimsFullCompletion,
   classifyTaskKind,
@@ -10,12 +13,16 @@ import {
   formatDeliveryFooter,
   inferTruncated,
   parseConversationFileRef,
+  parseOpenAiSseFrame,
+  shouldCheckStreamLoop,
+  splitSseFrames,
   stripDeliveryFooter,
   isContinueRequest,
   latestOpenTask,
   mergeContinuation,
   planQuantityBatches,
   splitDeliverableChunks,
+  unverifiedExecutionClaims,
   updateContractAfterGeneration,
 } from "./conversationTask";
 
@@ -120,6 +127,39 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
 }
 
 {
+  assertEqual(classifyTaskKind(""), "insufficient", "empty is insufficient");
+  assertEqual(classifyTaskKind("什麼是 Canonical Script？"), "knowledge", "knowledge question");
+  assertEqual(classifyTaskKind("比較這兩版腳本的風險"), "analysis", "analysis intent");
+  assertEqual(classifyTaskKind("修 bug 這個 function"), "code", "code intent");
+  assertEqual(classifyTaskKind("寫一份兩分鐘搞笑短片大綱"), "creation", "creation intent");
+  assertEqual(classifyTaskKind("執行刪除這筆付款紀錄"), "system", "system side-effect intent");
+}
+
+{
+  const split = splitSseFrames('data: {"choices":[{"delta":{"content":"第"}}]}\n\ndata: {"choices":[{"delta":{"content":"一集"}}]}\n\npartial');
+  assertEqual(split.frames.length, 2, "two sse frames");
+  assertEqual(split.rest, "partial", "keep incomplete frame");
+  const first = parseOpenAiSseFrame(split.frames[0]);
+  assertEqual(first.delta, "第", "keep untrimmed delta");
+  const done = parseOpenAiSseFrame("[DONE]");
+  assertEqual(done.done, true, "done frame");
+  assertEqual(shouldCheckStreamLoop(STREAM_LOOP_CHECK_MIN_CHARS - 1, 0), false, "below min");
+  assertEqual(shouldCheckStreamLoop(STREAM_LOOP_CHECK_MIN_CHARS, 0), true, "at min");
+  assertEqual(shouldCheckStreamLoop(STREAM_LOOP_CHECK_MIN_CHARS + STREAM_LOOP_CHECK_EVERY_CHARS - 1, STREAM_LOOP_CHECK_MIN_CHARS), false, "inside interval");
+  assertEqual(inferTruncated("有效前綴", "loop_stopped"), true, "stream loop is truncated");
+}
+
+{
+  assertEqual(unverifiedExecutionClaims("已成功部署到正式站").includes("deploy"), true, "deploy claim");
+  assertEqual(unverifiedExecutionClaims("已刪除該檔案").includes("side_effect"), true, "delete claim");
+  assertEqual(unverifiedExecutionClaims("已成功建立檔案").includes("file"), true, "unverified file claim");
+  assertEqual(unverifiedExecutionClaims("已成功建立檔案", { fileWritten: true }).includes("file"), false, "verified file claim");
+  const annotated = annotateUnverifiedClaims("已成功部署到正式站", ["deploy"]);
+  assert(annotated.includes("尚未驗證"), "annotate unverified");
+  assertEqual(annotateUnverifiedClaims("普通回答。", []), "普通回答。", "no annotation when clean");
+}
+
+{
   const contract = buildTaskContract(SERIES);
   const after = updateContractAfterGeneration(contract, "第1集……", { truncated: false, loop: false });
   const withFile = { ...after, fileId: "FILE-ab12cd34", fileName: fileNameForContract(after) };
@@ -128,6 +168,8 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   assert(footer.includes("檔案：FILE-ab12cd34"), "footer keeps file id");
   const packed = `第1集正文\n\n${footer}`;
   assertEqual(stripDeliveryFooter(packed), "第1集正文", "strip footer before file persist");
+  const withClaim = annotateUnverifiedClaims(`第1集正文\n\n${footer}`, ["deploy"]);
+  assertEqual(stripDeliveryFooter(withClaim), "第1集正文", "strip unverified claim before file persist");
   const parsed = parseConversationFileRef(packed);
   assertEqual(parsed?.fileId, "FILE-ab12cd34", "parse file id");
   assertEqual(parsed?.fileName, "500集分集影片故事大綱.txt", "parse file name");

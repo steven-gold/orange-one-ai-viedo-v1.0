@@ -26,17 +26,21 @@ import {
   attachFileToContract,
   buildConversationFile,
   conversationFilePage,
+  conversationFileVerified,
 } from "@/lib/conversationFile";
 import {
+  persistFindConversationFile,
   persistFindConversationFileByTask,
   persistUpsertConversationFile,
 } from "../db/conversationFileStore";
 import {
+  annotateUnverifiedClaims,
   buildTaskContract,
   formatDeliveryFooter,
   latestOpenTask,
   parseNotebookTasks,
   shouldAttachFooter,
+  unverifiedExecutionClaims,
   updateContractAfterGeneration,
   type ConversationTaskContract,
 } from "@/lib/conversationTask";
@@ -221,11 +225,14 @@ function upsertTask(tasks: ConversationTaskContract[], next: ConversationTaskCon
 }
 
 function attachFooter(text: string, contract: ConversationTaskContract | null): string {
-  const body = text.trim() || AI_UNAVAILABLE_ZH;
-  if (!contract || !shouldAttachFooter(contract)) return body;
+  const annotated = annotateUnverifiedClaims(
+    text.trim() || AI_UNAVAILABLE_ZH,
+    unverifiedExecutionClaims(text, { fileWritten: Boolean(contract?.fileId) }),
+  );
+  if (!contract || !shouldAttachFooter(contract)) return annotated;
   const footer = formatDeliveryFooter(contract);
-  if (footer && !body.includes(footer)) return `${body}\n\n${footer}`;
-  return body;
+  if (footer && !annotated.includes(footer)) return `${annotated}\n\n${footer}`;
+  return annotated;
 }
 
 async function persistGeneratedFile(
@@ -242,7 +249,9 @@ async function persistGeneratedFile(
     const file = buildConversationFile(accountUid, pageUid, contract, reply, prior);
     if (!file) return contract;
     await persistUpsertConversationFile(file);
-    return attachFileToContract(contract, file);
+    const stored = await persistFindConversationFile(file.fileUid, accountUid);
+    if (!conversationFileVerified(file, stored)) return contract;
+    return attachFileToContract(contract, stored ?? file);
   } catch {
     return contract;
   }
