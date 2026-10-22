@@ -274,6 +274,7 @@
 }
 
 .convHeader {
+  flex: 0 0 auto;
   min-height: 56px;
 }
 
@@ -285,8 +286,17 @@
   overflow: hidden;
 }
 
+.eval {
+  flex: 0 1 auto;
+  max-height: 220px;
+  overflow: auto;
+  min-height: 0;
+}
+
 .composerBar[data-component-uid="CORE-01-CMP-COMPOSER"] {
+  flex: 0 0 auto;
   min-height: 104px;
+  margin-top: auto;
 }
 
 .convHeader,
@@ -310,9 +320,29 @@
   min-width: 0;
 }
 
-.headerRow { justify-content: space-between; }
+.headerRow {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
 .headerRow strong { font-size: 16px; line-height: 21px; font-weight: 700; }
-.headerControls { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.headerControls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 280px;
+  justify-content: flex-end;
+}
+.assignedAi {
+  flex: 1 1 180px;
+  max-width: 280px;
+}
+.assignedAi .value {
+  white-space: nowrap;
+}
 
 .messagesHead {
   display: flex;
@@ -344,8 +374,8 @@
   flex-direction: column;
   gap: 10px;
   flex: 1 1 auto;
-  min-height: 180px;
-  max-height: min(52vh, 560px);
+  min-height: 72px;
+  max-height: min(36vh, 420px);
   margin-top: 10px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -545,11 +575,11 @@ button.evalBox {
   min-height: 40px;
 }
 
-.runtime { flex-direction: row; flex-wrap: wrap; min-height: 40px; }
+.runtime { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; min-height: 40px; }
 .runtimeBtn { flex: 1; min-width: 0; }
 
-.composer { flex-direction: row; min-height: 40px; flex-wrap: wrap; align-items: flex-end; }
-.composerInput { flex: 1; min-width: 160px; min-height: 72px; cursor: text; }
+.composer { flex-direction: row; min-height: 40px; flex-wrap: nowrap; align-items: flex-end; }
+.composerInput { flex: 1 1 auto; min-width: 160px; min-height: 72px; cursor: text; }
 .composerInput input { font-size: 13px; line-height: 18px; }
 .composerBar .composerInput textarea {
   display: block;

@@ -7,6 +7,8 @@ import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
 import {
   activeThreadUid,
+  assignedAiRouteDisplay,
+  assignedAiRouteParts,
   assignedAiRouteReady,
   assignedMultiRouteReady,
   composerTokenTone,
@@ -347,6 +349,9 @@ export function CoreVisual() {
   const composerTokens = resolveComposerTokens(draftMessage, currentFields);
   const parserBlocked = composerHasBlockingToken(composerTokens);
   const tooLong = messageExceedsStoredLimit(draftMessage);
+  const assignedAiValue = valueOf("CORE-01-FLD-ASSIGNED-AI");
+  const assignedAiCount = assignedAiRouteParts(assignedAiValue).length;
+  const assignedAiShown = assignedAiRouteDisplay(assignedAiValue);
   const routeReady = assignedAiRouteReady(currentFields);
   const multiReady = assignedMultiRouteReady(currentFields);
   const assistantTarget = composerTokens.some((row) => row.kind === "TARGET_ASSISTANT");
@@ -454,7 +459,11 @@ export function CoreVisual() {
               <div className={styles.headerControls}>
                 <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />
                 <IconButton uid="CORE-01-BTN-MULTI-AI" label={multiReady ? tx("core.multi_ai") : tx("core.multi_route_blocked")} icon="multi-ai" onAct={act} disabled={disabled || !multiReady} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
-                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} readonly hint={tx("core.assigned_ai_hint")} />
+                <div className={`${styles.field} ${styles.fieldReadonly} ${styles.assignedAi}`} data-control-uid="CORE-01-FLD-ASSIGNED-AI" title={assignedAiRouteParts(assignedAiValue).join("、")}>
+                  <span className={styles.label}>{tx("core.assigned_ai")}</span>
+                  <span className={styles.value}>{displayCoreValue(assignedAiShown || null, loading)}</span>
+                  <span className={styles.meta}>{assignedAiCount ? `${assignedAiCount} ${tx("core.assigned_ai_count")}` : tx("core.assigned_ai_hint")}</span>
+                </div>
                 <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
               </div>
             </div>

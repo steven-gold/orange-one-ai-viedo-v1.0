@@ -101,6 +101,13 @@ export function assignedAiRouteParts(value: string | null | undefined): string[]
   return parts;
 }
 
+export function assignedAiRouteDisplay(value: string | null | undefined, limit = 2): string {
+  const parts = assignedAiRouteParts(value);
+  if (!parts.length) return "";
+  if (parts.length <= limit) return parts.join("、");
+  return `${parts.slice(0, limit).join("、")} 等 ${parts.length} 家`;
+}
+
 export function conversationIsMultiAi(bindings: ConversationBindings, current: CurrentFn): boolean {
   return Boolean(bindings.multiAiUid && current(bindings.multiAiUid) === "active");
 }
@@ -852,6 +859,7 @@ export function parseThreadRecords(raw: string | null): ConversationThreadRecord
 
 function threadMatchesWorkItem(bindings: ConversationBindings, rowWorkItem: string, workItem: string): boolean {
   if (rowWorkItem === workItem) return true;
+  if (!rowWorkItem && workItem === bindings.defaultWorkItem) return true;
   if (bindings.strictWorkItem) return false;
   return !rowWorkItem;
 }

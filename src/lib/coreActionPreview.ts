@@ -13,7 +13,9 @@ import {
   activeThreadUidFor,
   appendAssistantMessageFor,
   appendAssistantMessagesFor,
+  assignedAiRouteDisplay as kernelAssignedAiRouteDisplay,
   assignedAiRouteLabel as kernelAssignedAiRouteLabel,
+  assignedAiRouteParts as kernelAssignedAiRouteParts,
   buildResumePointerFor,
   composerHasBlockingToken as kernelComposerHasBlockingToken,
   composerTokenTone as kernelComposerTokenTone,
@@ -58,7 +60,9 @@ export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
 export const CONVERSATION_STORED_MESSAGE_TEXT_CHARS = KERNEL_STORED_CHARS;
 
+export const assignedAiRouteDisplay = kernelAssignedAiRouteDisplay;
 export const assignedAiRouteLabel = kernelAssignedAiRouteLabel;
+export const assignedAiRouteParts = kernelAssignedAiRouteParts;
 export const isPlaceholderName = kernelIsPlaceholderName;
 export const exactName = kernelExactName;
 export const namedValue = kernelNamedValue;
