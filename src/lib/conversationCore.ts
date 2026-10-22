@@ -1,3 +1,11 @@
+import {
+  formatContractForPrompt,
+  latestOpenTask,
+  parseNotebookTasks,
+  splitDeliverableChunks,
+  type ConversationTaskContract,
+} from "./conversationTask";
+
 const PLACEHOLDER_NAMES = new Set([
   "新專題",
   "未命名專題",
@@ -557,14 +565,21 @@ function buildNotebookBody(
   return `${headerText}\n${refs.join("\n")}\n${footerText}`.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
 }
 
-function serializeNotebookRecords(records: ConversationNotebookRecord[]): string {
-  const payload = JSON.stringify({ kind: "NOTEBOOK", records });
+function serializeNotebookRecords(
+  records: ConversationNotebookRecord[],
+  extra?: { tasks?: ConversationTaskContract[] },
+): string {
+  const tasks = extra?.tasks?.length ? extra.tasks : undefined;
+  const payload = JSON.stringify({ kind: "NOTEBOOK", records, ...(tasks ? { tasks } : {}) });
   if (payload.length <= CONVERSATION_STORED_MESSAGE_TEXT_CHARS) return payload;
   const shrunk = records.map((row) => ({
     ...row,
     body: row.body.slice(0, Math.max(200, Math.floor(CONVERSATION_STORED_MESSAGE_TEXT_CHARS / Math.max(records.length, 1) - 120))),
   }));
-  return JSON.stringify({ kind: "NOTEBOOK", records: shrunk }).slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
+  return JSON.stringify({ kind: "NOTEBOOK", records: shrunk, ...(tasks ? { tasks } : {}) }).slice(
+    0,
+    CONVERSATION_STORED_MESSAGE_TEXT_CHARS,
+  );
 }
 
 function confirmedRefsFrom(bindings: ConversationBindings, current: CurrentFn): string[] {
@@ -607,7 +622,17 @@ export function refreshAssistantNotebookFor(
     body: buildNotebookBody(covered, version, hash, intent, { confirmedRefs, aliases }),
   };
   const others = existing.filter((row) => row.thread !== thread).map((row) => ({ ...row, status: "CURRENT" as const }));
-  return { [bindings.notebookUid]: serializeNotebookRecords([...others, next]) };
+  const tasks = parseNotebookTasks(current(bindings.notebookUid));
+  return { [bindings.notebookUid]: serializeNotebookRecords([...others, next], { tasks }) };
+}
+
+export function persistConversationTasksFor(
+  bindings: ConversationBindings,
+  current: CurrentFn,
+  tasks: ConversationTaskContract[],
+): Record<string, string> {
+  const records = parseNotebookRecords(current(bindings.notebookUid));
+  return { [bindings.notebookUid]: serializeNotebookRecords(records, { tasks }) };
 }
 
 export function formatConversationContext(
@@ -620,7 +645,14 @@ export function formatConversationContext(
   if (thread) lines.push(`對話：${thread}`);
   const notebook = notebookTextForThread(current(bindings.notebookUid), thread);
   if (notebook) lines.push(`筆記本：\n${notebook}`);
+  const openTask = latestOpenTask(parseNotebookTasks(current(bindings.notebookUid)), thread);
+  const contract = openTask ? formatContractForPrompt(openTask) : "";
+  if (contract) lines.push(`任務契約：\n${contract}`);
   return lines.filter(Boolean).join("\n");
+}
+
+function assistantChunks(reply: string): string[] {
+  return splitDeliverableChunks(reply.trim(), CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
 }
 
 export function appendAssistantMessageFor(
@@ -632,27 +664,14 @@ export function appendAssistantMessageFor(
   at?: string,
   route?: string,
 ): Record<string, string> {
-  const text = reply.trim();
-  if (!thread || !text) return {};
-  const records = parseMessageRecords(current(bindings.messageUid));
-  const nextMessages = ensureMessageIdentity([
-    ...records,
-    {
-      thread,
-      role: "assistant",
-      text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
-      seq: 0,
-      ref: "",
-      ...(alias ? { alias } : {}),
-      ...(at ? { at } : {}),
-      ...(route?.trim() ? { route: route.trim() } : {}),
-    },
-  ]);
-  const patched = (uid: string) => (uid === bindings.messageUid ? JSON.stringify(nextMessages) : current(uid));
-  return {
-    [bindings.messageUid]: JSON.stringify(nextMessages),
-    ...persistResumeOnThreadsFor(bindings, patched, thread, "RESPONSE"),
-  };
+  const chunks = assistantChunks(reply);
+  if (!thread || !chunks.length) return {};
+  return appendAssistantMessagesFor(
+    bindings,
+    current,
+    thread,
+    chunks.map((text) => ({ text, alias, at, route })),
+  );
 }
 
 export function appendAssistantMessagesFor(
@@ -665,21 +684,23 @@ export function appendAssistantMessagesFor(
   let records = parseMessageRecords(current(bindings.messageUid));
   let lastPatch: Record<string, string> = {};
   for (const reply of replies) {
-    const text = reply.text.trim();
-    if (!text) continue;
-    records = ensureMessageIdentity([
-      ...records,
-      {
-        thread,
-        role: "assistant",
-        text: text.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS),
-        seq: 0,
-        ref: "",
-        ...(reply.alias ? { alias: reply.alias } : {}),
-        ...(reply.at ? { at: reply.at } : {}),
-        ...(reply.route?.trim() ? { route: reply.route.trim() } : {}),
-      },
-    ]);
+    const chunks = assistantChunks(reply.text);
+    if (!chunks.length) continue;
+    for (const text of chunks) {
+      records = ensureMessageIdentity([
+        ...records,
+        {
+          thread,
+          role: "assistant",
+          text,
+          seq: 0,
+          ref: "",
+          ...(reply.alias ? { alias: reply.alias } : {}),
+          ...(reply.at ? { at: reply.at } : {}),
+          ...(reply.route?.trim() ? { route: reply.route.trim() } : {}),
+        },
+      ]);
+    }
     const patched = (uid: string) => (uid === bindings.messageUid ? JSON.stringify(records) : current(uid));
     lastPatch = {
       [bindings.messageUid]: JSON.stringify(records),

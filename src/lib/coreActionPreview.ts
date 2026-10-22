@@ -41,6 +41,7 @@ import {
   parseNotebookRecords as kernelParseNotebookRecords,
   parseThreadList as kernelParseThreadList,
   parseThreadRecords as kernelParseThreadRecords,
+  persistConversationTasksFor as kernelPersistConversationTasksFor,
   persistResumeOnThreadsFor,
   previewConversationAction,
   previewMessageActionFor,
@@ -304,6 +305,13 @@ export function appendAssistantMessages(
   replies: Array<{ text: string; alias?: string; at?: string; route?: string }>,
 ): Record<string, string> {
   return appendAssistantMessagesFor(CORE_CONVERSATION, current, thread, replies);
+}
+
+export function persistConversationTasks(
+  current: (uid: string) => string | null,
+  tasks: import("./conversationTask").ConversationTaskContract[],
+): Record<string, string> {
+  return kernelPersistConversationTasksFor(CORE_CONVERSATION, current, tasks);
 }
 
 export function contextFingerprint(current: (uid: string) => string | null): string {

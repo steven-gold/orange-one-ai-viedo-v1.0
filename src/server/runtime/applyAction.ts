@@ -18,9 +18,19 @@ import {
   formatConversationContext,
   messagesForThread as conversationMessagesForThread,
   parseMessageActionPayload as parseConversationMessageActionPayload,
+  persistConversationTasksFor,
   recentHistoryPayload as conversationRecentHistory,
   resolveComposerTokensFor,
 } from "@/lib/conversationCore";
+import {
+  buildTaskContract,
+  formatDeliveryFooter,
+  latestOpenTask,
+  parseNotebookTasks,
+  shouldAttachFooter,
+  updateContractAfterGeneration,
+  type ConversationTaskContract,
+} from "@/lib/conversationTask";
 import {
   activeThreadUid,
   appendAssistantMessage,
@@ -29,6 +39,7 @@ import {
   isMultiAiMode,
   messagesForThread,
   parseMessageActionPayload,
+  persistConversationTasks,
   previewCoreAction,
   recentHistoryPayload,
   resolveComposerTokens,
@@ -167,6 +178,51 @@ function promptFromValue(raw?: string): string {
   return text;
 }
 
+function resolveTaskContract(
+  prompt: string,
+  notebookRaw: string | null,
+  thread: string,
+): ConversationTaskContract | null {
+  const prior = latestOpenTask(parseNotebookTasks(notebookRaw), thread);
+  return prompt ? buildTaskContract(prompt, prior, thread) : prior;
+}
+
+function applyGeneratedContract(
+  contract: ConversationTaskContract | null,
+  generated: { text: string; truncated?: boolean; loop?: boolean } | null,
+  failed: boolean,
+): { reply: string; nextContract: ConversationTaskContract | null } {
+  let reply = generated?.text.trim() ? generated.text : AI_UNAVAILABLE_ZH;
+  let nextContract = contract;
+  if (failed) {
+    reply = AI_UNAVAILABLE_ZH;
+    if (contract) nextContract = { ...contract, status: "FAILED" };
+  } else if (contract && generated?.text.trim()) {
+    nextContract = updateContractAfterGeneration(contract, generated.text, {
+      truncated: generated.truncated ?? false,
+      loop: generated.loop ?? false,
+    });
+  }
+  if (nextContract && shouldAttachFooter(nextContract)) {
+    const footer = formatDeliveryFooter(nextContract);
+    if (footer && !reply.includes(footer)) reply = `${reply.trim()}\n\n${footer}`;
+  }
+  return { reply, nextContract: nextContract ?? null };
+}
+
+function upsertTask(tasks: ConversationTaskContract[], next: ConversationTaskContract): ConversationTaskContract[] {
+  const rest = tasks.filter((row) => row.taskId !== next.taskId);
+  return [...rest, next];
+}
+
+function attachFooter(text: string, contract: ConversationTaskContract | null): string {
+  const body = text.trim() || AI_UNAVAILABLE_ZH;
+  if (!contract || !shouldAttachFooter(contract)) return body;
+  const footer = formatDeliveryFooter(contract);
+  if (footer && !body.includes(footer)) return `${body}\n\n${footer}`;
+  return body;
+}
+
 async function fillConversationReply(
   table: string,
   bindings: ConversationBindings,
@@ -189,19 +245,34 @@ async function fillConversationReply(
   if (!thread) return;
   const history = conversationRecentHistory(conversationMessagesForThread(current(bindings.messageUid), thread).slice(0, -1));
   const context = formatConversationContext(bindings, current);
-  let reply = AI_UNAVAILABLE_ZH;
-  let route = "";
+  const contract = resolveTaskContract(prompt, current(bindings.notebookUid), thread);
+  let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
+  let failed = false;
   try {
     if (prompt) {
-      const generated = await generatePageReply(page, prompt, context, history);
-      reply = generated.text;
-      route = generated.route;
+      generated = await generatePageReply(page, prompt, context, history, {
+        contract: contract ?? undefined,
+        kind: contract?.kind,
+      });
     }
   } catch {
-    reply = AI_UNAVAILABLE_ZH;
+    failed = true;
   }
-  const patch = appendAssistantMessageFor(bindings, current, thread, reply, undefined, new Date().toISOString(), route);
-  for (const [uid, value] of Object.entries(patch)) await writeField(table, uid, value);
+  const { reply, nextContract } = applyGeneratedContract(contract, generated, failed);
+  const patch = appendAssistantMessageFor(
+    bindings,
+    current,
+    thread,
+    reply,
+    undefined,
+    new Date().toISOString(),
+    generated?.route ?? "",
+  );
+  const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
+  const taskPatch = nextContract
+    ? persistConversationTasksFor(bindings, patchedCurrent, upsertTask(parseNotebookTasks(current(bindings.notebookUid)), nextContract))
+    : {};
+  for (const [uid, value] of Object.entries({ ...patch, ...taskPatch })) await writeField(table, uid, value);
 }
 
 async function fillCorrectionScriptBody(
@@ -309,6 +380,8 @@ export async function applyWorkbenchAction(
       const thread = activeThreadUid(current);
       const history = recentHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread).slice(0, -1));
       const context = formatCoreChatContext(current);
+      const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
+      const contract = resolveTaskContract(prompt, current(notebookUid), thread);
       if (isMultiAiMode(current)) {
         const aliases = targetedParticipantAliases(tokens, current);
         let replies: Array<{ alias: string; text: string; route: string }> = aliases.map((alias) => ({
@@ -316,37 +389,55 @@ export async function applyWorkbenchAction(
           text: "",
           route: "",
         }));
+        let nextContract = contract;
         try {
           if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases);
+          if (contract) {
+            nextContract = updateContractAfterGeneration(contract, replies.map((row) => row.text).join("\n"), {
+              truncated: false,
+              loop: false,
+            });
+          }
         } catch {
           replies = aliases.map((alias) => ({ alias, text: "", route: "" }));
+          if (contract) nextContract = { ...contract, status: "FAILED" };
         }
         const patch = appendAssistantMessages(
           current,
           thread,
           replies.map((row) => ({
-            text: row.text.trim() || AI_UNAVAILABLE_ZH,
+            text: attachFooter(row.text, nextContract),
             alias: row.alias,
             at: new Date().toISOString(),
             route: row.route,
           })),
         );
-        for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
+        const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
+        const taskPatch = nextContract
+          ? persistConversationTasks(patchedCurrent, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
+          : {};
+        for (const [uid, value] of Object.entries({ ...patch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
         return;
       }
-      let reply = AI_UNAVAILABLE_ZH;
-      let route = "";
+      let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
+      let failed = false;
       try {
         if (prompt) {
-          const generated = await generatePageReply("core", prompt, context, history);
-          reply = generated.text;
-          route = generated.route;
+          generated = await generatePageReply("core", prompt, context, history, {
+            contract: contract ?? undefined,
+            kind: contract?.kind,
+          });
         }
       } catch {
-        reply = AI_UNAVAILABLE_ZH;
+        failed = true;
       }
-      const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), route);
-      for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.core, uid, value);
+      const { reply, nextContract } = applyGeneratedContract(contract, generated, failed);
+      const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), generated?.route ?? "");
+      const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
+      const taskPatch = nextContract
+        ? persistConversationTasks(patchedCurrent, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
+        : {};
+      for (const [uid, value] of Object.entries({ ...patch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
     }
     return;
   }

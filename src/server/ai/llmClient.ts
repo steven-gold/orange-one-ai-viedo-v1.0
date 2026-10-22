@@ -1,6 +1,18 @@
 import { getSqlClient } from "../db/client";
 import { listAiapiCredentials } from "../db/aiapiCredential";
 import { AIAPI_PROMPT_TEMPLATE_TOKEN, eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
+import {
+  MAX_GENERATION_CONTINUATIONS,
+  MAX_LOOP_REPAIRS,
+  continuationUserMessage,
+  detectGenerationLoop,
+  inferTruncated,
+  loopRepairUserMessage,
+  mergeContinuation,
+  temperatureFor,
+  type ConversationTaskContract,
+  type ConversationTaskKind,
+} from "@/lib/conversationTask";
 
 export type AiPageUid = "core" | "asset" | "video" | "edit";
 
@@ -63,7 +75,7 @@ const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
     "使用者問目前頁面或模組時：這是 CORE 工作台。若脈絡有工作項目，一併說明目前工作項目（故事／章節／世界觀／DNA／藍圖）；那是 CORE 內的工作項目，不是另一套產品。",
     "沒有產品版本號時不要編造，也不要把「無法確認版本」當唯一答案；直接說明這是 CORE 工作台與目前工作項目。",
     "脈絡區已有的專案／專題／工作項目／正式腳本必須沿用。",
-    "直接回答本則問題，以繁體中文精簡、可執行；只產出分析與候選，不把回覆當成正式腳本。",
+    "直接完成使用者要求的動作，以繁體中文可執行地回答。要求實際交付時產出該交付物；大型任務只寫本批次並標示未完成範圍。禁止把分析當成執行，禁止未完成卻宣稱全部完成。",
   ].join(""),
   asset: "你是 ACPOS 素材部門的修正分析型 AI。以繁體中文產出可套用的素材修正內容。禁止解釋成收銀或 POS。",
   video: "你是 ACPOS 影片部門的修正分析型 AI。以繁體中文產出可套用的鏡頭修正內容。禁止解釋成收銀或 POS。",
@@ -207,7 +219,9 @@ async function admitRoute(capability: string): Promise<{ configs: ProviderConfig
   return route;
 }
 
-async function callProvider(config: ProviderConfig, messages: ChatMessage[], temperature = 0.2): Promise<string> {
+type ProviderTurn = { content: string; finishReason: string };
+
+async function callProvider(config: ProviderConfig, messages: ChatMessage[], temperature = 0.2): Promise<ProviderTurn> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), config.timeoutMs);
   try {
@@ -226,11 +240,12 @@ async function callProvider(config: ProviderConfig, messages: ChatMessage[], tem
       throw new AiProviderError("AI_PROVIDER_HTTP_ERROR", `${config.provider} responded ${response.status}: ${detail}`);
     }
     const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
+      choices?: Array<{ message?: { content?: string }; finish_reason?: string; finishReason?: string }>;
     };
-    const content = clean(payload.choices?.[0]?.message?.content);
+    const choice = payload.choices?.[0];
+    const content = clean(choice?.message?.content);
     if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
-    return content;
+    return { content, finishReason: clean(choice?.finish_reason ?? choice?.finishReason) };
   } catch (error) {
     if (error instanceof AiProviderError) throw error;
     if (error instanceof Error && error.name === "AbortError") {
@@ -242,6 +257,55 @@ async function callProvider(config: ProviderConfig, messages: ChatMessage[], tem
   }
 }
 
+async function completeTurn(
+  config: ProviderConfig,
+  messages: ChatMessage[],
+  temperature: number,
+  contract?: ConversationTaskContract,
+): Promise<{ text: string; truncated: boolean; loop: boolean; finishReason: string }> {
+  const first = await callProvider(config, messages, temperature);
+  let text = first.content;
+  let finishReason = first.finishReason;
+  let truncated = inferTruncated(text, finishReason);
+  const loopCheck = detectGenerationLoop(text);
+  if (loopCheck.loop) {
+    text = loopCheck.validPrefix.trim();
+    truncated = true;
+    if (text && MAX_LOOP_REPAIRS > 0) {
+      const repaired = await callProvider(
+        config,
+        [...messages, { role: "assistant", content: text }, { role: "user", content: loopRepairUserMessage() }],
+        temperature,
+      );
+      const merged = mergeContinuation(text, repaired.content);
+      const again = detectGenerationLoop(merged);
+      text = again.loop ? again.validPrefix.trim() || text : merged;
+      finishReason = repaired.finishReason;
+      truncated = again.loop || inferTruncated(text, finishReason);
+    }
+    return { text, truncated, loop: true, finishReason };
+  }
+  let continuations = 0;
+  while (truncated && continuations < MAX_GENERATION_CONTINUATIONS) {
+    continuations += 1;
+    const follow = contract ? continuationUserMessage(contract) : "從上次結尾繼續寫，不要重複已寫內容。未完成不得宣稱全部完成。";
+    const next = await callProvider(
+      config,
+      [...messages, { role: "assistant", content: text }, { role: "user", content: follow }],
+      temperature,
+    );
+    text = mergeContinuation(text, next.content);
+    finishReason = next.finishReason;
+    const looped = detectGenerationLoop(text);
+    if (looped.loop) {
+      text = looped.validPrefix.trim() || text;
+      return { text, truncated: true, loop: true, finishReason };
+    }
+    truncated = inferTruncated(next.content, next.finishReason);
+  }
+  return { text, truncated, loop: false, finishReason };
+}
+
 export async function callChat(messages: ChatMessage[], capability: string): Promise<string> {
   const route = await admitRoute(capability);
   if (!route.configs.length) {
@@ -250,7 +314,7 @@ export async function callChat(messages: ChatMessage[], capability: string): Pro
   let lastError: AiProviderError | null = null;
   for (const config of route.configs.slice(0, fallbackLimit(route))) {
     try {
-      return await callProvider(config, messages);
+      return (await completeTurn(config, messages, 0.2)).text;
     } catch (error) {
       lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
     }
@@ -262,13 +326,14 @@ export function routeLabelFor(config: Pick<ProviderConfig, "provider" | "model">
   return [config.provider, config.model].filter((part) => part.trim()).join(" / ");
 }
 
-export type PageReply = { text: string; route: string };
+export type PageReply = { text: string; route: string; truncated: boolean; loop: boolean };
 
 export async function generatePageReply(
   page: AiPageUid,
   prompt: string,
   context?: string,
   history: ChatMessage[] = [],
+  options?: { contract?: ConversationTaskContract; kind?: ConversationTaskKind },
 ): Promise<PageReply> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
   if (!route.configs.length) {
@@ -276,6 +341,7 @@ export async function generatePageReply(
   }
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
   const recent = history.filter((row) => row.content.trim().length > 0);
+  const temperature = temperatureFor(options?.kind ?? options?.contract?.kind ?? "question");
   let lastError: AiProviderError | null = null;
   for (const config of route.configs.slice(0, fallbackLimit(route))) {
     const messages: ChatMessage[] = [
@@ -284,7 +350,8 @@ export async function generatePageReply(
       { role: "user", content: user },
     ];
     try {
-      return { text: await callProvider(config, messages), route: routeLabelFor(config) };
+      const turn = await completeTurn(config, messages, temperature, options?.contract);
+      return { text: turn.text, route: routeLabelFor(config), truncated: turn.truncated, loop: turn.loop };
     } catch (error) {
       lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
     }
@@ -327,8 +394,8 @@ export async function generateIndependentPageReplies(
         { role: "user", content: independentUser },
       ];
       try {
-        const text = await callProvider(config, messages, 0.8);
-        return { alias, text, route: routeLabelFor(config) };
+        const turn = await completeTurn(config, messages, 0.8);
+        return { alias, text: turn.text, route: routeLabelFor(config) };
       } catch {
         return { alias, text: "", route: routeLabelFor(config) };
       }
