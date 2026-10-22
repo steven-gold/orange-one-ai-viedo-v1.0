@@ -12,6 +12,7 @@ export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
 };
 
 export interface ProviderConfig {
+  profileId: string;
   url: string;
   model: string;
   provider: string;
@@ -44,6 +45,7 @@ function toProviderConfig(profile: AiapiProfile, credential: string): ProviderCo
   const timeoutMs = Number.isFinite(timeoutSeconds) && timeoutSeconds > 0 ? timeoutSeconds * 1000 : 20000;
 
   return {
+    profileId: profile.profileId,
     url: `${base}${endpoint}`,
     model,
     provider,
@@ -78,10 +80,11 @@ function systemPromptFor(page: AiPageUid, template: string, alias?: string): str
   return instruction;
 }
 
-type CachedConfigs = { at: number; configs: ProviderConfig[] };
+type CachedConfigs = { at: number; configs: ProviderConfig[]; grouped: boolean };
 
 const CONFIG_CACHE_MS = 15_000;
 const configCache = new Map<string, CachedConfigs>();
+const UNGROUPED_FALLBACK_LIMIT = 2;
 
 function uniqueProviders(configs: ProviderConfig[]): ProviderConfig[] {
   const seen = new Set<string>();
@@ -95,26 +98,78 @@ function uniqueProviders(configs: ProviderConfig[]): ProviderConfig[] {
   return unique;
 }
 
-export async function resolveProviderConfigs(capability: string): Promise<ProviderConfig[]> {
-  const cached = configCache.get(capability);
-  if (cached && Date.now() - cached.at < CONFIG_CACHE_MS) return cached.configs;
+function cacheKey(
+  capability: string,
+  groupRaw: string,
+  quarantineRaw: string,
+  rights: string,
+  data: string,
+  budget: string,
+): string {
+  return [capability, groupRaw, quarantineRaw, rights, data, budget].join("\u0001");
+}
+
+const KILL_SWITCH_UID = "AIAPI-01-FLD-KILL-SWITCH";
+const ROUTE_DECISION_UID = "AIAPI-01-FLD-ROUTE-DECISION";
+
+async function writeRouteDecision(value: string): Promise<void> {
+  await getSqlClient().run(
+    `INSERT INTO ghsn_aiapi_field_projection (control_uid, value_text)
+     VALUES (?, ?)
+     ON CONFLICT (control_uid) DO UPDATE SET value_text = EXCLUDED.value_text`,
+    [ROUTE_DECISION_UID, value],
+  );
+}
+
+function routeDecisionValue(configs: ProviderConfig[], blocked: string): string {
+  if (!configs.length) return blocked;
+  return `ROUTE_READY ${configs.map((config) => config.profileId).join(" ")}`.trim();
+}
+
+async function resolveRoute(capability: string): Promise<{ configs: ProviderConfig[]; grouped: boolean }> {
   const fields = await readAiapiFields();
+  const groupRaw = clean(fields.get("AIAPI-01-FLD-CANDIDATE-GROUP"));
+  const quarantineRaw = clean(fields.get("AIAPI-01-FLD-OPS-QUARANTINE"));
+  const rights = clean(fields.get("AIAPI-01-FLD-PF-RIGHTS"));
+  const data = clean(fields.get("AIAPI-01-FLD-PF-DATA"));
+  const budget = clean(fields.get("AIAPI-01-FLD-PF-BUDGET"));
+  const key = cacheKey(capability, groupRaw, quarantineRaw, rights, data, budget);
+  const cached = configCache.get(key);
+  if (cached && Date.now() - cached.at < CONFIG_CACHE_MS) {
+    return { configs: cached.configs, grouped: cached.grouped };
+  }
   const profiles = readProfiles((uid) => fields.get(uid) ?? null);
-  const candidates = eligibleProfiles(profiles, capability);
+  const admitted = eligibleProfiles(profiles, capability, {
+    groupRaw,
+    quarantineRaw,
+    rights,
+    data,
+    budget,
+  });
   const secrets = await listAiapiCredentials();
   const configs: ProviderConfig[] = [];
-  for (const profile of candidates) {
+  for (const profile of admitted.profiles) {
     const credential = secrets.get(profile.profileId);
     if (!credential) continue;
     const config = toProviderConfig(profile, credential);
     if (config) configs.push(config);
   }
-  const unique = uniqueProviders(configs);
-  configCache.set(capability, { at: Date.now(), configs: unique });
-  return unique;
+  const ordered = admitted.grouped ? configs : uniqueProviders(configs);
+  configCache.set(key, { at: Date.now(), configs: ordered, grouped: admitted.grouped });
+  return { configs: ordered, grouped: admitted.grouped };
+}
+
+export async function resolveProviderConfigs(capability: string): Promise<ProviderConfig[]> {
+  return (await resolveRoute(capability)).configs;
+}
+
+function fallbackLimit(route: { configs: ProviderConfig[]; grouped: boolean }): number {
+  return route.grouped ? route.configs.length : UNGROUPED_FALLBACK_LIMIT;
 }
 
 export async function assignedAiRouteSnapshot(capability = AI_CAPABILITY_BY_PAGE.core): Promise<string> {
+  const fields = await readAiapiFields();
+  if (fields.get(KILL_SWITCH_UID) === "ON") return "";
   const configs = await resolveProviderConfigs(capability);
   return configs
     .map((config) => [config.provider, config.model].filter((part) => part.trim()).join(" / "))
@@ -137,13 +192,19 @@ export class AiProviderError extends Error {
   }
 }
 
-const KILL_SWITCH_UID = "AIAPI-01-FLD-KILL-SWITCH";
-
 async function assertKillSwitchOff(): Promise<void> {
   const fields = await readAiapiFields();
   if (fields.get(KILL_SWITCH_UID) === "ON") {
+    await writeRouteDecision("ROUTE_BLOCKED");
     throw new AiProviderError("AI_PROVIDER_KILL_SWITCH", "Kill switch is on");
   }
+}
+
+async function admitRoute(capability: string): Promise<{ configs: ProviderConfig[]; grouped: boolean }> {
+  await assertKillSwitchOff();
+  const route = await resolveRoute(capability);
+  await writeRouteDecision(routeDecisionValue(route.configs, "ROUTE_BLOCKED"));
+  return route;
 }
 
 async function callProvider(config: ProviderConfig, messages: ChatMessage[], temperature = 0.2): Promise<string> {
@@ -182,13 +243,12 @@ async function callProvider(config: ProviderConfig, messages: ChatMessage[], tem
 }
 
 export async function callChat(messages: ChatMessage[], capability: string): Promise<string> {
-  await assertKillSwitchOff();
-  const configs = await resolveProviderConfigs(capability);
-  if (!configs.length) {
+  const route = await admitRoute(capability);
+  if (!route.configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${capability} provider with a stored credential`);
   }
   let lastError: AiProviderError | null = null;
-  for (const config of configs.slice(0, 2)) {
+  for (const config of route.configs.slice(0, fallbackLimit(route))) {
     try {
       return await callProvider(config, messages);
     } catch (error) {
@@ -210,15 +270,14 @@ export async function generatePageReply(
   context?: string,
   history: ChatMessage[] = [],
 ): Promise<PageReply> {
-  await assertKillSwitchOff();
-  const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
-  if (!configs.length) {
+  const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
+  if (!route.configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
   }
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
   const recent = history.filter((row) => row.content.trim().length > 0);
   let lastError: AiProviderError | null = null;
-  for (const config of configs.slice(0, 2)) {
+  for (const config of route.configs.slice(0, fallbackLimit(route))) {
     const messages: ChatMessage[] = [
       { role: "system", content: systemPromptFor(page, config.promptTemplate) },
       ...recent,
@@ -242,24 +301,21 @@ export async function generateIndependentPageReplies(
   history: ChatMessage[],
   aliases: string[],
 ): Promise<IndependentReply[]> {
-  await assertKillSwitchOff();
-  const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE[page]);
-  if (!configs.length) {
+  const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
+  if (!route.configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
   }
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
   const recent = history.filter((row) => row.content.trim().length > 0);
-  if (aliases.length > configs.length) {
+  if (aliases.length > route.configs.length) {
     throw new AiProviderError(
       "AI_PROVIDER_MULTI_SHORT",
-      `Multi needs ${aliases.length} ${AI_CAPABILITY_BY_PAGE[page]} providers; ${configs.length} ready`,
+      `Multi needs ${aliases.length} ${AI_CAPABILITY_BY_PAGE[page]} providers; ${route.configs.length} ready`,
     );
   }
-  const offset = Math.floor(Date.now() / 1000) % configs.length;
-  const rotated = [...configs.slice(offset), ...configs.slice(0, offset)];
   return Promise.all(
     aliases.map(async (alias, index) => {
-      const config = rotated[index];
+      const config = route.configs[index];
       if (!config) return { alias, text: "", route: "" };
       const independentUser = [
         user,

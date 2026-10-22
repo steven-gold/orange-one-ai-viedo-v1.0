@@ -329,13 +329,111 @@ export function findDuplicateProfile(
   );
 }
 
-export function supportsCapability(profile: AiapiProfile, capability: string): boolean {
+export function governedCapability(capability: string): string {
   const wanted = clean(capability);
+  return wanted === "TEXT_CHAT" ? "chat" : wanted;
+}
+
+export function supportsCapability(profile: AiapiProfile, capability: string): boolean {
+  const wanted = governedCapability(capability);
   return Boolean(wanted) && profileCapabilities(profile).includes(wanted);
 }
 
-export function eligibleProfiles(profiles: AiapiProfile[], capability: string): AiapiProfile[] {
-  return profiles
-    .filter((profile) => profile.enabled && supportsCapability(profile, capability))
+export function isGovernedResourceApproved(rights: string | null | undefined): boolean {
+  return clean(rights) === "APPROVED";
+}
+
+export function hasDataClassification(data: string | null | undefined): boolean {
+  return Boolean(clean(data));
+}
+
+export function hasBudgetGate(budget: string | null | undefined): boolean {
+  return Boolean(clean(budget));
+}
+
+export function parseCandidateGroupMembers(raw: string | null | undefined): string[] {
+  const text = clean(raw);
+  if (!text) return [];
+  const separator = " · ";
+  const payload = text.includes(separator) ? text.slice(text.indexOf(separator) + separator.length) : text;
+  return payload
+    .split(",")
+    .map((part) => clean(part))
+    .filter(Boolean);
+}
+
+export function isHealthBlocked(profile: AiapiProfile): boolean {
+  return clean(profile.lastTest).toUpperCase() === "FAIL";
+}
+
+export function isQuarantined(profile: AiapiProfile, raw: string | null | undefined): boolean {
+  const text = clean(raw);
+  if (!text || text.toUpperCase() === "RESTORED") return false;
+  const tokens = text.split(/[·,;\s]+/).map((part) => clean(part)).filter(Boolean);
+  const provider = clean(profile.providerId).toLowerCase();
+  return tokens.some((token) => token === profile.profileId || token.toLowerCase() === provider);
+}
+
+export function orderByCandidateGroup(
+  profiles: AiapiProfile[],
+  groupRaw: string | null | undefined,
+): { profiles: AiapiProfile[]; grouped: boolean } {
+  const members = parseCandidateGroupMembers(groupRaw);
+  if (!members.length) return { profiles, grouped: false };
+  const byId = new Map(profiles.map((profile) => [profile.profileId, profile]));
+  const byProvider = new Map<string, AiapiProfile[]>();
+  for (const profile of profiles) {
+    const key = clean(profile.providerId).toLowerCase();
+    const list = byProvider.get(key) ?? [];
+    list.push(profile);
+    byProvider.set(key, list);
+  }
+  const picked: AiapiProfile[] = [];
+  const seen = new Set<string>();
+  for (const member of members) {
+    const exact = byId.get(member);
+    if (exact && !seen.has(exact.profileId)) {
+      seen.add(exact.profileId);
+      picked.push(exact);
+      continue;
+    }
+    const group = byProvider.get(member.toLowerCase());
+    if (!group) continue;
+    for (const profile of group) {
+      if (seen.has(profile.profileId)) continue;
+      seen.add(profile.profileId);
+      picked.push(profile);
+    }
+  }
+  return picked.length ? { profiles: picked, grouped: true } : { profiles, grouped: false };
+}
+
+export function eligibleProfiles(
+  profiles: AiapiProfile[],
+  capability: string,
+  policy?: {
+    groupRaw?: string | null;
+    quarantineRaw?: string | null;
+    rights?: string | null;
+    data?: string | null;
+    budget?: string | null;
+  },
+): { profiles: AiapiProfile[]; grouped: boolean } {
+  if (
+    !isGovernedResourceApproved(policy?.rights) ||
+    !hasDataClassification(policy?.data) ||
+    !hasBudgetGate(policy?.budget)
+  ) {
+    return { profiles: [], grouped: false };
+  }
+  const admitted = profiles
+    .filter(
+      (profile) =>
+        profile.enabled &&
+        supportsCapability(profile, capability) &&
+        !isHealthBlocked(profile) &&
+        !isQuarantined(profile, policy?.quarantineRaw),
+    )
     .sort((left, right) => left.seq - right.seq);
+  return orderByCandidateGroup(admitted, policy?.groupRaw);
 }
