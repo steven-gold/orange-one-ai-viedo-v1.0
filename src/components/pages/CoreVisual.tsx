@@ -7,8 +7,6 @@ import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
 import {
   activeThreadUid,
-  assignedAiRouteDisplay,
-  assignedAiRouteParts,
   assignedAiRouteReady,
   assignedMultiRouteReady,
   composerTokenTone,
@@ -349,9 +347,6 @@ export function CoreVisual() {
   const composerTokens = resolveComposerTokens(draftMessage, currentFields);
   const parserBlocked = composerHasBlockingToken(composerTokens);
   const tooLong = messageExceedsStoredLimit(draftMessage);
-  const assignedAiValue = valueOf("CORE-01-FLD-ASSIGNED-AI");
-  const assignedAiCount = assignedAiRouteParts(assignedAiValue).length;
-  const assignedAiShown = assignedAiRouteDisplay(assignedAiValue);
   const routeReady = assignedAiRouteReady(currentFields);
   const multiReady = assignedMultiRouteReady(currentFields);
   const assistantTarget = composerTokens.some((row) => row.kind === "TARGET_ASSISTANT");
@@ -459,12 +454,8 @@ export function CoreVisual() {
               <div className={styles.headerControls}>
                 <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />
                 <IconButton uid="CORE-01-BTN-MULTI-AI" label={multiReady ? tx("core.multi_ai") : tx("core.multi_route_blocked")} icon="multi-ai" onAct={act} disabled={disabled || !multiReady} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
-                <div className={`${styles.field} ${styles.fieldReadonly} ${styles.assignedAi}`} data-control-uid="CORE-01-FLD-ASSIGNED-AI" title={assignedAiRouteParts(assignedAiValue).join("、")}>
-                  <span className={styles.label}>{tx("core.assigned_ai")}</span>
-                  <span className={styles.value}>{displayCoreValue(assignedAiShown || null, loading)}</span>
-                  <span className={styles.meta}>{assignedAiCount ? `${assignedAiCount} ${tx("core.assigned_ai_count")}` : tx("core.assigned_ai_hint")}</span>
-                </div>
                 <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+                <span className={styles.srOnly} data-control-uid="CORE-01-FLD-ASSIGNED-AI">{displayCoreValue(valueOf("CORE-01-FLD-ASSIGNED-AI"), loading)}</span>
               </div>
             </div>
           </section>
@@ -501,10 +492,55 @@ export function CoreVisual() {
                 ))
               )}
             </div>
-            <div className={styles.summaryInline}>
-              <span className={styles.summaryLabel}>{tx("core.summary_inline")}</span>
-              <p>{notebookText || tx("core.summary_hint")}</p>
-            </div>
+            <section className={styles.composerBar} data-component-uid="CORE-01-CMP-COMPOSER">
+              <div className={styles.composer}>
+                <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("attachment", event.target.files?.[0] ?? null); event.target.value = ""; }} />
+                <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("reference", event.target.files?.[0] ?? null); event.target.value = ""; }} />
+                <IconButton uid="CORE-01-BTN-ATTACHMENT" label={tx("core.attachment")} icon="attachment" onAct={() => attachRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, attachedName ? styles.active : ""].filter(Boolean).join(" ")} />
+                <IconButton uid="CORE-01-BTN-REFERENCE" label={tx("core.reference")} icon="reference" onAct={() => referenceRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, referenceName ? styles.active : ""].filter(Boolean).join(" ")} />
+                <label className={styles.composerInput}>
+                  <span className={styles.srOnly}>{tx("core.message")}</span>
+                  <textarea
+                    data-control-uid="CORE-01-FLD-MESSAGE"
+                    disabled={disabled}
+                    placeholder={tx("core.message_placeholder")}
+                    value={draftMessage}
+                    rows={3}
+                    onChange={(event) => setDraftMessage(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") return;
+                      if (event.nativeEvent.isComposing) return;
+                      if (event.ctrlKey || event.metaKey) {
+                        event.preventDefault();
+                        sendMessage();
+                      }
+                    }}
+                  />
+                </label>
+                <IconButton uid="CORE-01-BTN-SEND" label={tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : multiBlocked ? tx("core.multi_route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
+              </div>
+              {composerTokens.length ? (
+                <div className={styles.tokenRow} aria-live="polite">
+                  {composerTokens.map((token, index) => (
+                    <span key={`${token.raw}-${index}`} className={composerTokenTone(token.kind) === "ok" ? styles.tokenOk : composerTokenTone(token.kind) === "ambiguous" ? styles.tokenAmbiguous : styles.tokenError} data-token-kind={token.kind}>
+                      {token.canonical || token.raw}
+                      {token.kind === "AMBIGUOUS_REF" ? ` ${tx("core.token_ambiguous")}` : token.kind === "PARSER_ERROR" ? ` ${tx("core.token_invalid")}` : token.canonical && token.canonical !== token.raw ? ` ${tx("core.token_resolved")}` : ""}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              {tooLong ? <p className={styles.error} role="alert">{tx("core.message_too_long")}</p> : null}
+              {parserBlocked ? <p className={styles.error} role="alert">{tx("core.parser_blocked")}</p> : null}
+              {routeBlocked ? <p className={styles.error} role="alert">{tx("core.route_blocked")}</p> : null}
+              {multiBlocked ? <p className={styles.error} role="alert">{tx("core.multi_route_blocked")}</p> : null}
+              {attachedName || referenceName ? (
+                <p className={styles.composerFiles}>
+                  {attachedName ? `${tx("core.attached_file")} ${attachedName}` : null}
+                  {attachedName && referenceName ? " · " : null}
+                  {referenceName ? `${tx("core.reference_file")} ${referenceName}` : null}
+                </p>
+              ) : null}
+            </section>
             <div
               className={menu ? styles.messageMenu : styles.messageMenuHidden}
               data-component-uid="CORE-01-CMP-MESSAGE-MENU"
@@ -526,6 +562,14 @@ export function CoreVisual() {
                 </button>
               ))}
             </div>
+          </section>
+
+          <section className={`${styles.runtime} ${styles.composerBar}`} data-component-uid="CORE-01-CMP-RUNTIME" data-control-uid="CORE-01-FLD-RUNTIME-STAGE">
+            {RUNTIME_STAGES.map((stage) => (
+              <button key={stage.id} type="button" className={stage.id === activeStage ? `${styles.btn} ${styles.runtimeBtn} ${styles.active}` : `${styles.btn} ${styles.runtimeBtn}`} disabled={disabled} onClick={() => void act("CORE-01-FLD-RUNTIME-STAGE", stage.id)}>
+                {tx(stage.key)}
+              </button>
+            ))}
           </section>
 
           <section className={styles.eval} hidden={topicMode}>
@@ -576,64 +620,6 @@ export function CoreVisual() {
               <h3>{tx("core.discussion_constraint")}</h3>
               <p>{tx("core.discussion_constraint_body")}</p>
             </div>
-          </section>
-
-          <section className={`${styles.runtime} ${styles.composerBar}`} data-component-uid="CORE-01-CMP-RUNTIME" data-control-uid="CORE-01-FLD-RUNTIME-STAGE">
-            {RUNTIME_STAGES.map((stage) => (
-              <button key={stage.id} type="button" className={stage.id === activeStage ? `${styles.btn} ${styles.runtimeBtn} ${styles.active}` : `${styles.btn} ${styles.runtimeBtn}`} disabled={disabled} onClick={() => void act("CORE-01-FLD-RUNTIME-STAGE", stage.id)}>
-                {tx(stage.key)}
-              </button>
-            ))}
-          </section>
-
-          <section className={styles.composerBar} data-component-uid="CORE-01-CMP-COMPOSER">
-            <div className={styles.composer}>
-              <input ref={attachRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("attachment", event.target.files?.[0] ?? null); event.target.value = ""; }} />
-              <input ref={referenceRef} className={styles.fileInput} type="file" onChange={(event) => { pickFile("reference", event.target.files?.[0] ?? null); event.target.value = ""; }} />
-              <IconButton uid="CORE-01-BTN-ATTACHMENT" label={tx("core.attachment")} icon="attachment" onAct={() => attachRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, attachedName ? styles.active : ""].filter(Boolean).join(" ")} />
-              <IconButton uid="CORE-01-BTN-REFERENCE" label={tx("core.reference")} icon="reference" onAct={() => referenceRef.current?.click()} disabled={disabled} className={[styles.btn, styles.iconBtn, referenceName ? styles.active : ""].filter(Boolean).join(" ")} />
-              <label className={styles.composerInput}>
-                <span className={styles.srOnly}>{tx("core.message")}</span>
-                <textarea
-                  data-control-uid="CORE-01-FLD-MESSAGE"
-                  disabled={disabled}
-                  placeholder={tx("core.message_placeholder")}
-                  value={draftMessage}
-                  rows={3}
-                  onChange={(event) => setDraftMessage(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key !== "Enter") return;
-                    if (event.nativeEvent.isComposing) return;
-                    if (event.ctrlKey || event.metaKey) {
-                      event.preventDefault();
-                      sendMessage();
-                    }
-                  }}
-                />
-              </label>
-              <IconButton uid="CORE-01-BTN-SEND" label={tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : multiBlocked ? tx("core.multi_route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon="send" onAct={() => sendMessage()} disabled={disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
-            </div>
-            {composerTokens.length ? (
-              <div className={styles.tokenRow} aria-live="polite">
-                {composerTokens.map((token, index) => (
-                  <span key={`${token.raw}-${index}`} className={composerTokenTone(token.kind) === "ok" ? styles.tokenOk : composerTokenTone(token.kind) === "ambiguous" ? styles.tokenAmbiguous : styles.tokenError} data-token-kind={token.kind}>
-                    {token.canonical || token.raw}
-                    {token.kind === "AMBIGUOUS_REF" ? ` ${tx("core.token_ambiguous")}` : token.kind === "PARSER_ERROR" ? ` ${tx("core.token_invalid")}` : token.canonical && token.canonical !== token.raw ? ` ${tx("core.token_resolved")}` : ""}
-                  </span>
-                ))}
-              </div>
-            ) : null}
-            {tooLong ? <p className={styles.error} role="alert">{tx("core.message_too_long")}</p> : null}
-            {parserBlocked ? <p className={styles.error} role="alert">{tx("core.parser_blocked")}</p> : null}
-            {routeBlocked ? <p className={styles.error} role="alert">{tx("core.route_blocked")}</p> : null}
-            {multiBlocked ? <p className={styles.error} role="alert">{tx("core.multi_route_blocked")}</p> : null}
-            {attachedName || referenceName ? (
-              <p className={styles.composerFiles}>
-                {attachedName ? `${tx("core.attached_file")} ${attachedName}` : null}
-                {attachedName && referenceName ? " · " : null}
-                {referenceName ? `${tx("core.reference_file")} ${referenceName}` : null}
-              </p>
-            ) : null}
           </section>
         </main>
 

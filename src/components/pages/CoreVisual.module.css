@@ -270,7 +270,8 @@
   gap: 12px;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .convHeader {
@@ -279,7 +280,7 @@
 }
 
 .messages {
-  min-height: 0;
+  min-height: min(62vh, 640px);
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -287,16 +288,18 @@
 }
 
 .eval {
-  flex: 0 1 auto;
-  max-height: 220px;
-  overflow: auto;
+  flex: 0 0 auto;
   min-height: 0;
 }
 
 .composerBar[data-component-uid="CORE-01-CMP-COMPOSER"] {
   flex: 0 0 auto;
   min-height: 104px;
-  margin-top: auto;
+  margin-top: 10px;
+  padding: 10px 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .convHeader,
@@ -333,15 +336,7 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  flex: 1 1 280px;
   justify-content: flex-end;
-}
-.assignedAi {
-  flex: 1 1 180px;
-  max-width: 280px;
-}
-.assignedAi .value {
-  white-space: nowrap;
 }
 
 .messagesHead {
@@ -372,10 +367,9 @@
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   flex: 1 1 auto;
-  min-height: 72px;
-  max-height: min(36vh, 420px);
+  min-height: 280px;
   margin-top: 10px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -384,30 +378,30 @@
 
 .userMessage,
 .assistantMessage {
-  padding: 10px 14px;
+  padding: 14px 16px;
   border-radius: 12px;
   border: 1px solid var(--core-border);
 }
 
 .userMessage {
   align-self: flex-end;
-  max-width: 86%;
+  max-width: 92%;
   background: var(--core-input);
 }
 
 .assistantMessage {
   align-self: flex-start;
-  max-width: 86%;
+  max-width: 92%;
   background: #121833;
   border-color: rgba(139, 92, 255, 0.22);
 }
 
 .userMessage p,
 .assistantMessage p {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: var(--core-secondary);
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 15px;
+  line-height: 24px;
   white-space: pre-wrap;
 }
 
@@ -579,15 +573,17 @@ button.evalBox {
 .runtimeBtn { flex: 1; min-width: 0; }
 
 .composer { flex-direction: row; min-height: 40px; flex-wrap: nowrap; align-items: flex-end; }
-.composerInput { flex: 1 1 auto; min-width: 160px; min-height: 72px; cursor: text; }
+.composerInput { flex: 1 1 auto; min-width: 160px; min-height: 88px; cursor: text; }
 .composerInput input { font-size: 13px; line-height: 18px; }
 .composerBar .composerInput textarea {
   display: block;
   width: 100%;
-  min-height: 54px;
-  max-height: 160px;
+  min-height: 72px;
+  max-height: 200px;
   resize: vertical;
   white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 24px;
   overflow: auto;
   text-overflow: unset;
   font: inherit;
