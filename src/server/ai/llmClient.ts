@@ -1,5 +1,5 @@
 import { getSqlClient } from "../db/client";
-import { getAiapiCredential } from "../db/aiapiCredential";
+import { listAiapiCredentials } from "../db/aiapiCredential";
 import { AIAPI_PROMPT_TEMPLATE_TOKEN, eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
 
 export type AiPageUid = "core" | "asset" | "video" | "edit";
@@ -55,13 +55,13 @@ function toProviderConfig(profile: AiapiProfile, credential: string): ProviderCo
 
 const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
   core: [
-    "你是 ACPOS 影音生產作業系統的 CORE 分析型 AI。",
-    "ACPOS 處理專案、專題、藍圖、Canonical Script、素材、影片與剪輯。",
-    "禁止把 ACPOS 解釋成收銀機、POS、電子商務銷售或任何零售結帳系統。",
-    "禁止自稱會議秘書、核心設計助理，或再問使用者在哪個專案、哪個模組。",
-    "若使用者問目前模組、頁面或系統是什麼，直接回答：這是 ACPOS 影音生產作業系統的 CORE 模組。",
-    "脈絡區若已有專案／專題／工作項目／正式腳本，直接沿用。",
-    "以繁體中文精簡作答，延續本則剛送出的內容，只產出分析與候選，不把回覆當成正式腳本。",
+    "你是 ACPOS 影音生產作業系統 CORE 工作台的分析型 AI。",
+    "ACPOS 處理專案、專題、藍圖、Canonical Script、素材、影片與剪輯。禁止解釋成收銀機、POS 或零售結帳。",
+    "禁止自稱會議秘書。不要反問使用者現在在哪個專案或哪個模組。",
+    "使用者問目前頁面或模組時：這是 CORE 工作台。若脈絡有工作項目，一併說明目前工作項目（故事／章節／世界觀／DNA／藍圖）；那是 CORE 內的工作項目，不是另一套產品。",
+    "沒有產品版本號時不要編造，也不要把「無法確認版本」當唯一答案；直接說明這是 CORE 工作台與目前工作項目。",
+    "脈絡區已有的專案／專題／工作項目／正式腳本必須沿用。",
+    "直接回答本則問題，以繁體中文精簡、可執行；只產出分析與候選，不把回覆當成正式腳本。",
   ].join(""),
   asset: "你是 ACPOS 素材部門的修正分析型 AI。以繁體中文產出可套用的素材修正內容。禁止解釋成收銀或 POS。",
   video: "你是 ACPOS 影片部門的修正分析型 AI。以繁體中文產出可套用的鏡頭修正內容。禁止解釋成收銀或 POS。",
@@ -78,19 +78,40 @@ function systemPromptFor(page: AiPageUid, template: string, alias?: string): str
   return instruction;
 }
 
+type CachedConfigs = { at: number; configs: ProviderConfig[] };
+
+const CONFIG_CACHE_MS = 15_000;
+const configCache = new Map<string, CachedConfigs>();
+
+function uniqueProviders(configs: ProviderConfig[]): ProviderConfig[] {
+  const seen = new Set<string>();
+  const unique: ProviderConfig[] = [];
+  for (const config of configs) {
+    const key = config.provider.trim().toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    unique.push(config);
+  }
+  return unique;
+}
+
 export async function resolveProviderConfigs(capability: string): Promise<ProviderConfig[]> {
+  const cached = configCache.get(capability);
+  if (cached && Date.now() - cached.at < CONFIG_CACHE_MS) return cached.configs;
   const fields = await readAiapiFields();
   const profiles = readProfiles((uid) => fields.get(uid) ?? null);
   const candidates = eligibleProfiles(profiles, capability);
-
+  const secrets = await listAiapiCredentials();
   const configs: ProviderConfig[] = [];
   for (const profile of candidates) {
-    const credential = await getAiapiCredential(profile.profileId);
+    const credential = secrets.get(profile.profileId);
     if (!credential) continue;
     const config = toProviderConfig(profile, credential);
     if (config) configs.push(config);
   }
-  return configs;
+  const unique = uniqueProviders(configs);
+  configCache.set(capability, { at: Date.now(), configs: unique });
+  return unique;
 }
 
 export async function assignedAiRouteSnapshot(capability = AI_CAPABILITY_BY_PAGE.core): Promise<string> {
@@ -167,7 +188,7 @@ export async function callChat(messages: ChatMessage[], capability: string): Pro
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${capability} provider with a stored credential`);
   }
   let lastError: AiProviderError | null = null;
-  for (const config of configs) {
+  for (const config of configs.slice(0, 2)) {
     try {
       return await callProvider(config, messages);
     } catch (error) {
@@ -197,7 +218,7 @@ export async function generatePageReply(
   const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
   const recent = history.filter((row) => row.content.trim().length > 0);
   let lastError: AiProviderError | null = null;
-  for (const config of configs) {
+  for (const config of configs.slice(0, 2)) {
     const messages: ChatMessage[] = [
       { role: "system", content: systemPromptFor(page, config.promptTemplate) },
       ...recent,
@@ -234,48 +255,27 @@ export async function generateIndependentPageReplies(
       `Multi needs ${aliases.length} ${AI_CAPABILITY_BY_PAGE[page]} providers; ${configs.length} ready`,
     );
   }
-  const replies: IndependentReply[] = [];
-  for (const [index, alias] of aliases.entries()) {
-    const config = configs[index];
-    if (!config) {
-      replies.push({ alias, text: "", route: "" });
-      continue;
-    }
-    const prior = replies
-      .filter((row) => row.text.trim())
-      .map((row) => `@${row.alias}：${row.text.trim().slice(0, 400)}`)
-      .join("\n");
-    const independentUser = [
-      user,
-      `[本則由參與者 @${alias} 獨立作答。必須提出與其他參與者不同的觀點、理由或風險，禁止複述或同文。]`,
-      prior ? `[其他參與者已說過，請勿重複]\n${prior}` : "",
-    ].filter(Boolean).join("\n\n");
-    const messages: ChatMessage[] = [
-      { role: "system", content: systemPromptFor(page, config.promptTemplate, alias) },
-      ...recent,
-      { role: "user", content: independentUser },
-    ];
-    const normalize = (value: string) => value.replace(/\s+/g, "").slice(0, 240);
-    try {
-      let text = await callProvider(config, messages, 0.8);
-      const duplicated = replies.some((row) => row.text && normalize(row.text) === normalize(text));
-      if (duplicated) {
-        text = await callProvider(
-          config,
-          [
-            ...messages,
-            {
-              role: "user",
-              content: `上一則與 @${replies.map((row) => row.alias).join("、")} 同文。請改從不同風險、不同取捨或不同下一步重寫，禁止複述。`,
-            },
-          ],
-          0.95,
-        );
+  const offset = Math.floor(Date.now() / 1000) % configs.length;
+  const rotated = [...configs.slice(offset), ...configs.slice(0, offset)];
+  return Promise.all(
+    aliases.map(async (alias, index) => {
+      const config = rotated[index];
+      if (!config) return { alias, text: "", route: "" };
+      const independentUser = [
+        user,
+        `[本則由場次別名 @${alias} 獨立作答。A／B／C 只是場次別名，不是固定供應商。必須提出與其他參與者不同的觀點、理由或風險，禁止複述或同文。]`,
+      ].join("\n\n");
+      const messages: ChatMessage[] = [
+        { role: "system", content: systemPromptFor(page, config.promptTemplate, alias) },
+        ...recent,
+        { role: "user", content: independentUser },
+      ];
+      try {
+        const text = await callProvider(config, messages, 0.8);
+        return { alias, text, route: routeLabelFor(config) };
+      } catch {
+        return { alias, text: "", route: routeLabelFor(config) };
       }
-      replies.push({ alias, text, route: routeLabelFor(config) });
-    } catch {
-      replies.push({ alias, text: "", route: routeLabelFor(config) });
-    }
-  }
-  return replies;
+    }),
+  );
 }

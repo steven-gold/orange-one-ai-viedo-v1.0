@@ -37,3 +37,15 @@ export async function getAiapiCredential(profileId: string): Promise<string | nu
   const value = (rows[0]?.secret_text ?? "").trim();
   return value ? value : null;
 }
+
+export async function listAiapiCredentials(): Promise<Map<string, string>> {
+  const rows = await getSqlClient().all<{ credential_uid: string; secret_text: string | null }>(
+    "SELECT credential_uid, secret_text FROM ghsn_aiapi_credential",
+  );
+  const map = new Map<string, string>();
+  for (const row of rows) {
+    const secret = (row.secret_text ?? "").trim();
+    if (row.credential_uid && secret) map.set(row.credential_uid, secret);
+  }
+  return map;
+}
