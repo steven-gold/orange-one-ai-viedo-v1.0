@@ -3,6 +3,11 @@ import {
   STREAM_LOOP_CHECK_EVERY_CHARS,
   STREAM_LOOP_CHECK_MIN_CHARS,
   annotateUnverifiedClaims,
+  consumeGenerationStream,
+  encodeGenerationSse,
+  generationStatusLabel,
+  isConversationGeneratingAction,
+  parseGenerationSseFrame,
   buildTaskContract,
   claimsFullCompletion,
   classifyTaskKind,
@@ -161,6 +166,48 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
 }
 
 {
+  const encoded = `${encodeGenerationSse({ type: "token", text: "第" })}${encodeGenerationSse({ type: "status", status: "STOPPED" })}${encodeGenerationSse({ type: "done" })}partial`;
+  const split = splitSseFrames(encoded);
+  assertEqual(split.frames.length, 3, "generation sse frames");
+  assertEqual(split.rest, "partial", "keep incomplete generation frame");
+  const token = parseGenerationSseFrame(split.frames[0]);
+  const status = parseGenerationSseFrame(split.frames[1]);
+  const done = parseGenerationSseFrame(split.frames[2]);
+  assertEqual(token?.type, "token", "token event");
+  assertEqual(token && token.type === "token" ? token.text : "", "第", "keep token text");
+  assertEqual(status?.type, "status", "status event");
+  assertEqual(status && status.type === "status" ? status.status : "", "STOPPED", "stopped status event");
+  assertEqual(done?.type, "done", "done event");
+  assertEqual(parseGenerationSseFrame("not-json"), null, "reject provider sse as generation event");
+}
+
+async function testConsumeGenerationStream(): Promise<void> {
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      const encoded = `${encodeGenerationSse({ type: "token", text: "甲" })}${encodeGenerationSse({ type: "status", status: "PARTIAL" })}${encodeGenerationSse({ type: "done" })}`;
+      controller.enqueue(new TextEncoder().encode(encoded));
+      controller.close();
+    },
+  });
+  const tokens: string[] = [];
+  const statuses: string[] = [];
+  await consumeGenerationStream(body, {
+    token: (text) => tokens.push(text),
+    status: (status) => statuses.push(status),
+  });
+  assertEqual(tokens.join(""), "甲", "consume token");
+  assertEqual(statuses.join(""), "PARTIAL", "consume status");
+}
+
+{
+  assertEqual(isConversationGeneratingAction("CORE-01-ACT-SEND"), true, "send streams");
+  assertEqual(isConversationGeneratingAction("CORE-01-ACT-MSG-ANALYZE"), true, "analyze streams");
+  assertEqual(isConversationGeneratingAction("CORE-01-ACT-MSG-QUOTE"), false, "quote stays json");
+  assertEqual(generationStatusLabel("STOPPED"), "已停止", "status label stopped");
+  assertEqual(generationStatusLabel("PARTIAL"), "部分完成", "status label partial");
+}
+
+{
   assertEqual(unverifiedExecutionClaims("已成功部署到正式站").includes("deploy"), true, "deploy claim");
   assertEqual(unverifiedExecutionClaims("已刪除該檔案").includes("side_effect"), true, "delete claim");
   assertEqual(unverifiedExecutionClaims("已成功建立檔案").includes("file"), true, "unverified file claim");
@@ -186,4 +233,11 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   assertEqual(parsed?.fileName, "500集分集影片故事大綱.txt", "parse file name");
 }
 
-console.log("conversationTask.test.ts PASS");
+testConsumeGenerationStream()
+  .then(() => {
+    console.log("conversationTask.test.ts PASS");
+  })
+  .catch((error: unknown) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

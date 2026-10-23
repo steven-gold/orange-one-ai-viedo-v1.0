@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generationSseResponse, isConversationGeneratingAction } from "@/lib/conversationTask";
 import { jsonError, requireAuth } from "@/server/auth/requireAuth";
 import { knownVideoAction, persistHasVideoPermission, persistRecordVideoAction } from "@/server/db/persist";
 import { VIDEO_PERMISSION } from "@/server/domain/video";
@@ -19,6 +20,11 @@ export async function POST(request: Request) {
     const allowed = await persistHasVideoPermission(principal.accountUid);
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${VIDEO_PERMISSION} required`, 403);
+    }
+    if (isConversationGeneratingAction(actionUid)) {
+      return generationSseResponse(async (sink) => {
+        await persistRecordVideoAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal, sink);
+      });
     }
     const eventUid = await persistRecordVideoAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });

@@ -250,17 +250,18 @@ function mergeAbort(timeoutMs: number, external?: AbortSignal): { signal: AbortS
   };
 }
 
-async function readJsonTurn(response: Response): Promise<ProviderTurn> {
+async function readJsonTurn(response: Response, onToken?: (text: string) => void): Promise<ProviderTurn> {
   const payload = (await response.json()) as {
     choices?: Array<{ message?: { content?: string }; finish_reason?: string; finishReason?: string }>;
   };
   const choice = payload.choices?.[0];
   const content = clean(choice?.message?.content);
   if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
+  onToken?.(content);
   return { content, finishReason: clean(choice?.finish_reason ?? choice?.finishReason) };
 }
 
-async function readSseTurn(response: Response, userSignal?: AbortSignal): Promise<ProviderTurn> {
+async function readSseTurn(response: Response, userSignal?: AbortSignal, onToken?: (text: string) => void): Promise<ProviderTurn> {
   const body = response.body;
   if (!body) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no stream body");
   const reader = body.getReader();
@@ -289,7 +290,10 @@ async function readSseTurn(response: Response, userSignal?: AbortSignal): Promis
           if (looped.loop) return stopLoop(looped.validPrefix);
           return { content, finishReason };
         }
-        if (parsed.delta) content += parsed.delta;
+        if (parsed.delta) {
+          content += parsed.delta;
+          onToken?.(parsed.delta);
+        }
         if (parsed.finishReason) finishReason = parsed.finishReason;
         if (shouldCheckStreamLoop(content.length, lastChecked)) {
           lastChecked = content.length;
@@ -316,7 +320,10 @@ async function readSseTurn(response: Response, userSignal?: AbortSignal): Promis
   const leftover = splitSseFrames(buffer);
   for (const frame of leftover.frames) {
     const parsed = parseOpenAiSseFrame(frame);
-    if (parsed.delta) content += parsed.delta;
+    if (parsed.delta) {
+      content += parsed.delta;
+      onToken?.(parsed.delta);
+    }
     if (parsed.finishReason) finishReason = parsed.finishReason;
   }
   if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
@@ -349,6 +356,7 @@ async function callProvider(
   messages: ChatMessage[],
   temperature = 0.2,
   signal?: AbortSignal,
+  onToken?: (text: string) => void,
 ): Promise<ProviderTurn> {
   if (signal?.aborted) throw new GenerationCancelled("");
   const merged = mergeAbort(config.timeoutMs, signal);
@@ -363,9 +371,9 @@ async function callProvider(
     }
     const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
     if (contentType.includes("text/event-stream") && response.body) {
-      return await readSseTurn(response, signal);
+      return await readSseTurn(response, signal, onToken);
     }
-    return await readJsonTurn(response);
+    return await readJsonTurn(response, onToken);
   } catch (error) {
     if (error instanceof AiProviderError) throw error;
     if (error instanceof GenerationCancelled) throw error;
@@ -385,8 +393,9 @@ async function completeTurn(
   temperature: number,
   contract?: ConversationTaskContract,
   signal?: AbortSignal,
+  onToken?: (text: string) => void,
 ): Promise<{ text: string; truncated: boolean; loop: boolean; finishReason: string }> {
-  const first = await callProvider(config, messages, temperature, signal);
+  const first = await callProvider(config, messages, temperature, signal, onToken);
   let text = first.content;
   let finishReason = first.finishReason;
   if (first.cancelled) throw new GenerationCancelled(text);
@@ -402,6 +411,7 @@ async function completeTurn(
           [...messages, { role: "assistant", content: text }, { role: "user", content: loopRepairUserMessage() }],
           temperature,
           signal,
+          onToken,
         );
         if (repaired.cancelled) throw new GenerationCancelled(mergeContinuation(text, repaired.content));
         const merged = mergeContinuation(text, repaired.content);
@@ -426,6 +436,7 @@ async function completeTurn(
         [...messages, { role: "assistant", content: text }, { role: "user", content: follow }],
         temperature,
         signal,
+        onToken,
       );
       if (next.cancelled) throw new GenerationCancelled(mergeContinuation(text, next.content));
       text = mergeContinuation(text, next.content);
@@ -472,7 +483,7 @@ export async function generatePageReply(
   prompt: string,
   context?: string,
   history: ChatMessage[] = [],
-  options?: { contract?: ConversationTaskContract; kind?: ConversationTaskKind; signal?: AbortSignal },
+  options?: { contract?: ConversationTaskContract; kind?: ConversationTaskKind; signal?: AbortSignal; onToken?: (text: string) => void },
 ): Promise<PageReply> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
   if (!route.configs.length) {
@@ -489,7 +500,7 @@ export async function generatePageReply(
       { role: "user", content: user },
     ];
     try {
-      const turn = await completeTurn(config, messages, temperature, options?.contract, options?.signal);
+      const turn = await completeTurn(config, messages, temperature, options?.contract, options?.signal, options?.onToken);
       return { text: turn.text, route: routeLabelFor(config), truncated: turn.truncated, loop: turn.loop };
     } catch (error) {
       if (error instanceof GenerationCancelled) throw error;
@@ -508,6 +519,7 @@ export async function generateIndependentPageReplies(
   history: ChatMessage[],
   aliases: string[],
   signal?: AbortSignal,
+  onToken?: (text: string) => void,
 ): Promise<IndependentReply[]> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
   if (!route.configs.length) {
@@ -535,7 +547,7 @@ export async function generateIndependentPageReplies(
         { role: "user", content: independentUser },
       ];
       try {
-        const turn = await completeTurn(config, messages, 0.8, undefined, signal);
+        const turn = await completeTurn(config, messages, 0.8, undefined, signal, onToken);
         return { alias, text: turn.text, route: routeLabelFor(config) };
       } catch (error) {
         if (error instanceof GenerationCancelled) throw error;

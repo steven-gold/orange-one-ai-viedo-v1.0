@@ -25,6 +25,7 @@ import {
   threadScopeReady,
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
+import { generationStatusLabel, type ConversationTaskStatus } from "@/lib/conversationTask";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -121,18 +122,21 @@ export function CoreVisual() {
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const [scriptOpen, setScriptOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [streamDraft, setStreamDraft] = useState("");
+  const [streamStatus, setStreamStatus] = useState<ConversationTaskStatus | null>(null);
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
   const referenceRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const sendAbortRef = useRef<AbortController | null>(null);
+  const expectStreamRefreshRef = useRef(false);
   fieldsRef.current = fields;
 
   useEffect(() => {
     const node = timelineRef.current;
     if (!node) return;
     node.scrollTop = node.scrollHeight;
-  }, [fields, tick]);
+  }, [fields, tick, streamDraft]);
 
   useEffect(() => {
     if (!menu) return;
@@ -180,7 +184,14 @@ export function CoreVisual() {
         setError(cause instanceof CoreClientError ? cause.code : "CORE_READ_UNAVAILABLE");
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (cancelled) return;
+        setLoading(false);
+        if (expectStreamRefreshRef.current) {
+          expectStreamRefreshRef.current = false;
+          setGenerating(false);
+          setStreamDraft("");
+          setStreamStatus(null);
+        }
       });
     return () => {
       cancelled = true;
@@ -220,17 +231,35 @@ export function CoreVisual() {
     if (controller) {
       sendAbortRef.current = controller;
       setGenerating(true);
+      setStreamDraft("");
+      setStreamStatus("OPEN");
     }
     try {
-      await postCoreAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue, controller?.signal);
-      if (generatingTurn) setTick((value) => value + 1);
-    } catch {
-      if (generatingTurn) setTick((value) => value + 1);
-    } finally {
-      if (controller && sendAbortRef.current === controller) {
-        sendAbortRef.current = null;
-        setGenerating(false);
+      await postCoreAction(
+        DEFAULT_ACCOUNT,
+        controlUid,
+        actionUid,
+        DEFAULT_SESSION,
+        nextValue,
+        controller?.signal,
+        controller
+          ? {
+              token: (text) => setStreamDraft((prev) => prev + text),
+              status: (status) => setStreamStatus(status),
+            }
+          : undefined,
+      );
+      if (generatingTurn) {
+        expectStreamRefreshRef.current = true;
+        setTick((value) => value + 1);
       }
+    } catch {
+      if (generatingTurn) {
+        expectStreamRefreshRef.current = true;
+        setTick((value) => value + 1);
+      }
+    } finally {
+      if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
     }
   }, [applyPatch]);
 
@@ -274,6 +303,7 @@ export function CoreVisual() {
       sendAbortRef.current.abort();
       return;
     }
+    if (generating) return;
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUid(current)) return;
     const text = draftMessage.trim();
@@ -289,7 +319,7 @@ export function CoreVisual() {
     if (!payload) return;
     setDraftMessage("");
     void act("CORE-01-BTN-SEND", payload);
-  }, [act, draftMessage]);
+  }, [act, draftMessage, generating]);
 
   const insertQuote = useCallback((ref: string, prefix = "") => {
     const piece = quoteInsertText(ref);
@@ -484,7 +514,7 @@ export function CoreVisual() {
               <span>{tx("core.right_click_only")}</span>
             </div>
             <div className={styles.timeline} ref={timelineRef}>
-              {conversation.length === 0 ? (
+              {conversation.length === 0 && !generating ? (
                 <p className={styles.threadEmpty}>{tx("core.conversation_empty")}</p>
               ) : (
                 conversation.map((row, index) => (
@@ -512,6 +542,15 @@ export function CoreVisual() {
                   </article>
                 ))
               )}
+              {generating ? (
+                <article className={styles.assistantMessage} data-stream="live">
+                  <div className={styles.bubbleRole}>
+                    {tx("core.ai_response_n")}
+                    {streamStatus ? ` ${tx("conversation.stream.status")}：${generationStatusLabel(streamStatus)}` : ` ${tx("conversation.stream.generating")}`}
+                  </div>
+                  <p>{streamDraft || tx("conversation.stream.generating")}</p>
+                </article>
+              ) : null}
             </div>
             <section className={styles.composerBar} data-component-uid="CORE-01-CMP-COMPOSER">
               <div className={styles.composer}>

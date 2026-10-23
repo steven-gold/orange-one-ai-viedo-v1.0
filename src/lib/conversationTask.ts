@@ -18,6 +18,11 @@ export type ConversationTaskKind =
 
 export type ConversationTaskStatus = "OPEN" | "PARTIAL" | "COMPLETE" | "FAILED" | "STOPPED";
 
+export type GenerationStreamSink = {
+  token: (text: string) => void;
+  status: (status: ConversationTaskStatus) => void;
+};
+
 export type ConversationTaskContract = {
   taskId: string;
   thread: string;
@@ -327,11 +332,15 @@ export function parseConversationFileRef(text: string): { fileId: string; fileNa
   return { fileId: id[1], fileName: clean(name?.[1]) || "成品.txt" };
 }
 
-function statusLabel(status: ConversationTaskStatus): string {
+export function generationStatusLabel(status: ConversationTaskStatus): string {
   if (status === "COMPLETE") return "已完成";
   if (status === "PARTIAL" || status === "OPEN") return "部分完成";
   if (status === "STOPPED") return "已停止";
   return "失敗";
+}
+
+function statusLabel(status: ConversationTaskStatus): string {
+  return generationStatusLabel(status);
 }
 
 export function shouldAttachFooter(contract: ConversationTaskContract): boolean {
@@ -418,6 +427,134 @@ export function splitSseFrames(buffer: string): { frames: string[]; rest: string
     }
   }
   return { frames, rest };
+}
+
+export type GenerationStreamEvent =
+  | { type: "token"; text: string }
+  | { type: "status"; status: ConversationTaskStatus }
+  | { type: "done" };
+
+export function encodeGenerationSse(event: GenerationStreamEvent): string {
+  return `data: ${JSON.stringify(event)}\n\n`;
+}
+
+export function parseGenerationSseFrame(data: string): GenerationStreamEvent | null {
+  const trimmed = clean(data);
+  if (!trimmed) return null;
+  try {
+    const parsed = JSON.parse(trimmed) as { type?: unknown; text?: unknown; status?: unknown };
+    if (parsed.type === "token" && typeof parsed.text === "string") return { type: "token", text: parsed.text };
+    if (
+      parsed.type === "status" &&
+      (parsed.status === "OPEN" ||
+        parsed.status === "PARTIAL" ||
+        parsed.status === "COMPLETE" ||
+        parsed.status === "FAILED" ||
+        parsed.status === "STOPPED")
+    ) {
+      return { type: "status", status: parsed.status };
+    }
+    if (parsed.type === "done") return { type: "done" };
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function isConversationGeneratingAction(actionUid: string): boolean {
+  return actionUid.endsWith("-ACT-SEND") || actionUid.endsWith("-ACT-MSG-ANALYZE");
+}
+
+export function generationSseResponse(run: (sink: GenerationStreamSink) => Promise<void>): Response {
+  const encoder = new TextEncoder();
+  let closed = false;
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const push = (event: GenerationStreamEvent) => {
+        if (closed) return;
+        try {
+          controller.enqueue(encoder.encode(encodeGenerationSse(event)));
+        } catch {
+          closed = true;
+        }
+      };
+      const sink: GenerationStreamSink = {
+        token: (text) => push({ type: "token", text }),
+        status: (status) => push({ type: "status", status }),
+      };
+      try {
+        await run(sink);
+      } catch {
+        push({ type: "status", status: "FAILED" });
+      } finally {
+        push({ type: "done" });
+        closed = true;
+        try {
+          controller.close();
+        } catch {
+          // Stream already closed after abort or natural end.
+        }
+      }
+    },
+  });
+  return new Response(stream, {
+    status: 202,
+    headers: {
+      "content-type": "text/event-stream",
+      "cache-control": "no-store",
+      connection: "keep-alive",
+    },
+  });
+}
+
+export async function consumeGenerationStream(
+  body: ReadableStream<Uint8Array>,
+  sink: GenerationStreamSink,
+  signal?: AbortSignal,
+): Promise<void> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  const onAbort = () => {
+    void reader.cancel();
+  };
+  if (signal?.aborted) {
+    await reader.cancel();
+    return;
+  }
+  signal?.addEventListener("abort", onAbort);
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const split = splitSseFrames(buffer);
+      buffer = split.rest;
+      for (const frame of split.frames) {
+        const event = parseGenerationSseFrame(frame);
+        if (!event) continue;
+        if (event.type === "token" && event.text) sink.token(event.text);
+        if (event.type === "status") sink.status(event.status);
+        if (event.type === "done") return;
+      }
+    }
+    const leftover = splitSseFrames(buffer);
+    for (const frame of leftover.frames) {
+      const event = parseGenerationSseFrame(frame);
+      if (!event) continue;
+      if (event.type === "token" && event.text) sink.token(event.text);
+      if (event.type === "status") sink.status(event.status);
+    }
+  } catch {
+    // Stream aborted or closed before a terminal frame.
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
+    try {
+      await reader.cancel();
+    } catch {
+      // Stream already closed after abort or natural end.
+    }
+  }
 }
 
 export function parseOpenAiSseFrame(data: string): { delta: string; finishReason: string; done: boolean } {

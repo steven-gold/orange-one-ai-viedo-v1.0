@@ -1,5 +1,10 @@
 import type { NavigationArea, NavigationContextResponse } from "./navigation";
 import { isNavigationTargetResolvable } from "./navigation";
+import {
+  consumeGenerationStream,
+  isConversationGeneratingAction,
+  type GenerationStreamSink,
+} from "./conversationTask";
 
 export class NavigationClientError extends Error {
   readonly code: string;
@@ -177,15 +182,17 @@ export async function fetchCoreReadModel(
   return (await response.json()) as CoreReadModel;
 }
 
-export async function postCoreAction(
+async function postWorkbenchAction(
+  path: string,
   accountUid: string,
   controlUid: string,
   actionUid: string,
-  sessionUid = "sess-demo-001",
+  sessionUid: string,
   nextValue?: string,
   signal?: AbortSignal,
+  stream?: GenerationStreamSink,
 ): Promise<void> {
-  await fetch("/api/core/action", {
+  const response = await fetch(path, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -195,6 +202,26 @@ export async function postCoreAction(
     body: JSON.stringify({ controlUid, actionUid, nextValue }),
     signal,
   });
+  const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
+  if (stream && contentType.includes("text/event-stream") && response.body) {
+    await consumeGenerationStream(response.body, stream, signal);
+    return;
+  }
+  if (isConversationGeneratingAction(actionUid) && stream && response.ok) {
+    stream.status("COMPLETE");
+  }
+}
+
+export async function postCoreAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+  nextValue?: string,
+  signal?: AbortSignal,
+  stream?: GenerationStreamSink,
+): Promise<void> {
+  await postWorkbenchAction("/api/core/action", accountUid, controlUid, actionUid, sessionUid, nextValue, signal, stream);
 }
 
 export class ConversationFileClientError extends Error {
@@ -317,17 +344,9 @@ export async function postAssetAction(
   sessionUid = "sess-demo-001",
   nextValue?: string,
   signal?: AbortSignal,
+  stream?: GenerationStreamSink,
 ): Promise<void> {
-  await fetch("/api/assets/action", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-account-uid": accountUid,
-      "x-session-uid": sessionUid,
-    },
-    body: JSON.stringify({ controlUid, actionUid, nextValue }),
-    signal,
-  });
+  await postWorkbenchAction("/api/assets/action", accountUid, controlUid, actionUid, sessionUid, nextValue, signal, stream);
 }
 
 export interface VideoFieldValue {
@@ -379,17 +398,9 @@ export async function postVideoAction(
   sessionUid = "sess-demo-001",
   nextValue?: string,
   signal?: AbortSignal,
+  stream?: GenerationStreamSink,
 ): Promise<void> {
-  await fetch("/api/video/action", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-account-uid": accountUid,
-      "x-session-uid": sessionUid,
-    },
-    body: JSON.stringify({ controlUid, actionUid, nextValue }),
-    signal,
-  });
+  await postWorkbenchAction("/api/video/action", accountUid, controlUid, actionUid, sessionUid, nextValue, signal, stream);
 }
 
 export interface EditFieldValue {
@@ -441,17 +452,9 @@ export async function postEditAction(
   sessionUid = "sess-demo-001",
   nextValue?: string,
   signal?: AbortSignal,
+  stream?: GenerationStreamSink,
 ): Promise<void> {
-  await fetch("/api/edit/action", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-account-uid": accountUid,
-      "x-session-uid": sessionUid,
-    },
-    body: JSON.stringify({ controlUid, actionUid, nextValue }),
-    signal,
-  });
+  await postWorkbenchAction("/api/edit/action", accountUid, controlUid, actionUid, sessionUid, nextValue, signal, stream);
 }
 
 export interface QaFieldValue {

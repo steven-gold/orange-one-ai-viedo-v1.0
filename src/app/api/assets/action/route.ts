@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generationSseResponse, isConversationGeneratingAction } from "@/lib/conversationTask";
 import { jsonError, requireAuth } from "@/server/auth/requireAuth";
 import { knownAssetAction, persistHasAssetPermission, persistRecordAssetAction } from "@/server/db/persist";
 import { ASSET_PERMISSION } from "@/server/domain/asset";
@@ -19,6 +20,11 @@ export async function POST(request: Request) {
     const allowed = await persistHasAssetPermission(principal.accountUid);
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${ASSET_PERMISSION} required`, 403);
+    }
+    if (isConversationGeneratingAction(actionUid)) {
+      return generationSseResponse(async (sink) => {
+        await persistRecordAssetAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal, sink);
+      });
     }
     const eventUid = await persistRecordAssetAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });

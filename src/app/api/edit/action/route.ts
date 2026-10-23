@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generationSseResponse, isConversationGeneratingAction } from "@/lib/conversationTask";
 import { jsonError, requireAuth } from "@/server/auth/requireAuth";
 import { knownEditAction, persistHasEditPermission, persistRecordEditAction } from "@/server/db/persist";
 import { EDIT_PERMISSION } from "@/server/domain/edit";
@@ -19,6 +20,11 @@ export async function POST(request: Request) {
     const allowed = await persistHasEditPermission(principal.accountUid);
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${EDIT_PERMISSION} required`, 403);
+    }
+    if (isConversationGeneratingAction(actionUid)) {
+      return generationSseResponse(async (sink) => {
+        await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal, sink);
+      });
     }
     const eventUid = await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });

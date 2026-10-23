@@ -43,6 +43,7 @@ import {
   unverifiedExecutionClaims,
   updateContractAfterGeneration,
   type ConversationTaskContract,
+  type GenerationStreamSink,
 } from "@/lib/conversationTask";
 import {
   activeThreadUid,
@@ -276,6 +277,7 @@ async function fillConversationReply(
   nextValue?: string,
   accountUid?: string,
   signal?: AbortSignal,
+  stream?: GenerationStreamSink,
 ): Promise<void> {
   const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     `SELECT control_uid, value_text FROM ${table}`,
@@ -293,6 +295,7 @@ async function fillConversationReply(
   const history = conversationRecentHistory(conversationMessagesForThread(current(bindings.messageUid), thread).slice(0, -1));
   const context = formatConversationContext(bindings, current);
   const contract = resolveTaskContract(prompt, current(bindings.notebookUid), thread);
+  if (contract) stream?.status(contract.status);
   let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
   let failed = false;
   let stopped = false;
@@ -302,6 +305,7 @@ async function fillConversationReply(
         contract: contract ?? undefined,
         kind: contract?.kind,
         signal,
+        onToken: stream ? (text) => stream.token(text) : undefined,
       });
     }
   } catch (error) {
@@ -314,6 +318,9 @@ async function fillConversationReply(
   }
   const generatedContract = applyGeneratedContract(contract, generated, failed, stopped);
   const nextContract = await persistGeneratedFile(accountUid, page, generatedContract.nextContract, generatedContract.reply);
+  if (nextContract) stream?.status(nextContract.status);
+  else if (stopped) stream?.status("STOPPED");
+  else if (failed) stream?.status("FAILED");
   const reply = attachFooter(generatedContract.reply, nextContract);
   if (stopped && !reply.trim()) return;
   const patch = appendAssistantMessageFor(
@@ -411,6 +418,7 @@ export async function applyWorkbenchAction(
   nextValue?: string,
   accountUid?: string,
   signal?: AbortSignal,
+  stream?: GenerationStreamSink,
 ): Promise<AiapiOutcome | void> {
   if (page === "dashboard") {
     return;
@@ -443,6 +451,7 @@ export async function applyWorkbenchAction(
       const context = formatCoreChatContext(current);
       const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
       const contract = resolveTaskContract(prompt, current(notebookUid), thread);
+      if (contract) stream?.status(contract.status);
       if (isMultiAiMode(current)) {
         const aliases = targetedParticipantAliases(tokens, current);
         let replies: Array<{ alias: string; text: string; route: string }> = aliases.map((alias) => ({
@@ -452,7 +461,7 @@ export async function applyWorkbenchAction(
         }));
         let nextContract = contract;
         try {
-          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases, signal);
+          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases, signal, stream ? (text) => stream.token(text) : undefined);
           if (contract) {
             nextContract = updateContractAfterGeneration(contract, replies.map((row) => row.text).join("\n"), {
               truncated: false,
@@ -480,6 +489,7 @@ export async function applyWorkbenchAction(
           nextContract,
           replies.map((row) => row.text).join("\n"),
         );
+        if (nextContract) stream?.status(nextContract.status);
         const patch = appendAssistantMessages(
           current,
           thread,
@@ -506,6 +516,7 @@ export async function applyWorkbenchAction(
             contract: contract ?? undefined,
             kind: contract?.kind,
             signal,
+            onToken: stream ? (text) => stream.token(text) : undefined,
           });
         }
       } catch (error) {
@@ -518,6 +529,9 @@ export async function applyWorkbenchAction(
       }
       const generatedContract = applyGeneratedContract(contract, generated, failed, stopped);
       const nextContract = await persistGeneratedFile(accountUid, "core", generatedContract.nextContract, generatedContract.reply);
+      if (nextContract) stream?.status(nextContract.status);
+      else if (stopped) stream?.status("STOPPED");
+      else if (failed) stream?.status("FAILED");
       const reply = attachFooter(generatedContract.reply, nextContract);
       if (stopped && !reply.trim()) return;
       const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), generated?.route ?? "");
@@ -548,7 +562,7 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid, signal);
+      await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid, signal, stream);
     }
     if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
@@ -589,7 +603,7 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "VIDEO-01-ACT-SEND" || actionUid === "VIDEO-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue, accountUid, signal);
+      await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue, accountUid, signal, stream);
     }
     if (actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.video, "VIDEO-01-TXT-CORRECTION")) || "";
@@ -636,7 +650,7 @@ export async function applyWorkbenchAction(
     });
     const written = await applyProjectedAction(FIELD_TABLE.edit, previewEditAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE") && written) {
-      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue, accountUid, signal);
+      await fillConversationReply(FIELD_TABLE.edit, EDIT_CONVERSATION, "edit", actionUid, nextValue, accountUid, signal, stream);
     }
     if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-API-INSTRUCTION")) || "";

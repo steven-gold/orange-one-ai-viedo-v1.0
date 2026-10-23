@@ -28,6 +28,7 @@ import {
   resolveComposerTokensFor,
   threadsForWorkItem,
 } from "@/lib/conversationCore";
+import { generationStatusLabel, type ConversationTaskStatus } from "@/lib/conversationTask";
 import { ConversationFileActions } from "./ConversationFileActions";
 import { displayVideoValue } from "./videoFormat";
 import { Icon } from "@/components/ui/Icon";
@@ -135,16 +136,19 @@ export function VideoVisual() {
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [streamDraft, setStreamDraft] = useState("");
+  const [streamStatus, setStreamStatus] = useState<ConversationTaskStatus | null>(null);
   const fieldsRef = useRef(fields);
   const timelineRef = useRef<HTMLDivElement>(null);
   const sendAbortRef = useRef<AbortController | null>(null);
+  const expectStreamRefreshRef = useRef(false);
   fieldsRef.current = fields;
 
   useEffect(() => {
     const node = timelineRef.current;
     if (!node) return;
     node.scrollTop = node.scrollHeight;
-  }, [fields, tick]);
+  }, [fields, tick, streamDraft]);
 
   useEffect(() => {
     if (!menu) return;
@@ -210,7 +214,14 @@ export function VideoVisual() {
         setFields(emptyFields());
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (cancelled) return;
+        setLoading(false);
+        if (expectStreamRefreshRef.current) {
+          expectStreamRefreshRef.current = false;
+          setGenerating(false);
+          setStreamDraft("");
+          setStreamStatus(null);
+        }
       });
     return () => {
       cancelled = true;
@@ -260,17 +271,31 @@ export function VideoVisual() {
       if (controller) {
         sendAbortRef.current = controller;
         setGenerating(true);
+        setStreamDraft("");
+        setStreamStatus("OPEN");
       }
       try {
-        await postVideoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue, controller?.signal);
+        await postVideoAction(
+          DEFAULT_ACCOUNT,
+          controlUid,
+          actionUid,
+          DEFAULT_SESSION,
+          nextValue,
+          controller?.signal,
+          controller
+            ? {
+                token: (text) => setStreamDraft((prev) => prev + text),
+                status: (status) => setStreamStatus(status),
+              }
+            : undefined,
+        );
+        if (generatingTurn) expectStreamRefreshRef.current = true;
         if (refreshTurn) setTick((value) => value + 1);
       } catch {
+        if (generatingTurn) expectStreamRefreshRef.current = true;
         if (refreshTurn) setTick((value) => value + 1);
       } finally {
-        if (controller && sendAbortRef.current === controller) {
-          sendAbortRef.current = null;
-          setGenerating(false);
-        }
+        if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
       }
     },
     [applyPatch],
@@ -292,6 +317,7 @@ export function VideoVisual() {
       sendAbortRef.current.abort();
       return;
     }
+    if (generating) return;
     const current = (uid: string) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null;
     if (!activeThreadUidFor(VIDEO_CONVERSATION, current)) return;
     const text = correctionDraft.trim();
@@ -301,7 +327,7 @@ export function VideoVisual() {
     if (!text) return;
     setCorrectionDraft("");
     void act("VIDEO-01-BTN-SEND", text);
-  }, [act, correctionDraft]);
+  }, [act, correctionDraft, generating]);
 
   const runMessageAction = useCallback((actionUid: string, messageRef: string, text: string) => {
     setMenu(null);
@@ -556,7 +582,7 @@ export function VideoVisual() {
             <span>{tx("video.right_click_only")}</span>
           </div>
           <div className={styles.messageTimeline} ref={timelineRef}>
-            {conversation.length === 0 ? (
+            {conversation.length === 0 && !generating ? (
               <p className={styles.threadEmpty}>{tx("video.conversation_empty")}</p>
             ) : (
               conversation.map((row, index) => (
@@ -584,6 +610,15 @@ export function VideoVisual() {
                 </article>
               ))
             )}
+            {generating ? (
+              <article className={styles.assistantMessage} data-stream="live">
+                <div className={styles.bubbleRole}>
+                  {tx("video.ai_response_n")}
+                  {streamStatus ? ` ${tx("conversation.stream.status")}：${generationStatusLabel(streamStatus)}` : ` ${tx("conversation.stream.generating")}`}
+                </div>
+                <p>{streamDraft || tx("conversation.stream.generating")}</p>
+              </article>
+            ) : null}
           </div>
           <div className={styles.summaryInline}>
             <span className={styles.summaryLabel}>{tx("video.summary_inline")}</span>

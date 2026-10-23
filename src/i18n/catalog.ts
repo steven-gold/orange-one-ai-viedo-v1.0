@@ -2486,6 +2486,8 @@ const catalog = {
   "conversation.file.title": { "zh-TW": "任務成品", "zh-CN": "任务成品", en: "Task deliverable" },
   "conversation.file.close": { "zh-TW": "關閉", "zh-CN": "关闭", en: "Close" },
   "conversation.file.unavailable": { "zh-TW": "成品暫時無法讀取", "zh-CN": "成品暂时无法读取", en: "Deliverable is unavailable" },
+  "conversation.stream.generating": { "zh-TW": "生成中", "zh-CN": "生成中", en: "Generating" },
+  "conversation.stream.status": { "zh-TW": "狀態", "zh-CN": "状态", en: "Status" },
   "login.title": { "zh-TW": "登入", "zh-CN": "登录", en: "Sign in" },
   "login.email": { "zh-TW": "電子郵件", "zh-CN": "电子邮件", en: "Email" },
   "login.password": { "zh-TW": "密碼", "zh-CN": "密码", en: "Password" },
