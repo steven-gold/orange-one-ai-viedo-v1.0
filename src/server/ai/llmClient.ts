@@ -524,7 +524,7 @@ export async function generateIndependentPageReplies(
   history: ChatMessage[],
   aliases: string[],
   signal?: AbortSignal,
-  onToken?: (text: string) => void,
+  onToken?: (text: string, alias?: string) => void,
   contract?: ConversationTaskContract,
 ): Promise<IndependentReply[]> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
@@ -557,7 +557,7 @@ export async function generateIndependentPageReplies(
         { role: "user", content: independentUser },
       ];
       try {
-        const turn = await completeTurn(config, messages, 0.8, contract, signal, onToken);
+        const turn = await completeTurn(config, messages, 0.8, contract, signal, onToken ? (text) => onToken(text, alias) : undefined);
         return { alias, text: turn.text, route: routeLabelFor(config) };
       } catch (error) {
         if (error instanceof GenerationCancelled) throw error;

@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { isAiUnavailable } from "@/lib/aiReply";
 import { CoreClientError, fetchCoreReadModel, postCoreAction, type CoreFieldValue } from "@/lib/client";
-import { ConversationFileActions } from "./ConversationFileActions";
+import { ConversationMessageBody } from "./ConversationMessageBody";
+import { ConversationMarkdown } from "./ConversationMarkdown";
 import {
   activeThreadUid,
   assignedAiRouteReady,
@@ -14,6 +14,7 @@ import {
   canonicalScriptRef,
   composerHasBlockingToken,
   exactName,
+  lastUserText,
   messageExceedsStoredLimit,
   parseCanonicalScript,
   messagesForThread,
@@ -25,7 +26,7 @@ import {
   threadScopeReady,
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
-import { generationStatusLabel, type ConversationTaskStatus } from "@/lib/conversationTask";
+import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
 import { displayCoreValue } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
@@ -122,7 +123,7 @@ export function CoreVisual() {
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const [scriptOpen, setScriptOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [streamDraft, setStreamDraft] = useState("");
+  const [streamDrafts, setStreamDrafts] = useState<Record<string, string>>({});
   const [streamStatus, setStreamStatus] = useState<ConversationTaskStatus | null>(null);
   const fieldsRef = useRef(fields);
   const attachRef = useRef<HTMLInputElement>(null);
@@ -136,7 +137,7 @@ export function CoreVisual() {
     const node = timelineRef.current;
     if (!node) return;
     node.scrollTop = node.scrollHeight;
-  }, [fields, tick, streamDraft]);
+  }, [fields, tick, streamDrafts]);
 
   useEffect(() => {
     if (!menu) return;
@@ -184,12 +185,20 @@ export function CoreVisual() {
         setError(cause instanceof CoreClientError ? cause.code : "CORE_READ_UNAVAILABLE");
       })
       .finally(() => {
-        if (cancelled) return;
+        if (cancelled) {
+          if (expectStreamRefreshRef.current) {
+            expectStreamRefreshRef.current = false;
+            setGenerating(false);
+            setStreamDrafts({});
+            setStreamStatus(null);
+          }
+          return;
+        }
         setLoading(false);
         if (expectStreamRefreshRef.current) {
           expectStreamRefreshRef.current = false;
           setGenerating(false);
-          setStreamDraft("");
+          setStreamDrafts({});
           setStreamStatus(null);
         }
       });
@@ -232,7 +241,7 @@ export function CoreVisual() {
     if (controller) {
       sendAbortRef.current = controller;
       setGenerating(true);
-      setStreamDraft("");
+      setStreamDrafts({});
       setStreamStatus("OPEN");
     }
     try {
@@ -245,7 +254,11 @@ export function CoreVisual() {
         controller?.signal,
         controller
           ? {
-              token: (text) => setStreamDraft((prev) => prev + text),
+              token: (text, alias) =>
+                setStreamDrafts((prev) => {
+                  const key = alias?.trim() || "_";
+                  return { ...prev, [key]: (prev[key] ?? "") + text };
+                }),
               status: (status) => setStreamStatus(status),
             }
           : undefined,
@@ -537,22 +550,45 @@ export function CoreVisual() {
                       {row.ref ? ` ${row.ref}` : ""}
                       {row.at ? ` ${row.at}` : ""}
                     </div>
-                    <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
-                    {row.role === "assistant" ? (
-                      <ConversationFileActions text={row.text} accountUid={DEFAULT_ACCOUNT} sessionUid={DEFAULT_SESSION} tx={tx} />
-                    ) : null}
-                  </article>
-                ))
-              )}
-              {generating ? (
-                <article className={styles.assistantMessage} data-stream="live">
-                  <div className={styles.bubbleRole}>
-                    {tx("core.ai_response_n")}
-                    {streamStatus ? ` ${tx("conversation.stream.status")}：${generationStatusLabel(streamStatus)}` : ` ${tx("conversation.stream.generating")}`}
-                  </div>
-                  <p>{streamDraft || tx("conversation.stream.generating")}</p>
-                </article>
-              ) : null}
+                    <ConversationMessageBody
+                      text={row.text}
+                      role={row.role}
+                      accountUid={DEFAULT_ACCOUNT}
+                      sessionUid={DEFAULT_SESSION}
+                      tx={tx}
+                      busy={generating}
+                      onRetry={
+                        row.role === "assistant"
+                          ? () => {
+                              const prior = lastUserText(valueOf("CORE-01-FLD-MESSAGE"), activeThread ?? "");
+                              if (prior) void act("CORE-01-BTN-SEND", prior);
+                            }
+                          : undefined
+                      }
+                      onRegenerate={
+                        row.role === "assistant"
+                          ? () => {
+                              const prior = lastUserText(valueOf("CORE-01-FLD-MESSAGE"), activeThread ?? "");
+                              if (prior) void act("CORE-01-BTN-SEND", prior);
+                            }
+                          : undefined
+                      }
+                    />
+                   </article>
+                 ))
+               )}
+               {generating ? (
+                 (Object.keys(streamDrafts).length ? Object.entries(streamDrafts) : [["_"," "]]).map(([alias, text]) => (
+                 <article key={alias} className={styles.assistantMessage} data-stream="live">
+                   <div className={styles.bubbleRole}>
+                     {tx("core.ai_response_n")}
+                     {alias !== "_" ? ` @${alias}` : ""}
+                     {streamStatus ? ` ${tx("conversation.stream.status")}：${tx(generationStatusKey(streamStatus))}` : ` ${tx("conversation.stream.generating")}`}
+                   </div>
+                   <ConversationMarkdown text={(text ?? "").trim() || tx("conversation.stream.generating")} />
+                 </article>
+                 ))
+               ) : null}
             </div>
             <section className={styles.composerBar} data-component-uid="CORE-01-CMP-COMPOSER">
               <div className={styles.composer}>

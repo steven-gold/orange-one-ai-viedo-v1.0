@@ -20,6 +20,7 @@ import {
   parseMessageActionPayload as parseConversationMessageActionPayload,
   persistConversationTasksFor,
   recentHistoryPayload as conversationRecentHistory,
+  refreshAssistantNotebookFor,
   resolveComposerTokensFor,
 } from "@/lib/conversationCore";
 import {
@@ -36,12 +37,14 @@ import {
 import {
   annotateUnverifiedClaims,
   buildTaskContract,
+  diagnoseGenerationFailure,
   formatDeliveryFooter,
   latestOpenTask,
   parseNotebookTasks,
   shouldAttachFooter,
   unverifiedExecutionClaims,
   updateContractAfterGeneration,
+  withTaskObservation,
   type ConversationTaskContract,
   type GenerationStreamSink,
 } from "@/lib/conversationTask";
@@ -56,6 +59,7 @@ import {
   persistConversationTasks,
   previewCoreAction,
   recentHistoryPayload,
+  refreshAssistantNotebook,
   resolveComposerTokens,
   targetedParticipantAliases,
 } from "@/lib/coreActionPreview";
@@ -65,7 +69,7 @@ import { previewQaAction } from "@/lib/qaActionPreview";
 import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, type AiPageUid } from "../ai/llmClient";
+import { AiProviderError, assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, type AiPageUid } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -206,26 +210,46 @@ function applyGeneratedContract(
   generated: { text: string; truncated?: boolean; loop?: boolean } | null,
   failed: boolean,
   stopped = false,
+  startedAt = 0,
+  providerCode = "",
 ): { reply: string; nextContract: ConversationTaskContract | null } {
+  const text = generated?.text.trim() ?? "";
+  const truncated = generated?.truncated ?? false;
+  const loop = generated?.loop ?? false;
+  const empty = !text;
+  const failReason = diagnoseGenerationFailure({
+    failed: failed || (!stopped && empty),
+    empty,
+    loop,
+    truncated,
+    providerCode,
+  });
+  const observation = {
+    chars: text.length,
+    durationMs: startedAt ? Date.now() - startedAt : 0,
+    loop,
+    truncated: truncated || stopped,
+    failReason,
+  };
   if (stopped) {
-    const reply = generated?.text.trim() ?? "";
-    const nextContract = contract
-      ? updateContractAfterGeneration(contract, reply, { truncated: true, loop: false, stopped: true })
-      : null;
-    return { reply, nextContract };
+    const nextContract = withTaskObservation(
+      contract ? updateContractAfterGeneration(contract, text, { truncated: true, loop: false, stopped: true }) : null,
+      observation,
+    );
+    return { reply: text, nextContract };
   }
-  let reply = generated?.text.trim() ? generated.text : AI_UNAVAILABLE_ZH;
+  let reply = text || AI_UNAVAILABLE_ZH;
   let nextContract = contract;
   if (failed) {
     reply = AI_UNAVAILABLE_ZH;
     if (contract) nextContract = { ...contract, status: "FAILED" };
-  } else if (contract && generated?.text.trim()) {
-    nextContract = updateContractAfterGeneration(contract, generated.text, {
-      truncated: generated.truncated ?? false,
-      loop: generated.loop ?? false,
+  } else if (contract && text) {
+    nextContract = updateContractAfterGeneration(contract, generated?.text ?? text, {
+      truncated,
+      loop,
     });
   }
-  return { reply, nextContract: nextContract ?? null };
+  return { reply, nextContract: withTaskObservation(nextContract ?? null, observation) };
 }
 
 function upsertTask(tasks: ConversationTaskContract[], next: ConversationTaskContract): ConversationTaskContract[] {
@@ -299,6 +323,8 @@ async function fillConversationReply(
   let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
   let failed = false;
   let stopped = false;
+  let providerCode = "";
+  const startedAt = Date.now();
   try {
     if (prompt) {
       generated = await generatePageReply(page, prompt, context, history, {
@@ -314,9 +340,10 @@ async function fillConversationReply(
       stopped = true;
     } else {
       failed = true;
+      if (error instanceof AiProviderError) providerCode = error.code;
     }
   }
-  const generatedContract = applyGeneratedContract(contract, generated, failed, stopped);
+  const generatedContract = applyGeneratedContract(contract, generated, failed, stopped, startedAt, providerCode);
   const nextContract = await persistGeneratedFile(accountUid, page, generatedContract.nextContract, generatedContract.reply);
   if (nextContract) stream?.status(nextContract.status);
   else if (stopped) stream?.status("STOPPED");
@@ -333,10 +360,18 @@ async function fillConversationReply(
     generated?.route ?? "",
   );
   const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
+  const notebookPatch = refreshAssistantNotebookFor(
+    bindings,
+    patchedCurrent,
+    thread,
+    conversationMessagesForThread(patchedCurrent(bindings.messageUid), thread),
+    "record",
+  );
+  const afterNote = (uid: string) => notebookPatch[uid] ?? patchedCurrent(uid);
   const taskPatch = nextContract
-    ? persistConversationTasksFor(bindings, patchedCurrent, upsertTask(parseNotebookTasks(current(bindings.notebookUid)), nextContract))
+    ? persistConversationTasksFor(bindings, afterNote, upsertTask(parseNotebookTasks(afterNote(bindings.notebookUid)), nextContract))
     : {};
-  for (const [uid, value] of Object.entries({ ...patch, ...taskPatch })) await writeField(table, uid, value);
+  for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(table, uid, value);
 }
 
 async function fillCorrectionScriptBody(
@@ -460,8 +495,23 @@ export async function applyWorkbenchAction(
           route: "",
         }));
         let nextContract = contract;
+        let multiFailed = false;
+        let multiStopped = false;
+        let multiCode = "";
+        const startedAt = Date.now();
         try {
-          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases, signal, stream ? (text) => stream.token(text) : undefined, contract ?? undefined);
+          if (prompt) {
+            replies = await generateIndependentPageReplies(
+              "core",
+              prompt,
+              context,
+              history,
+              aliases,
+              signal,
+              stream ? (text, alias) => stream.token(text, alias) : undefined,
+              contract ?? undefined,
+            );
+          }
           if (contract) {
             nextContract = updateContractAfterGeneration(contract, replies.map((row) => row.text).join("\n"), {
               truncated: false,
@@ -471,6 +521,7 @@ export async function applyWorkbenchAction(
         } catch (error) {
           if (error instanceof GenerationCancelled) {
             replies = aliases.map((alias) => ({ alias, text: error.partial, route: "" }));
+            multiStopped = true;
             if (contract) {
               nextContract = updateContractAfterGeneration(contract, error.partial, {
                 truncated: true,
@@ -480,15 +531,25 @@ export async function applyWorkbenchAction(
             }
           } else {
             replies = aliases.map((alias) => ({ alias, text: "", route: "" }));
+            multiFailed = true;
+            if (error instanceof AiProviderError) multiCode = error.code;
             if (contract) nextContract = { ...contract, status: "FAILED" };
           }
         }
-        nextContract = await persistGeneratedFile(
-          accountUid,
-          "core",
-          nextContract,
-          replies.map((row) => row.text).join("\n"),
-        );
+        const joined = replies.map((row) => row.text).join("\n");
+        nextContract = withTaskObservation(nextContract ?? null, {
+          chars: joined.length,
+          durationMs: Date.now() - startedAt,
+          loop: false,
+          truncated: multiStopped,
+          failReason: diagnoseGenerationFailure({
+            failed: multiFailed,
+            empty: !joined.trim(),
+            truncated: multiStopped,
+            providerCode: multiCode,
+          }),
+        });
+        nextContract = await persistGeneratedFile(accountUid, "core", nextContract, joined);
         if (nextContract) stream?.status(nextContract.status);
         const patch = appendAssistantMessages(
           current,
@@ -501,15 +562,24 @@ export async function applyWorkbenchAction(
           })),
         );
         const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
+        const notebookPatch = refreshAssistantNotebook(
+          patchedCurrent,
+          thread,
+          messagesForThread(patchedCurrent("CORE-01-FLD-MESSAGE"), thread),
+          "record",
+        );
+        const afterNote = (uid: string) => notebookPatch[uid] ?? patchedCurrent(uid);
         const taskPatch = nextContract
-          ? persistConversationTasks(patchedCurrent, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
+          ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(afterNote(notebookUid)), nextContract))
           : {};
-        for (const [uid, value] of Object.entries({ ...patch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
+        for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
         return;
       }
       let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
       let failed = false;
       let stopped = false;
+      let providerCode = "";
+      const startedAt = Date.now();
       try {
         if (prompt) {
           generated = await generatePageReply("core", prompt, context, history, {
@@ -525,9 +595,10 @@ export async function applyWorkbenchAction(
           stopped = true;
         } else {
           failed = true;
+          if (error instanceof AiProviderError) providerCode = error.code;
         }
       }
-      const generatedContract = applyGeneratedContract(contract, generated, failed, stopped);
+      const generatedContract = applyGeneratedContract(contract, generated, failed, stopped, startedAt, providerCode);
       const nextContract = await persistGeneratedFile(accountUid, "core", generatedContract.nextContract, generatedContract.reply);
       if (nextContract) stream?.status(nextContract.status);
       else if (stopped) stream?.status("STOPPED");
@@ -536,10 +607,17 @@ export async function applyWorkbenchAction(
       if (stopped && !reply.trim() && !nextContract) return;
       const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), generated?.route ?? "");
       const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
+      const notebookPatch = refreshAssistantNotebook(
+        patchedCurrent,
+        thread,
+        messagesForThread(patchedCurrent("CORE-01-FLD-MESSAGE"), thread),
+        "record",
+      );
+      const afterNote = (uid: string) => notebookPatch[uid] ?? patchedCurrent(uid);
       const taskPatch = nextContract
-        ? persistConversationTasks(patchedCurrent, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
+        ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(afterNote(notebookUid)), nextContract))
         : {};
-      for (const [uid, value] of Object.entries({ ...patch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
+      for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
     }
     return;
   }

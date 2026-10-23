@@ -30,6 +30,7 @@ import {
   hasSendableMessage as kernelHasSendableMessage,
   messageExceedsStoredLimit as kernelMessageExceedsStoredLimit,
   isPlaceholderName as kernelIsPlaceholderName,
+  lastUserText as kernelLastUserText,
   messagesForThread as kernelMessagesForThread,
   MULTI_AI_ALIASES as KERNEL_MULTI_AI_ALIASES,
   namedList as kernelNamedList,
@@ -167,6 +168,10 @@ export function lastAssistantText(raw: string | null, thread: string, fallback?:
     if (records[index].role === "assistant") return records[index].text;
   }
   return "";
+}
+
+export function lastUserText(raw: string | null, thread: string): string {
+  return kernelLastUserText(raw, thread);
 }
 
 function sourceHash(parts: string[]): string {

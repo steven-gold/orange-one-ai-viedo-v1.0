@@ -19,8 +19,16 @@ export type ConversationTaskKind =
 export type ConversationTaskStatus = "OPEN" | "PARTIAL" | "COMPLETE" | "FAILED" | "STOPPED";
 
 export type GenerationStreamSink = {
-  token: (text: string) => void;
+  token: (text: string, alias?: string) => void;
   status: (status: ConversationTaskStatus) => void;
+};
+
+export type ConversationTaskObservation = {
+  chars: number;
+  durationMs: number;
+  loop: boolean;
+  truncated: boolean;
+  failReason: string;
 };
 
 export type ConversationTaskContract = {
@@ -49,6 +57,7 @@ export type ConversationTaskContract = {
   fileName?: string;
   batchSize: number;
   version: number;
+  observation?: ConversationTaskObservation;
 };
 
 export type GenerationMonitor = {
@@ -299,8 +308,49 @@ export function formatDeliveryFooter(contract: ConversationTaskContract): string
     contract.status === "PARTIAL" || contract.status === "OPEN" || contract.status === "STOPPED" ? "可續寫；未完成不得視為全部完成。" : "",
     contract.fileName ? `成品：${contract.fileName}` : "",
     contract.fileId ? `檔案：${contract.fileId}` : "",
+    formatObservationLine(contract.observation),
+    contract.observation?.failReason ? `失敗原因：${contract.observation.failReason}` : "",
   ];
   return lines.filter(Boolean).join("\n");
+}
+
+function formatObservationLine(observation?: ConversationTaskObservation): string {
+  if (!observation) return "";
+  const seconds = Math.max(0, Math.round(observation.durationMs / 100) / 10);
+  const parts = [`字數 ${observation.chars}`, `耗時 ${seconds} 秒`];
+  if (observation.loop) parts.push("循環");
+  if (observation.truncated) parts.push("截斷");
+  return `觀測：${parts.join("；")}`;
+}
+
+export function diagnoseGenerationFailure(input: {
+  failed?: boolean;
+  empty?: boolean;
+  loop?: boolean;
+  truncated?: boolean;
+  providerCode?: string;
+}): string {
+  if (input.providerCode === "AI_PROVIDER_NOT_CONFIGURED" || input.providerCode === "AI_PROVIDER_KILL_SWITCH") {
+    return "供應商未設定或暫時無法使用";
+  }
+  if (input.providerCode === "AI_PROVIDER_TIMEOUT") return "供應商逾時";
+  if (input.providerCode === "AI_PROVIDER_MULTI_SHORT") return "Multi 路由未滿 3 條";
+  if (input.providerCode === "AI_PROVIDER_HTTP_ERROR" || input.providerCode === "AI_PROVIDER_UNREACHABLE") {
+    return "供應商無法連線";
+  }
+  if (input.empty) return "空回應";
+  if (input.loop) return "偵測到重複循環";
+  if (input.truncated) return "輸出被截斷";
+  if (input.failed) return "生成失敗";
+  return "";
+}
+
+export function withTaskObservation(
+  contract: ConversationTaskContract | null,
+  observation: ConversationTaskObservation,
+): ConversationTaskContract | null {
+  if (!contract) return null;
+  return { ...contract, observation };
 }
 
 export function conversationFileUid(accountUid: string, pageUid: string, taskId: string): string {
@@ -330,6 +380,21 @@ export function parseConversationFileRef(text: string): { fileId: string; fileNa
   if (!id) return null;
   const name = /成品：\s*([^\n]+)/u.exec(text);
   return { fileId: id[1], fileName: clean(name?.[1]) || "成品.txt" };
+}
+
+export function generationStatusKey(
+  status: ConversationTaskStatus,
+):
+  | "conversation.stream.status.complete"
+  | "conversation.stream.status.open"
+  | "conversation.stream.status.partial"
+  | "conversation.stream.status.stopped"
+  | "conversation.stream.status.failed" {
+  if (status === "COMPLETE") return "conversation.stream.status.complete";
+  if (status === "OPEN") return "conversation.stream.status.open";
+  if (status === "PARTIAL") return "conversation.stream.status.partial";
+  if (status === "STOPPED") return "conversation.stream.status.stopped";
+  return "conversation.stream.status.failed";
 }
 
 export function generationStatusLabel(status: ConversationTaskStatus): string {
@@ -431,7 +496,7 @@ export function splitSseFrames(buffer: string): { frames: string[]; rest: string
 }
 
 export type GenerationStreamEvent =
-  | { type: "token"; text: string }
+  | { type: "token"; text: string; alias?: string }
   | { type: "status"; status: ConversationTaskStatus }
   | { type: "done" };
 
@@ -443,8 +508,11 @@ export function parseGenerationSseFrame(data: string): GenerationStreamEvent | n
   const trimmed = clean(data);
   if (!trimmed) return null;
   try {
-    const parsed = JSON.parse(trimmed) as { type?: unknown; text?: unknown; status?: unknown };
-    if (parsed.type === "token" && typeof parsed.text === "string") return { type: "token", text: parsed.text };
+    const parsed = JSON.parse(trimmed) as { type?: unknown; text?: unknown; status?: unknown; alias?: unknown };
+    if (parsed.type === "token" && typeof parsed.text === "string") {
+      const alias = typeof parsed.alias === "string" ? parsed.alias.trim() : "";
+      return alias ? { type: "token", text: parsed.text, alias } : { type: "token", text: parsed.text };
+    }
     if (
       parsed.type === "status" &&
       (parsed.status === "OPEN" ||
@@ -480,7 +548,7 @@ export function generationSseResponse(run: (sink: GenerationStreamSink) => Promi
         }
       };
       const sink: GenerationStreamSink = {
-        token: (text) => push({ type: "token", text }),
+        token: (text, alias) => push(alias ? { type: "token", text, alias } : { type: "token", text }),
         status: (status) => push({ type: "status", status }),
       };
       try {
@@ -527,7 +595,7 @@ export async function consumeGenerationStream(
   signal?.addEventListener("abort", onAbort);
   const apply = (event: GenerationStreamEvent | null): boolean => {
     if (!event) return false;
-    if (event.type === "token" && event.text) sink.token(event.text);
+    if (event.type === "token" && event.text) sink.token(event.text, event.alias);
     if (event.type === "status") {
       sink.status(event.status);
       if (event.status !== "OPEN") terminal = true;

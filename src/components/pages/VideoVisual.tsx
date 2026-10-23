@@ -22,14 +22,16 @@ import {
   composerHasBlockingToken,
   composerTokenTone,
   messageExceedsStoredLimit,
+  lastUserText,
   messagesForThread,
   notebookTextForThread,
   quoteInsertText,
   resolveComposerTokensFor,
   threadsForWorkItem,
 } from "@/lib/conversationCore";
-import { generationStatusLabel, type ConversationTaskStatus } from "@/lib/conversationTask";
-import { ConversationFileActions } from "./ConversationFileActions";
+import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
+import { ConversationMarkdown } from "./ConversationMarkdown";
+import { ConversationMessageBody } from "./ConversationMessageBody";
 import { displayVideoValue } from "./videoFormat";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
@@ -136,7 +138,7 @@ export function VideoVisual() {
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const [generating, setGenerating] = useState(false);
-  const [streamDraft, setStreamDraft] = useState("");
+  const [streamDrafts, setStreamDrafts] = useState<Record<string, string>>({});
   const [streamStatus, setStreamStatus] = useState<ConversationTaskStatus | null>(null);
   const fieldsRef = useRef(fields);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -148,7 +150,7 @@ export function VideoVisual() {
     const node = timelineRef.current;
     if (!node) return;
     node.scrollTop = node.scrollHeight;
-  }, [fields, tick, streamDraft]);
+  }, [fields, tick, streamDrafts]);
 
   useEffect(() => {
     if (!menu) return;
@@ -214,12 +216,20 @@ export function VideoVisual() {
         setFields(emptyFields());
       })
       .finally(() => {
-        if (cancelled) return;
+        if (cancelled) {
+          if (expectStreamRefreshRef.current) {
+            expectStreamRefreshRef.current = false;
+            setGenerating(false);
+            setStreamDrafts({});
+            setStreamStatus(null);
+          }
+          return;
+        }
         setLoading(false);
         if (expectStreamRefreshRef.current) {
           expectStreamRefreshRef.current = false;
           setGenerating(false);
-          setStreamDraft("");
+          setStreamDrafts({});
           setStreamStatus(null);
         }
       });
@@ -272,7 +282,7 @@ export function VideoVisual() {
       if (controller) {
         sendAbortRef.current = controller;
         setGenerating(true);
-        setStreamDraft("");
+        setStreamDrafts({});
         setStreamStatus("OPEN");
       }
       try {
@@ -285,7 +295,11 @@ export function VideoVisual() {
           controller?.signal,
           controller
             ? {
-                token: (text) => setStreamDraft((prev) => prev + text),
+                token: (text, alias) =>
+                  setStreamDrafts((prev) => {
+                    const key = alias?.trim() || "_";
+                    return { ...prev, [key]: (prev[key] ?? "") + text };
+                  }),
                 status: (status) => setStreamStatus(status),
               }
             : undefined,
@@ -605,22 +619,47 @@ export function VideoVisual() {
                     {row.ref ? ` ${row.ref}` : ""}
                     {row.at ? ` ${row.at}` : ""}
                   </div>
-                  <p>{row.role === "assistant" && isAiUnavailable(row.text) ? tx("ai.unavailable") : row.text}</p>
-                  {row.role === "assistant" ? (
-                    <ConversationFileActions text={row.text} accountUid={DEFAULT_ACCOUNT} sessionUid={DEFAULT_SESSION} tx={tx} />
-                  ) : null}
-                </article>
-              ))
-            )}
-            {generating ? (
-              <article className={styles.assistantMessage} data-stream="live">
-                <div className={styles.bubbleRole}>
-                  {tx("video.ai_response_n")}
-                  {streamStatus ? ` ${tx("conversation.stream.status")}：${generationStatusLabel(streamStatus)}` : ` ${tx("conversation.stream.generating")}`}
-                </div>
-                <p>{streamDraft || tx("conversation.stream.generating")}</p>
-              </article>
-            ) : null}
+                    <ConversationMessageBody
+                      text={row.text}
+                      role={row.role}
+                      accountUid={DEFAULT_ACCOUNT}
+                      sessionUid={DEFAULT_SESSION}
+                      tx={tx}
+                      busy={generating}
+                      onRetry={
+                        row.role === "assistant"
+                          ? () => {
+                              const prior = lastUserText(valueOf("VIDEO-01-FLD-CORRECTION-MESSAGES"), activeThread ?? "");
+                              if (prior) void act("VIDEO-01-BTN-SEND", prior);
+                            }
+                          : undefined
+                      }
+                      onRegenerate={
+                        row.role === "assistant"
+                          ? () => {
+                              const prior = lastUserText(valueOf("VIDEO-01-FLD-CORRECTION-MESSAGES"), activeThread ?? "");
+                              if (prior) void act("VIDEO-01-BTN-SEND", prior);
+                            }
+                          : undefined
+                      }
+                    />
+                  </article>
+                ))
+              )}
+              {generating
+                ? (Object.keys(streamDrafts).length ? Object.entries(streamDrafts) : [["_", " "]]).map(([alias, text]) => (
+                    <article key={alias} className={styles.assistantMessage} data-stream="live">
+                      <div className={styles.bubbleRole}>
+                        {tx("video.ai_response_n")}
+                        {alias !== "_" ? ` @${alias}` : ""}
+                        {streamStatus
+                          ? ` ${tx("conversation.stream.status")}：${tx(generationStatusKey(streamStatus))}`
+                          : ` ${tx("conversation.stream.generating")}`}
+                      </div>
+                      <ConversationMarkdown text={(text ?? "").trim() || tx("conversation.stream.generating")} />
+                    </article>
+                  ))
+                : null}
           </div>
           <div className={styles.summaryInline}>
             <span className={styles.summaryLabel}>{tx("video.summary_inline")}</span>

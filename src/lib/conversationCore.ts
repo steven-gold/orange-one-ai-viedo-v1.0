@@ -574,7 +574,10 @@ function serializeNotebookRecords(
   if (payload.length <= CONVERSATION_STORED_MESSAGE_TEXT_CHARS) return payload;
   const shrunk = records.map((row) => ({
     ...row,
-    body: row.body.slice(0, Math.max(200, Math.floor(CONVERSATION_STORED_MESSAGE_TEXT_CHARS / Math.max(records.length, 1) - 120))),
+    body:
+      row.status === "STALE"
+        ? row.body.slice(0, 120)
+        : row.body.slice(0, Math.max(200, Math.floor(CONVERSATION_STORED_MESSAGE_TEXT_CHARS / Math.max(records.length, 1) - 120))),
   }));
   return JSON.stringify({ kind: "NOTEBOOK", records: shrunk, ...(tasks ? { tasks } : {}) }).slice(
     0,
@@ -621,9 +624,14 @@ export function refreshAssistantNotebookFor(
     sourceHash: hash,
     body: buildNotebookBody(covered, version, hash, intent, { confirmedRefs, aliases }),
   };
-  const others = existing.filter((row) => row.thread !== thread).map((row) => ({ ...row, status: "CURRENT" as const }));
+  const priorSame = existing
+    .filter((row) => row.thread === thread)
+    .map((row) => ({ ...row, status: "STALE" as const }))
+    .sort((left, right) => right.version - left.version);
+  const staleSame = priorSame[0] ? [priorSame[0]] : [];
+  const others = existing.filter((row) => row.thread !== thread);
   const tasks = parseNotebookTasks(current(bindings.notebookUid));
-  return { [bindings.notebookUid]: serializeNotebookRecords([...others, next], { tasks }) };
+  return { [bindings.notebookUid]: serializeNotebookRecords([...others, ...staleSame, next], { tasks }) };
 }
 
 export function persistConversationTasksFor(
@@ -635,6 +643,60 @@ export function persistConversationTasksFor(
   return { [bindings.notebookUid]: serializeNotebookRecords(records, { tasks }) };
 }
 
+export type ConversationMemoryProjection = {
+  thread: string;
+  notebookVersion: number;
+  notebookStatus: ConversationNotebookStatus;
+  body: string;
+  coveredCount: number;
+  sourceHash: string;
+  confirmedRefs: string[];
+  aliases: string[];
+  openTaskId: string;
+  openTaskStatus: string;
+};
+
+export function projectConversationMemory(
+  bindings: ConversationBindings,
+  current: CurrentFn,
+  thread: string,
+): ConversationMemoryProjection | null {
+  if (!thread) return null;
+  const note = parseNotebookRecords(current(bindings.notebookUid)).find(
+    (row) => row.thread === thread && row.status === "CURRENT",
+  );
+  const openTask = latestOpenTask(parseNotebookTasks(current(bindings.notebookUid)), thread);
+  if (!note && !openTask) return null;
+  return {
+    thread,
+    notebookVersion: note?.version ?? 0,
+    notebookStatus: note?.status ?? "CURRENT",
+    body: note?.body ?? "",
+    coveredCount: note?.coveredCount ?? 0,
+    sourceHash: note?.sourceHash ?? "",
+    confirmedRefs: confirmedRefsFrom(bindings, current),
+    aliases: conversationParticipantAliases(bindings, current),
+    openTaskId: openTask?.taskId ?? "",
+    openTaskStatus: openTask?.status ?? "",
+  };
+}
+
+export function formatMemoryProjection(projection: ConversationMemoryProjection): string {
+  return [
+    `版本 ${projection.notebookVersion || "—"}`,
+    `狀態：${projection.notebookStatus === "STALE" ? "過期" : "現行"}`,
+    projection.coveredCount ? `涵蓋則數：${projection.coveredCount}` : "",
+    projection.sourceHash ? `來源雜湊：${projection.sourceHash}` : "",
+    projection.confirmedRefs.length ? `已確認結論：${projection.confirmedRefs.join("、")}` : "",
+    projection.aliases.length ? `參與者別名：${projection.aliases.join("、")}` : "",
+    projection.openTaskId ? `開放任務：${projection.openTaskId}` : "",
+    projection.openTaskStatus ? `任務狀態：${projection.openTaskStatus}` : "",
+    projection.body,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 export function formatConversationContext(
   bindings: ConversationBindings,
   current: CurrentFn,
@@ -643,8 +705,8 @@ export function formatConversationContext(
   const lines = [...(bindings.contextExtra?.(current) ?? []), ...extra];
   const thread = activeThreadUidFor(bindings, current);
   if (thread) lines.push(`對話：${thread}`);
-  const notebook = notebookTextForThread(current(bindings.notebookUid), thread);
-  if (notebook) lines.push(`筆記本：\n${notebook}`);
+  const projection = projectConversationMemory(bindings, current, thread);
+  if (projection) lines.push(`記憶投影：\n${formatMemoryProjection(projection)}`);
   const openTask = latestOpenTask(parseNotebookTasks(current(bindings.notebookUid)), thread);
   const contract = openTask ? formatContractForPrompt(openTask) : "";
   if (contract) lines.push(`任務契約：\n${contract}`);

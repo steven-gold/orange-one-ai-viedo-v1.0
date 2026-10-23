@@ -5,6 +5,8 @@ import {
   annotateUnverifiedClaims,
   consumeGenerationStream,
   encodeGenerationSse,
+  diagnoseGenerationFailure,
+  generationStatusKey,
   generationStatusLabel,
   isConversationGeneratingAction,
   parseGenerationSseFrame,
@@ -180,6 +182,8 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   assertEqual(status && status.type === "status" ? status.status : "", "STOPPED", "stopped status event");
   assertEqual(done?.type, "done", "done event");
   assertEqual(parseGenerationSseFrame("not-json"), null, "reject provider sse as generation event");
+  const aliased = parseGenerationSseFrame(JSON.stringify({ type: "token", text: "甲", alias: "A" }));
+  assertEqual(aliased && aliased.type === "token" ? aliased.alias : "", "A", "token alias");
 }
 
 async function testConsumeGenerationStream(): Promise<void> {
@@ -224,6 +228,10 @@ async function testConsumeGenerationStream(): Promise<void> {
   assertEqual(generationStatusLabel("OPEN"), "進行中", "status label open");
   assertEqual(generationStatusLabel("COMPLETE"), "已完成", "status label complete");
   assertEqual(generationStatusLabel("FAILED"), "失敗", "status label failed");
+  assertEqual(generationStatusKey("OPEN"), "conversation.stream.status.open", "status key open");
+  assertEqual(generationStatusKey("FAILED"), "conversation.stream.status.failed", "status key failed");
+  assertEqual(diagnoseGenerationFailure({ failed: true, empty: true }), "空回應", "empty fail");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_TIMEOUT" }), "供應商逾時", "timeout fail");
 }
 
 {
@@ -240,9 +248,13 @@ async function testConsumeGenerationStream(): Promise<void> {
   const contract = buildTaskContract(SERIES);
   const after = updateContractAfterGeneration(contract, "第1集……", { truncated: false, loop: false });
   const withFile = { ...after, fileId: "FILE-ab12cd34", fileName: fileNameForContract(after) };
-  const footer = formatDeliveryFooter(withFile);
+  const footer = formatDeliveryFooter({
+    ...withFile,
+    observation: { chars: 12, durationMs: 1500, loop: false, truncated: false, failReason: "" },
+  });
   assert(footer.includes("成品：500集分集影片故事大綱.txt"), "footer names the file");
   assert(footer.includes("檔案：FILE-ab12cd34"), "footer keeps file id");
+  assert(footer.includes("觀測：字數 12；耗時 1.5 秒"), "footer keeps observation");
   const packed = `第1集正文\n\n${footer}`;
   assertEqual(stripDeliveryFooter(packed), "第1集正文", "strip footer before file persist");
   const withClaim = annotateUnverifiedClaims(`第1集正文\n\n${footer}`, ["deploy"]);
