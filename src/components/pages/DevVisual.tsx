@@ -4,13 +4,37 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { DevClientError, fetchDevReadModel, postDevAction, type DevFieldValue } from "@/lib/client";
+import {
+  filterCompanies,
+  type DevCampaignStatus,
+  type DevCandidate,
+  type DevCandidateStatus,
+  type DevCompany,
+  type DevDeliveryStatus,
+  type DevJobStatus,
+  type DevMode,
+  type DevOpportunityState,
+  type DevProfile,
+  type DevSignal,
+  workbenchFromFields,
+} from "@/lib/devState";
 import { displayDevValue } from "./devFormat";
 import { DEV_CONTROL_ACTIONS, DEV_STAGES, DEV_VISIBLE_CONTROLS, type DevStage } from "./devControls";
 import styles from "./DevVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
-const EMPTY_ROWS = 3;
+const EMPTY_PROFILE: DevProfile = {
+  profileId: "",
+  version: 0,
+  product: "",
+  industry: "",
+  market: "",
+  keywords: "",
+  exclude: "",
+  mode: "SINGLE",
+  status: "DRAFT",
+};
 
 function Btn({
   uid,
@@ -35,30 +59,58 @@ function Btn({
   );
 }
 
-function EmptyRows({
-  columns,
-  dash,
-  rowClass,
-  lastCell,
-}: {
-  columns: number;
-  dash: string;
-  rowClass: string;
-  lastCell?: string;
-}) {
-  return (
-    <>
-      {Array.from({ length: EMPTY_ROWS }, (_, index) => (
-        <div className={`${styles.trow} ${rowClass}`} key={`empty-${index}`}>
-          {Array.from({ length: columns }, (__, col) => (
-            <span key={`c-${col}`} className={col === columns - 1 && lastCell ? styles.rowAct : undefined}>
-              {col === columns - 1 && lastCell ? lastCell : dash}
-            </span>
-          ))}
-        </div>
-      ))}
-    </>
-  );
+const JOB_LABEL: Record<DevJobStatus, TranslationKey> = {
+  RUNNING: "dev.job-running",
+  PAUSED: "dev.job-paused",
+  STOPPED: "dev.job-stopped",
+  EXTERNAL_PENDING: "dev.job-pending",
+};
+
+const OPP_LABEL: Record<DevOpportunityState, TranslationKey> = {
+  OPEN: "dev.opp-open",
+  QUALIFIED: "dev.opp-qualified",
+  CONTACTED: "dev.opp-contacted",
+  REPLIED: "dev.opp-replied",
+  PROPOSAL: "dev.opp-proposal",
+  WON: "dev.opp-won",
+  LOST: "dev.opp-lost",
+  SUPPRESSED: "dev.opp-suppressed",
+};
+
+const OPP_NEXT: Record<DevOpportunityState, DevOpportunityState[]> = {
+  OPEN: ["QUALIFIED", "SUPPRESSED"],
+  QUALIFIED: ["CONTACTED", "SUPPRESSED"],
+  CONTACTED: ["REPLIED", "SUPPRESSED"],
+  REPLIED: ["PROPOSAL", "SUPPRESSED"],
+  PROPOSAL: ["WON", "LOST", "SUPPRESSED"],
+  WON: [],
+  LOST: [],
+  SUPPRESSED: [],
+};
+
+const CANDIDATE_LABEL: Record<DevCandidateStatus, TranslationKey> = {
+  REVIEW: "dev.candidate-review",
+  APPROVED: "dev.candidate-approved",
+  CHANGE_REQUEST: "dev.candidate-cr",
+};
+
+const CAMPAIGN_LABEL: Record<DevCampaignStatus, TranslationKey> = {
+  REVIEW: "dev.campaign-review",
+  APPROVED: "dev.campaign-approved",
+  QUEUED: "dev.campaign-queued",
+  STOPPED: "dev.campaign-stopped",
+};
+
+const DELIVERY_LABEL: Record<DevDeliveryStatus, TranslationKey> = {
+  QUEUED: "dev.delivery-queued",
+  EXTERNAL_PENDING: "dev.delivery-pending",
+  STOPPED: "dev.delivery-stopped",
+};
+
+function errorKey(code: string | null | undefined): TranslationKey | null {
+  if (!code) return null;
+  const key = `dev.err.${code}` as TranslationKey;
+  return key;
 }
 
 export function DevVisual() {
@@ -67,10 +119,19 @@ export function DevVisual() {
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
-  const [, setFields] = useState<DevFieldValue[]>([]);
+  const [fields, setFields] = useState<DevFieldValue[]>([]);
   const [stage, setStage] = useState<DevStage>(1);
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState<DevProfile>(EMPTY_PROFILE);
+  const [selectedSignalId, setSelectedSignalId] = useState("");
+  const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
+  const [contactType, setContactType] = useState<"EMAIL" | "PHONE" | "ADDRESS">("EMAIL");
+  const [contactValue, setContactValue] = useState("");
+  const [contactSource, setContactSource] = useState("MANUAL");
+  const [selectedCandidateId, setSelectedCandidateId] = useState("");
+  const [audienceQuery, setAudienceQuery] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -80,7 +141,12 @@ export function DevVisual() {
       .then((model) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
-        setFields(model.fields.length ? model.fields : DEV_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        const nextFields = model.fields.length ? model.fields : DEV_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null }));
+        setFields(nextFields);
+        const workbench = workbenchFromFields(nextFields);
+        if (workbench.profile) setDraft(workbench.profile);
+        if (workbench.query) setQuery(workbench.query);
+        if (workbench.audienceQuery) setAudienceQuery(workbench.audienceQuery);
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -99,27 +165,60 @@ export function DevVisual() {
     };
   }, [tick]);
 
-  const act = useCallback(async (controlUid: string) => {
+  const act = useCallback(async (controlUid: string, payload?: Record<string, unknown>) => {
     const actionUid = DEV_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
+    setBusy(true);
     try {
-      await postDevAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      await postDevAction(
+        DEFAULT_ACCOUNT,
+        controlUid,
+        actionUid,
+        DEFAULT_SESSION,
+        payload ? JSON.stringify(payload) : undefined,
+      );
+      if (controlUid === "DEV-01-BTN-SOURCE-MANAGE") {
+        window.location.assign("/admin/knowledge");
+        return;
+      }
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
+    setBusy(false);
     setTick((n) => n + 1);
   }, []);
 
-  const disabled = !authorized && !loading;
+  const disabled = (!authorized && !loading) || busy;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
-  const tx = (key: TranslationKey) => t(key);
+  const tx = (key: TranslationKey, params?: Record<string, string | number>) => t(key, params);
   const dash = displayDevValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(DEV_VISIBLE_CONTROLS), []);
   const campaignView = stage === 4 || stage === 5;
+  const workbench = useMemo(() => workbenchFromFields(fields), [fields]);
+  const actionError = errorKey(workbench.error?.code);
+  const jobStatus = workbench.job?.status ?? null;
+  const jobLabel = jobStatus ? tx(JOB_LABEL[jobStatus]) : loading ? dash : tx("dev.job-idle");
+  const companies = filterCompanies(workbench.companies, query);
+  const selectedCompanyId = selectedCompanyIds[0] ?? companies[0]?.companyId ?? "";
+  const selectedCompany = workbench.companies.find((company) => company.companyId === selectedCompanyId) ?? null;
+  const selectedCandidate =
+    workbench.candidates.find((item) => item.candidateId === selectedCandidateId) ??
+    workbench.candidates.find((item) => item.status === "REVIEW") ??
+    workbench.candidates[workbench.candidates.length - 1] ??
+    null;
+  const approvedCandidate = workbench.candidates.find((item) => item.status === "APPROVED") ?? null;
+  const campaign = workbench.campaign;
+  const deliveries = workbench.deliveries;
 
   const selectStage = (next: DevStage, uid: string) => {
     setStage(next);
     void act(uid);
+  };
+
+  const toggleCompany = (companyId: string) => {
+    setSelectedCompanyIds((current) =>
+      current.includes(companyId) ? current.filter((id) => id !== companyId) : [...current, companyId],
+    );
   };
 
   return (
@@ -135,6 +234,11 @@ export function DevVisual() {
       {error ? (
         <div className={styles.error} role="alert">
           {tx("dev.error")}
+        </div>
+      ) : null}
+      {actionError ? (
+        <div className={styles.error} role="alert">
+          {tx(actionError)}
         </div>
       ) : null}
 
@@ -173,7 +277,7 @@ export function DevVisual() {
           </div>
           <div className={styles.ctx}>
             <span>{tx("dev.ctx-run")}</span>
-            <strong>{dash}</strong>
+            <strong>{jobLabel}</strong>
           </div>
           <div className={styles.ctx}>
             <span>{tx("dev.ctx-policy")}</span>
@@ -194,7 +298,12 @@ export function DevVisual() {
                 <button type="button" className={styles.btn} disabled={disabled} onClick={() => setDrawerOpen(true)}>
                   {tx("dev.btn-topic")}
                 </button>
-                <button type="button" className={styles.btn} disabled={disabled} onClick={() => setDrawerOpen(true)}>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled}
+                  onClick={() => void act("DEV-01-BTN-SOURCE-MANAGE")}
+                >
                   {tx("dev.btn-source")}
                 </button>
               </div>
@@ -202,37 +311,106 @@ export function DevVisual() {
             <div className={styles.fields}>
               <label className={styles.field}>
                 <span>{tx("dev.field-product")}</span>
-                <div className={styles.fieldBox}>{dash}</div>
+                <input
+                  className={styles.fieldInput}
+                  value={draft.product}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, product: event.target.value }))}
+                />
               </label>
               <label className={styles.field}>
                 <span>{tx("dev.field-industry")}</span>
-                <div className={styles.fieldBox}>{dash}</div>
+                <input
+                  className={styles.fieldInput}
+                  value={draft.industry}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, industry: event.target.value }))}
+                />
               </label>
               <label className={styles.field}>
                 <span>{tx("dev.field-market")}</span>
-                <div className={styles.fieldBox}>{dash}</div>
+                <input
+                  className={styles.fieldInput}
+                  value={draft.market}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, market: event.target.value }))}
+                />
               </label>
               <label className={styles.field}>
                 <span>{tx("dev.field-keywords")}</span>
-                <div className={styles.fieldBox}>{dash}</div>
+                <input
+                  className={styles.fieldInput}
+                  value={draft.keywords}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, keywords: event.target.value }))}
+                />
               </label>
               <label className={styles.field}>
                 <span>{tx("dev.field-exclude")}</span>
-                <div className={styles.fieldBox}>{dash}</div>
+                <input
+                  className={styles.fieldInput}
+                  value={draft.exclude}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, exclude: event.target.value }))}
+                />
               </label>
               <label className={styles.field}>
                 <span>{tx("dev.field-mode")}</span>
-                <div className={styles.fieldBox}>{tx("dev.field-mode-value")}</div>
+                <select
+                  className={styles.fieldSelect}
+                  value={draft.mode}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, mode: event.target.value as DevMode }))}
+                >
+                  <option value="SINGLE">{tx("dev.mode-single")}</option>
+                  <option value="CONTINUOUS">{tx("dev.mode-continuous")}</option>
+                </select>
               </label>
             </div>
             <div className={styles.actions}>
-              <button type="button" className={styles.btn} disabled={disabled} onClick={() => setDrawerOpen(true)}>
+              <button
+                type="button"
+                className={styles.btn}
+                disabled={disabled}
+                onClick={() =>
+                  void act("DEV-01-BTN-PROFILE-SAVE", {
+                    product: draft.product,
+                    industry: draft.industry,
+                    market: draft.market,
+                    keywords: draft.keywords,
+                    exclude: draft.exclude,
+                    mode: draft.mode,
+                  })
+                }
+              >
                 {tx("dev.btn-profile-save")}
               </button>
-              <Btn uid="DEV-01-BTN-DISCOVERY-START" label={tx("dev.btn-start")} onAct={act} disabled={disabled} primary />
-              <Btn uid="DEV-01-BTN-DISCOVERY-PAUSE" label={tx("dev.btn-pause")} onAct={act} disabled={disabled} />
-              <Btn uid="DEV-01-BTN-DISCOVERY-RESUME" label={tx("dev.btn-resume")} onAct={act} disabled={disabled} />
-              <Btn uid="DEV-01-BTN-DISCOVERY-STOP" label={tx("dev.btn-stop")} onAct={act} disabled={disabled} danger />
+              <Btn
+                uid="DEV-01-BTN-DISCOVERY-START"
+                label={tx("dev.btn-start")}
+                onAct={(uid) => void act(uid)}
+                disabled={disabled || jobStatus === "RUNNING" || jobStatus === "EXTERNAL_PENDING"}
+                primary={jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING"}
+              />
+              <Btn
+                uid="DEV-01-BTN-DISCOVERY-PAUSE"
+                label={tx("dev.btn-pause")}
+                onAct={(uid) => void act(uid)}
+                disabled={disabled || jobStatus !== "RUNNING"}
+              />
+              <Btn
+                uid="DEV-01-BTN-DISCOVERY-RESUME"
+                label={tx("dev.btn-resume")}
+                onAct={(uid) => void act(uid)}
+                disabled={disabled || jobStatus !== "PAUSED"}
+              />
+              <Btn
+                uid="DEV-01-BTN-DISCOVERY-STOP"
+                label={tx("dev.btn-stop")}
+                onAct={(uid) => void act(uid)}
+                disabled={disabled || (jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING")}
+                danger
+              />
             </div>
             <div className={styles.card}>
               <h3>{tx("dev.signal-title")}</h3>
@@ -246,11 +424,54 @@ export function DevVisual() {
                   <span>{tx("dev.col-opportunity")}</span>
                   <span>{tx("dev.col-action")}</span>
                 </div>
-                <EmptyRows columns={7} dash={dash} rowClass={styles.signalRow} lastCell={tx("dev.row-qualify")} />
+                {workbench.signals.length ? (
+                  workbench.signals.map((signal: DevSignal) => (
+                    <div
+                      className={`${styles.trow} ${styles.signalRow}`}
+                      key={signal.signalId}
+                      onClick={() => setSelectedSignalId(signal.signalId)}
+                    >
+                      <span>{signal.companyName}</span>
+                      <span>{signal.intent}</span>
+                      <span>{signal.evidence}</span>
+                      <span>{signal.freshness}</span>
+                      <span>{signal.match}</span>
+                      <span>{signal.status}</span>
+                      <span className={styles.rowAct}>{selectedSignalId === signal.signalId ? tx("dev.row-qualify") : signal.status}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className={styles.empty}>{loading ? dash : tx("dev.empty-signals")}</p>
+                )}
+              </div>
+              <div className={styles.actions}>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled || !selectedSignalId}
+                  onClick={() => void act("DEV-01-BTN-SIGNAL-QUALIFY", { signalId: selectedSignalId })}
+                >
+                  {tx("dev.btn-qualify")}
+                </button>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled || !selectedSignalId}
+                  onClick={() => void act("DEV-01-BTN-SIGNAL-IGNORE", { signalId: selectedSignalId })}
+                >
+                  {tx("dev.btn-ignore")}
+                </button>
               </div>
             </div>
           </section>
-          <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} />
+          <GovernanceRail
+            t={tx}
+            dash={dash}
+            disabled={disabled}
+            onDrawer={() => setDrawerOpen(true)}
+            connector={jobStatus === "EXTERNAL_PENDING" ? tx("dev.connector-pending") : dash}
+            blocker={workbench.job?.blocker === "SHARED_ACQUISITION_UNAVAILABLE" ? tx("dev.blocker-acquisition") : dash}
+          />
         </div>
       ) : null}
 
@@ -262,16 +483,15 @@ export function DevVisual() {
             <div className={styles.toolbar}>
               <input
                 className={styles.search}
-                data-control-uid="DEV-01-BTN-DIRECTORY-SEARCH"
                 placeholder={tx("dev.search-company")}
                 value={query}
                 disabled={disabled}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter") void act("DEV-01-BTN-DIRECTORY-SEARCH");
+                  if (event.key === "Enter") void act("DEV-01-BTN-DIRECTORY-SEARCH", { query });
                 }}
               />
-              <Btn uid="DEV-01-BTN-DIRECTORY-SEARCH" label={tx("dev.btn-search")} onAct={act} disabled={disabled} />
+              <Btn uid="DEV-01-BTN-DIRECTORY-SEARCH" label={tx("dev.btn-search")} onAct={() => void act("DEV-01-BTN-DIRECTORY-SEARCH", { query })} disabled={disabled} />
             </div>
             <div className={styles.table}>
               <div className={`${styles.thead} ${styles.dirHead}`}>
@@ -282,15 +502,102 @@ export function DevVisual() {
                 <span>{tx("dev.col-suppression")}</span>
                 <span>{tx("dev.col-action")}</span>
               </div>
-              <EmptyRows columns={6} dash={dash} rowClass={styles.dirRow} lastCell={tx("dev.row-open")} />
+              {companies.length ? (
+                companies.map((company: DevCompany) => (
+                  <div className={`${styles.trow} ${styles.dirRow}`} key={company.companyId}>
+                    <span className={styles.check}>
+                      <input
+                        type="checkbox"
+                        checked={selectedCompanyIds.includes(company.companyId)}
+                        disabled={disabled}
+                        onChange={() => toggleCompany(company.companyId)}
+                      />
+                      {company.name} / {company.identityKind === "NAME_ONLY" ? company.name : company.identityValue}
+                    </span>
+                    <span>{company.contacts.map((item) => item.value).join("、") || dash}</span>
+                    <span>{company.evidence || dash}</span>
+                    <span>{tx(OPP_LABEL[company.opportunity.state])}</span>
+                    <span>{company.suppression || dash}</span>
+                    <span className={styles.rowAct}>{tx("dev.row-open")}</span>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.empty}>{loading ? dash : tx("dev.empty-companies")}</p>
+              )}
+            </div>
+            <p className={styles.note}>{tx("dev.selected-count", { n: selectedCompanyIds.length })}</p>
+            {workbench.merge ? <p className={styles.note}>{tx("dev.merge-ready")}</p> : null}
+            {workbench.exported ? <p className={styles.note}>{tx("dev.export-done", { n: workbench.exported.companyCount })}</p> : null}
+            <div className={styles.actions}>
+              <Btn
+                uid="DEV-01-BTN-MERGE-PREVIEW"
+                label={tx("dev.btn-merge-preview")}
+                onAct={() => void act("DEV-01-BTN-MERGE-PREVIEW", { companyIds: selectedCompanyIds })}
+                disabled={disabled}
+              />
+              <Btn uid="DEV-01-BTN-MERGE" label={tx("dev.btn-merge")} onAct={(uid) => void act(uid)} disabled={disabled || !workbench.merge} primary />
+              <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
+            </div>
+            <div className={styles.fields}>
+              <label className={styles.field}>
+                <span>{tx("dev.contact-type")}</span>
+                <select className={styles.fieldSelect} value={contactType} disabled={disabled} onChange={(event) => setContactType(event.target.value as "EMAIL" | "PHONE" | "ADDRESS")}>
+                  <option value="EMAIL">Email</option>
+                  <option value="PHONE">Phone</option>
+                  <option value="ADDRESS">Address</option>
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>{tx("dev.contact-value")}</span>
+                <input className={styles.fieldInput} value={contactValue} disabled={disabled} onChange={(event) => setContactValue(event.target.value)} />
+              </label>
+              <label className={styles.field}>
+                <span>{tx("dev.contact-source")}</span>
+                <input className={styles.fieldInput} value={contactSource} disabled={disabled} onChange={(event) => setContactSource(event.target.value)} />
+              </label>
             </div>
             <div className={styles.actions}>
-              <Btn uid="DEV-01-BTN-MERGE-PREVIEW" label={tx("dev.btn-merge-preview")} onAct={act} disabled={disabled} />
-              <Btn uid="DEV-01-BTN-MERGE" label={tx("dev.btn-merge")} onAct={act} disabled={disabled} primary />
-              <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={act} disabled={disabled} />
+              <button
+                type="button"
+                className={styles.btn}
+                disabled={disabled || !selectedCompanyId || !contactValue}
+                onClick={() =>
+                  void act("DEV-01-BTN-CONTACT-UPSERT", {
+                    companyId: selectedCompanyId,
+                    contactType,
+                    contactValue,
+                    contactSource,
+                  })
+                }
+              >
+                {tx("dev.btn-contact")}
+              </button>
+              <select
+                className={styles.fieldSelect}
+                disabled={disabled || !selectedCompany}
+                value=""
+                onChange={(event) => {
+                  const nextState = event.target.value as DevOpportunityState;
+                  if (nextState) void act("DEV-01-BTN-OPPORTUNITY-STATE", { companyId: selectedCompanyId, nextState });
+                }}
+              >
+                <option value="">{selectedCompany ? tx(OPP_LABEL[selectedCompany.opportunity.state]) : tx("dev.col-opportunity")}</option>
+                {(selectedCompany ? OPP_NEXT[selectedCompany.opportunity.state] : []).map((state) => (
+                  <option key={state} value={state}>
+                    {tx(OPP_LABEL[state])}
+                  </option>
+                ))}
+              </select>
             </div>
           </section>
-          <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} />
+          <GovernanceRail
+            t={tx}
+            dash={dash}
+            disabled={disabled}
+            onDrawer={() => setDrawerOpen(true)}
+            connector={dash}
+            blocker={dash}
+          />
         </div>
       ) : null}
 
@@ -304,19 +611,19 @@ export function DevVisual() {
               <div className={styles.metaGrid}>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.col-company")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{selectedCompany?.name || dash}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.col-opportunity")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{selectedCompany ? tx(OPP_LABEL[selectedCompany.opportunity.state]) : dash}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.col-contact")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{selectedCompany?.contacts.find((item) => item.type === "EMAIL")?.value || dash}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.col-version")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{selectedCandidate ? String(selectedCandidate.version) : dash}</strong>
                 </div>
               </div>
             </div>
@@ -329,15 +636,48 @@ export function DevVisual() {
                 <span>{tx("dev.col-version")}</span>
                 <span>{tx("dev.col-action")}</span>
               </div>
-              <EmptyRows columns={6} dash={dash} rowClass={styles.msgRow} lastCell={tx("dev.row-open")} />
+              {workbench.candidates.length ? (
+                workbench.candidates.map((candidate: DevCandidate) => (
+                  <div
+                    className={`${styles.trow} ${styles.msgRow}`}
+                    key={candidate.candidateId}
+                    onClick={() => setSelectedCandidateId(candidate.candidateId)}
+                  >
+                    <span>{candidate.companyName}</span>
+                    <span>{candidate.personalization}</span>
+                    <span>{candidate.policy === "PASS" ? tx("dev.policy-pass") : tx("dev.policy-blocked")}</span>
+                    <span>{tx(CANDIDATE_LABEL[candidate.status])}</span>
+                    <span>{String(candidate.version)}</span>
+                    <span className={styles.rowAct}>{selectedCandidate?.candidateId === candidate.candidateId ? tx("dev.row-open") : tx(CANDIDATE_LABEL[candidate.status])}</span>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.empty}>{loading ? dash : tx("dev.empty-candidates")}</p>
+              )}
             </div>
             <div className={styles.actions}>
-              <Btn uid="DEV-01-BTN-CANDIDATE-CREATE" label={tx("dev.btn-candidate-create")} onAct={act} disabled={disabled} primary />
-              <Btn uid="DEV-01-BTN-CANDIDATE-DECIDE" label={tx("dev.btn-candidate-decide")} onAct={act} disabled={disabled} />
-              <Btn uid="DEV-01-BTN-CR-CREATE" label={tx("dev.btn-cr")} onAct={act} disabled={disabled} />
+              <Btn
+                uid="DEV-01-BTN-CANDIDATE-CREATE"
+                label={tx("dev.btn-candidate-create")}
+                onAct={() => void act("DEV-01-BTN-CANDIDATE-CREATE", { companyId: selectedCompanyId })}
+                disabled={disabled}
+                primary
+              />
+              <Btn
+                uid="DEV-01-BTN-CANDIDATE-DECIDE"
+                label={tx("dev.btn-candidate-decide")}
+                onAct={() => void act("DEV-01-BTN-CANDIDATE-DECIDE", { candidateId: selectedCandidate?.candidateId })}
+                disabled={disabled || selectedCandidate?.status !== "REVIEW"}
+              />
+              <Btn
+                uid="DEV-01-BTN-CR-CREATE"
+                label={tx("dev.btn-cr")}
+                onAct={() => void act("DEV-01-BTN-CR-CREATE", { candidateId: selectedCandidate?.candidateId })}
+                disabled={disabled || selectedCandidate?.status !== "REVIEW"}
+              />
             </div>
           </section>
-          <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} />
+          <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} connector={dash} blocker={dash} />
         </div>
       ) : null}
 
@@ -350,11 +690,11 @@ export function DevVisual() {
               <div className={styles.metaGrid}>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.filter-company")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{audienceQuery || dash}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.filter-contact")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{campaign ? String(campaign.recipients.length) : dash}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.filter-suppression")}</span>
@@ -362,9 +702,21 @@ export function DevVisual() {
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.filter-message")}</span>
-                  <strong>{tx("dev.filter-message-value")}</strong>
+                  <strong>{approvedCandidate ? `${approvedCandidate.candidateId} v${approvedCandidate.version}` : tx("dev.filter-message-value")}</strong>
                 </div>
               </div>
+            </div>
+            <div className={styles.toolbar}>
+              <input
+                className={styles.search}
+                placeholder={tx("dev.search-audience")}
+                value={audienceQuery}
+                disabled={disabled}
+                onChange={(event) => setAudienceQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery });
+                }}
+              />
             </div>
             <div className={styles.card}>
               <h3>{tx("dev.recipient-title")}</h3>
@@ -377,24 +729,53 @@ export function DevVisual() {
                   <span>{tx("dev.col-message")}</span>
                   <span>{tx("dev.col-result")}</span>
                 </div>
-                <EmptyRows columns={6} dash={dash} rowClass={styles.rcpRow} />
+                {campaign?.recipients.length ? (
+                  campaign.recipients.map((recipient) => (
+                    <div className={`${styles.trow} ${styles.rcpRow}`} key={recipient.recipientId}>
+                      <span>{recipient.companyName}</span>
+                      <span>{recipient.contactValue}</span>
+                      <span>{recipient.suppression || dash}</span>
+                      <span>{tx("dev.policy-pass")}</span>
+                      <span>{`v${recipient.messageVersion}`}</span>
+                      <span>{campaign.previewed ? tx("dev.preview-ready") : dash}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className={styles.empty}>{loading ? dash : tx("dev.empty-recipients")}</p>
+                )}
               </div>
             </div>
             <div className={styles.actions}>
-              <Btn uid="DEV-01-BTN-CAMPAIGN-SEARCH" label={tx("dev.btn-audience-search")} onAct={act} disabled={disabled} />
-              <Btn uid="DEV-01-BTN-CAMPAIGN-CREATE" label={tx("dev.btn-campaign-create")} onAct={act} disabled={disabled} primary />
-              <Btn uid="DEV-01-BTN-CAMPAIGN-APPROVE" label={tx("dev.btn-campaign-approve")} onAct={act} disabled={disabled} />
+              <Btn
+                uid="DEV-01-BTN-CAMPAIGN-SEARCH"
+                label={tx("dev.btn-audience-search")}
+                onAct={() => void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery })}
+                disabled={disabled}
+              />
+              <Btn
+                uid="DEV-01-BTN-CAMPAIGN-CREATE"
+                label={tx("dev.btn-campaign-create")}
+                onAct={() => void act("DEV-01-BTN-CAMPAIGN-CREATE", { candidateId: approvedCandidate?.candidateId })}
+                disabled={disabled || !approvedCandidate}
+                primary
+              />
+              <Btn
+                uid="DEV-01-BTN-CAMPAIGN-APPROVE"
+                label={tx("dev.btn-campaign-approve")}
+                onAct={(uid) => void act(uid)}
+                disabled={disabled || campaign?.status !== "REVIEW"}
+              />
             </div>
             <div className={styles.card}>
               <h3>{tx("dev.approval-title")}</h3>
-              <p className={styles.note}>{tx("dev.approval-hint")}</p>
+              <p className={styles.note}>{campaign ? tx(CAMPAIGN_LABEL[campaign.status]) : tx("dev.approval-hint")}</p>
             </div>
           </section>
           <aside className={styles.rail} data-section-uid="DEV-01-SEC-07" data-component-uid="DEV-01-CMP-DELIVERY">
             <h2>{tx("dev.delivery-stage")}</h2>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-campaign")}</span>
-              <strong>{tx("dev.delivery-campaign-value")}</strong>
+              <strong>{campaign ? tx(CAMPAIGN_LABEL[campaign.status]) : tx("dev.delivery-campaign-value")}</strong>
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-policy")}</span>
@@ -402,24 +783,30 @@ export function DevVisual() {
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-envelope")}</span>
-              <strong>{tx("dev.delivery-envelope-value")}</strong>
+              <strong>{deliveries.length ? `To = ${deliveries.length} · CC/BCC = 0` : tx("dev.delivery-envelope-value")}</strong>
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.col-suppression")}</span>
-              <strong>{tx("dev.delivery-suppression-value")}</strong>
+              <strong>{campaign?.recipients.some((item) => item.suppression) ? tx("dev.policy-blocked") : tx("dev.delivery-suppression-value")}</strong>
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-idempotency")}</span>
-              <strong>{tx("dev.required")}</strong>
+              <strong>{deliveries[0]?.idempotencyKey || tx("dev.required")}</strong>
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-audit")}</span>
-              <strong>{tx("dev.required")}</strong>
+              <strong>{deliveries.length ? tx(DELIVERY_LABEL[deliveries[0].status]) : tx("dev.required")}</strong>
             </div>
             <div className={styles.actions}>
-              <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={act} disabled={disabled} primary />
-              <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={act} disabled={disabled} />
-              <Btn uid="DEV-01-BTN-KILL-SWITCH" label={tx("dev.btn-kill")} onAct={act} disabled={disabled} danger />
+              <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary />
+              <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
+              <Btn
+                uid="DEV-01-BTN-KILL-SWITCH"
+                label={tx("dev.btn-kill")}
+                onAct={() => void act("DEV-01-BTN-KILL-SWITCH", { reason: "OPERATOR_STOP" })}
+                disabled={disabled || (campaign?.status !== "QUEUED" && campaign?.status !== "APPROVED")}
+                danger
+              />
             </div>
             <div className={styles.killNote}>{tx("dev.kill-note")}</div>
           </aside>
@@ -444,11 +831,11 @@ export function DevVisual() {
           <div className={styles.metaGrid}>
             <div className={styles.metaItem}>
               <span>{tx("dev.col-evidence")}</span>
-              <strong>{dash}</strong>
+              <strong>{workbench.profile?.product || dash}</strong>
             </div>
             <div className={styles.metaItem}>
               <span>{tx("dev.col-version")}</span>
-              <strong>{dash}</strong>
+              <strong>{workbench.profile ? String(workbench.profile.version) : dash}</strong>
             </div>
           </div>
           <button type="button" className={styles.btn} onClick={() => setDrawerOpen(false)}>
@@ -465,11 +852,15 @@ function GovernanceRail({
   dash,
   disabled,
   onDrawer,
+  connector,
+  blocker,
 }: {
   t: (key: TranslationKey) => string;
   dash: string;
   disabled: boolean;
   onDrawer: () => void;
+  connector: string;
+  blocker: string;
 }) {
   return (
     <aside className={styles.rail} data-section-uid="DEV-01-SEC-08" data-component-uid="DEV-01-CMP-GOVERNANCE">
@@ -484,7 +875,7 @@ function GovernanceRail({
       </div>
       <div className={styles.railCard}>
         <span>{t("dev.rail-connector")}</span>
-        <strong>{dash}</strong>
+        <strong>{connector}</strong>
       </div>
       <div className={styles.railCard}>
         <span>{t("dev.rail-suppression")}</span>
@@ -492,7 +883,7 @@ function GovernanceRail({
       </div>
       <div className={styles.railCard}>
         <span>{t("dev.rail-blockers")}</span>
-        <strong>{dash}</strong>
+        <strong>{blocker}</strong>
       </div>
       <div className={styles.railCard}>
         <span>{t("dev.rail-owner")}</span>

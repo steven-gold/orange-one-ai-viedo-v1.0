@@ -6,6 +6,7 @@ import {
   unavailableFromReason,
 } from "@/lib/aiReply";
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
+import { previewDevAction } from "@/lib/devActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
@@ -824,6 +825,10 @@ export async function applyWorkbenchAction(
       "QA-01-FLD-PROVENANCE": inbound.provenance || null,
     };
     await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
+    return;
+  }
+  if (page === "dev") {
+    await applyProjectedAction(FIELD_TABLE.dev, previewDevAction, controlUid, actionUid, nextValue);
     return;
   }
   if (page === "aiapi") {

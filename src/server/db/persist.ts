@@ -17,6 +17,7 @@ import {
 } from "@/lib/conversationCore";
 import { AIAPI_REGISTRY_UID, readProfiles, serializeProfiles } from "@/lib/aiapiProfiles";
 import { AIAPI_EXTRA_PROJECTION_KEYS } from "@/lib/aiapiActionPreview";
+import { DEV_EXTRA_PROJECTION_KEYS } from "@/lib/devState";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
@@ -1162,7 +1163,8 @@ export async function persistListDevFields(): Promise<DevFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_dev_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return DEV_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...DEV_VISIBLE_CONTROLS, ...DEV_EXTRA_PROJECTION_KEYS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1190,8 +1192,9 @@ export async function persistRecordDevAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("dev", controlUid, actionUid);
+  await applyWorkbenchAction("dev", controlUid, actionUid, nextValue);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_dev_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

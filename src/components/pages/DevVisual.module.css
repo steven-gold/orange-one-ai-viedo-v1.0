@@ -216,6 +216,47 @@
   align-items: center;
 }
 
+.fieldInput,
+.fieldSelect {
+  height: 40px;
+  width: 100%;
+  padding: 0 14px;
+  border: 1px solid var(--dev-border);
+  border-radius: 10px;
+  background: var(--dev-input);
+  color: var(--dev-text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.fieldInput:disabled,
+.fieldSelect:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.empty {
+  margin: 0;
+  padding: 14px;
+  color: var(--dev-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

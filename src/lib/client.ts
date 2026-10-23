@@ -866,16 +866,20 @@ export async function postDevAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  nextValue?: string,
 ): Promise<void> {
-  await fetch("/api/dev/action", {
+  const response = await fetch("/api/dev/action", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, nextValue }),
   });
+  if (!response.ok) {
+    throw new DevClientError("DEV_ACTION_UNAVAILABLE", `dev action failed: ${response.status}`);
+  }
 }
 
 export interface SocFieldValue {
