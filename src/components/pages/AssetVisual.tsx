@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { ASSET_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
+import { ASSET_CORRECTION_RESPONSE_UID, displayAiReply } from "@/lib/aiReply";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
@@ -215,9 +215,7 @@ export function AssetVisual() {
 
   const correctionCandidate = parseCorrectionScript(valueOf(ASSET_CORRECTION_RESPONSE_UID));
   const correctionBody = correctionCandidate?.script_body
-    ? isAiUnavailable(correctionCandidate.script_body)
-      ? t("ai.unavailable")
-      : correctionCandidate.script_body
+    ? displayAiReply(correctionCandidate.script_body, t("ai.unavailable"))
     : "";
 
   const applyPatch = useCallback((patch: Record<string, string>) => {

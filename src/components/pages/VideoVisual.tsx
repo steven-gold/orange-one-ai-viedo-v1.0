@@ -11,7 +11,7 @@ import {
   postVideoAction,
   type VideoFieldValue,
 } from "@/lib/client";
-import { VIDEO_CORRECTION_RESPONSE_UID, isAiUnavailable } from "@/lib/aiReply";
+import { VIDEO_CORRECTION_RESPONSE_UID, displayAiReply } from "@/lib/aiReply";
 import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { parseCorrectionScript } from "@/lib/correctionScript";
@@ -246,9 +246,7 @@ export function VideoVisual() {
 
   const correctionCandidate = parseCorrectionScript(valueOf(VIDEO_CORRECTION_RESPONSE_UID));
   const correctionBody = correctionCandidate?.script_body
-    ? isAiUnavailable(correctionCandidate.script_body)
-      ? t("ai.unavailable")
-      : correctionCandidate.script_body
+    ? displayAiReply(correctionCandidate.script_body, t("ai.unavailable"))
     : "";
 
   const applyPatch = useCallback((patch: Record<string, string>) => {

@@ -575,6 +575,56 @@ export function previewCoreAction(
       ...(script ? { "CORE-01-BTN-CANONICAL-SCRIPT": serializeCanonicalScript(script) } : {}),
     };
   }
+  if (actionUid === "CORE-01-ACT-STORY-CANDIDATE") {
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    if (!project) return {};
+    const candidate = namedValue(nextValue, current("CORE-01-FLD-VERSION-STATE") || "故事候選");
+    return {
+      "CORE-01-BTN-STORY-CANDIDATE": "created",
+      "CORE-01-FLD-VERSION-STATE": candidate,
+      "CORE-01-LST-WORK-ITEMS": "STORY",
+      "CORE-01-FLD-RUNTIME-STAGE": "CANDIDATE",
+      "CORE-01-BTN-CANDIDATE-CREATE": current("CORE-01-BTN-CANDIDATE-CREATE") || "created",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CANDIDATE-RETURN") {
+    const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
+    if (!candidate) return {};
+    return {
+      "CORE-01-BTN-RETURN-MODIFY": "returned",
+      "CORE-01-BTN-CANDIDATE-CONFIRM": "",
+      "CORE-01-FLD-LOCK-REVIEW": "",
+      "CORE-01-FLD-RUNTIME-STAGE": "HUMAN_DECISION",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CANDIDATE-COMPARE") {
+    const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
+    if (!candidate) return {};
+    return {
+      "CORE-01-BTN-CANDIDATE-COMPARE": "comparing",
+      "CORE-01-FLD-EVALUATION": current("CORE-01-FLD-EVALUATION") || "evaluated",
+      "CORE-01-FLD-RUNTIME-STAGE": "CORE_EVALUATION",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-HUMAN-DECISION-RECORD") {
+    const decision = exactName(nextValue) || current("CORE-01-FLD-HUMAN-DECISION") || "recorded";
+    return {
+      "CORE-01-FLD-HUMAN-DECISION": decision,
+      "CORE-01-FLD-RUNTIME-STAGE": "HUMAN_DECISION",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-ASSISTANT-STRUCTURED-DECISION-CREATE") {
+    const decision = exactName(nextValue) || current("CORE-01-FLD-STRUCTURED-DECISION") || "recorded";
+    return {
+      "CORE-01-FLD-STRUCTURED-DECISION": decision,
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CANDIDATE-EVALUATE") {
+    return {
+      "CORE-01-FLD-EVALUATION": exactName(nextValue) || current("CORE-01-FLD-EVALUATION") || "evaluated",
+      "CORE-01-FLD-RUNTIME-STAGE": "CORE_EVALUATION",
+    };
+  }
   if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
     return {};
   }

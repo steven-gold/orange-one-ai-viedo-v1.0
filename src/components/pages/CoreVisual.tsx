@@ -373,6 +373,7 @@ export function CoreVisual() {
     (valueOf("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" ||
       valueOf("CORE-01-BTN-PROJECT-LOCK") === projectName);
   const topicBlocked = valueOf("CORE-01-FLD-RUNTIME-STAGE") === "TOPIC_LINEAGE_BLOCKED" && !projectIsConfirmed;
+  const candidateName = exactName(valueOf("CORE-01-FLD-VERSION-STATE"));
   const blueprintName = exactName(valueOf("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(valueOf("CORE-01-FLD-PACKAGE"));
   const scriptProjection = parseCanonicalScript(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
   const scriptName = canonicalScriptRef(valueOf("CORE-01-BTN-CANONICAL-SCRIPT"));
@@ -699,8 +700,8 @@ export function CoreVisual() {
             </div>
             <div className={styles.candidateRow}>
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-CANDIDATE-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-CREATE")}>{tx("core.create_candidate")}</button>
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-CANDIDATE-CONFIRM" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-CONFIRM")}>{tx("core.confirm_candidate")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-RETURN-MODIFY" disabled={disabled} onClick={() => void act("CORE-01-BTN-RETURN-MODIFY")}>{tx("core.return_modify")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-CANDIDATE-CONFIRM" disabled={disabled || !candidateName} onClick={() => void act("CORE-01-BTN-CANDIDATE-CONFIRM")}>{tx("core.confirm_candidate")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-RETURN-MODIFY" disabled={disabled || !candidateName} onClick={() => void act("CORE-01-BTN-RETURN-MODIFY")}>{tx("core.return_modify")}</button>
               <span className={styles.hint}>{tx("core.decision_flow")}</span>
             </div>
           </section>
@@ -774,7 +775,7 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.confirmed_version")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CANDIDATE-CONFIRM"), loading)}</span></div>
             <div className={styles.kv} data-component-uid="CORE-01-CMP-LOCK-REVIEW" data-control-uid="CORE-01-FLD-LOCK-REVIEW"><span>{tx("core.lock_review")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-LOCK-REVIEW"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.block_reason")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CHILD-LOCK"), loading)}</span></div>
-            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANDIDATE-COMPARE" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-COMPARE")}>{tx("core.compare_candidate")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANDIDATE-COMPARE" disabled={disabled || !candidateName} onClick={() => void act("CORE-01-BTN-CANDIDATE-COMPARE")}>{tx("core.compare_candidate")}</button>
             <p className={styles.overwrite}>{tx("core.no_overwrite")}</p>
           </section>
         </aside>

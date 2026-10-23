@@ -338,6 +338,7 @@ export function diagnoseGenerationFailure(input: {
   if (input.providerCode === "AI_PROVIDER_HTTP_ERROR" || input.providerCode === "AI_PROVIDER_UNREACHABLE") {
     return "供應商無法連線";
   }
+  if (input.providerCode === "AI_PROVIDER_EMPTY_RESPONSE") return "空回應";
   if (input.empty) return "空回應";
   if (input.loop) return "偵測到重複循環";
   if (input.truncated) return "輸出被截斷";

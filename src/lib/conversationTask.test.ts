@@ -232,6 +232,11 @@ async function testConsumeGenerationStream(): Promise<void> {
   assertEqual(generationStatusKey("FAILED"), "conversation.stream.status.failed", "status key failed");
   assertEqual(diagnoseGenerationFailure({ failed: true, empty: true }), "空回應", "empty fail");
   assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_TIMEOUT" }), "供應商逾時", "timeout fail");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_UNREACHABLE" }), "供應商無法連線", "unreachable fail");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_HTTP_ERROR" }), "供應商無法連線", "http fail");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_EMPTY_RESPONSE" }), "空回應", "empty response code");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_MULTI_SHORT" }), "Multi 路由未滿 3 條", "multi short");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_NOT_CONFIGURED" }), "供應商未設定或暫時無法使用", "not configured");
 }
 
 {

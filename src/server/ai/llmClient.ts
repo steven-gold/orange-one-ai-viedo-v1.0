@@ -515,7 +515,7 @@ export async function generatePageReply(
   throw lastError ?? new AiProviderError("AI_PROVIDER_UNREACHABLE", "All candidate providers failed");
 }
 
-export type IndependentReply = { alias: string; text: string; route: string };
+export type IndependentReply = { alias: string; text: string; route: string; errorCode?: string };
 
 export async function generateIndependentPageReplies(
   page: AiPageUid,
@@ -561,7 +561,8 @@ export async function generateIndependentPageReplies(
         return { alias, text: turn.text, route: routeLabelFor(config) };
       } catch (error) {
         if (error instanceof GenerationCancelled) throw error;
-        return { alias, text: "", route: routeLabelFor(config) };
+        const errorCode = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+        return { alias, text: "", route: routeLabelFor(config), errorCode };
       }
     }),
   );

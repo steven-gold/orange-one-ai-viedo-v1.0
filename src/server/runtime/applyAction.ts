@@ -1,8 +1,9 @@
 import {
-  AI_UNAVAILABLE_ZH,
   ASSET_CORRECTION_RESPONSE_UID,
   EDIT_CORRECTION_CANDIDATE_UID,
   VIDEO_CORRECTION_RESPONSE_UID,
+  unavailableBody,
+  unavailableFromReason,
 } from "@/lib/aiReply";
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { previewAssetAction } from "@/lib/assetActionPreview";
@@ -238,11 +239,13 @@ function applyGeneratedContract(
     );
     return { reply: text, nextContract };
   }
-  let reply = text || AI_UNAVAILABLE_ZH;
+  let reply = text;
   let nextContract = contract;
   if (failed) {
-    reply = AI_UNAVAILABLE_ZH;
+    reply = unavailableBody({ failed: true, empty, loop, truncated, providerCode });
     if (contract) nextContract = { ...contract, status: "FAILED" };
+  } else if (!text) {
+    reply = unavailableBody({ failed: true, empty: true, providerCode });
   } else if (contract && text) {
     nextContract = updateContractAfterGeneration(contract, generated?.text ?? text, {
       truncated,
@@ -259,7 +262,8 @@ function upsertTask(tasks: ConversationTaskContract[], next: ConversationTaskCon
 
 function attachFooter(text: string, contract: ConversationTaskContract | null): string {
   const body = text.trim();
-  const fallback = body || (contract?.status === "STOPPED" ? "" : AI_UNAVAILABLE_ZH);
+  const fallback =
+    body || (contract?.status === "STOPPED" ? "" : unavailableFromReason(contract?.observation?.failReason ?? ""));
   const annotated = annotateUnverifiedClaims(
     fallback,
     unverifiedExecutionClaims(text, { fileWritten: Boolean(contract?.fileId) }),
@@ -388,7 +392,10 @@ async function fillCorrectionScriptBody(
     if (prompt) body = (await generatePageReply(page, prompt, "", [], { signal })).text;
   } catch (error) {
     if (error instanceof GenerationCancelled) body = error.partial;
-    else body = AI_UNAVAILABLE_ZH;
+    else {
+      const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+      body = unavailableBody({ failed: true, empty: true, providerCode: code });
+    }
   }
   await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
 }
@@ -489,7 +496,7 @@ export async function applyWorkbenchAction(
       if (contract) stream?.status(contract.status);
       if (isMultiAiMode(current)) {
         const aliases = targetedParticipantAliases(tokens, current);
-        let replies: Array<{ alias: string; text: string; route: string }> = aliases.map((alias) => ({
+        let replies: Array<{ alias: string; text: string; route: string; errorCode?: string }> = aliases.map((alias) => ({
           alias,
           text: "",
           route: "",
@@ -512,12 +519,6 @@ export async function applyWorkbenchAction(
               contract ?? undefined,
             );
           }
-          if (contract) {
-            nextContract = updateContractAfterGeneration(contract, replies.map((row) => row.text).join("\n"), {
-              truncated: false,
-              loop: false,
-            });
-          }
         } catch (error) {
           if (error instanceof GenerationCancelled) {
             replies = aliases.map((alias) => ({ alias, text: error.partial, route: "" }));
@@ -537,6 +538,17 @@ export async function applyWorkbenchAction(
           }
         }
         const joined = replies.map((row) => row.text).join("\n");
+        const firstCode = replies.find((row) => row.errorCode)?.errorCode || multiCode;
+        if (!multiStopped && !joined.trim()) {
+          multiFailed = true;
+          multiCode = firstCode;
+          if (contract) nextContract = { ...contract, status: "FAILED" };
+        } else if (!multiStopped && contract) {
+          nextContract = updateContractAfterGeneration(contract, joined, {
+            truncated: false,
+            loop: false,
+          });
+        }
         nextContract = withTaskObservation(nextContract ?? null, {
           chars: joined.length,
           durationMs: Date.now() - startedAt,
@@ -555,7 +567,12 @@ export async function applyWorkbenchAction(
           current,
           thread,
           replies.map((row) => ({
-            text: attachFooter(row.text, nextContract),
+            text: attachFooter(
+              row.text.trim()
+                ? row.text
+                : unavailableBody({ failed: !multiStopped, empty: true, providerCode: row.errorCode || multiCode }),
+              nextContract,
+            ),
             alias: row.alias,
             at: new Date().toISOString(),
             route: row.route,

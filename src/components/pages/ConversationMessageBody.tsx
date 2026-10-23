@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
-import { isAiUnavailable } from "@/lib/aiReply";
+import { displayAiReply } from "@/lib/aiReply";
 import { foldedMessagePreview, shouldFoldMessage } from "@/lib/conversationMarkdown";
 import { ConversationFileActions } from "./ConversationFileActions";
 import { ConversationMarkdown } from "./ConversationMarkdown";
@@ -27,8 +27,7 @@ export function ConversationMessageBody({
   onRegenerate?: () => void;
   busy?: boolean;
 }) {
-  const unavailable = role === "assistant" && isAiUnavailable(text);
-  const display = unavailable ? tx("ai.unavailable") : text;
+  const display = role === "assistant" ? displayAiReply(text, tx("ai.unavailable")) : text;
   const foldable = shouldFoldMessage(display);
   const [expanded, setExpanded] = useState(false);
   const shown = foldable && !expanded ? foldedMessagePreview(display) : display;
