@@ -64,6 +64,9 @@ function currentFrom(map: Record<string, string | null>): (uid: string) => strin
   const missing = unavailableBody({ providerCode: "AI_PROVIDER_NOT_CONFIGURED" });
   assertEqual(missing, "目前無法取得 AI 回應（供應商未設定或暫時無法使用）。", "not configured body");
   assert(isAiUnavailable(missing), "not configured counts as unavailable");
+  const unusable = unavailableBody({ providerCode: "AI_PROVIDER_UNUSABLE_OUTPUT" });
+  assertEqual(unusable, "目前無法取得 AI 回應（輸出無法使用）。", "unusable body");
+  assert(isAiUnavailable(unusable), "unusable counts as unavailable");
 }
 
 console.log("coreActionPreview.test.ts PASS");

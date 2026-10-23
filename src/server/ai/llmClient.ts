@@ -13,7 +13,9 @@ import {
   MAX_LOOP_REPAIRS,
   continuationUserMessage,
   detectGenerationLoop,
+  detectUnusableOutput,
   formatContractForPrompt,
+  modelBlockedForLanguage,
   inferTruncated,
   loopRepairUserMessage,
   mergeContinuation,
@@ -518,8 +520,17 @@ export async function callChat(messages: ChatMessage[], capability: string): Pro
   }
   let lastError: AiProviderError | null = null;
   for (const config of route.configs.slice(0, fallbackLimit(route))) {
+    if (modelBlockedForLanguage(config.model)) {
+      lastError = new AiProviderError("AI_PROVIDER_UNUSABLE_OUTPUT", "Provider blocked for language");
+      continue;
+    }
     try {
-      return (await completeTurn(config, messages, 0.2)).text;
+      const turn = await completeTurn(config, messages, 0.2);
+      if (detectUnusableOutput(turn.text)) {
+        lastError = new AiProviderError("AI_PROVIDER_UNUSABLE_OUTPUT", "Provider output unusable");
+        continue;
+      }
+      return turn.text;
     } catch (error) {
       if (error instanceof GenerationCancelled) throw error;
       lastError = error instanceof AiProviderError ? error : new AiProviderError("AI_PROVIDER_UNREACHABLE", "Provider call failed");
@@ -554,6 +565,10 @@ export async function generatePageReply(
   const temperature = temperatureFor(options?.kind ?? options?.contract?.kind ?? "question");
   let lastError: AiProviderError | null = null;
   for (const config of route.configs.slice(0, fallbackLimit(route))) {
+    if (modelBlockedForLanguage(config.model, options?.contract?.language)) {
+      lastError = new AiProviderError("AI_PROVIDER_UNUSABLE_OUTPUT", "Provider blocked for language");
+      continue;
+    }
     const messages: ChatMessage[] = [
       { role: "system", content: systemPromptFor(page, config.promptTemplate) },
       ...recent,
@@ -561,6 +576,10 @@ export async function generatePageReply(
     ];
     try {
       const turn = await completeTurn(config, messages, temperature, options?.contract, options?.signal, options?.onToken);
+      if (detectUnusableOutput(turn.text)) {
+        lastError = new AiProviderError("AI_PROVIDER_UNUSABLE_OUTPUT", "Provider output unusable");
+        continue;
+      }
       return { text: turn.text, route: routeLabelFor(config), truncated: turn.truncated, loop: turn.loop };
     } catch (error) {
       if (error instanceof GenerationCancelled) throw error;
@@ -611,8 +630,14 @@ export async function generateIndependentPageReplies(
         ...recent,
         { role: "user", content: independentUser },
       ];
+      if (modelBlockedForLanguage(config.model, contract?.language)) {
+        return { alias, text: "", route: routeLabelFor(config), errorCode: "AI_PROVIDER_UNUSABLE_OUTPUT" };
+      }
       try {
         const turn = await completeTurn(config, messages, 0.8, contract, signal, onToken ? (text) => onToken(text, alias) : undefined);
+        if (detectUnusableOutput(turn.text)) {
+          return { alias, text: "", route: routeLabelFor(config), errorCode: "AI_PROVIDER_UNUSABLE_OUTPUT" };
+        }
         return { alias, text: turn.text, route: routeLabelFor(config) };
       } catch (error) {
         if (error instanceof GenerationCancelled) throw error;

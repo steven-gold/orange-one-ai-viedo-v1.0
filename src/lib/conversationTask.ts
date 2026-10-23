@@ -67,6 +67,7 @@ export type GenerationMonitor = {
 };
 
 const CONTINUE_RE = /繼續(討論|生成|寫|作|產出)?|續寫|接著寫|下一[批批次集]/u;
+const CATALOG_RE = /每一章|章節名稱|每集名稱|各集名稱|各章名稱|每一集/u;
 const EPISODE_RE = /(?:大約|約)?(\d+)\s*集/u;
 const MINUTE_RE = /每集\s*(?:約)?\s*(\d+)\s*分鐘/u;
 const COUNT_RE = /(?:大約|約)?(\d+)\s*(章|回|篇|則|項|集)/u;
@@ -98,7 +99,14 @@ function hashId(parts: string[]): string {
 }
 
 export function isContinueRequest(text: string): boolean {
-  return CONTINUE_RE.test(clean(text));
+  const body = clean(text);
+  return CONTINUE_RE.test(body) || CATALOG_RE.test(body);
+}
+
+export function modelBlockedForLanguage(model: string, language = "zh-TW"): boolean {
+  const id = clean(model).toLowerCase();
+  if (!id) return false;
+  return id.includes("allam") && language !== "en";
 }
 
 export function classifyTaskKind(text: string): ConversationTaskKind {
@@ -188,11 +196,13 @@ export function buildTaskContract(
 ): ConversationTaskContract {
   const raw = clean(prompt);
   if (prior && isContinueRequest(raw)) {
-    const planned = planQuantityBatches(prior.quantity, prior.batchSize, completedCount(prior));
+    const restart = CATALOG_RE.test(raw) && !CONTINUE_RE.test(raw);
+    const planned = planQuantityBatches(prior.quantity, prior.batchSize, restart ? 0 : completedCount(prior));
     return {
       ...prior,
       thread: prior.thread || thread,
-      status: prior.status === "COMPLETE" ? "COMPLETE" : "PARTIAL",
+      status: prior.status === "COMPLETE" && !restart ? "COMPLETE" : "PARTIAL",
+      completedItems: planned.completedItems,
       pendingItems: planned.pendingItems.length ? planned.pendingItems : prior.pendingItems,
       nextBatch: planned.nextBatch ?? prior.nextBatch,
       version: prior.version + 1,
@@ -274,7 +284,7 @@ export function latestOpenTask(
   const scoped = thread ? tasks.filter((row) => !row.thread || row.thread === thread) : tasks;
   for (let index = scoped.length - 1; index >= 0; index -= 1) {
     const row = scoped[index];
-    if (row.status === "OPEN" || row.status === "PARTIAL" || row.status === "STOPPED") return row;
+    if (row.status === "OPEN" || row.status === "PARTIAL" || row.status === "STOPPED" || row.status === "FAILED") return row;
   }
   return scoped[scoped.length - 1] ?? null;
 }
@@ -339,6 +349,7 @@ export function diagnoseGenerationFailure(input: {
     return "供應商無法連線";
   }
   if (input.providerCode === "AI_PROVIDER_EMPTY_RESPONSE") return "空回應";
+  if (input.providerCode === "AI_PROVIDER_UNUSABLE_OUTPUT") return "輸出無法使用";
   if (input.empty) return "空回應";
   if (input.loop) return "偵測到重複循環";
   if (input.truncated) return "輸出被截斷";
@@ -434,6 +445,36 @@ export function splitDeliverableChunks(text: string, limit: number): string[] {
   }
   if (rest) chunks.push(rest);
   return chunks;
+}
+
+export function detectUnusableOutput(text: string): boolean {
+  const body = clean(text);
+  if (!body) return true;
+  const batchHits = body.match(/第\s*1\s*[–-]\s*20\s*[篇章集項則]/gu) ?? [];
+  if (batchHits.length >= 6) return true;
+  const han = body.match(/\p{Script=Han}/gu) ?? [];
+  if (han.length >= 80) {
+    const stops = (body.match(/[。！？]/gu) ?? []).length;
+    const common = (body.match(/[的了是在有不我你他這那會為與及或但]/gu) ?? []).length;
+    if (stops === 0 && common < 4) return true;
+  }
+  return false;
+}
+
+export function batchLooksDelivered(text: string, contract: ConversationTaskContract): boolean {
+  if (!contract.batched || !contract.nextBatch) return Boolean(clean(text));
+  const match = /第\s*(\d+)\s*[–-]\s*(\d+)\s*(集|章|篇|回)/u.exec(contract.nextBatch);
+  if (!match) return Boolean(clean(text));
+  const start = Number.parseInt(match[1], 10);
+  const unit = match[3];
+  const units = unit === "集" ? ["集", "章"] : [unit];
+  let hits = 0;
+  for (const label of units) {
+    for (let index = start; index < start + 3; index += 1) {
+      if (new RegExp(`第\\s*${index}\\s*${label}(?![–\\d])`, "u").test(text)) hits += 1;
+    }
+  }
+  return hits >= 2;
 }
 
 export function detectGenerationLoop(text: string): GenerationMonitor {
@@ -713,15 +754,23 @@ export function claimsFullCompletion(text: string, contract: ConversationTaskCon
 export function updateContractAfterGeneration(
   contract: ConversationTaskContract,
   output: string,
-  flags: { truncated: boolean; loop: boolean; failed?: boolean; stopped?: boolean },
+  flags: { truncated: boolean; loop: boolean; failed?: boolean; stopped?: boolean; unusable?: boolean },
 ): ConversationTaskContract {
-  if (flags.failed && !clean(output)) {
-    return { ...contract, status: "FAILED" };
-  }
+  const unusable = Boolean(flags.unusable) || detectUnusableOutput(output);
   if (flags.stopped) {
     return {
       ...contract,
       status: "STOPPED",
+      resumeCursor: clean(output).slice(-80) || contract.resumeCursor,
+    };
+  }
+  if (flags.failed || unusable) {
+    return { ...contract, status: "FAILED" };
+  }
+  if (flags.loop) {
+    return {
+      ...contract,
+      status: "PARTIAL",
       resumeCursor: clean(output).slice(-80) || contract.resumeCursor,
     };
   }
@@ -731,14 +780,21 @@ export function updateContractAfterGeneration(
   if (!contract.batched) {
     return {
       ...contract,
-      status: flags.truncated || flags.loop ? "PARTIAL" : "COMPLETE",
+      status: flags.truncated ? "PARTIAL" : "COMPLETE",
       resumeCursor: flags.truncated ? output.slice(-80) : undefined,
+    };
+  }
+  if (!batchLooksDelivered(output, contract)) {
+    return {
+      ...contract,
+      status: "PARTIAL",
+      resumeCursor: clean(output).slice(-80) || contract.resumeCursor,
     };
   }
   const through = Math.min(completedCount(contract) + contract.batchSize, contract.quantity?.count ?? 0);
   const planned = planQuantityBatches(contract.quantity, contract.batchSize, through);
   const falseComplete = claimsFullCompletion(output, contract) && (planned.pendingItems.length > 0 || flags.truncated);
-  const status: ConversationTaskStatus = planned.pendingItems.length || flags.truncated || flags.loop || falseComplete
+  const status: ConversationTaskStatus = planned.pendingItems.length || flags.truncated || falseComplete
     ? "PARTIAL"
     : "COMPLETE";
   return {
@@ -747,7 +803,7 @@ export function updateContractAfterGeneration(
     completedItems: planned.completedItems.length ? planned.completedItems : contract.completedItems,
     pendingItems: status === "COMPLETE" ? [] : planned.pendingItems,
     nextBatch: status === "COMPLETE" ? undefined : planned.nextBatch,
-    resumeCursor: flags.truncated || flags.loop ? output.slice(-80) : undefined,
+    resumeCursor: flags.truncated ? output.slice(-80) : undefined,
   };
 }
 

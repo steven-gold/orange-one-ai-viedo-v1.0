@@ -1,8 +1,11 @@
 import {
   CORE_CONVERSATION,
   formatConversationContext,
+  generationHistoryPayload,
+  parseMessageRecords,
   parseNotebookRecords,
   previewAssistantRecordFor,
+  previewConversationSend,
   projectConversationMemory,
   refreshAssistantNotebookFor,
   type ConversationMessageRecord,
@@ -67,6 +70,34 @@ function currentFrom(map: Record<string, string | null>): (uid: string) => strin
   assertEqual(recorded["CORE-01-BTN-ASSISTANT-RECORD"], "recorded", "assistant writes recorded without messages");
   assert(Boolean(recorded["CORE-01-BTN-NEW-THREAD"]), "assistant ensures a thread");
   assertEqual(recorded["CORE-01-FLD-RUNTIME-STAGE"], "ASSISTANT_SUMMARY", "assistant moves runtime stage");
+}
+
+{
+  const thread = "對話 1";
+  const prompt = "我要每一章節名稱與內容";
+  const messages: ConversationMessageRecord[] = [
+    { thread, role: "user", text: "製作500集搞笑影片", seq: 1, ref: "#MSG-000011" },
+    { thread, role: "assistant", text: "亂碼", seq: 1, ref: "#AI-000016" },
+    { thread, role: "user", text: prompt, seq: 2, ref: "#MSG-000012" },
+    { thread, role: "assistant", text: "目前無法取得 AI 回應（供應商無法連線）。", seq: 2, ref: "#AI-000017" },
+  ];
+  const history = generationHistoryPayload(messages, prompt);
+  assertEqual(history.some((row) => row.content === "製作500集搞笑影片"), true, "keeps original demand");
+  assertEqual(history.some((row) => row.content === prompt), false, "drops copied user prompt");
+  const current = currentFrom({
+    "CORE-01-CTL-PROJECT": "示範專案",
+    "CORE-01-LST-WORK-ITEMS": "STORY",
+    "CORE-01-LST-THREADS": thread,
+    "CORE-01-BTN-NEW-THREAD": JSON.stringify([{ title: thread, workItem: "STORY" }]),
+    "CORE-01-FLD-ASSIGNED-AI": "groq / gemini-2.5-flash",
+    "CORE-01-FLD-MESSAGE": JSON.stringify(messages),
+  });
+  const retry = previewConversationSend(CORE_CONVERSATION, current, prompt);
+  assertEqual(retry["CORE-01-FLD-MESSAGE"], undefined, "retry does not copy the user message");
+  assertEqual(retry["CORE-01-BTN-SEND"], "sent", "retry still sends");
+  const first = previewConversationSend(CORE_CONVERSATION, current, "新的一則");
+  const next = parseMessageRecords(first["CORE-01-FLD-MESSAGE"] ?? "");
+  assertEqual(next.at(-1)?.text, "新的一則", "new prompt still appends");
 }
 
 console.log("conversationCore.test.ts PASS");

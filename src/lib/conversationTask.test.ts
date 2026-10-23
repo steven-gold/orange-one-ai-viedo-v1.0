@@ -15,7 +15,10 @@ import {
   classifyTaskKind,
   completedCount,
   detectGenerationLoop,
+  detectUnusableOutput,
+  batchLooksDelivered,
   formatContractForPrompt,
+  modelBlockedForLanguage,
   fileNameForContract,
   formatDeliveryFooter,
   inferTruncated,
@@ -81,8 +84,13 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   const prior = buildTaskContract(SERIES, null, "對話 1");
   const continued = buildTaskContract("繼續寫", prior, "對話 1");
   assertEqual(isContinueRequest("繼續寫"), true, "continue detector");
+  assertEqual(isContinueRequest("我要每一章節名稱與內容"), true, "catalog continue");
   assertEqual(continued.taskId, prior.taskId, "continue keeps task");
   assertEqual(continued.quantity?.count, 500, "continue keeps 500");
+  const advanced = { ...prior, completedItems: ["第1–20集"] };
+  const catalog = buildTaskContract("我要每一章節名稱與內容", advanced, "對話 1");
+  assertEqual(catalog.nextBatch, "第1–20集", "catalog restarts first batch");
+  assertEqual(catalog.completedItems.length, 0, "catalog does not keep false complete");
 }
 
 {
@@ -96,7 +104,19 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   const after = updateContractAfterGeneration(contract, "第1集……", { truncated: false, loop: false });
   assertEqual(after.status, "PARTIAL", "one batch is not complete");
   assert(after.pendingItems.length > 0, "pending remains");
+  assertEqual(after.completedItems.length, 0, "thin output does not complete a batch");
   assertEqual(claimsFullCompletion("500集已全部完成", contract), true, "false complete detector");
+  const delivered = "第1集 開場。第2集 進網咖。第3集 遇見對手。";
+  assertEqual(batchLooksDelivered(delivered, contract), true, "episode headings look delivered");
+  const done = updateContractAfterGeneration(contract, delivered, { truncated: false, loop: false });
+  assertEqual(done.completedItems[0], "第1–20集", "delivered batch advances");
+  const garbage = "第1–20篇".repeat(8);
+  assertEqual(detectUnusableOutput(garbage), true, "repeated batch label is unusable");
+  const failed = updateContractAfterGeneration(contract, garbage, { truncated: false, loop: false });
+  assertEqual(failed.status, "FAILED", "unusable stays failed");
+  assertEqual(failed.completedItems.length, 0, "unusable does not complete batch");
+  assertEqual(modelBlockedForLanguage("allam-2-7b", "zh-TW"), true, "skip allam for zh-TW");
+  assertEqual(modelBlockedForLanguage("gemini-2.5-flash", "zh-TW"), false, "keep gemini");
 }
 
 {
@@ -237,6 +257,7 @@ async function testConsumeGenerationStream(): Promise<void> {
   assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_EMPTY_RESPONSE" }), "空回應", "empty response code");
   assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_MULTI_SHORT" }), "Multi 路由未滿 3 條", "multi short");
   assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_NOT_CONFIGURED" }), "供應商未設定或暫時無法使用", "not configured");
+  assertEqual(diagnoseGenerationFailure({ providerCode: "AI_PROVIDER_UNUSABLE_OUTPUT" }), "輸出無法使用", "unusable output");
 }
 
 {

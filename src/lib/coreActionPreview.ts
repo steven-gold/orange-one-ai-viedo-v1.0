@@ -47,6 +47,7 @@ import {
   previewConversationAction,
   previewMessageActionFor,
   quoteInsertText as kernelQuoteInsertText,
+  generationHistoryPayload as kernelGenerationHistoryPayload,
   recentHistoryPayload as kernelRecentHistoryPayload,
   refreshAssistantNotebookFor,
   resolveComposerTokensFor,
@@ -80,6 +81,7 @@ export const messageExceedsStoredLimit = kernelMessageExceedsStoredLimit;
 export const parseAssistantIntent = kernelParseAssistantIntent;
 export const ASSISTANT_OPERATIONS = KERNEL_ASSISTANT_OPERATIONS;
 export const recentHistoryPayload = kernelRecentHistoryPayload;
+export const generationHistoryPayload = kernelGenerationHistoryPayload;
 
 export type CoreResumeStatus = ConversationResumeStatus;
 export type CoreResumePointer = ConversationResumePointer;

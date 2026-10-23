@@ -20,7 +20,7 @@ import {
   messagesForThread as conversationMessagesForThread,
   parseMessageActionPayload as parseConversationMessageActionPayload,
   persistConversationTasksFor,
-  recentHistoryPayload as conversationRecentHistory,
+  generationHistoryPayload as conversationGenerationHistory,
   refreshAssistantNotebookFor,
   resolveComposerTokensFor,
 } from "@/lib/conversationCore";
@@ -38,6 +38,7 @@ import {
 import {
   annotateUnverifiedClaims,
   buildTaskContract,
+  detectUnusableOutput,
   diagnoseGenerationFailure,
   formatDeliveryFooter,
   latestOpenTask,
@@ -59,7 +60,7 @@ import {
   parseMessageActionPayload,
   persistConversationTasks,
   previewCoreAction,
-  recentHistoryPayload,
+  generationHistoryPayload,
   refreshAssistantNotebook,
   resolveComposerTokens,
   targetedParticipantAliases,
@@ -217,13 +218,14 @@ function applyGeneratedContract(
   const text = generated?.text.trim() ?? "";
   const truncated = generated?.truncated ?? false;
   const loop = generated?.loop ?? false;
+  const unusable = Boolean(text) && detectUnusableOutput(text);
   const empty = !text;
   const failReason = diagnoseGenerationFailure({
-    failed: failed || (!stopped && empty),
+    failed: failed || unusable || (!stopped && empty),
     empty,
     loop,
     truncated,
-    providerCode,
+    providerCode: unusable && !providerCode ? "AI_PROVIDER_UNUSABLE_OUTPUT" : providerCode,
   });
   const observation = {
     chars: text.length,
@@ -241,9 +243,22 @@ function applyGeneratedContract(
   }
   let reply = text;
   let nextContract = contract;
-  if (failed) {
-    reply = unavailableBody({ failed: true, empty, loop, truncated, providerCode });
-    if (contract) nextContract = { ...contract, status: "FAILED" };
+  if (failed || unusable) {
+    reply = unavailableBody({
+      failed: true,
+      empty,
+      loop,
+      truncated,
+      providerCode: unusable && !providerCode ? "AI_PROVIDER_UNUSABLE_OUTPUT" : providerCode,
+    });
+    if (contract) {
+      nextContract = updateContractAfterGeneration(contract, generated?.text ?? text, {
+        truncated,
+        loop,
+        failed: true,
+        unusable,
+      });
+    }
   } else if (!text) {
     reply = unavailableBody({ failed: true, empty: true, providerCode });
   } else if (contract && text) {
@@ -320,7 +335,7 @@ async function fillConversationReply(
   if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) return;
   const thread = activeThreadUidFor(bindings, current);
   if (!thread) return;
-  const history = conversationRecentHistory(conversationMessagesForThread(current(bindings.messageUid), thread).slice(0, -1));
+  const history = conversationGenerationHistory(conversationMessagesForThread(current(bindings.messageUid), thread), prompt);
   const context = formatConversationContext(bindings, current);
   const contract = resolveTaskContract(prompt, current(bindings.notebookUid), thread);
   if (contract) stream?.status(contract.status);
@@ -489,7 +504,7 @@ export async function applyWorkbenchAction(
       const tokens = resolveComposerTokens(prompt, current);
       if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) return;
       const thread = activeThreadUid(current);
-      const history = recentHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread).slice(0, -1));
+      const history = generationHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), prompt);
       const context = formatCoreChatContext(current);
       const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
       const contract = resolveTaskContract(prompt, current(notebookUid), thread);
@@ -544,9 +559,16 @@ export async function applyWorkbenchAction(
           multiCode = firstCode;
           if (contract) nextContract = { ...contract, status: "FAILED" };
         } else if (!multiStopped && contract) {
+          const unusable = detectUnusableOutput(joined);
+          if (unusable) {
+            multiFailed = true;
+            multiCode = firstCode || "AI_PROVIDER_UNUSABLE_OUTPUT";
+          }
           nextContract = updateContractAfterGeneration(contract, joined, {
             truncated: false,
             loop: false,
+            failed: unusable,
+            unusable,
           });
         }
         nextContract = withTaskObservation(nextContract ?? null, {

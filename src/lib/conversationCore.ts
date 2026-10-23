@@ -344,6 +344,17 @@ export function recentHistoryPayload(
     .filter((row) => row.content.trim().length > 0);
 }
 
+export function generationHistoryPayload(
+  records: ConversationMessageRecord[],
+  prompt: string,
+): Array<{ role: ConversationMessageRole; content: string }> {
+  let rows = records;
+  if (rows.at(-1)?.role === "assistant") rows = rows.slice(0, -1);
+  const last = rows.at(-1);
+  if (last?.role === "user" && last.text === prompt) rows = rows.slice(0, -1);
+  return recentHistoryPayload(rows);
+}
+
 export function lastAssistantText(raw: string | null, thread: string, fallback?: string | null): string {
   const records = messagesForThread(raw, thread, fallback);
   for (let index = records.length - 1; index >= 0; index -= 1) {
@@ -1268,6 +1279,15 @@ export function previewConversationSend(
   let records = parseMessageRecords(current(bindings.messageUid)).map((row) =>
     row.thread ? row : { ...row, thread },
   );
+  const lastUser = [...records].reverse().find((row) => row.thread === thread && row.role === "user");
+  if (lastUser?.text === payload) {
+    const patched = (uid: string) => current(uid);
+    return {
+      [bindings.sendUid]: "sent",
+      ...(bindings.runtimeStageUid ? { [bindings.runtimeStageUid]: "AI_RESPONSES" } : {}),
+      ...persistResumeOnThreadsFor(bindings, patched, thread, "SEND"),
+    };
+  }
   if (!records.some((row) => row.thread === thread && row.role === "assistant")) {
     const priorSummary = current(bindings.notebookUid);
     const priorNotebook = parseNotebookRecords(priorSummary ?? null);
