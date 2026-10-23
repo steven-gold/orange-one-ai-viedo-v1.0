@@ -12,6 +12,11 @@ import {
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
 import {
+  adapterFamily,
+  buildProviderRequest,
+  readProviderText,
+} from "@/lib/aiapiAdapter";
+import {
   AIAPI_PROVIDER_REGISTRY,
   prefixCandidates,
   promptTemplateForProvider,
@@ -107,17 +112,6 @@ function timeoutOf(profile: AiapiProfile): number {
   return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 20000;
 }
 
-function adapterFamily(profile: AiapiProfile): "openai" | "gemini" | "anthropic" | null {
-  const adapter = profile.adapterType.trim().toLowerCase();
-  if (!adapter) return null;
-  if (adapter.includes("gemini") || adapter.includes("google")) return "gemini";
-  if (adapter.includes("anthropic") || adapter.includes("claude")) return "anthropic";
-  if (adapter.includes("openai") || adapter.includes("deepseek") || adapter.includes("groq") || adapter.includes("openrouter")) {
-    return "openai";
-  }
-  return null;
-}
-
 interface ProviderCall {
   url: string;
   init: RequestInit;
@@ -144,63 +138,25 @@ function readByPath(payload: unknown, path: string): string {
 function buildCall(profile: AiapiProfile, credential: string, instruction: string): ProviderCall | null {
   const url = providerUrl(profile);
   if (!url) return null;
-  const family = adapterFamily(profile);
-  const method = (profile.httpMethod || "POST").toUpperCase();
-  if (family === "gemini") {
-    return {
-      url,
-      init: {
-        method,
-        headers: { "content-type": "application/json", "x-goog-api-key": credential },
-        body: JSON.stringify({ contents: [{ parts: [{ text: instruction }] }] }),
-      },
-      read: (payload) => {
-        const data = payload as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
-        return (data.candidates?.[0]?.content?.parts ?? []).map((part) => part.text ?? "").join("").trim();
-      },
-    };
-  }
-  if (family === "anthropic") {
-    return {
-      url,
-      init: {
-        method,
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": credential,
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: profile.modelId,
-          max_tokens: 16,
-          messages: [{ role: "user", content: instruction }],
-        }),
-      },
-      read: (payload) => {
-        const data = payload as { content?: Array<{ text?: string }> };
-        return (data.content ?? []).map((part) => part.text ?? "").join("").trim();
-      },
-    };
-  }
-  if (family === "openai") {
-    return {
-      url,
-      init: {
-        method,
-        headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
-        body: JSON.stringify({
-          model: profile.modelId,
-          messages: [{ role: "user", content: instruction }],
-          max_tokens: 16,
-        }),
-      },
-      read: (payload) => {
-        const data = payload as { choices?: Array<{ message?: { content?: string } }> };
-        return (data.choices?.[0]?.message?.content ?? "").trim();
-      },
-    };
-  }
-  return null;
+  const family = adapterFamily(profile.adapterType, url);
+  if (!family) return null;
+  const request = buildProviderRequest({
+    url,
+    credential,
+    adapterType: profile.adapterType,
+    model: profile.modelId,
+    messages: [{ role: "user", content: instruction }],
+    temperature: 0,
+    stream: false,
+    httpMethod: profile.httpMethod,
+    maxTokens: 16,
+  });
+  if (!request) return null;
+  return {
+    url: request.url,
+    init: request.init,
+    read: (payload) => readProviderText(payload, family).content,
+  };
 }
 
 async function callProvider(profile: AiapiProfile, credential: string, instruction: string): Promise<AiapiOutcome & { evidence?: string }> {

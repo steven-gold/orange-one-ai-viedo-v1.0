@@ -1,5 +1,12 @@
 import { getSqlClient } from "../db/client";
 import { listAiapiCredentials } from "../db/aiapiCredential";
+import {
+  adapterFamily,
+  buildProviderRequest,
+  parseProviderSseFrame,
+  readProviderText,
+  type AdapterFamily,
+} from "@/lib/aiapiAdapter";
 import { AIAPI_PROMPT_TEMPLATE_TOKEN, eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
 import {
   MAX_GENERATION_CONTINUATIONS,
@@ -10,7 +17,6 @@ import {
   inferTruncated,
   loopRepairUserMessage,
   mergeContinuation,
-  parseOpenAiSseFrame,
   shouldCheckStreamLoop,
   splitSseFrames,
   temperatureFor,
@@ -35,6 +41,10 @@ export interface ProviderConfig {
   credential: string;
   timeoutMs: number;
   promptTemplate: string;
+  adapterType: string;
+  family: AdapterFamily;
+  httpMethod: string;
+  maxContext: number;
 }
 
 function clean(value: string | null | undefined): string {
@@ -54,20 +64,28 @@ function toProviderConfig(profile: AiapiProfile, credential: string): ProviderCo
   const rawEndpoint = clean(profile.endpointPath);
   if (!provider || !base || !rawEndpoint) return null;
   const endpoint = rawEndpoint.startsWith("/") ? rawEndpoint : `/${rawEndpoint}`;
+  const url = `${base}${endpoint}`;
+  const family = adapterFamily(profile.adapterType, url);
+  if (!family) return null;
 
   const model = clean(profile.modelId);
   if (!model) return null;
   const timeoutSeconds = Number.parseInt(clean(profile.timeoutSeconds), 10);
   const timeoutMs = Number.isFinite(timeoutSeconds) && timeoutSeconds > 0 ? timeoutSeconds * 1000 : 20000;
+  const maxContext = Number.parseInt(clean(profile.maxContext), 10);
 
   return {
     profileId: profile.profileId,
-    url: `${base}${endpoint}`,
+    url,
     model,
     provider,
     credential,
     timeoutMs,
     promptTemplate: clean(profile.promptTemplate),
+    adapterType: clean(profile.adapterType),
+    family,
+    httpMethod: clean(profile.httpMethod) || "POST",
+    maxContext: Number.isFinite(maxContext) && maxContext > 0 ? maxContext : 0,
   };
 }
 
@@ -251,18 +269,20 @@ function mergeAbort(timeoutMs: number, external?: AbortSignal): { signal: AbortS
   };
 }
 
-async function readJsonTurn(response: Response, onToken?: (text: string) => void): Promise<ProviderTurn> {
-  const payload = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string }; finish_reason?: string; finishReason?: string }>;
-  };
-  const choice = payload.choices?.[0];
-  const content = clean(choice?.message?.content);
-  if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
-  onToken?.(content);
-  return { content, finishReason: clean(choice?.finish_reason ?? choice?.finishReason) };
+async function readJsonTurn(response: Response, family: AdapterFamily, onToken?: (text: string) => void): Promise<ProviderTurn> {
+  const payload = (await response.json()) as unknown;
+  const turn = readProviderText(payload, family);
+  if (!turn.content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
+  onToken?.(turn.content);
+  return { content: turn.content, finishReason: turn.finishReason };
 }
 
-async function readSseTurn(response: Response, userSignal?: AbortSignal, onToken?: (text: string) => void): Promise<ProviderTurn> {
+async function readSseTurn(
+  response: Response,
+  family: AdapterFamily,
+  userSignal?: AbortSignal,
+  onToken?: (text: string) => void,
+): Promise<ProviderTurn> {
   const body = response.body;
   if (!body) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no stream body");
   const reader = body.getReader();
@@ -284,7 +304,7 @@ async function readSseTurn(response: Response, userSignal?: AbortSignal, onToken
       const split = splitSseFrames(buffer);
       buffer = split.rest;
       for (const frame of split.frames) {
-        const parsed = parseOpenAiSseFrame(frame);
+        const parsed = parseProviderSseFrame(frame, family);
         if (parsed.done) {
           if (!content) throw new AiProviderError("AI_PROVIDER_EMPTY_RESPONSE", "Provider returned no message content");
           const looped = detectGenerationLoop(content);
@@ -320,7 +340,7 @@ async function readSseTurn(response: Response, userSignal?: AbortSignal, onToken
   }
   const leftover = splitSseFrames(buffer);
   for (const frame of leftover.frames) {
-    const parsed = parseOpenAiSseFrame(frame);
+    const parsed = parseProviderSseFrame(frame, family);
     if (parsed.delta) {
       content += parsed.delta;
       onToken?.(parsed.delta);
@@ -333,6 +353,35 @@ async function readSseTurn(response: Response, userSignal?: AbortSignal, onToken
   return { content, finishReason };
 }
 
+function fitMessages(messages: ChatMessage[], maxContext: number): ChatMessage[] {
+  if (!maxContext || maxContext >= 32000) return messages;
+  const budget = Math.max(800, Math.floor(maxContext * 2));
+  const system = messages.filter((row) => row.role === "system");
+  const rest = messages.filter((row) => row.role !== "system");
+  const kept: ChatMessage[] = [];
+  let used = system.reduce((sum, row) => sum + row.content.length, 0);
+  for (let index = rest.length - 1; index >= 0; index -= 1) {
+    const row = rest[index];
+    const size = row.content.length;
+    if (kept.length && used + size > budget) break;
+    kept.unshift(row);
+    used += size;
+  }
+  return [...system, ...kept];
+}
+
+function shouldRetryWithoutStream(status: number): boolean {
+  return status >= 400 && status < 500 && status !== 401 && status !== 403;
+}
+
+function lastTurn(messages: ChatMessage[]): ChatMessage[] {
+  const system = messages.filter((row) => row.role === "system");
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].role === "user") return [...system, messages[index]];
+  }
+  return messages;
+}
+
 async function postProvider(
   config: ProviderConfig,
   messages: ChatMessage[],
@@ -340,16 +389,18 @@ async function postProvider(
   stream: boolean,
   signal: AbortSignal,
 ): Promise<Response> {
-  return fetch(config.url, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${config.credential}`,
-    },
-    body: JSON.stringify({ model: config.model, messages, temperature, stream }),
-    signal,
-    cache: "no-store",
+  const request = buildProviderRequest({
+    url: config.url,
+    credential: config.credential,
+    adapterType: config.adapterType,
+    model: config.model,
+    messages,
+    temperature,
+    stream,
+    httpMethod: config.httpMethod,
   });
+  if (!request) throw new AiProviderError("AI_PROVIDER_UNREACHABLE", `${config.provider} adapter is unsupported`);
+  return fetch(request.url, { ...request.init, signal, cache: "no-store" });
 }
 
 async function callProvider(
@@ -362,9 +413,13 @@ async function callProvider(
   if (signal?.aborted) throw new GenerationCancelled("");
   const merged = mergeAbort(config.timeoutMs, signal);
   try {
-    let response = await postProvider(config, messages, temperature, true, merged.signal);
-    if (!response.ok && (response.status === 400 || response.status === 422)) {
-      response = await postProvider(config, messages, temperature, false, merged.signal);
+    const packed = fitMessages(messages, config.maxContext);
+    let response = await postProvider(config, packed, temperature, true, merged.signal);
+    if (!response.ok && shouldRetryWithoutStream(response.status)) {
+      response = await postProvider(config, packed, temperature, false, merged.signal);
+    }
+    if (!response.ok && shouldRetryWithoutStream(response.status) && packed.length > lastTurn(packed).length) {
+      response = await postProvider(config, lastTurn(packed), temperature, false, merged.signal);
     }
     if (!response.ok) {
       const detail = (await response.text().catch(() => "")).slice(0, 200);
@@ -372,9 +427,9 @@ async function callProvider(
     }
     const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
     if (contentType.includes("text/event-stream") && response.body) {
-      return await readSseTurn(response, signal, onToken);
+      return await readSseTurn(response, config.family, signal, onToken);
     }
-    return await readJsonTurn(response, onToken);
+    return await readJsonTurn(response, config.family, onToken);
   } catch (error) {
     if (error instanceof AiProviderError) throw error;
     if (error instanceof GenerationCancelled) throw error;
