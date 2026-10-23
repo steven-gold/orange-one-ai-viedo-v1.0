@@ -2,6 +2,7 @@ import {
   CORE_CONVERSATION,
   formatConversationContext,
   parseNotebookRecords,
+  previewAssistantRecordFor,
   projectConversationMemory,
   refreshAssistantNotebookFor,
   type ConversationMessageRecord,
@@ -53,6 +54,19 @@ function currentFrom(map: Record<string, string | null>): (uid: string) => strin
   }));
   assert(context.includes("記憶投影："), "context uses memory projection");
   assert(context.includes("版本 2"), "context keeps version");
+}
+
+{
+  const recorded = previewAssistantRecordFor(
+    CORE_CONVERSATION,
+    currentFrom({
+      "CORE-01-CTL-PROJECT": "示範專案",
+      "CORE-01-LST-WORK-ITEMS": "STORY",
+    }),
+  );
+  assertEqual(recorded["CORE-01-BTN-ASSISTANT-RECORD"], "recorded", "assistant writes recorded without messages");
+  assert(Boolean(recorded["CORE-01-BTN-NEW-THREAD"]), "assistant ensures a thread");
+  assertEqual(recorded["CORE-01-FLD-RUNTIME-STAGE"], "ASSISTANT_SUMMARY", "assistant moves runtime stage");
 }
 
 console.log("conversationCore.test.ts PASS");

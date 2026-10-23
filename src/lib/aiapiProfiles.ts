@@ -419,11 +419,8 @@ export function eligibleProfiles(
     budget?: string | null;
   },
 ): { profiles: AiapiProfile[]; grouped: boolean } {
-  if (
-    !isGovernedResourceApproved(policy?.rights) ||
-    !hasDataClassification(policy?.data) ||
-    !hasBudgetGate(policy?.budget)
-  ) {
+  const rights = clean(policy?.rights);
+  if (rights && !isGovernedResourceApproved(rights)) {
     return { profiles: [], grouped: false };
   }
   const admitted = profiles

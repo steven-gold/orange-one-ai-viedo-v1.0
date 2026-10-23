@@ -276,8 +276,6 @@ export function VideoVisual() {
       );
       if (!Object.keys(patch).length) return;
       applyPatch(patch);
-      const refreshTurn =
-        generatingTurn || actionUid === "VIDEO-01-ACT-CORRECTION-GENERATE";
       const controller = generatingTurn ? new AbortController() : null;
       if (controller) {
         sendAbortRef.current = controller;
@@ -305,10 +303,10 @@ export function VideoVisual() {
             : undefined,
         );
         if (generatingTurn) expectStreamRefreshRef.current = true;
-        if (refreshTurn) setTick((value) => value + 1);
+        setTick((value) => value + 1);
       } catch {
         if (generatingTurn) expectStreamRefreshRef.current = true;
-        if (refreshTurn) setTick((value) => value + 1);
+        setTick((value) => value + 1);
       } finally {
         if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
       }

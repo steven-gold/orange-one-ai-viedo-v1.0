@@ -1195,20 +1195,23 @@ export function previewAssistantRecordFor(
   bindings: ConversationBindings,
   current: CurrentFn,
 ): Record<string, string> {
-  const thread = activeThreadUidFor(bindings, current);
-  if (!thread) return {};
-  const records = messagesForThread(current(bindings.messageUid), thread);
-  if (!records.length) return {};
-  const intent: AssistantIntent = { operation: "MEETING_RECORD", refs: [] };
-  const notebookPatch = refreshAssistantNotebookFor(bindings, current, thread, records, "record", intent);
-  if (!Object.keys(notebookPatch).length) {
-    return { [bindings.assistantUid]: "recorded" };
+  const ensured = ensureConversationThread(bindings, current);
+  const patched = (uid: string) => ensured[uid] ?? current(uid);
+  const thread = activeThreadUidFor(bindings, patched);
+  if (!thread) {
+    return Object.keys(ensured).length ? { ...ensured, [bindings.assistantUid]: "recorded" } : {};
   }
+  const records = messagesForThread(patched(bindings.messageUid), thread);
+  const intent: AssistantIntent = { operation: "MEETING_RECORD", refs: [] };
+  const notebookPatch = records.length
+    ? refreshAssistantNotebookFor(bindings, patched, thread, records, "record", intent)
+    : {};
   return {
+    ...ensured,
     ...notebookPatch,
     [bindings.assistantUid]: "recorded",
     ...(bindings.runtimeStageUid ? { [bindings.runtimeStageUid]: "ASSISTANT_SUMMARY" } : {}),
-    ...persistResumeOnThreadsFor(bindings, current, thread, "ASSISTANT_RECORD"),
+    ...persistResumeOnThreadsFor(bindings, patched, thread, "ASSISTANT_RECORD"),
   };
 }
 

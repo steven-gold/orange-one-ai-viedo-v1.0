@@ -290,8 +290,6 @@ export function EditVisual() {
       );
       if (!Object.keys(patch).length) return;
       applyPatch(patch);
-      const refreshTurn =
-        generatingTurn || actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE";
       const controller = generatingTurn ? new AbortController() : null;
       if (controller) {
         sendAbortRef.current = controller;
@@ -319,10 +317,10 @@ export function EditVisual() {
             : undefined,
         );
         if (generatingTurn) expectStreamRefreshRef.current = true;
-        if (refreshTurn) setTick((value) => value + 1);
+        setTick((value) => value + 1);
       } catch {
         if (generatingTurn) expectStreamRefreshRef.current = true;
-        if (refreshTurn) setTick((value) => value + 1);
+        setTick((value) => value + 1);
       } finally {
         if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
       }

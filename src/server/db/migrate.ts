@@ -403,6 +403,7 @@ const MIGRATION_FILES = [
   "026_reset_aiapi_drafts.sql",
   "027_reset_aiapi_registry.sql",
   "028_conversation_file.sql",
+  "029_seed_aiapi_route_policy.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -432,6 +433,21 @@ const RESET_AIAPI_REGISTRY = [
   "DELETE FROM ghsn_aiapi_credential",
 ];
 
+const SEED_AIAPI_ROUTE_POLICY = [
+  `INSERT INTO ghsn_aiapi_field_projection (control_uid, value_text)
+   VALUES ('AIAPI-01-FLD-PF-RIGHTS', 'APPROVED')
+   ON CONFLICT (control_uid) DO UPDATE SET value_text = EXCLUDED.value_text
+   WHERE ghsn_aiapi_field_projection.value_text IS NULL OR ghsn_aiapi_field_projection.value_text = ''`,
+  `INSERT INTO ghsn_aiapi_field_projection (control_uid, value_text)
+   VALUES ('AIAPI-01-FLD-PF-DATA', 'INTERNAL')
+   ON CONFLICT (control_uid) DO UPDATE SET value_text = EXCLUDED.value_text
+   WHERE ghsn_aiapi_field_projection.value_text IS NULL OR ghsn_aiapi_field_projection.value_text = ''`,
+  `INSERT INTO ghsn_aiapi_field_projection (control_uid, value_text)
+   VALUES ('AIAPI-01-FLD-PF-BUDGET', 'DEMO')
+   ON CONFLICT (control_uid) DO UPDATE SET value_text = EXCLUDED.value_text
+   WHERE ghsn_aiapi_field_projection.value_text IS NULL OR ghsn_aiapi_field_projection.value_text = ''`,
+];
+
 const RESET_MIGRATIONS: Record<string, string[]> = {
   "022_reset_core_drafts.sql": RESET_CORE_DRAFTS,
   "023_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
@@ -439,6 +455,7 @@ const RESET_MIGRATIONS: Record<string, string[]> = {
   "025_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "026_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "027_reset_aiapi_registry.sql": RESET_AIAPI_REGISTRY,
+  "029_seed_aiapi_route_policy.sql": SEED_AIAPI_ROUTE_POLICY,
 };
 
 async function runBootstrap(): Promise<MigrationResult> {

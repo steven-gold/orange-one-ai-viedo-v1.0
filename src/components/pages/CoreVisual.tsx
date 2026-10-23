@@ -8,6 +8,7 @@ import { ConversationMessageBody } from "./ConversationMessageBody";
 import { ConversationMarkdown } from "./ConversationMarkdown";
 import {
   activeThreadUid,
+  assignedAiRouteDisplay,
   assignedAiRouteReady,
   assignedMultiRouteReady,
   composerTokenTone,
@@ -263,15 +264,11 @@ export function CoreVisual() {
             }
           : undefined,
       );
-      if (generatingTurn) {
-        expectStreamRefreshRef.current = true;
-        setTick((value) => value + 1);
-      }
+      if (generatingTurn) expectStreamRefreshRef.current = true;
+      setTick((value) => value + 1);
     } catch {
-      if (generatingTurn) {
-        expectStreamRefreshRef.current = true;
-        setTick((value) => value + 1);
-      }
+      if (generatingTurn) expectStreamRefreshRef.current = true;
+      setTick((value) => value + 1);
     } finally {
       if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
     }
@@ -512,12 +509,18 @@ export function CoreVisual() {
               <div>
                 <div className={styles.label}>{tx("core.conv_header")}</div>
                 <strong>{currentWorkLabel}</strong>
-                <div className={styles.meta}>{tx(resumeStatusKey)}{resume?.conversation_id ? ` ${resume.conversation_id}` : ""}</div>
+                <div className={styles.meta}>
+                  {tx(resumeStatusKey)}
+                  {resume?.conversation_id ? ` ${resume.conversation_id}` : ""}
+                  {routeReady
+                    ? ` · ${assignedAiRouteDisplay(valueOf("CORE-01-FLD-ASSIGNED-AI")) || tx("core.assigned_ai")}`
+                    : ` · ${tx("core.route_blocked")}`}
+                </div>
               </div>
               <div className={styles.headerControls}>
                 <IconButton uid="CORE-01-BTN-SINGLE-AI" label={tx("core.single_ai")} icon="single-ai" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, singleActive ? styles.active : ""].filter(Boolean).join(" ")} />
                 <IconButton uid="CORE-01-BTN-MULTI-AI" label={multiReady ? tx("core.multi_ai") : tx("core.multi_route_blocked")} icon="multi-ai" onAct={act} disabled={disabled || !multiReady} className={[styles.btn, styles.iconBtn, multiActive ? styles.active : ""].filter(Boolean).join(" ")} />
-                <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn}`} />
+                <IconButton uid="CORE-01-BTN-ASSISTANT-RECORD" label={tx("core.assistant_record")} icon="record" onAct={act} disabled={disabled} className={`${styles.btn} ${styles.iconBtn} ${valueOf("CORE-01-BTN-ASSISTANT-RECORD") === "recorded" ? styles.active : ""}`} />
                 <span className={styles.srOnly} data-control-uid="CORE-01-FLD-ASSIGNED-AI">{displayCoreValue(valueOf("CORE-01-FLD-ASSIGNED-AI"), loading)}</span>
               </div>
             </div>

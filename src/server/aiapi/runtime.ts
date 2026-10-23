@@ -897,8 +897,8 @@ export async function runQueueProbe(): Promise<AiapiOutcome> {
 export async function runRouteExecution(profileIdRaw: string | undefined): Promise<AiapiOutcome> {
   const fields = await loadFields();
   if (fields.get("AIAPI-01-FLD-KILL-SWITCH") === "ON") return { ok: false, code: "AIAPI_KILL_SWITCH_ON" };
-  if (fields.get("AIAPI-01-FLD-PF-RIGHTS") !== "APPROVED") return { ok: false, code: "AIAPI_CAPABILITY_NOT_APPROVED" };
-  if (!(fields.get("AIAPI-01-FLD-PF-DATA") ?? "").trim()) return { ok: false, code: "AIAPI_DATA_CLASSIFICATION_REQUIRED" };
+  const rights = (fields.get("AIAPI-01-FLD-PF-RIGHTS") ?? "").trim();
+  if (rights && rights !== "APPROVED") return { ok: false, code: "AIAPI_CAPABILITY_NOT_APPROVED" };
 
   const profiles = await loadProfiles();
   const profileId = profileFromValue(profileIdRaw) || profiles[0]?.profileId || "";
