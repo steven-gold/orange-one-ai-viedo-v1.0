@@ -334,7 +334,8 @@ export function parseConversationFileRef(text: string): { fileId: string; fileNa
 
 export function generationStatusLabel(status: ConversationTaskStatus): string {
   if (status === "COMPLETE") return "已完成";
-  if (status === "PARTIAL" || status === "OPEN") return "部分完成";
+  if (status === "OPEN") return "進行中";
+  if (status === "PARTIAL") return "部分完成";
   if (status === "STOPPED") return "已停止";
   return "失敗";
 }
@@ -515,6 +516,7 @@ export async function consumeGenerationStream(
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let terminal = false;
   const onAbort = () => {
     void reader.cancel();
   };
@@ -523,6 +525,19 @@ export async function consumeGenerationStream(
     return;
   }
   signal?.addEventListener("abort", onAbort);
+  const apply = (event: GenerationStreamEvent | null): boolean => {
+    if (!event) return false;
+    if (event.type === "token" && event.text) sink.token(event.text);
+    if (event.type === "status") {
+      sink.status(event.status);
+      if (event.status !== "OPEN") terminal = true;
+    }
+    if (event.type === "done") {
+      terminal = true;
+      return true;
+    }
+    return false;
+  };
   try {
     while (true) {
       const { value, done } = await reader.read();
@@ -531,20 +546,11 @@ export async function consumeGenerationStream(
       const split = splitSseFrames(buffer);
       buffer = split.rest;
       for (const frame of split.frames) {
-        const event = parseGenerationSseFrame(frame);
-        if (!event) continue;
-        if (event.type === "token" && event.text) sink.token(event.text);
-        if (event.type === "status") sink.status(event.status);
-        if (event.type === "done") return;
+        if (apply(parseGenerationSseFrame(frame))) return;
       }
     }
     const leftover = splitSseFrames(buffer);
-    for (const frame of leftover.frames) {
-      const event = parseGenerationSseFrame(frame);
-      if (!event) continue;
-      if (event.type === "token" && event.text) sink.token(event.text);
-      if (event.type === "status") sink.status(event.status);
-    }
+    for (const frame of leftover.frames) apply(parseGenerationSseFrame(frame));
   } catch {
     // Stream aborted or closed before a terminal frame.
   } finally {
@@ -555,6 +561,7 @@ export async function consumeGenerationStream(
       // Stream already closed after abort or natural end.
     }
   }
+  if (!terminal && !signal?.aborted) sink.status("FAILED");
 }
 
 export function parseOpenAiSseFrame(data: string): { delta: string; finishReason: string; done: boolean } {

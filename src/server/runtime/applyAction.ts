@@ -322,7 +322,7 @@ async function fillConversationReply(
   else if (stopped) stream?.status("STOPPED");
   else if (failed) stream?.status("FAILED");
   const reply = attachFooter(generatedContract.reply, nextContract);
-  if (stopped && !reply.trim()) return;
+  if (stopped && !reply.trim() && !nextContract) return;
   const patch = appendAssistantMessageFor(
     bindings,
     current,
@@ -461,7 +461,7 @@ export async function applyWorkbenchAction(
         }));
         let nextContract = contract;
         try {
-          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases, signal, stream ? (text) => stream.token(text) : undefined);
+          if (prompt) replies = await generateIndependentPageReplies("core", prompt, context, history, aliases, signal, stream ? (text) => stream.token(text) : undefined, contract ?? undefined);
           if (contract) {
             nextContract = updateContractAfterGeneration(contract, replies.map((row) => row.text).join("\n"), {
               truncated: false,
@@ -533,7 +533,7 @@ export async function applyWorkbenchAction(
       else if (stopped) stream?.status("STOPPED");
       else if (failed) stream?.status("FAILED");
       const reply = attachFooter(generatedContract.reply, nextContract);
-      if (stopped && !reply.trim()) return;
+      if (stopped && !reply.trim() && !nextContract) return;
       const patch = appendAssistantMessage(current, thread, reply, undefined, new Date().toISOString(), generated?.route ?? "");
       const patchedCurrent = (uid: string) => patch[uid] ?? current(uid);
       const taskPatch = nextContract

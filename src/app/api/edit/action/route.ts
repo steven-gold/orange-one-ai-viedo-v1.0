@@ -5,6 +5,7 @@ import { knownEditAction, persistHasEditPermission, persistRecordEditAction } fr
 import { EDIT_PERMISSION } from "@/server/domain/edit";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   const principal = await requireAuth(request);

@@ -203,11 +203,19 @@ async function postWorkbenchAction(
     signal,
   });
   const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
-  if (stream && contentType.includes("text/event-stream") && response.body) {
+  if (stream && contentType.includes("text/event-stream")) {
+    if (!response.body) {
+      stream.status("FAILED");
+      throw new CoreClientError("CORE_STREAM_UNAVAILABLE", `${path} stream empty: ${response.status}`);
+    }
     await consumeGenerationStream(response.body, stream, signal);
     return;
   }
-  if (isConversationGeneratingAction(actionUid) && stream && response.ok) {
+  if (!response.ok) {
+    stream?.status("FAILED");
+    throw new CoreClientError("CORE_ACTION_UNAVAILABLE", `${path} failed: ${response.status}`);
+  }
+  if (isConversationGeneratingAction(actionUid) && stream) {
     stream.status("COMPLETE");
   }
 }

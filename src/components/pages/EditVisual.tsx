@@ -271,6 +271,8 @@ export function EditVisual() {
     async (controlUid: string, nextValue?: string) => {
       const actionUid = EDIT_CONTROL_ACTIONS[controlUid];
       if (!actionUid) return;
+      const generatingTurn = actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE";
+      if (generatingTurn && (sendAbortRef.current || generating)) return;
       const patch = previewEditAction(
         controlUid,
         actionUid,
@@ -279,7 +281,6 @@ export function EditVisual() {
       );
       if (!Object.keys(patch).length) return;
       applyPatch(patch);
-      const generatingTurn = actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE";
       const refreshTurn =
         generatingTurn || actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE";
       const controller = generatingTurn ? new AbortController() : null;
@@ -313,7 +314,7 @@ export function EditVisual() {
         if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
       }
     },
-    [applyPatch],
+    [applyPatch, generating],
   );
 
   const insertQuote = useCallback((ref: string, prefix = "") => {
@@ -358,10 +359,11 @@ export function EditVisual() {
       void navigator.clipboard?.writeText(text);
       return;
     }
+    if (generating || sendAbortRef.current) return;
     const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
     if (!controlUid) return;
     void act(controlUid, JSON.stringify({ actionUid, messageRef }));
-  }, [act, insertQuote]);
+  }, [act, generating, insertQuote]);
 
   const v = (uid: string) => valueOf(uid);
   const standalone = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD";

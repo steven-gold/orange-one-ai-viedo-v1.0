@@ -6,6 +6,7 @@ import {
   MAX_LOOP_REPAIRS,
   continuationUserMessage,
   detectGenerationLoop,
+  formatContractForPrompt,
   inferTruncated,
   loopRepairUserMessage,
   mergeContinuation,
@@ -489,7 +490,11 @@ export async function generatePageReply(
   if (!route.configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
   }
-  const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
+  const contractText = options?.contract ? formatContractForPrompt(options.contract) : "";
+  const parts = [prompt];
+  if (context) parts.push(`[脈絡]\n${context}`);
+  if (contractText) parts.push(`[任務契約]\n${contractText}`);
+  const user = parts.join("\n\n");
   const recent = history.filter((row) => row.content.trim().length > 0);
   const temperature = temperatureFor(options?.kind ?? options?.contract?.kind ?? "question");
   let lastError: AiProviderError | null = null;
@@ -520,12 +525,17 @@ export async function generateIndependentPageReplies(
   aliases: string[],
   signal?: AbortSignal,
   onToken?: (text: string) => void,
+  contract?: ConversationTaskContract,
 ): Promise<IndependentReply[]> {
   const route = await admitRoute(AI_CAPABILITY_BY_PAGE[page]);
   if (!route.configs.length) {
     throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${AI_CAPABILITY_BY_PAGE[page]} provider with a stored credential`);
   }
-  const user = context ? `${prompt}\n\n[脈絡]\n${context}` : prompt;
+  const contractText = contract ? formatContractForPrompt(contract) : "";
+  const parts = [prompt];
+  if (context) parts.push(`[脈絡]\n${context}`);
+  if (contractText) parts.push(`[任務契約]\n${contractText}`);
+  const user = parts.join("\n\n");
   const recent = history.filter((row) => row.content.trim().length > 0);
   if (aliases.length > route.configs.length) {
     throw new AiProviderError(
@@ -547,7 +557,7 @@ export async function generateIndependentPageReplies(
         { role: "user", content: independentUser },
       ];
       try {
-        const turn = await completeTurn(config, messages, 0.8, undefined, signal, onToken);
+        const turn = await completeTurn(config, messages, 0.8, contract, signal, onToken);
         return { alias, text: turn.text, route: routeLabelFor(config) };
       } catch (error) {
         if (error instanceof GenerationCancelled) throw error;

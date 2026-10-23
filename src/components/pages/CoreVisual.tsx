@@ -218,6 +218,8 @@ export function CoreVisual() {
   const act = useCallback(async (controlUid: string, nextValue?: string) => {
     const actionUid = CORE_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
+    const generatingTurn = actionUid === "CORE-01-ACT-SEND" || actionUid === "CORE-01-ACT-MSG-ANALYZE";
+    if (generatingTurn && (sendAbortRef.current || generating)) return;
     const patch = previewCoreAction(
       controlUid,
       actionUid,
@@ -226,7 +228,6 @@ export function CoreVisual() {
     );
     if (!Object.keys(patch).length) return;
     applyPatch(patch);
-    const generatingTurn = actionUid === "CORE-01-ACT-SEND" || actionUid === "CORE-01-ACT-MSG-ANALYZE";
     const controller = generatingTurn ? new AbortController() : null;
     if (controller) {
       sendAbortRef.current = controller;
@@ -261,7 +262,7 @@ export function CoreVisual() {
     } finally {
       if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
     }
-  }, [applyPatch]);
+  }, [applyPatch, generating]);
 
   const openNameDialog = useCallback((kind: NameDialogKind, preset = "") => {
     setDialogName(preset);
@@ -346,10 +347,11 @@ export function CoreVisual() {
       void navigator.clipboard?.writeText(text);
       return;
     }
+    if (generating || sendAbortRef.current) return;
     const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
     if (!controlUid) return;
     void act(controlUid, JSON.stringify({ actionUid, messageRef }));
-  }, [act, insertQuote]);
+  }, [act, generating, insertQuote]);
 
   const disabled = false;
   const tx = (key: TranslationKey) => t(key);

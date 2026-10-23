@@ -63,6 +63,7 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   assert(prompt.includes("500集"), "prompt keeps 500");
   assert(prompt.includes("本批次"), "prompt scopes the batch");
   assert(prompt.includes("禁止宣稱全部完成"), "prompt forbids false complete");
+  assert(prompt.includes("目標："), "prompt keeps the goal");
 }
 
 {
@@ -197,6 +198,21 @@ async function testConsumeGenerationStream(): Promise<void> {
   });
   assertEqual(tokens.join(""), "甲", "consume token");
   assertEqual(statuses.join(""), "PARTIAL", "consume status");
+
+  const failed: string[] = [];
+  await consumeGenerationStream(
+    new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(encodeGenerationSse({ type: "token", text: "乙" })));
+        controller.close();
+      },
+    }),
+    {
+      token: () => undefined,
+      status: (status) => failed.push(status),
+    },
+  );
+  assertEqual(failed.join(""), "FAILED", "unterminated stream is failed");
 }
 
 {
@@ -205,6 +221,9 @@ async function testConsumeGenerationStream(): Promise<void> {
   assertEqual(isConversationGeneratingAction("CORE-01-ACT-MSG-QUOTE"), false, "quote stays json");
   assertEqual(generationStatusLabel("STOPPED"), "已停止", "status label stopped");
   assertEqual(generationStatusLabel("PARTIAL"), "部分完成", "status label partial");
+  assertEqual(generationStatusLabel("OPEN"), "進行中", "status label open");
+  assertEqual(generationStatusLabel("COMPLETE"), "已完成", "status label complete");
+  assertEqual(generationStatusLabel("FAILED"), "失敗", "status label failed");
 }
 
 {

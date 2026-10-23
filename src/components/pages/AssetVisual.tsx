@@ -224,6 +224,8 @@ export function AssetVisual() {
   const act = useCallback(async (controlUid: string, nextValue?: string) => {
     const actionUid = ASSET_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
+    const generatingTurn = actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE";
+    if (generatingTurn && (sendAbortRef.current || generating)) return;
     const patch = previewAssetAction(
       controlUid,
       actionUid,
@@ -232,7 +234,6 @@ export function AssetVisual() {
     );
     if (!Object.keys(patch).length) return;
     applyPatch(patch);
-    const generatingTurn = actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE";
     const refreshTurn =
       generatingTurn || actionUid === "ASSET-01-ACT-CORRECTION-GENERATE";
     const controller = generatingTurn ? new AbortController() : null;
@@ -265,7 +266,7 @@ export function AssetVisual() {
     } finally {
       if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
     }
-  }, [applyPatch]);
+  }, [applyPatch, generating]);
 
   const openNameDialog = useCallback((kind: NameDialogKind, preset = "") => {
     setDialogName(preset);
@@ -337,10 +338,11 @@ export function AssetVisual() {
       void navigator.clipboard?.writeText(text);
       return;
     }
+    if (generating || sendAbortRef.current) return;
     const controlUid = MESSAGE_MENU.find((row) => row.actionUid === actionUid)?.uid;
     if (!controlUid) return;
     void act(controlUid, JSON.stringify({ actionUid, messageRef }));
-  }, [act, insertQuote]);
+  }, [act, generating, insertQuote]);
 
   const inboundReady = inbound.ready;
   const evaluated = valueOf("ASSET-01-BTN-EVALUATE") === "evaluated";

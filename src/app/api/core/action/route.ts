@@ -5,6 +5,7 @@ import { knownCoreAction, persistHasCorePermission, persistRecordCoreAction } fr
 import { CORE_PERMISSION } from "@/server/domain/core";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   const principal = await requireAuth(request);
