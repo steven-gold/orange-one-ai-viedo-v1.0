@@ -1,5 +1,6 @@
-import { previewDevAction } from "./devActionPreview";
+import { applyDiscoveryCollection, previewDevAction } from "./devActionPreview";
 import { bindSharedOwnersForTest } from "./devSharedOwners";
+import { PUBLIC_JSON_SOURCES, completedRun, failedRun, sourceRecordFrom } from "./sharedAcquisition";
 import { DEV_VISIBLE_CONTROLS } from "../server/domain/dev";
 import {
   DEV_AUDIENCE_UID,
@@ -93,6 +94,48 @@ function store(seed: Record<string, string> = {}): {
   assert(parseJson<{ code: string }>(pause["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_JOB_NOT_RUNNING", "pending job cannot pause");
   apply("DEV-01-BTN-DISCOVERY-STOP", "DEV-01-ACT-DISCOVERY-STOP");
   assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "STOPPED", "pending job can stop");
+  bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
+  const { current, apply } = store();
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({ product: "影像工作臺", industry: "媒體", keywords: "企業開發", mode: "SINGLE" }),
+  );
+  apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
+  const liveSignal: DevSignal = {
+    signalId: "SIG-LIVE",
+    companyName: "中華電視股份有限公司",
+    intent: "影像工作臺",
+    evidence: "臺灣證券交易所上市基本資料 9926 文化創意業",
+    freshness: "2026-10-24",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-03793901",
+    match: "resolved",
+    opportunity: "OPEN",
+    status: "NEW",
+    version: 1,
+  };
+  const patch = applyDiscoveryCollection(current, {
+    ok: true,
+    source: sourceRecordFrom(PUBLIC_JSON_SOURCES[0], "ACTIVE"),
+    run: completedRun(PUBLIC_JSON_SOURCES[0].sourceId, 1),
+    signals: [liveSignal],
+    items: [],
+  });
+  assert(parseJson<DevSignal[]>(patch[DEV_SIGNALS_UID], []).length === 1, "collection writes verified signals");
+  assert(parseJson<DevJob | null>(patch[DEV_JOB_UID], null)?.status === "RUNNING", "successful collection keeps RUNNING");
+  const blocked = applyDiscoveryCollection(current, {
+    ok: false,
+    source: sourceRecordFrom(PUBLIC_JSON_SOURCES[0], "UNAVAILABLE"),
+    run: failedRun(PUBLIC_JSON_SOURCES[0].sourceId, "SHARED_ACQUISITION_UNAVAILABLE"),
+    reason: "SHARED_ACQUISITION_UNAVAILABLE",
+  });
+  assert(parseJson<DevJob | null>(blocked[DEV_JOB_UID], null)?.status === "EXTERNAL_PENDING", "failed collection waits externally");
+  assert(parseJson<DevJob | null>(blocked[DEV_JOB_UID], null)?.blocker === "SHARED_ACQUISITION_UNAVAILABLE", "failed collection records blocker");
   bindSharedOwnersForTest(null);
 }
 

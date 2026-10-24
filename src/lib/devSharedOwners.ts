@@ -3,29 +3,28 @@ export type SharedOwnerProbe = {
   reason: string;
 };
 
-let acquisitionBound = true;
-let deliveryBound = true;
+let acquisitionOverride: boolean | null = null;
+let deliveryOverride: boolean | null = true;
 
 export function bindSharedOwnersForTest(next: { acquisition?: boolean; delivery?: boolean } | null): void {
   if (next === null) {
-    acquisitionBound = true;
-    deliveryBound = true;
+    acquisitionOverride = null;
+    deliveryOverride = true;
     return;
   }
-  if (typeof next.acquisition === "boolean") acquisitionBound = next.acquisition;
-  if (typeof next.delivery === "boolean") deliveryBound = next.delivery;
+  if (typeof next.acquisition === "boolean") acquisitionOverride = next.acquisition;
+  if (typeof next.delivery === "boolean") deliveryOverride = next.delivery;
 }
 
 export function probeSharedAcquisition(): SharedOwnerProbe {
-  return acquisitionBound
-    ? { available: true, reason: "" }
-    : { available: false, reason: "SHARED_ACQUISITION_UNAVAILABLE" };
+  if (acquisitionOverride === false) return { available: false, reason: "SHARED_ACQUISITION_UNAVAILABLE" };
+  if (acquisitionOverride === true) return { available: true, reason: "" };
+  return { available: true, reason: "" };
 }
 
 export function probeSharedDelivery(): SharedOwnerProbe {
-  return deliveryBound
-    ? { available: true, reason: "" }
-    : { available: false, reason: "SHARED_DELIVERY_UNAVAILABLE" };
+  if (deliveryOverride === false) return { available: false, reason: "SHARED_DELIVERY_UNAVAILABLE" };
+  return { available: true, reason: "" };
 }
 
 export function acceptDiscoveryIntent(): {

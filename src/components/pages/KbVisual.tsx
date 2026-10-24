@@ -4,6 +4,22 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { KbClientError, fetchKbReadModel, postKbAction, type KbFieldValue } from "@/lib/client";
+import type { AcquisitionResultItem, AcquisitionSourceRecord } from "@/lib/sharedAcquisition";
+import {
+  KB_ACQ_MODE_UID,
+  KB_RESULTS_UID,
+  KB_RUN_FAIL_UID,
+  KB_RUN_ID_UID,
+  KB_RUN_PROGRESS_UID,
+  KB_RUN_STATUS_UID,
+  KB_SOURCE_CLASS_UID,
+  KB_SOURCE_NAME_UID,
+  KB_SOURCE_RIGHTS_UID,
+  KB_SOURCE_SCOPE_UID,
+  KB_SOURCE_STATUS_UID,
+  KB_SOURCE_TYPE_UID,
+  KB_SOURCES_UID,
+} from "@/lib/kbState";
 import { displayKbValue } from "./kbFormat";
 import {
   KB_CONTROL_ACTIONS,
@@ -17,6 +33,15 @@ import {
   type KbView,
 } from "./kbControls";
 import styles from "./KbVisual.module.css";
+
+function readJson<T>(raw: string | null | undefined, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
@@ -85,7 +110,7 @@ export function KbVisual() {
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
-  const [, setFields] = useState<KbFieldValue[]>([]);
+  const [fields, setFields] = useState<KbFieldValue[]>([]);
   const [view, setView] = useState<KbView>("KB-01-VIEW-OVERVIEW");
   const [drawer, setDrawer] = useState<KbDrawer | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
@@ -134,6 +159,13 @@ export function KbVisual() {
   const dash = displayKbValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(KB_VISIBLE_CONTROLS), []);
   const viewActions = KB_VIEW_ACTIONS[view];
+  const fieldMap = useMemo(() => new Map(fields.map((item) => [item.controlUid, item.value])), [fields]);
+  const fieldOf = (uid: string) => displayKbValue(fieldMap.get(uid) ?? null, loading);
+  const sources = readJson<AcquisitionSourceRecord[]>(fieldMap.get(KB_SOURCES_UID), []);
+  const results = readJson<AcquisitionResultItem[]>(fieldMap.get(KB_RESULTS_UID), []);
+  const sourceName = fieldOf(KB_SOURCE_NAME_UID);
+  const runStatus = fieldOf(KB_RUN_STATUS_UID);
+  const runFail = fieldOf(KB_RUN_FAIL_UID);
 
   const switchView = (next: KbView) => {
     setView(next);
@@ -253,17 +285,17 @@ export function KbVisual() {
                 <h2>{tx("kb.overview-title")}</h2>
                 <p className={styles.note}>{tx("kb.overview-hint")}</p>
               </div>
-              <div className={styles.cardGridFive}>
-                <article className={styles.card} data-component-uid="KB-01-CMP-OVERVIEW-KPI">
-                  <h3>{tx("kb.kpi-source")}</h3>
-                  <p className={styles.note}>{tx("kb.kpi-source-hint")}</p>
-                  <strong>{dash}</strong>
-                </article>
-                <article className={styles.card}>
-                  <h3>{tx("kb.kpi-ingestion")}</h3>
-                  <p className={styles.note}>{tx("kb.kpi-ingestion-hint")}</p>
-                  <strong>{dash}</strong>
-                </article>
+               <div className={styles.cardGridFive}>
+                 <article className={styles.card} data-component-uid="KB-01-CMP-OVERVIEW-KPI">
+                   <h3>{tx("kb.kpi-source")}</h3>
+                   <p className={styles.note}>{tx("kb.kpi-source-hint")}</p>
+                   <strong>{sourceName === "—" ? dash : sourceName}</strong>
+                 </article>
+                 <article className={styles.card}>
+                   <h3>{tx("kb.kpi-ingestion")}</h3>
+                   <p className={styles.note}>{tx("kb.kpi-ingestion-hint")}</p>
+                   <strong>{runStatus === "—" ? dash : runStatus}</strong>
+                 </article>
                 <article className={styles.card}>
                   <h3>{tx("kb.kpi-experience")}</h3>
                   <p className={styles.note}>{tx("kb.kpi-experience-hint")}</p>
@@ -288,9 +320,9 @@ export function KbVisual() {
               </div>
             </section>
             <aside className={styles.rail} data-section-uid="KB-01-SEC-02-WARN" data-component-uid="KB-01-CMP-OVERVIEW-WARN">
-              <h2>{tx("kb.warn-title")}</h2>
-              <p className={styles.note}>{tx("kb.warn-hint")}</p>
-              <strong>{dash}</strong>
+               <h2>{tx("kb.warn-title")}</h2>
+               <p className={styles.note}>{tx("kb.warn-hint")}</p>
+               <strong>{runFail === "—" ? dash : runFail}</strong>
               <div className={styles.railPills}>
                 <span className={styles.pill}>{tx("kb.rail-real-only")}</span>
                 <span className={`${styles.pill} ${styles.pillWarn}`}>{tx("kb.rail-no-fake")}</span>
@@ -316,31 +348,42 @@ export function KbVisual() {
                       <th>{tx("kb.col-scope")}</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>{dash}</td>
-                      <td>{dash}</td>
-                      <td>{dash}</td>
-                      <td>{dash}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-            <section className={styles.workspace} data-section-uid="KB-01-SEC-04" data-component-uid="KB-01-CMP-SOURCE-DETAIL">
+                   <tbody>
+                     {sources.length ? (
+                       sources.map((source) => (
+                         <tr key={source.sourceId}>
+                           <td>{source.name}</td>
+                           <td>{source.type}</td>
+                           <td>{source.status === "ACTIVE" ? tx("kb.status-available") : tx("kb.status-unavailable")}</td>
+                           <td>{source.scope}</td>
+                         </tr>
+                       ))
+                     ) : (
+                       <tr>
+                         <td>{dash}</td>
+                         <td>{dash}</td>
+                         <td>{dash}</td>
+                         <td>{dash}</td>
+                       </tr>
+                     )}
+                   </tbody>
+                 </table>
+               </div>
+             </section>
+             <section className={styles.workspace} data-section-uid="KB-01-SEC-04" data-component-uid="KB-01-CMP-SOURCE-DETAIL">
               <div>
                 <h2>{tx("kb.source-gov")}</h2>
                 <p className={styles.note}>{tx("kb.source-gov-hint")}</p>
               </div>
-              <div className={styles.kvList}>
-                <Kv uid="KB-01-FLD-SOURCE-NAME" label={tx("kb.fld-name")} value={dash} />
-                <Kv uid="KB-01-FLD-SOURCE-TYPE" label={tx("kb.fld-type")} value={dash} />
-                <Kv uid="KB-01-FLD-SOURCE-SCOPE" label={tx("kb.fld-scope")} value={dash} />
-                <Kv uid="KB-01-FLD-SOURCE-RIGHTS" label={tx("kb.fld-rights")} value={dash} />
-                <Kv uid="KB-01-FLD-SOURCE-CLASS" label={tx("kb.fld-class")} value={dash} />
-                <Kv uid="KB-01-FLD-ACQ-MODE" label={tx("kb.fld-acq-mode")} value={dash} />
-                <Kv uid="KB-01-FLD-SOURCE-STATUS" label={tx("kb.fld-status")} value={dash} />
-              </div>
+               <div className={styles.kvList}>
+                 <Kv uid={KB_SOURCE_NAME_UID} label={tx("kb.fld-name")} value={fieldOf(KB_SOURCE_NAME_UID)} />
+                 <Kv uid={KB_SOURCE_TYPE_UID} label={tx("kb.fld-type")} value={fieldOf(KB_SOURCE_TYPE_UID)} />
+                 <Kv uid={KB_SOURCE_SCOPE_UID} label={tx("kb.fld-scope")} value={fieldOf(KB_SOURCE_SCOPE_UID)} />
+                 <Kv uid={KB_SOURCE_RIGHTS_UID} label={tx("kb.fld-rights")} value={fieldOf(KB_SOURCE_RIGHTS_UID)} />
+                 <Kv uid={KB_SOURCE_CLASS_UID} label={tx("kb.fld-class")} value={fieldOf(KB_SOURCE_CLASS_UID)} />
+                 <Kv uid={KB_ACQ_MODE_UID} label={tx("kb.fld-acq-mode")} value={fieldOf(KB_ACQ_MODE_UID)} />
+                 <Kv uid={KB_SOURCE_STATUS_UID} label={tx("kb.fld-status")} value={fieldOf(KB_SOURCE_STATUS_UID)} />
+               </div>
               <div className={styles.actions}>
                 <span className={styles.actionsLabel}>{tx("kb.actions")}</span>
                 {viewActions.map((uid) => (
@@ -351,12 +394,12 @@ export function KbVisual() {
             <aside className={styles.rail} data-section-uid="KB-01-SEC-05" data-component-uid="KB-01-CMP-INGESTION">
               <h2>{tx("kb.ingest-title")}</h2>
               <p className={styles.note}>{tx("kb.ingest-hint")}</p>
-              <div className={styles.kvList}>
-                <Kv uid="KB-01-FLD-RUN-ID" label={tx("kb.fld-run-id")} value={dash} />
-                <Kv uid="KB-01-FLD-RUN-STATUS" label={tx("kb.fld-run-status")} value={dash} />
-                <Kv uid="KB-01-FLD-RUN-PROGRESS" label={tx("kb.fld-progress")} value={dash} />
-                <Kv uid="KB-01-FLD-RUN-FAIL" label={tx("kb.fld-failure")} value={dash} />
-              </div>
+               <div className={styles.kvList}>
+                 <Kv uid={KB_RUN_ID_UID} label={tx("kb.fld-run-id")} value={fieldOf(KB_RUN_ID_UID)} />
+                 <Kv uid={KB_RUN_STATUS_UID} label={tx("kb.fld-run-status")} value={fieldOf(KB_RUN_STATUS_UID)} />
+                 <Kv uid={KB_RUN_PROGRESS_UID} label={tx("kb.fld-progress")} value={fieldOf(KB_RUN_PROGRESS_UID)} />
+                 <Kv uid={KB_RUN_FAIL_UID} label={tx("kb.fld-failure")} value={fieldOf(KB_RUN_FAIL_UID)} />
+               </div>
               <span className={`${styles.pill} ${styles.pillPurple}`}>{tx("kb.shared-runtime")}</span>
             </aside>
           </>
@@ -379,24 +422,35 @@ export function KbVisual() {
                       <th>{tx("kb.col-fresh")}</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>{dash}</td>
-                      <td>{dash}</td>
-                      <td>{dash}</td>
-                      <td>{dash}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className={styles.actions}>
-                <span className={styles.actionsLabel}>{tx("kb.actions")}</span>
-                {viewActions.map((uid) => (
-                  <Btn key={uid} uid={uid} label={tx(ACTION_LABELS[uid])} onAct={onAction} disabled={disabled} primary={KB_PRIMARY_ACTIONS.has(uid)} />
-                ))}
-              </div>
-            </section>
-            <section className={styles.workspace} data-section-uid="KB-01-SEC-07" data-component-uid="KB-01-CMP-CITATION">
+                   <tbody>
+                     {results.length ? (
+                       results.map((item) => (
+                         <tr key={item.identityValue}>
+                           <td>{item.title}</td>
+                           <td>{item.type}</td>
+                           <td>{item.source}</td>
+                           <td>{item.freshness}</td>
+                         </tr>
+                       ))
+                     ) : (
+                       <tr>
+                         <td>{dash}</td>
+                         <td>{dash}</td>
+                         <td>{dash}</td>
+                         <td>{dash}</td>
+                       </tr>
+                     )}
+                   </tbody>
+                 </table>
+               </div>
+               <div className={styles.actions}>
+                 <span className={styles.actionsLabel}>{tx("kb.actions")}</span>
+                 {viewActions.map((uid) => (
+                   <Btn key={uid} uid={uid} label={tx(ACTION_LABELS[uid])} onAct={onAction} disabled={disabled} primary={KB_PRIMARY_ACTIONS.has(uid)} />
+                 ))}
+               </div>
+             </section>
+             <section className={styles.workspace} data-section-uid="KB-01-SEC-07" data-component-uid="KB-01-CMP-CITATION">
               <div>
                 <h2>{tx("kb.citation-title")}</h2>
                 <p className={styles.note}>{tx("kb.citation-hint")}</p>

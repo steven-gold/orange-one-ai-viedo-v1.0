@@ -6,7 +6,10 @@ import {
   unavailableFromReason,
 } from "@/lib/aiReply";
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
-import { previewDevAction } from "@/lib/devActionPreview";
+import { applyDiscoveryCollection, previewDevAction } from "@/lib/devActionPreview";
+import { kbAcquisitionPatchFromCollect, previewKbAction } from "@/lib/kbActionPreview";
+import { collectDiscoverySignals } from "../acquisition/collect";
+import { parseJson, type DevProfile } from "@/lib/devState";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
@@ -828,7 +831,46 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "dev") {
-    await applyProjectedAction(FIELD_TABLE.dev, previewDevAction, controlUid, actionUid, nextValue);
+    const written = await applyProjectedAction(FIELD_TABLE.dev, previewDevAction, controlUid, actionUid, nextValue);
+    if (
+      written &&
+      (actionUid === "DEV-01-ACT-DISCOVERY-START" || actionUid === "DEV-01-ACT-DISCOVERY-RESUME")
+    ) {
+      const jobRaw = await readField(FIELD_TABLE.dev, "DEV-01-STATE-JOB");
+      const job = parseJson<{ status?: string }>(jobRaw, {});
+      if (job.status === "RUNNING") {
+        const profile = parseJson<DevProfile | null>(await readField(FIELD_TABLE.dev, "DEV-01-STATE-PROFILE"), null);
+        if (profile) {
+          const collected = await collectDiscoverySignals(profile);
+          const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+            `SELECT control_uid, value_text FROM ${FIELD_TABLE.dev}`,
+          );
+          const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+          const patch = applyDiscoveryCollection((uid) => cache.get(uid) ?? null, collected);
+          for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.dev, uid, value);
+        }
+      }
+    }
+    return;
+  }
+  if (page === "kb") {
+    await applyProjectedAction(FIELD_TABLE.kb, previewKbAction, controlUid, actionUid, nextValue);
+    if (actionUid === "createAcquisitionJob") {
+      const profile = parseJson<DevProfile | null>(await readField(FIELD_TABLE.dev, "DEV-01-STATE-PROFILE"), null) ?? {
+        profileId: "",
+        version: 0,
+        product: "",
+        industry: "",
+        market: "",
+        keywords: "",
+        exclude: "",
+        mode: "SINGLE" as const,
+        status: "DRAFT" as const,
+      };
+      const collected = await collectDiscoverySignals(profile);
+      const patch = kbAcquisitionPatchFromCollect(collected);
+      for (const [uid, value] of Object.entries(patch)) await writeField(FIELD_TABLE.kb, uid, value);
+    }
     return;
   }
   if (page === "aiapi") {

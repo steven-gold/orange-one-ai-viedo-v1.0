@@ -39,6 +39,7 @@ import {
   usable,
 } from "./devState";
 import { acceptDeliveryIntent, acceptDiscoveryIntent } from "./devSharedOwners";
+import { mergeDiscoverySignals, type AcquisitionCollectResult } from "./sharedAcquisition";
 
 function serialize(value: unknown): string {
   return JSON.stringify(value);
@@ -107,6 +108,39 @@ function startJob(profile: DevProfile): DevJob {
     startedAt: nowIso(),
     updatedAt: nowIso(),
   };
+}
+
+export function applyDiscoveryCollection(
+  current: (uid: string) => string | null,
+  result: AcquisitionCollectResult,
+): Record<string, string> {
+  const workbench = readDevWorkbench(current);
+  if (!workbench.job) return fail(workbench, "DEV_JOB_NOT_STOPPABLE");
+  if (workbench.job.status !== "RUNNING" && workbench.job.status !== "EXTERNAL_PENDING") {
+    return fail(workbench, "DEV_JOB_NOT_STOPPABLE");
+  }
+  if (!result.ok) {
+    const job: DevJob = {
+      ...workbench.job,
+      status: "EXTERNAL_PENDING",
+      blocker: result.reason || "SHARED_ACQUISITION_UNAVAILABLE",
+      updatedAt: nowIso(),
+    };
+    return patchFrom(clearError({ ...workbench, job }));
+  }
+  const job: DevJob = {
+    ...workbench.job,
+    status: "RUNNING",
+    blocker: "",
+    updatedAt: nowIso(),
+  };
+  return patchFrom(
+    clearError({
+      ...workbench,
+      job,
+      signals: mergeDiscoverySignals(workbench.signals, result.signals),
+    }),
+  );
 }
 
 function qualifyCompany(signal: DevSignal, existing: DevCompany[]): DevCompany {
@@ -188,7 +222,8 @@ export function previewDevAction(
       return fail(workbench, "DEV_JOB_ALREADY_ACTIVE");
     }
     const profile: DevProfile = { ...workbench.profile!, status: "ACTIVE" };
-    return patchFrom(clearError({ ...workbench, profile, job: startJob(profile) }));
+    const job = startJob(profile);
+    return patchFrom(clearError({ ...workbench, profile, job }));
   }
 
   if (actionUid === "DEV-01-ACT-DISCOVERY-PAUSE") {

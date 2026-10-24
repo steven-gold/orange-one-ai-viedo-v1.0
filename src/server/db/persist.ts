@@ -18,6 +18,7 @@ import {
 import { AIAPI_REGISTRY_UID, readProfiles, serializeProfiles } from "@/lib/aiapiProfiles";
 import { AIAPI_EXTRA_PROJECTION_KEYS } from "@/lib/aiapiActionPreview";
 import { DEV_EXTRA_PROJECTION_KEYS } from "@/lib/devState";
+import { KB_EXTRA_PROJECTION_KEYS } from "@/lib/kbState";
 import { projectDashboardFromCore } from "@/lib/dashboardProjection";
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import {
@@ -1534,7 +1535,8 @@ export async function persistListKbFields(): Promise<KbFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_kb_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return KB_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...KB_VISIBLE_CONTROLS, ...KB_EXTRA_PROJECTION_KEYS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
