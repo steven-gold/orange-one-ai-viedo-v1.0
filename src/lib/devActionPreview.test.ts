@@ -1,4 +1,5 @@
 import { previewDevAction } from "./devActionPreview";
+import { bindSharedOwnersForTest } from "./devSharedOwners";
 import { DEV_VISIBLE_CONTROLS } from "../server/domain/dev";
 import {
   DEV_AUDIENCE_UID,
@@ -45,6 +46,7 @@ function store(seed: Record<string, string> = {}): {
 }
 
 {
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
   const { current, apply } = store();
   const incomplete = apply("DEV-01-BTN-PROFILE-SAVE", "DEV-01-ACT-PROFILE-SAVE", JSON.stringify({ product: "" }));
   assert(parseJson<{ code: string }>(incomplete["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_PROFILE_INCOMPLETE", "empty profile is rejected");
@@ -60,15 +62,38 @@ function store(seed: Record<string, string> = {}): {
 
   apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
   const job = parseJson<DevJob | null>(current(DEV_JOB_UID), null);
-  assert(job?.status === "EXTERNAL_PENDING", "start waits for shared acquisition");
-  assert(job?.blocker === "SHARED_ACQUISITION_UNAVAILABLE", "missing acquisition is blocked not faked");
+  assert(job?.status === "RUNNING", "start binds shared acquisition when the owner is available");
+  assert(job?.blocker === "", "available acquisition has no blocker");
   assert(parseJson<DevSignal[]>(current(DEV_SIGNALS_UID), []).length === 0, "start never invents signals");
 
-  const pause = apply("DEV-01-BTN-DISCOVERY-PAUSE", "DEV-01-ACT-DISCOVERY-PAUSE");
-  assert(parseJson<{ code: string }>(pause["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_JOB_NOT_RUNNING", "pause requires RUNNING");
+  apply("DEV-01-BTN-DISCOVERY-PAUSE", "DEV-01-ACT-DISCOVERY-PAUSE");
+  assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "PAUSED", "pause requires RUNNING");
+
+  apply("DEV-01-BTN-DISCOVERY-RESUME", "DEV-01-ACT-DISCOVERY-RESUME");
+  assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "RUNNING", "resume rebinds shared acquisition");
 
   apply("DEV-01-BTN-DISCOVERY-STOP", "DEV-01-ACT-DISCOVERY-STOP");
+  assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "STOPPED", "running job can stop");
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: false, delivery: true });
+  const { current, apply } = store();
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({ product: "影像工作臺", industry: "媒體", keywords: "企業開發", mode: "SINGLE" }),
+  );
+  apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
+  const job = parseJson<DevJob | null>(current(DEV_JOB_UID), null);
+  assert(job?.status === "EXTERNAL_PENDING", "missing acquisition waits externally");
+  assert(job?.blocker === "SHARED_ACQUISITION_UNAVAILABLE", "missing acquisition is blocked not faked");
+  assert(parseJson<DevSignal[]>(current(DEV_SIGNALS_UID), []).length === 0, "blocked start never invents signals");
+  const pause = apply("DEV-01-BTN-DISCOVERY-PAUSE", "DEV-01-ACT-DISCOVERY-PAUSE");
+  assert(parseJson<{ code: string }>(pause["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_JOB_NOT_RUNNING", "pending job cannot pause");
+  apply("DEV-01-BTN-DISCOVERY-STOP", "DEV-01-ACT-DISCOVERY-STOP");
   assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "STOPPED", "pending job can stop");
+  bindSharedOwnersForTest(null);
 }
 
 {
@@ -209,6 +234,7 @@ function store(seed: Record<string, string> = {}): {
     contacts: [{ contactId: "CT-S", type: "EMAIL", value: "stop@example.com", source: "MANUAL", status: "ACTIVE" }],
     suppression: "Do Not Contact",
   };
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
   const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company, suppressed]) });
 
   const noSend = apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
@@ -246,12 +272,83 @@ function store(seed: Record<string, string> = {}): {
   assert(deliveries.length === 1, "dispatch fans out one delivery per recipient");
   assert(deliveries[0].to === "demo@example.com", "delivery To is exactly one");
   assert(deliveries[0].cc === 0 && deliveries[0].bcc === 0, "delivery forbids CC and BCC");
-  assert(deliveries[0].status === "EXTERNAL_PENDING", "dispatch waits for shared delivery owner");
+  assert(deliveries[0].status === "QUEUED", "dispatch queues through shared delivery owner");
 
   apply("DEV-01-BTN-KILL-SWITCH", "DEV-01-ACT-KILL-SWITCH", JSON.stringify({ reason: "OPERATOR_STOP" }));
   assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "STOPPED", "kill switch stops queued campaign");
   assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "STOPPED", "kill switch stops pending deliveries");
   assert(current(DEV_AUDIENCE_UID) === "示範", "audience query persists");
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: false });
+  const company: DevCompany = {
+    companyId: "CO-D",
+    name: "示範公司",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-222",
+    aliases: [],
+    contacts: [{ contactId: "CT-D", type: "EMAIL", value: "demo@example.com", source: "MANUAL", status: "ACTIVE" }],
+    opportunity: { opportunityId: "OPP-D", state: "QUALIFIED" },
+    suppression: "",
+    evidence: "公開招標",
+    mergedFrom: [],
+    version: 1,
+  };
+  const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company]) });
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-D" }));
+  const candidateId = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].candidateId;
+  apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId }));
+  apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
+  apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
+  apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
+  assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "EXTERNAL_PENDING", "missing delivery owner waits externally");
+  assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "QUEUED", "campaign still queues the intent");
+  bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
+  const signal: DevSignal = {
+    signalId: "SIG-LOOP",
+    companyName: "閉環企業",
+    intent: "採購",
+    evidence: "公開招標公告",
+    freshness: "2026-10-23",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-88888888",
+    match: "resolved",
+    opportunity: "OPEN",
+    status: "NEW",
+    version: 1,
+  };
+  const { current, apply } = store({ [DEV_SIGNALS_UID]: JSON.stringify([signal]) });
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({ product: "影像工作臺", industry: "媒體", keywords: "企業開發", mode: "SINGLE" }),
+  );
+  apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
+  assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "RUNNING", "loop start binds acquisition");
+  apply("DEV-01-BTN-SIGNAL-QUALIFY", "DEV-01-ACT-SIGNAL-QUALIFY", JSON.stringify({ signalId: "SIG-LOOP" }));
+  const companyId = parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), [])[0].companyId;
+  apply(
+    "DEV-01-BTN-CONTACT-UPSERT",
+    "DEV-01-ACT-CONTACT-UPSERT",
+    JSON.stringify({ companyId, contactType: "EMAIL", contactValue: "loop@example.com", contactSource: "MANUAL" }),
+  );
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId }));
+  const loopCandidate = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
+  apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId: loopCandidate.candidateId }));
+  apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
+  apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
+  apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
+  assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "QUEUED", "loop dispatch queues campaign");
+  assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].to === "loop@example.com", "loop delivery keeps one To");
+  apply("DEV-01-BTN-KILL-SWITCH", "DEV-01-ACT-KILL-SWITCH", JSON.stringify({ reason: "OPERATOR_STOP" }));
+  assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "STOPPED", "loop kill stops campaign");
+  assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "STOPPED", "loop kill stops delivery");
+  bindSharedOwnersForTest(null);
 }
 
 console.log("devActionPreview.test.ts PASS");

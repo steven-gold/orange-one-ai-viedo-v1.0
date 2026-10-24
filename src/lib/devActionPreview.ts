@@ -38,6 +38,7 @@ import {
   readDevWorkbench,
   usable,
 } from "./devState";
+import { acceptDeliveryIntent, acceptDiscoveryIntent } from "./devSharedOwners";
 
 function serialize(value: unknown): string {
   return JSON.stringify(value);
@@ -94,14 +95,15 @@ function opportunityFrom(raw: string | undefined): DevOpportunityState | null {
   return null;
 }
 
-function pendingJob(profile: DevProfile): DevJob {
+function startJob(profile: DevProfile): DevJob {
+  const accepted = acceptDiscoveryIntent();
   return {
     jobId: newUid("JOB"),
     profileId: profile.profileId,
     profileVersion: profile.version,
-    status: "EXTERNAL_PENDING",
+    status: accepted.status,
     mode: profile.mode,
-    blocker: "SHARED_ACQUISITION_UNAVAILABLE",
+    blocker: accepted.blocker,
     startedAt: nowIso(),
     updatedAt: nowIso(),
   };
@@ -186,7 +188,7 @@ export function previewDevAction(
       return fail(workbench, "DEV_JOB_ALREADY_ACTIVE");
     }
     const profile: DevProfile = { ...workbench.profile!, status: "ACTIVE" };
-    return patchFrom(clearError({ ...workbench, profile, job: pendingJob(profile) }));
+    return patchFrom(clearError({ ...workbench, profile, job: startJob(profile) }));
   }
 
   if (actionUid === "DEV-01-ACT-DISCOVERY-PAUSE") {
@@ -198,10 +200,11 @@ export function previewDevAction(
 
   if (actionUid === "DEV-01-ACT-DISCOVERY-RESUME") {
     if (workbench.job?.status !== "PAUSED") return fail(workbench, "DEV_JOB_NOT_PAUSED");
+    const accepted = acceptDiscoveryIntent();
     const job: DevJob = {
       ...workbench.job,
-      status: "EXTERNAL_PENDING",
-      blocker: "SHARED_ACQUISITION_UNAVAILABLE",
+      status: accepted.status,
+      blocker: accepted.blocker,
       updatedAt: nowIso(),
     };
     const profile = workbench.profile ? { ...workbench.profile, status: "ACTIVE" as const } : workbench.profile;
@@ -485,6 +488,7 @@ export function previewDevAction(
     if (!candidate || candidate.status !== "APPROVED" || candidate.version !== campaign.candidateVersion) {
       return fail(workbench, "DEV_CAMPAIGN_VERSION_STALE");
     }
+    const accepted = acceptDeliveryIntent();
     const deliveries: DevDelivery[] = campaign.recipients.map((recipient) => ({
       deliveryId: newUid("DLV"),
       campaignId: campaign.campaignId,
@@ -493,8 +497,8 @@ export function previewDevAction(
       to: recipient.contactValue,
       cc: 0,
       bcc: 0,
-      status: "EXTERNAL_PENDING",
-      result: "EXTERNAL_PENDING",
+      status: accepted.status,
+      result: accepted.result,
       idempotencyKey: `${campaign.campaignId}:${recipient.recipientId}:${campaign.candidateVersion}`,
       version: 1,
     }));

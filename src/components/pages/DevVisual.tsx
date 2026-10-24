@@ -11,11 +11,13 @@ import {
   type DevCandidateStatus,
   type DevCompany,
   type DevDeliveryStatus,
+  type DevIdentityKind,
   type DevJobStatus,
   type DevMode,
   type DevOpportunityState,
   type DevProfile,
   type DevSignal,
+  type DevSignalStatus,
   workbenchFromFields,
 } from "@/lib/devState";
 import { displayDevValue } from "./devFormat";
@@ -105,6 +107,21 @@ const DELIVERY_LABEL: Record<DevDeliveryStatus, TranslationKey> = {
   QUEUED: "dev.delivery-queued",
   EXTERNAL_PENDING: "dev.delivery-pending",
   STOPPED: "dev.delivery-stopped",
+};
+
+const SIGNAL_LABEL: Record<DevSignalStatus, TranslationKey> = {
+  NEW: "dev.signal-new",
+  QUALIFIED: "dev.signal-qualified",
+  IGNORED: "dev.signal-ignored",
+  ENGAGED: "dev.signal-engaged",
+  CONVERTED: "dev.signal-converted",
+  SUPPRESSED: "dev.signal-suppressed",
+};
+
+const IDENTITY_LABEL: Record<DevIdentityKind, TranslationKey> = {
+  REGISTRATION: "dev.identity-registration",
+  JURISDICTION: "dev.identity-jurisdiction",
+  NAME_ONLY: "dev.identity-name-only",
 };
 
 function errorKey(code: string | null | undefined): TranslationKey | null {
@@ -288,7 +305,8 @@ export function DevVisual() {
 
       {stage === 1 ? (
         <div className={styles.cols}>
-          <section className={styles.workspace} data-section-uid="DEV-01-SEC-03" data-component-uid="DEV-01-CMP-DISCOVERY">
+          <section className={styles.workspace} data-section-uid="DEV-01-SEC-03">
+            <div data-component-uid="DEV-01-CMP-DISCOVERY-SETUP">
             <div className={styles.profile}>
               <div>
                 <h3>{tx("dev.profile-title")}</h3>
@@ -367,7 +385,78 @@ export function DevVisual() {
                 </select>
               </label>
             </div>
-            <div className={styles.actions}>
+            </div>
+            <div data-component-uid="DEV-01-CMP-DISCOVERY-RUNTIME">
+            <div className={styles.card}>
+              <h3>{tx("dev.runtime-title")}</h3>
+              <div className={styles.metaGrid}>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.ctx-run")}</span>
+                  <strong>{jobLabel}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.rail-connector")}</span>
+                  <strong>{jobStatus === "EXTERNAL_PENDING" ? tx("dev.connector-pending") : jobStatus === "RUNNING" ? tx("dev.job-running") : dash}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.signal-title")}</span>
+                  <strong>{tx("dev.runtime-summary", { n: workbench.signals.length })}</strong>
+                </div>
+              </div>
+            </div>
+            <div className={styles.card}>
+              <h3>{tx("dev.signal-title")}</h3>
+              <div className={styles.table}>
+                <div className={`${styles.thead} ${styles.signalHead}`}>
+                  <span>{tx("dev.col-company")}</span>
+                  <span>{tx("dev.col-intent")}</span>
+                  <span>{tx("dev.col-evidence")}</span>
+                  <span>{tx("dev.col-freshness")}</span>
+                  <span>{tx("dev.col-match")}</span>
+                  <span>{tx("dev.col-opportunity")}</span>
+                  <span>{tx("dev.col-action")}</span>
+                </div>
+                {workbench.signals.length ? (
+                  workbench.signals.map((signal: DevSignal) => (
+                    <div
+                      className={`${styles.trow} ${styles.signalRow}`}
+                      key={signal.signalId}
+                      onClick={() => setSelectedSignalId(signal.signalId)}
+                    >
+                      <span>{signal.companyName}</span>
+                      <span>{signal.intent}</span>
+                      <span>{signal.evidence}</span>
+                      <span>{signal.freshness}</span>
+                      <span>{signal.match}</span>
+                      <span>{tx(SIGNAL_LABEL[signal.status])}</span>
+                      <span className={styles.rowAct}>{selectedSignalId === signal.signalId ? tx("dev.row-qualify") : tx(SIGNAL_LABEL[signal.status])}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className={styles.empty}>{loading ? dash : tx("dev.empty-signals")}</p>
+                )}
+              </div>
+              <div className={styles.actions}>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled || !selectedSignalId}
+                  onClick={() => void act("DEV-01-BTN-SIGNAL-QUALIFY", { signalId: selectedSignalId })}
+                >
+                  {tx("dev.btn-qualify")}
+                </button>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled || !selectedSignalId}
+                  onClick={() => void act("DEV-01-BTN-SIGNAL-IGNORE", { signalId: selectedSignalId })}
+                >
+                  {tx("dev.btn-ignore")}
+                </button>
+              </div>
+            </div>
+            </div>
+            <div className={styles.actions} data-component-uid="DEV-01-CMP-DISCOVERY-ACTION">
               <button
                 type="button"
                 className={styles.btn}
@@ -412,57 +501,6 @@ export function DevVisual() {
                 danger
               />
             </div>
-            <div className={styles.card}>
-              <h3>{tx("dev.signal-title")}</h3>
-              <div className={styles.table}>
-                <div className={`${styles.thead} ${styles.signalHead}`}>
-                  <span>{tx("dev.col-company")}</span>
-                  <span>{tx("dev.col-intent")}</span>
-                  <span>{tx("dev.col-evidence")}</span>
-                  <span>{tx("dev.col-freshness")}</span>
-                  <span>{tx("dev.col-match")}</span>
-                  <span>{tx("dev.col-opportunity")}</span>
-                  <span>{tx("dev.col-action")}</span>
-                </div>
-                {workbench.signals.length ? (
-                  workbench.signals.map((signal: DevSignal) => (
-                    <div
-                      className={`${styles.trow} ${styles.signalRow}`}
-                      key={signal.signalId}
-                      onClick={() => setSelectedSignalId(signal.signalId)}
-                    >
-                      <span>{signal.companyName}</span>
-                      <span>{signal.intent}</span>
-                      <span>{signal.evidence}</span>
-                      <span>{signal.freshness}</span>
-                      <span>{signal.match}</span>
-                      <span>{signal.status}</span>
-                      <span className={styles.rowAct}>{selectedSignalId === signal.signalId ? tx("dev.row-qualify") : signal.status}</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className={styles.empty}>{loading ? dash : tx("dev.empty-signals")}</p>
-                )}
-              </div>
-              <div className={styles.actions}>
-                <button
-                  type="button"
-                  className={styles.btn}
-                  disabled={disabled || !selectedSignalId}
-                  onClick={() => void act("DEV-01-BTN-SIGNAL-QUALIFY", { signalId: selectedSignalId })}
-                >
-                  {tx("dev.btn-qualify")}
-                </button>
-                <button
-                  type="button"
-                  className={styles.btn}
-                  disabled={disabled || !selectedSignalId}
-                  onClick={() => void act("DEV-01-BTN-SIGNAL-IGNORE", { signalId: selectedSignalId })}
-                >
-                  {tx("dev.btn-ignore")}
-                </button>
-              </div>
-            </div>
           </section>
           <GovernanceRail
             t={tx}
@@ -477,7 +515,8 @@ export function DevVisual() {
 
       {stage === 2 ? (
         <div className={styles.cols}>
-          <section className={styles.workspace} data-section-uid="DEV-01-SEC-04" data-component-uid="DEV-01-CMP-DIRECTORY">
+          <section className={styles.workspace} data-section-uid="DEV-01-SEC-04">
+            <div data-component-uid="DEV-01-CMP-DIRECTORY">
             <h2>{tx("dev.directory-title")}</h2>
             <p className={styles.note}>{tx("dev.directory-hint")}</p>
             <div className={styles.toolbar}>
@@ -512,7 +551,7 @@ export function DevVisual() {
                         disabled={disabled}
                         onChange={() => toggleCompany(company.companyId)}
                       />
-                      {company.name} / {company.identityKind === "NAME_ONLY" ? company.name : company.identityValue}
+                      {company.name}／{tx(IDENTITY_LABEL[company.identityKind])}
                     </span>
                     <span>{company.contacts.map((item) => item.value).join("、") || dash}</span>
                     <span>{company.evidence || dash}</span>
@@ -526,8 +565,13 @@ export function DevVisual() {
               )}
             </div>
             <p className={styles.note}>{tx("dev.selected-count", { n: selectedCompanyIds.length })}</p>
-            {workbench.merge ? <p className={styles.note}>{tx("dev.merge-ready")}</p> : null}
             {workbench.exported ? <p className={styles.note}>{tx("dev.export-done", { n: workbench.exported.companyCount })}</p> : null}
+            <div className={styles.actions}>
+              <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
+            </div>
+            </div>
+            <div data-component-uid="DEV-01-CMP-MERGE">
+            {workbench.merge ? <p className={styles.note}>{tx("dev.merge-ready")}</p> : null}
             <div className={styles.actions}>
               <Btn
                 uid="DEV-01-BTN-MERGE-PREVIEW"
@@ -536,15 +580,15 @@ export function DevVisual() {
                 disabled={disabled}
               />
               <Btn uid="DEV-01-BTN-MERGE" label={tx("dev.btn-merge")} onAct={(uid) => void act(uid)} disabled={disabled || !workbench.merge} primary />
-              <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
+            </div>
             </div>
             <div className={styles.fields}>
               <label className={styles.field}>
                 <span>{tx("dev.contact-type")}</span>
                 <select className={styles.fieldSelect} value={contactType} disabled={disabled} onChange={(event) => setContactType(event.target.value as "EMAIL" | "PHONE" | "ADDRESS")}>
-                  <option value="EMAIL">Email</option>
-                  <option value="PHONE">Phone</option>
-                  <option value="ADDRESS">Address</option>
+                  <option value="EMAIL">{tx("dev.contact-email")}</option>
+                  <option value="PHONE">{tx("dev.contact-phone")}</option>
+                  <option value="ADDRESS">{tx("dev.contact-address")}</option>
                 </select>
               </label>
               <label className={styles.field}>
@@ -603,7 +647,8 @@ export function DevVisual() {
 
       {stage === 3 ? (
         <div className={styles.cols}>
-          <section className={styles.workspace} data-section-uid="DEV-01-SEC-05" data-component-uid="DEV-01-CMP-MESSAGE">
+          <section className={styles.workspace} data-section-uid="DEV-01-SEC-05">
+            <div data-component-uid="DEV-01-CMP-MESSAGE">
             <h2>{tx("dev.message-title")}</h2>
             <p className={styles.note}>{tx("dev.message-hint")}</p>
             <div className={styles.card}>
@@ -663,6 +708,10 @@ export function DevVisual() {
                 disabled={disabled}
                 primary
               />
+            </div>
+            </div>
+            <div data-component-uid="DEV-01-CMP-MESSAGE-REVIEW">
+            <div className={styles.actions}>
               <Btn
                 uid="DEV-01-BTN-CANDIDATE-DECIDE"
                 label={tx("dev.btn-candidate-decide")}
@@ -676,6 +725,7 @@ export function DevVisual() {
                 disabled={disabled || selectedCandidate?.status !== "REVIEW"}
               />
             </div>
+            </div>
           </section>
           <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} connector={dash} blocker={dash} />
         </div>
@@ -683,7 +733,8 @@ export function DevVisual() {
 
       {campaignView ? (
         <div className={styles.split}>
-          <section className={styles.workspace} data-section-uid="DEV-01-SEC-06" data-component-uid="DEV-01-CMP-CAMPAIGN">
+          <section className={styles.workspace} data-section-uid="DEV-01-SEC-06">
+            <div data-component-uid="DEV-01-CMP-CAMPAIGN">
             <h2>{tx("dev.campaign-stage")}</h2>
             <div className={styles.card}>
               <h3>{tx("dev.audience-filter")}</h3>
@@ -766,12 +817,16 @@ export function DevVisual() {
                 disabled={disabled || campaign?.status !== "REVIEW"}
               />
             </div>
+            </div>
+            <div data-component-uid="DEV-01-CMP-CAMPAIGN-REVIEW">
             <div className={styles.card}>
               <h3>{tx("dev.approval-title")}</h3>
               <p className={styles.note}>{campaign ? tx(CAMPAIGN_LABEL[campaign.status]) : tx("dev.approval-hint")}</p>
             </div>
+            </div>
           </section>
-          <aside className={styles.rail} data-section-uid="DEV-01-SEC-07" data-component-uid="DEV-01-CMP-DELIVERY">
+          <aside className={styles.rail} data-section-uid="DEV-01-SEC-07">
+            <div data-component-uid="DEV-01-CMP-DELIVERY">
             <h2>{tx("dev.delivery-stage")}</h2>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-campaign")}</span>
@@ -783,7 +838,7 @@ export function DevVisual() {
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.delivery-envelope")}</span>
-              <strong>{deliveries.length ? `To = ${deliveries.length} · CC/BCC = 0` : tx("dev.delivery-envelope-value")}</strong>
+              <strong>{deliveries.length ? tx("dev.delivery-envelope-count", { n: deliveries.length }) : tx("dev.delivery-envelope-value")}</strong>
             </div>
             <div className={styles.railCard}>
               <span>{tx("dev.col-suppression")}</span>
@@ -800,49 +855,84 @@ export function DevVisual() {
             <div className={styles.actions}>
               <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary />
               <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
-              <Btn
-                uid="DEV-01-BTN-KILL-SWITCH"
-                label={tx("dev.btn-kill")}
-                onAct={() => void act("DEV-01-BTN-KILL-SWITCH", { reason: "OPERATOR_STOP" })}
-                disabled={disabled || (campaign?.status !== "QUEUED" && campaign?.status !== "APPROVED")}
-                danger
-              />
             </div>
+            </div>
+            <div data-component-uid="DEV-01-CMP-KILL-SWITCH">
+            <Btn
+              uid="DEV-01-BTN-KILL-SWITCH"
+              label={tx("dev.btn-kill")}
+              onAct={() => void act("DEV-01-BTN-KILL-SWITCH", { reason: "OPERATOR_STOP" })}
+              disabled={disabled || (campaign?.status !== "QUEUED" && campaign?.status !== "APPROVED")}
+              danger
+            />
             <div className={styles.killNote}>{tx("dev.kill-note")}</div>
+            </div>
           </aside>
         </div>
       ) : null}
 
       {campaignView ? (
-        <div className={styles.chain} data-section-uid="DEV-01-SEC-09">
+        <div className={styles.chain}>
           {tx("dev.chain")}
         </div>
       ) : (
-        <div className={styles.dock} data-section-uid="DEV-01-SEC-02">
+        <div className={styles.dock}>
           <strong>{tx("dev.dock-title")}</strong>
           <p>{tx("dev.dock-hint")}</p>
         </div>
       )}
 
-      {drawerOpen ? (
-        <section className={styles.card} data-section-uid="DEV-01-SEC-09" data-component-uid="DEV-01-CMP-DRAWER">
-          <h3>{tx("dev.drawer-title")}</h3>
-          <p className={styles.note}>{tx("dev.drawer-hint")}</p>
-          <div className={styles.metaGrid}>
-            <div className={styles.metaItem}>
-              <span>{tx("dev.col-evidence")}</span>
-              <strong>{workbench.profile?.product || dash}</strong>
-            </div>
-            <div className={styles.metaItem}>
-              <span>{tx("dev.col-version")}</span>
-              <strong>{workbench.profile ? String(workbench.profile.version) : dash}</strong>
-            </div>
+      <section
+        className={styles.card}
+        data-section-uid="DEV-01-SEC-09"
+        data-component-uid="DEV-01-CMP-DETAIL-DRAWER"
+        hidden={!drawerOpen}
+      >
+        <h3>{tx("dev.drawer-title")}</h3>
+        <p className={styles.note}>{tx("dev.drawer-hint")}</p>
+        <div className={styles.metaGrid}>
+          <div className={styles.metaItem}>
+            <span>{tx("dev.col-evidence")}</span>
+            <strong>{workbench.profile?.product || dash}</strong>
           </div>
-          <button type="button" className={styles.btn} onClick={() => setDrawerOpen(false)}>
-            {tx("global.common.close")}
-          </button>
-        </section>
-      ) : null}
+          <div className={styles.metaItem}>
+            <span>{tx("dev.col-version")}</span>
+            <strong>{workbench.profile ? String(workbench.profile.version) : dash}</strong>
+          </div>
+        </div>
+        <button type="button" className={styles.btn} onClick={() => setDrawerOpen(false)}>
+          {tx("global.common.close")}
+        </button>
+      </section>
+
+      {stage === 1 ? null : (
+        <>
+          <div data-component-uid="DEV-01-CMP-DISCOVERY-SETUP" hidden />
+          <div data-component-uid="DEV-01-CMP-DISCOVERY-RUNTIME" hidden />
+          <div data-component-uid="DEV-01-CMP-DISCOVERY-ACTION" hidden />
+        </>
+      )}
+      {stage === 2 ? null : (
+        <>
+          <div data-component-uid="DEV-01-CMP-DIRECTORY" hidden />
+          <div data-component-uid="DEV-01-CMP-MERGE" hidden />
+        </>
+      )}
+      {stage === 3 ? null : (
+        <>
+          <div data-component-uid="DEV-01-CMP-MESSAGE" hidden />
+          <div data-component-uid="DEV-01-CMP-MESSAGE-REVIEW" hidden />
+        </>
+      )}
+      {campaignView ? null : (
+        <>
+          <div data-component-uid="DEV-01-CMP-CAMPAIGN" hidden />
+          <div data-component-uid="DEV-01-CMP-CAMPAIGN-REVIEW" hidden />
+          <div data-component-uid="DEV-01-CMP-DELIVERY" hidden />
+          <div data-component-uid="DEV-01-CMP-KILL-SWITCH" hidden />
+        </>
+      )}
+      {campaignView ? <div data-component-uid="DEV-01-CMP-GOVERNANCE" hidden /> : null}
     </div>
   );
 }
