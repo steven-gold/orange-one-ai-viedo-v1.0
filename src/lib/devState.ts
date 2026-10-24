@@ -80,6 +80,9 @@ export interface DevSignal {
   opportunity: string;
   status: DevSignalStatus;
   version: number;
+  email?: string;
+  phone?: string;
+  address?: string;
 }
 
 export interface DevContact {

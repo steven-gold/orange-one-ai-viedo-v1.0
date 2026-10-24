@@ -75,6 +75,13 @@ function textOf(row: TwseRow, keys: string[]): string {
   return "";
 }
 
+function publicContact(value: string, kind: "EMAIL" | "PHONE" | "ADDRESS"): string {
+  const text = value.trim();
+  if (!text || text === "-" || text === "無" || text === "N/A") return "";
+  if (kind === "EMAIL") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) ? text : "";
+  return text.slice(0, 200);
+}
+
 const TOKEN_ALIASES: Record<string, string[]> = {
   媒體: ["文化創意", "電視", "廣播", "電影", "廣告", "出版"],
   影像: ["文化創意", "電視", "電影"],
@@ -136,6 +143,15 @@ export function parsePublicCompanyRows(raw: unknown, profile: DevProfile, source
     const identityValue = tax ? `TW-${tax}` : `TWSE-${code}`;
     if (seen.has(identityValue)) continue;
     seen.add(identityValue);
+    const email = publicContact(
+      textOf(row, ["電子郵件信箱", "投資人關係電子郵件", "電子郵件", "Email", "email"]),
+      "EMAIL",
+    );
+    const phone = publicContact(
+      textOf(row, ["總機電話", "投資人關係聯絡電話", "過戶電話", "電話", "Telephone", "phone"]),
+      "PHONE",
+    );
+    const address = publicContact(textOf(row, ["住址", "過戶地址", "英文通訊地址", "地址", "Address", "address"]), "ADDRESS");
     signals.push({
       signalId: newUid("SIG"),
       companyName: name,
@@ -148,17 +164,35 @@ export function parsePublicCompanyRows(raw: unknown, profile: DevProfile, source
       opportunity: "OPEN",
       status: "NEW",
       version: 1,
+      ...(email ? { email } : {}),
+      ...(phone ? { phone } : {}),
+      ...(address ? { address } : {}),
     });
     if (signals.length >= 12) break;
   }
   return signals;
 }
 
+function fillPublicContact(prior: DevSignal, incoming: DevSignal): DevSignal {
+  if (prior.status !== "NEW") return prior;
+  return {
+    ...prior,
+    email: prior.email || incoming.email,
+    phone: prior.phone || incoming.phone,
+    address: prior.address || incoming.address,
+    evidence: incoming.evidence || prior.evidence,
+    freshness: incoming.freshness || prior.freshness,
+  };
+}
+
 export function mergeDiscoverySignals(existing: DevSignal[], incoming: DevSignal[]): DevSignal[] {
   const byIdentity = new Map(existing.map((item) => [item.identityValue, item]));
   for (const signal of incoming) {
     const prior = byIdentity.get(signal.identityValue);
-    if (prior) continue;
+    if (prior) {
+      byIdentity.set(signal.identityValue, fillPublicContact(prior, signal));
+      continue;
+    }
     byIdentity.set(signal.identityValue, signal);
   }
   return [...byIdentity.values()];

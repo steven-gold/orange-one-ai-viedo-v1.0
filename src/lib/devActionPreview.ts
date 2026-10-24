@@ -143,7 +143,31 @@ export function applyDiscoveryCollection(
   );
 }
 
+function contactsFromSignal(signal: DevSignal): DevContact[] {
+  const contacts: DevContact[] = [];
+  if (signal.email) {
+    contacts.push({ contactId: newUid("CT"), type: "EMAIL", value: signal.email, source: "公開資料", status: "ACTIVE" });
+  }
+  if (signal.phone) {
+    contacts.push({ contactId: newUid("CT"), type: "PHONE", value: signal.phone, source: "公開資料", status: "ACTIVE" });
+  }
+  if (signal.address) {
+    contacts.push({ contactId: newUid("CT"), type: "ADDRESS", value: signal.address, source: "公開資料", status: "ACTIVE" });
+  }
+  return contacts;
+}
+
+function mergeContacts(existing: DevContact[], incoming: DevContact[]): DevContact[] {
+  const next = [...existing];
+  for (const contact of incoming) {
+    if (next.some((item) => item.type === contact.type && item.value === contact.value)) continue;
+    next.push(contact);
+  }
+  return next;
+}
+
 function qualifyCompany(signal: DevSignal, existing: DevCompany[]): DevCompany {
+  const incoming = contactsFromSignal(signal);
   const matched = existing.find(
     (company) =>
       identityResolved(signal.identityKind) &&
@@ -157,6 +181,7 @@ function qualifyCompany(signal: DevSignal, existing: DevCompany[]): DevCompany {
     return {
       ...matched,
       aliases,
+      contacts: mergeContacts(matched.contacts, incoming),
       evidence: signal.evidence,
       version: matched.version + 1,
     };
@@ -167,7 +192,7 @@ function qualifyCompany(signal: DevSignal, existing: DevCompany[]): DevCompany {
     identityKind: signal.identityKind,
     identityValue: signal.identityValue,
     aliases: [signal.companyName],
-    contacts: [],
+    contacts: incoming,
     opportunity: { opportunityId: newUid("OPP"), state: "OPEN" },
     suppression: "",
     evidence: signal.evidence,
@@ -365,7 +390,7 @@ export function previewDevAction(
           contactId: newUid("CT"),
           type,
           value,
-          source: usable(payload.contactSource) || "MANUAL",
+          source: usable(payload.contactSource) || "人工",
           status: "ACTIVE",
         };
     const contacts = existing

@@ -4,12 +4,12 @@ export type SharedOwnerProbe = {
 };
 
 let acquisitionOverride: boolean | null = null;
-let deliveryOverride: boolean | null = true;
+let deliveryOverride: boolean | null = null;
 
 export function bindSharedOwnersForTest(next: { acquisition?: boolean; delivery?: boolean } | null): void {
   if (next === null) {
     acquisitionOverride = null;
-    deliveryOverride = true;
+    deliveryOverride = null;
     return;
   }
   if (typeof next.acquisition === "boolean") acquisitionOverride = next.acquisition;
@@ -23,8 +23,8 @@ export function probeSharedAcquisition(): SharedOwnerProbe {
 }
 
 export function probeSharedDelivery(): SharedOwnerProbe {
-  if (deliveryOverride === false) return { available: false, reason: "SHARED_DELIVERY_UNAVAILABLE" };
-  return { available: true, reason: "" };
+  if (deliveryOverride === true) return { available: true, reason: "" };
+  return { available: false, reason: "SHARED_DELIVERY_UNAVAILABLE" };
 }
 
 export function acceptDiscoveryIntent(): {

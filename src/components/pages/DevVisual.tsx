@@ -5,6 +5,8 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { DevClientError, fetchDevReadModel, postDevAction, type DevFieldValue } from "@/lib/client";
 import {
+  activeEmailContact,
+  companyEligibleForMessage,
   filterCompanies,
   type DevCampaignStatus,
   type DevCandidate,
@@ -146,7 +148,7 @@ export function DevVisual() {
   const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
   const [contactType, setContactType] = useState<"EMAIL" | "PHONE" | "ADDRESS">("EMAIL");
   const [contactValue, setContactValue] = useState("");
-  const [contactSource, setContactSource] = useState("MANUAL");
+  const [contactSource, setContactSource] = useState("人工");
   const [selectedCandidateId, setSelectedCandidateId] = useState("");
   const [audienceQuery, setAudienceQuery] = useState("");
 
@@ -218,6 +220,8 @@ export function DevVisual() {
   const companies = filterCompanies(workbench.companies, query);
   const selectedCompanyId = selectedCompanyIds[0] ?? companies[0]?.companyId ?? "";
   const selectedCompany = workbench.companies.find((company) => company.companyId === selectedCompanyId) ?? null;
+  const selectedHasEmail = selectedCompany ? Boolean(activeEmailContact(selectedCompany)) : false;
+  const selectedCanMessage = selectedCompany ? companyEligibleForMessage(selectedCompany) : false;
   const selectedCandidate =
     workbench.candidates.find((item) => item.candidateId === selectedCandidateId) ??
     workbench.candidates.find((item) => item.status === "REVIEW") ??
@@ -419,7 +423,7 @@ export function DevVisual() {
                 {workbench.signals.length ? (
                   workbench.signals.map((signal: DevSignal) => (
                     <div
-                      className={`${styles.trow} ${styles.signalRow}`}
+                      className={`${styles.trow} ${styles.signalRow} ${selectedSignalId === signal.signalId ? styles.trowSelected : ""}`}
                       key={signal.signalId}
                       onClick={() => setSelectedSignalId(signal.signalId)}
                     >
@@ -429,7 +433,9 @@ export function DevVisual() {
                       <span>{signal.freshness}</span>
                       <span>{signal.match}</span>
                       <span>{tx(SIGNAL_LABEL[signal.status])}</span>
-                      <span className={styles.rowAct}>{selectedSignalId === signal.signalId ? tx("dev.row-qualify") : tx(SIGNAL_LABEL[signal.status])}</span>
+                      <span className={styles.rowAct}>
+                        {selectedSignalId === signal.signalId ? tx("dev.row-selected") : tx("dev.row-qualify")}
+                      </span>
                     </div>
                   ))
                 ) : (
@@ -543,7 +549,10 @@ export function DevVisual() {
               </div>
               {companies.length ? (
                 companies.map((company: DevCompany) => (
-                  <div className={`${styles.trow} ${styles.dirRow}`} key={company.companyId}>
+                  <div
+                    className={`${styles.trow} ${styles.dirRow} ${selectedCompanyIds.includes(company.companyId) ? styles.trowSelected : ""}`}
+                    key={company.companyId}
+                  >
                     <span className={styles.check}>
                       <input
                         type="checkbox"
@@ -565,6 +574,7 @@ export function DevVisual() {
               )}
             </div>
             <p className={styles.note}>{tx("dev.selected-count", { n: selectedCompanyIds.length })}</p>
+            {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
             {workbench.exported ? <p className={styles.note}>{tx("dev.export-done", { n: workbench.exported.companyCount })}</p> : null}
             <div className={styles.actions}>
               <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
@@ -684,7 +694,7 @@ export function DevVisual() {
               {workbench.candidates.length ? (
                 workbench.candidates.map((candidate: DevCandidate) => (
                   <div
-                    className={`${styles.trow} ${styles.msgRow}`}
+                    className={`${styles.trow} ${styles.msgRow} ${selectedCandidate?.candidateId === candidate.candidateId ? styles.trowSelected : ""}`}
                     key={candidate.candidateId}
                     onClick={() => setSelectedCandidateId(candidate.candidateId)}
                   >
@@ -701,11 +711,12 @@ export function DevVisual() {
               )}
             </div>
             <div className={styles.actions}>
+              {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
               <Btn
                 uid="DEV-01-BTN-CANDIDATE-CREATE"
                 label={tx("dev.btn-candidate-create")}
                 onAct={() => void act("DEV-01-BTN-CANDIDATE-CREATE", { companyId: selectedCompanyId })}
-                disabled={disabled}
+                disabled={disabled || !selectedCanMessage}
                 primary
               />
             </div>
@@ -852,6 +863,12 @@ export function DevVisual() {
               <span>{tx("dev.delivery-audit")}</span>
               <strong>{deliveries.length ? tx(DELIVERY_LABEL[deliveries[0].status]) : tx("dev.required")}</strong>
             </div>
+            {deliveries.some((item) => item.status === "EXTERNAL_PENDING") ? (
+              <div className={styles.railCard}>
+                <span>{tx("dev.rail-blockers")}</span>
+                <strong>{tx("dev.blocker-delivery")}</strong>
+              </div>
+            ) : null}
             <div className={styles.actions}>
               <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary />
               <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />

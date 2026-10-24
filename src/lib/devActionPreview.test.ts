@@ -152,15 +152,18 @@ function store(seed: Record<string, string> = {}): {
     opportunity: "OPEN",
     status: "NEW",
     version: 1,
+    email: "ir@example.com",
+    phone: "02-11111111",
   };
   const { current, apply } = store({
-    [DEV_SIGNALS_UID]: JSON.stringify([signal, { ...signal, signalId: "SIG-2", companyName: "略過企業" }]),
+    [DEV_SIGNALS_UID]: JSON.stringify([signal, { ...signal, signalId: "SIG-2", companyName: "略過企業", email: undefined }]),
   });
   apply("DEV-01-BTN-SIGNAL-QUALIFY", "DEV-01-ACT-SIGNAL-QUALIFY", JSON.stringify({ signalId: "SIG-1" }));
   const companies = parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), []);
   assert(companies.length === 1, "qualify creates one company");
   assert(companies[0].identityValue === "TW-12345678", "company keeps registration identity");
   assert(companies[0].opportunity.state === "OPEN", "opportunity starts OPEN");
+  assert(companies[0].contacts.some((item) => item.type === "EMAIL" && item.value === "ir@example.com"), "qualify copies public email");
   assert(parseJson<DevSignal[]>(current(DEV_SIGNALS_UID), [])[0].status === "QUALIFIED", "signal becomes QUALIFIED");
 
   apply("DEV-01-BTN-SIGNAL-IGNORE", "DEV-01-ACT-SIGNAL-IGNORE", JSON.stringify({ signalId: "SIG-2" }));
@@ -168,6 +171,9 @@ function store(seed: Record<string, string> = {}): {
   assert(ignored?.status === "IGNORED", "ignore keeps evidence and marks IGNORED");
   apply("DEV-01-BTN-SIGNAL-IGNORE", "DEV-01-ACT-SIGNAL-IGNORE", JSON.stringify({ signalId: "missing" }));
   assert(parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), []).length === 1, "ignore never creates a company");
+
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: companies[0].companyId }));
+  assert(parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].contactValue === "ir@example.com", "qualify email is enough to create a candidate");
 }
 
 {
@@ -348,6 +354,32 @@ function store(seed: Record<string, string> = {}): {
   assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "EXTERNAL_PENDING", "missing delivery owner waits externally");
   assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "QUEUED", "campaign still queues the intent");
   bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest(null);
+  const company: DevCompany = {
+    companyId: "CO-DEFAULT",
+    name: "示範公司",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-333",
+    aliases: [],
+    contacts: [{ contactId: "CT-DEFAULT", type: "EMAIL", value: "demo@example.com", source: "公開資料", status: "ACTIVE" }],
+    opportunity: { opportunityId: "OPP-DEFAULT", state: "QUALIFIED" },
+    suppression: "",
+    evidence: "公開招標",
+    mergedFrom: [],
+    version: 1,
+  };
+  const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company]) });
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-DEFAULT" }));
+  const candidateId = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].candidateId;
+  apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId }));
+  apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
+  apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
+  apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
+  assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "EXTERNAL_PENDING", "production default keeps delivery external pending");
+  assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].result === "EXTERNAL_PENDING", "production default never pretends the mail left");
 }
 
 {

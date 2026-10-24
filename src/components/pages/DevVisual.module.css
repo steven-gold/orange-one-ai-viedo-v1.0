@@ -331,6 +331,12 @@
 .trow {
   color: var(--dev-secondary);
   background: transparent;
+  cursor: pointer;
+}
+
+.trowSelected {
+  background: rgba(124, 92, 255, 0.16);
+  color: var(--dev-primary);
 }
 
 .trow:last-child span {

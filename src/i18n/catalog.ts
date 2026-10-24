@@ -1681,6 +1681,8 @@ const catalog = {
   "dev.btn-qualify": { "zh-TW": "合格", "zh-CN": "合格", en: "Qualify" },
   "dev.btn-ignore": { "zh-TW": "略過", "zh-CN": "略过", en: "Ignore" },
   "dev.btn-contact": { "zh-TW": "更新聯絡", "zh-CN": "更新联络", en: "Update contact" },
+  "dev.contact-missing-email": { "zh-TW": "這家企業還沒有可用電子郵件。請先填入已確認的信箱，才能建立一對一內容。", "zh-CN": "这家企业还没有可用电子邮件。请先填入已确认的信箱，才能建立一对一内容。", en: "This company has no usable email yet. Enter a verified mailbox before creating a one-to-one candidate." },
+  "dev.row-selected": { "zh-TW": "已選", "zh-CN": "已选", en: "Selected" },
   "dev.job-idle": { "zh-TW": "未啟動", "zh-CN": "未启动", en: "Idle" },
   "dev.job-running": { "zh-TW": "執行中", "zh-CN": "执行中", en: "Running" },
   "dev.job-paused": { "zh-TW": "已暫停", "zh-CN": "已暂停", en: "Paused" },
