@@ -456,3 +456,20 @@
   font-size: 12px;
   line-height: 18px;
 }
+
+.dock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  min-height: 56px;
+  padding: 0 12px;
+  border: 1px solid var(--soc-border);
+  border-radius: 12px;
+  background: var(--soc-surface);
+  overflow-x: auto;
+}
+
+.dock .btn {
+  flex: 0 0 auto;
+}

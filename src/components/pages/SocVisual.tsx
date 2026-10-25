@@ -394,28 +394,6 @@ export function SocVisual() {
                 <p className={styles.empty}>{loading ? dash : tx("soc.empty-platform")}</p>
               )}
             </div>
-            <div className={styles.actions}>
-              <Btn
-                uid="SOC-01-BTN-PLATFORM-CONFIG"
-                label={tx("soc.btn-platform-config")}
-                onAct={() =>
-                  void act("SOC-01-BTN-PLATFORM-CONFIG", {
-                    platformKey,
-                    displayName: platformName,
-                    enable: platformEnable,
-                  })
-                }
-                disabled={disabled || !platformKey || !platformName}
-                primary
-              />
-              <Btn
-                uid="SOC-01-BTN-KILL"
-                label={tx("soc.btn-kill")}
-                onAct={() => void act("SOC-01-BTN-KILL", { reason: "OPERATOR_STOP" })}
-                disabled={disabled || !risky}
-                danger
-              />
-            </div>
             {!risky ? <p className={styles.note}>{tx("soc.kill-idle")}</p> : null}
           </section>
           <GovernanceRail
@@ -474,39 +452,6 @@ export function SocVisual() {
                     {discovery.blocker ? ` · ${tx("soc.adapter-unavailable")}` : ""}
                   </p>
                 ) : null}
-                <div className={styles.actions}>
-                  <Btn
-                    uid="SOC-01-BTN-TARGET-DISCOVERY"
-                    label={tx("soc.btn-discovery")}
-                    onAct={() =>
-                      void act("SOC-01-BTN-TARGET-DISCOVERY", {
-                        jobName,
-                        platformKey: activePlatformKey,
-                        targetTypes,
-                        categories,
-                        keywords,
-                        mode,
-                      })
-                    }
-                    disabled={disabled || !activePlatformKey || !targetTypes || !categories || !keywords}
-                    primary
-                  />
-                  <Btn
-                    uid="SOC-01-BTN-ACCOUNT-BIND"
-                    label={tx("soc.btn-bind")}
-                    onAct={() =>
-                      void act("SOC-01-BTN-ACCOUNT-BIND", {
-                        platformKey: activePlatformKey,
-                        displayName,
-                        loginIdentifier,
-                        authMode,
-                        credentialValue,
-                        accountId: selectedAccount?.accountId,
-                      })
-                    }
-                    disabled={disabled || !activePlatformKey || !displayName || !loginIdentifier || !authMode || !credentialValue}
-                  />
-                </div>
                 <label className={styles.field}>
                   <span>{tx("soc.field-display-name")}</span>
                   <input className={styles.fieldInput} value={displayName} disabled={disabled} onChange={(event) => setDisplayName(event.target.value)} />
@@ -574,20 +519,6 @@ export function SocVisual() {
                     <p className={styles.empty}>{loading ? dash : tx("soc.empty-target")}</p>
                   )}
                 </div>
-                <div className={styles.actions}>
-                  <Btn
-                    uid="SOC-01-BTN-TARGET-JOIN"
-                    label={tx("soc.btn-join")}
-                    onAct={() => void act("SOC-01-BTN-TARGET-JOIN", { targetId: selectedTarget?.targetId })}
-                    disabled={disabled || !canJoin}
-                  />
-                  <Btn
-                    uid="SOC-01-BTN-MANUAL-COMPLETE"
-                    label={tx("soc.btn-manual")}
-                    onAct={() => void act("SOC-01-BTN-MANUAL-COMPLETE", { targetId: selectedTarget?.targetId })}
-                    disabled={disabled || !canManual}
-                  />
-                </div>
                 {!selectedTarget ? <p className={styles.note}>{tx("soc.missing-target")}</p> : null}
               </div>
             </div>
@@ -623,23 +554,6 @@ export function SocVisual() {
                 <span>{tx("soc.reveal-reason")}</span>
                 <input className={styles.fieldInput} value={revealReason} disabled={disabled} onChange={(event) => setRevealReason(event.target.value)} />
               </label>
-              <div className={styles.actions}>
-                <Btn
-                  uid="SOC-01-BTN-CREDENTIAL-REVEAL"
-                  label={tx("soc.btn-reveal")}
-                  onAct={() =>
-                    void act("SOC-01-BTN-CREDENTIAL-REVEAL", { accountId: selectedAccount?.accountId, reason: revealReason })
-                  }
-                  disabled={disabled || selectedAccount?.credentialStatus !== "SET" || !revealReason}
-                />
-                <Btn
-                  uid="SOC-01-BTN-ACCOUNT-UNBIND"
-                  label={tx("soc.btn-unbind")}
-                  onAct={() => void act("SOC-01-BTN-ACCOUNT-UNBIND", { accountId: selectedAccount?.accountId })}
-                  disabled={disabled || !selectedAccount || selectedAccount.binding === "UNBOUND"}
-                  danger
-                />
-              </div>
               {accounts.map((item: SocAccount) => (
                 <button
                   type="button"
@@ -717,32 +631,6 @@ export function SocVisual() {
                   <option value="RETURN">{tx("soc.decision-return")}</option>
                 </select>
               </label>
-              <div className={styles.actions}>
-                <Btn
-                  uid="SOC-01-BTN-CONTENT-SAVE"
-                  label={tx("soc.btn-draft")}
-                  onAct={() =>
-                    void act("SOC-01-BTN-CONTENT-SAVE", {
-                      releaseSource,
-                      platformKey: activePlatformKey,
-                      variant,
-                    })
-                  }
-                  disabled={disabled || !releaseSource || !activePlatformKey || !variant}
-                />
-                <Btn
-                  uid="SOC-01-BTN-CANDIDATE-DECIDE"
-                  label={tx("soc.btn-candidate")}
-                  onAct={() =>
-                    void act("SOC-01-BTN-CANDIDATE-DECIDE", {
-                      packageId: content?.packageId,
-                      decision,
-                    })
-                  }
-                  disabled={disabled || content?.candidate !== "REVIEW"}
-                  primary
-                />
-              </div>
             </div>
           </section>
           <GovernanceRail
@@ -825,35 +713,6 @@ export function SocVisual() {
                   <strong>{policy ? `${policy.minIntervalHours} / ${policy.dailyLimit} / ${policy.weeklyLimit}` : dash}</strong>
                 </div>
                 {!policy || policy.targetId !== selectedTarget?.targetId ? <p className={styles.note}>{tx("soc.missing-policy")}</p> : null}
-                <div className={styles.actions}>
-                  <Btn
-                    uid="SOC-01-BTN-POLICY-CONFIG"
-                    label={tx("soc.btn-policy")}
-                    onAct={() =>
-                      void act("SOC-01-BTN-POLICY-CONFIG", {
-                        targetId: selectedTarget?.targetId,
-                        minIntervalHours,
-                        dailyLimit,
-                        weeklyLimit,
-                      })
-                    }
-                    disabled={disabled || !selectedTarget}
-                  />
-                  <Btn
-                    uid="SOC-01-BTN-PUBLISH"
-                    label={tx("soc.btn-publish")}
-                    onAct={() =>
-                      void act("SOC-01-BTN-PUBLISH", {
-                        targetId: selectedTarget?.targetId,
-                        channelAccountId: publishAccount?.accountId,
-                        contentPackageId: content?.packageId,
-                      })
-                    }
-                    disabled={disabled || !canPublish}
-                    primary
-                  />
-                  <Btn uid="SOC-01-BTN-REFRESH" label={tx("soc.btn-refresh")} onAct={() => void act("SOC-01-BTN-REFRESH")} disabled={disabled} />
-                </div>
               </div>
             </div>
             <div className={styles.card}>
@@ -917,6 +776,162 @@ export function SocVisual() {
           />
         </div>
       ) : null}
+
+      <div
+        className={styles.dock}
+        data-section-uid="SOC-01-SEC-09"
+        data-component-uid="SOC-01-CMP-ACTION-DOCK"
+        data-visual-uid="SOC-01-VIS-ACTION-DOCK"
+      >
+        {stage === 1 ? (
+          <>
+            <Btn
+              uid="SOC-01-BTN-PLATFORM-CONFIG"
+              label={tx("soc.btn-platform-config")}
+              onAct={() =>
+                void act("SOC-01-BTN-PLATFORM-CONFIG", {
+                  platformKey,
+                  displayName: platformName,
+                  enable: platformEnable,
+                })
+              }
+              disabled={disabled || !platformKey || !platformName}
+              primary
+            />
+            <Btn
+              uid="SOC-01-BTN-KILL"
+              label={tx("soc.btn-kill")}
+              onAct={() => void act("SOC-01-BTN-KILL", { reason: "OPERATOR_STOP" })}
+              disabled={disabled || !risky}
+              danger
+            />
+          </>
+        ) : null}
+        {stage === 2 ? (
+          <>
+            <Btn
+              uid="SOC-01-BTN-TARGET-DISCOVERY"
+              label={tx("soc.btn-discovery")}
+              onAct={() =>
+                void act("SOC-01-BTN-TARGET-DISCOVERY", {
+                  jobName,
+                  platformKey: activePlatformKey,
+                  targetTypes,
+                  categories,
+                  keywords,
+                  mode,
+                })
+              }
+              disabled={disabled || !activePlatformKey || !targetTypes || !categories || !keywords}
+              primary
+            />
+            <Btn
+              uid="SOC-01-BTN-ACCOUNT-BIND"
+              label={tx("soc.btn-bind")}
+              onAct={() =>
+                void act("SOC-01-BTN-ACCOUNT-BIND", {
+                  platformKey: activePlatformKey,
+                  displayName,
+                  loginIdentifier,
+                  authMode,
+                  credentialValue,
+                  accountId: selectedAccount?.accountId,
+                })
+              }
+              disabled={disabled || !activePlatformKey || !displayName || !loginIdentifier || !authMode || !credentialValue}
+            />
+            <Btn
+              uid="SOC-01-BTN-TARGET-JOIN"
+              label={tx("soc.btn-join")}
+              onAct={() => void act("SOC-01-BTN-TARGET-JOIN", { targetId: selectedTarget?.targetId })}
+              disabled={disabled || !canJoin}
+            />
+            <Btn
+              uid="SOC-01-BTN-MANUAL-COMPLETE"
+              label={tx("soc.btn-manual")}
+              onAct={() => void act("SOC-01-BTN-MANUAL-COMPLETE", { targetId: selectedTarget?.targetId })}
+              disabled={disabled || !canManual}
+            />
+            <Btn
+              uid="SOC-01-BTN-CREDENTIAL-REVEAL"
+              label={tx("soc.btn-reveal")}
+              onAct={() =>
+                void act("SOC-01-BTN-CREDENTIAL-REVEAL", { accountId: selectedAccount?.accountId, reason: revealReason })
+              }
+              disabled={disabled || selectedAccount?.credentialStatus !== "SET" || !revealReason}
+            />
+            <Btn
+              uid="SOC-01-BTN-ACCOUNT-UNBIND"
+              label={tx("soc.btn-unbind")}
+              onAct={() => void act("SOC-01-BTN-ACCOUNT-UNBIND", { accountId: selectedAccount?.accountId })}
+              disabled={disabled || !selectedAccount || selectedAccount.binding === "UNBOUND"}
+              danger
+            />
+          </>
+        ) : null}
+        {stage === 3 ? (
+          <>
+            <Btn
+              uid="SOC-01-BTN-CONTENT-SAVE"
+              label={tx("soc.btn-draft")}
+              onAct={() =>
+                void act("SOC-01-BTN-CONTENT-SAVE", {
+                  releaseSource,
+                  platformKey: activePlatformKey,
+                  variant,
+                })
+              }
+              disabled={disabled || !releaseSource || !activePlatformKey || !variant}
+            />
+            <Btn
+              uid="SOC-01-BTN-CANDIDATE-DECIDE"
+              label={tx("soc.btn-candidate")}
+              onAct={() =>
+                void act("SOC-01-BTN-CANDIDATE-DECIDE", {
+                  packageId: content?.packageId,
+                  decision,
+                })
+              }
+              disabled={disabled || content?.candidate !== "REVIEW"}
+              primary
+            />
+          </>
+        ) : null}
+        {stage === 4 ? (
+          <>
+            <Btn
+              uid="SOC-01-BTN-POLICY-CONFIG"
+              label={tx("soc.btn-policy")}
+              onAct={() =>
+                void act("SOC-01-BTN-POLICY-CONFIG", {
+                  targetId: selectedTarget?.targetId,
+                  minIntervalHours,
+                  dailyLimit,
+                  weeklyLimit,
+                })
+              }
+              disabled={disabled || !selectedTarget}
+            />
+            <Btn
+              uid="SOC-01-BTN-PUBLISH"
+              label={tx("soc.btn-publish")}
+              onAct={() =>
+                void act("SOC-01-BTN-PUBLISH", {
+                  targetId: selectedTarget?.targetId,
+                  channelAccountId: publishAccount?.accountId,
+                  contentPackageId: content?.packageId,
+                })
+              }
+              disabled={disabled || !canPublish}
+              primary
+            />
+            <Btn uid="SOC-01-BTN-REFRESH" label={tx("soc.btn-refresh")} onAct={() => void act("SOC-01-BTN-REFRESH")} disabled={disabled} />
+          </>
+        ) : null}
+        {stage === 5 ? (
+          <Btn uid="SOC-01-BTN-REFRESH" label={tx("soc.btn-refresh")} onAct={() => void act("SOC-01-BTN-REFRESH")} disabled={disabled} />
+        ) : null}
+      </div>
 
       {drawerOpen ? (
         <section className={styles.card} data-section-uid="SOC-01-SEC-08" data-component-uid="SOC-01-CMP-GOVERNANCE">
