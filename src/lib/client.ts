@@ -929,16 +929,20 @@ export async function postSocAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  nextValue?: string,
 ): Promise<void> {
-  await fetch("/api/social/action", {
+  const response = await fetch("/api/social/action", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, nextValue }),
   });
+  if (!response.ok) {
+    throw new SocClientError("SOC_ACTION_UNAVAILABLE", `social action failed: ${response.status}`);
+  }
 }
 
 export interface ErpFieldValue {

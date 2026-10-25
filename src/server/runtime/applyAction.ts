@@ -7,6 +7,7 @@ import {
 } from "@/lib/aiReply";
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { applyDiscoveryCollection, previewDevAction } from "@/lib/devActionPreview";
+import { previewSocAction } from "@/lib/socActionPreview";
 import { kbAcquisitionPatchFromCollect, previewKbAction } from "@/lib/kbActionPreview";
 import { collectDiscoverySignals } from "../acquisition/collect";
 import { parseJson, type DevProfile } from "@/lib/devState";
@@ -828,6 +829,10 @@ export async function applyWorkbenchAction(
       "QA-01-FLD-PROVENANCE": inbound.provenance || null,
     };
     await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
+    return;
+  }
+  if (page === "soc") {
+    await applyProjectedAction(FIELD_TABLE.soc, previewSocAction, controlUid, actionUid, nextValue);
     return;
   }
   if (page === "dev") {
