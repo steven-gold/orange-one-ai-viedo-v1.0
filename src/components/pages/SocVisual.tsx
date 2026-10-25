@@ -109,6 +109,34 @@ function errorKey(code: string | null | undefined): TranslationKey | null {
   return `soc.err.${code}` as TranslationKey;
 }
 
+const SOC_CODE_LABEL: Record<string, TranslationKey> = {
+  SHARED_ADAPTER_UNAVAILABLE: "soc.adapter-unavailable",
+  ADAPTER_ACCEPTED: "soc.adapter-accepted",
+  OPERATOR_STOP: "soc.kill-operator",
+  PENDING_EXTERNAL: "soc.request-pending",
+  STOPPED: "soc.request-stopped",
+  EXTERNAL_PENDING: "soc.discovery-pending",
+  REGISTERED: "soc.capability-registered",
+  GOVERNED: "soc.policy-governed",
+  UNKNOWN: "soc.health-unknown",
+  BOUND_LOCKED: "soc.binding-locked",
+  READY_TO_JOIN: "soc.target-ready-join",
+  POSTED: "soc.target-posted",
+};
+
+function displaySocCode(
+  raw: string | null | undefined,
+  dash: string,
+  tx: (key: TranslationKey) => string,
+): string {
+  const value = (raw ?? "").trim();
+  if (!value || value === dash) return dash;
+  const key = SOC_CODE_LABEL[value];
+  if (key) return tx(key);
+  if (/^[A-Z][A-Z0-9_]*$/.test(value)) return dash;
+  return value;
+}
+
 export function SocVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
@@ -356,9 +384,9 @@ export function SocVisual() {
                     }}
                   >
                     <span>{item.displayName}</span>
-                    <span>{item.capability === "REGISTERED" ? tx("soc.capability-registered") : item.capability}</span>
-                    <span>{item.policy === "GOVERNED" ? tx("soc.policy-governed") : item.policy}</span>
-                    <span>{item.health === "UNKNOWN" ? tx("soc.health-unknown") : item.health}</span>
+                    <span>{displaySocCode(item.capability, dash, tx)}</span>
+                    <span>{displaySocCode(item.policy, dash, tx)}</span>
+                    <span>{displaySocCode(item.health, dash, tx)}</span>
                     <span>{tx(ENABLE_LABEL[item.enable])}</span>
                   </div>
                 ))
@@ -397,9 +425,9 @@ export function SocVisual() {
             onDrawer={() => setDrawerOpen(true)}
             onAct={act}
             variant="platform"
-            health={selectedPlatform ? (selectedPlatform.health === "UNKNOWN" ? tx("soc.health-unknown") : selectedPlatform.health) : dash}
+            health={selectedPlatform ? displaySocCode(selectedPlatform.health, dash, tx) : dash}
             capability={selectedPlatform ? tx("soc.capability-registered") : dash}
-            blocker={workbench.kill?.reason || discovery?.blocker || dash}
+            blocker={displaySocCode(workbench.kill?.reason || discovery?.blocker, dash, tx)}
             manual={dash}
           />
         </div>
@@ -537,7 +565,7 @@ export function SocVisual() {
                         onClick={() => setSelectedTargetId(item.targetId)}
                       >
                         <span>{item.name}</span>
-                        <span>{item.capability === "GOVERNED" ? tx("soc.policy-governed") : item.capability}</span>
+                        <span>{displaySocCode(item.capability, dash, tx)}</span>
                         <span>{tx(TARGET_LABEL[item.status])}</span>
                         <span>{item.signal || dash}</span>
                       </div>
@@ -639,7 +667,7 @@ export function SocVisual() {
             variant="account"
             health={selectedAccount ? tx(BINDING_LABEL[selectedAccount.binding]) : dash}
             capability={selectedTarget ? tx(TARGET_LABEL[selectedTarget.status]) : dash}
-            blocker={discovery?.blocker || dash}
+            blocker={displaySocCode(discovery?.blocker, dash, tx)}
             manual={canManual ? tx("soc.target-manual") : dash}
           />
         </div>
@@ -862,10 +890,10 @@ export function SocVisual() {
                       onClick={() => setSelectedRequestId(item.requestId)}
                     >
                       <span>{item.requestId}</span>
-                      <span>{item.external === "PENDING_EXTERNAL" ? tx("soc.request-pending") : item.external === "STOPPED" ? tx("soc.request-stopped") : item.external || tx(REQUEST_LABEL[item.status])}</span>
+                      <span>{displaySocCode(item.external, dash, tx) !== dash ? displaySocCode(item.external, dash, tx) : tx(REQUEST_LABEL[item.status])}</span>
                       <span>{item.metrics || dash}</span>
                       <span>{item.interaction || dash}</span>
-                      <span>{item.callback === "SHARED_ADAPTER_UNAVAILABLE" ? tx("soc.adapter-unavailable") : item.callback || dash}</span>
+                      <span>{displaySocCode(item.callback, dash, tx)}</span>
                     </div>
                   ))
                 ) : (
@@ -884,7 +912,7 @@ export function SocVisual() {
             variant="publish"
             health={selectedRequest ? tx(REQUEST_LABEL[selectedRequest.status]) : dash}
             capability={selectedTarget ? tx(TARGET_LABEL[selectedTarget.status]) : dash}
-            blocker={workbench.kill?.reason || selectedRequest?.callback || dash}
+            blocker={displaySocCode(workbench.kill?.reason || selectedRequest?.callback, dash, tx)}
             manual={dash}
           />
         </div>
@@ -898,9 +926,7 @@ export function SocVisual() {
             <div className={styles.lineageItem}>
               <span>{tx("soc.col-callback")}</span>
               <strong>
-                {selectedRequest?.callback === "SHARED_ADAPTER_UNAVAILABLE"
-                  ? tx("soc.adapter-unavailable")
-                  : selectedRequest?.callback || discovery?.blocker || dash}
+                {displaySocCode(selectedRequest?.callback || discovery?.blocker, dash, tx)}
               </strong>
             </div>
             <div className={styles.lineageItem}>

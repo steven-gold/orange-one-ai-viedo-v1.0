@@ -1916,6 +1916,8 @@ const catalog = {
   "soc.empty-record": { "zh-TW": "尚無發佈紀錄。", "zh-CN": "尚无发布纪录。", en: "No publish records yet." },
   "soc.kill-idle": { "zh-TW": "目前沒有高風險操作，停止按鈕不可用。", "zh-CN": "目前没有高风险操作，停止按钮不可用。", en: "No high-risk operation; stop stays unavailable." },
   "soc.adapter-unavailable": { "zh-TW": "共享適配器不可用", "zh-CN": "共享适配器不可用", en: "Shared adapter unavailable" },
+  "soc.adapter-accepted": { "zh-TW": "適配器已接受要求", "zh-CN": "适配器已接受要求", en: "Adapter accepted the request" },
+  "soc.kill-operator": { "zh-TW": "操作員停止", "zh-CN": "操作员停止", en: "Operator stop" },
   "soc.secret-hint": { "zh-TW": "憑證只在送出時使用，不會回填或進入一般投影。", "zh-CN": "凭证只在送出时使用，不会回填或进入一般投影。", en: "The credential is input-only and never echoed into the projection." },
   "soc.missing-target": { "zh-TW": "請先選擇一筆目標。", "zh-CN": "请先选择一笔目标。", en: "Select a target first." },
   "soc.missing-account": { "zh-TW": "尚未綁定可用帳號。", "zh-CN": "尚未绑定可用帐号。", en: "No bound account yet." },
