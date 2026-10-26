@@ -851,7 +851,12 @@ export function DevVisual() {
               <p className={styles.note}>{tx("dev.blocker-delivery")}</p>
             ) : null}
             </div>
-            <div data-component-uid="DEV-01-CMP-KILL-SWITCH" />
+            <div data-component-uid="DEV-01-CMP-KILL-SWITCH">
+              <div className={styles.card}>
+                <h3>{tx("dev.btn-kill")}</h3>
+                <p className={styles.note}>{tx("dev.kill-note")}</p>
+              </div>
+            </div>
           </section>
           <GovernanceRail
             t={tx}
