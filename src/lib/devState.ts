@@ -45,6 +45,8 @@ export type DevCandidateStatus = "REVIEW" | "APPROVED" | "CHANGE_REQUEST";
 export type DevCampaignStatus = "REVIEW" | "APPROVED" | "QUEUED" | "STOPPED";
 export type DevDeliveryStatus = "QUEUED" | "EXTERNAL_PENDING" | "STOPPED";
 
+export type DevPriority = "HIGH" | "NORMAL" | "LOW";
+
 export interface DevProfile {
   profileId: string;
   version: number;
@@ -53,6 +55,9 @@ export interface DevProfile {
   market: string;
   keywords: string;
   exclude: string;
+  language: string;
+  priority: DevPriority;
+  sourceScope: string;
   mode: DevMode;
   status: DevProfileStatus;
 }
@@ -205,6 +210,9 @@ export interface DevActionPayload {
   market?: string;
   keywords?: string;
   exclude?: string;
+  language?: string;
+  priority?: string;
+  sourceScope?: string;
   mode?: string;
   signalId?: string;
   query?: string;
@@ -237,9 +245,19 @@ export function parsePayload(raw: string | undefined): DevActionPayload {
   return parsed && typeof parsed === "object" ? parsed : {};
 }
 
+function normalizeProfile(profile: DevProfile | null): DevProfile | null {
+  if (!profile) return null;
+  return {
+    ...profile,
+    language: profile.language || "zh-TW",
+    priority: profile.priority === "HIGH" || profile.priority === "LOW" || profile.priority === "NORMAL" ? profile.priority : "NORMAL",
+    sourceScope: profile.sourceScope || "ALLOWED",
+  };
+}
+
 export function readDevWorkbench(current: (uid: string) => string | null): DevWorkbench {
   return {
-    profile: parseJson<DevProfile | null>(current(DEV_PROFILE_UID), null),
+    profile: normalizeProfile(parseJson<DevProfile | null>(current(DEV_PROFILE_UID), null)),
     job: parseJson<DevJob | null>(current(DEV_JOB_UID), null),
     signals: parseJson<DevSignal[]>(current(DEV_SIGNALS_UID), []),
     companies: parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), []),
@@ -294,11 +312,28 @@ export function filterCompanies(companies: DevCompany[], query: string): DevComp
   const needle = query.trim().toLowerCase();
   if (!needle) return companies;
   return companies.filter((company) => {
-    const hay = [company.name, company.identityValue, ...company.aliases, ...company.contacts.map((item) => item.value)]
+    const hay = [
+      company.name,
+      company.identityValue,
+      company.identityKind,
+      company.evidence,
+      company.opportunity.state,
+      company.suppression,
+      ...company.aliases,
+      ...company.contacts.map((item) => item.value),
+    ]
       .join(" ")
       .toLowerCase();
     return hay.includes(needle);
   });
+}
+
+export function searchDirectoryProjection(companies: DevCompany[], query: string): DevCompany[] {
+  return filterCompanies(companies, query);
+}
+
+export function searchAudienceProjection(companies: DevCompany[], query: string): Array<{ company: DevCompany; contact: DevContact }> {
+  return eligibleAudience(companies, query);
 }
 
 export function activeEmailContact(company: DevCompany): DevContact | null {

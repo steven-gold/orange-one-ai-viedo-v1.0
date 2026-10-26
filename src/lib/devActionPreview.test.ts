@@ -13,6 +13,7 @@ import {
   DEV_PROFILE_UID,
   DEV_SIGNALS_UID,
   parseJson,
+  readDevWorkbench,
   type DevCampaign,
   type DevCandidate,
   type DevCompany,
@@ -60,6 +61,9 @@ function store(seed: Record<string, string> = {}): {
   const profile = parseJson<DevProfile | null>(current(DEV_PROFILE_UID), null);
   assert(profile?.status === "DRAFT", "saved profile stays draft");
   assert(profile?.product === "影像工作臺", "profile product persists");
+  assert(profile?.language === "zh-TW", "profile language defaults to zh-TW");
+  assert(profile?.priority === "NORMAL", "profile priority defaults to NORMAL");
+  assert(profile?.sourceScope === "ALLOWED", "profile source scope defaults to ALLOWED");
 
   apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
   const job = parseJson<DevJob | null>(current(DEV_JOB_UID), null);
@@ -260,6 +264,9 @@ function store(seed: Record<string, string> = {}): {
   apply("DEV-01-BTN-DIRECTORY-SEARCH", "DEV-01-ACT-DIRECTORY-SEARCH", JSON.stringify({ query: "示範" }));
   apply("DEV-01-BTN-EXPORT", "DEV-01-ACT-EXPORT");
   assert(parseJson<{ companyCount: number }>(current("DEV-01-STATE-EXPORT"), { companyCount: 0 }).companyCount === 1, "export uses current query");
+  apply("DEV-01-BTN-DIRECTORY-SEARCH", "DEV-01-ACT-DIRECTORY-SEARCH", JSON.stringify({ query: "QUALIFIED" }));
+  apply("DEV-01-BTN-EXPORT", "DEV-01-ACT-EXPORT");
+  assert(parseJson<{ companyCount: number }>(current("DEV-01-STATE-EXPORT"), { companyCount: 0 }).companyCount === 1, "directory search matches opportunity state");
 }
 
 {
@@ -424,6 +431,49 @@ function store(seed: Record<string, string> = {}): {
   assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "STOPPED", "loop kill stops campaign");
   assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "STOPPED", "loop kill stops delivery");
   bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
+  const { current, apply } = store();
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({
+      product: "影像工作臺",
+      industry: "媒體",
+      keywords: "企業開發",
+      language: "en",
+      priority: "HIGH",
+      sourceScope: "ALLOWED",
+      mode: "SINGLE",
+    }),
+  );
+  const profile = parseJson<DevProfile | null>(current(DEV_PROFILE_UID), null);
+  assert(profile?.language === "en", "profile language persists");
+  assert(profile?.priority === "HIGH", "profile priority persists");
+  assert(profile?.sourceScope === "ALLOWED", "profile source scope persists");
+  bindSharedOwnersForTest(null);
+}
+
+{
+  const { current } = store({
+    [DEV_PROFILE_UID]: JSON.stringify({
+      profileId: "PRF-LEGACY",
+      version: 3,
+      product: "影像工作臺",
+      industry: "媒體",
+      market: "",
+      keywords: "企業開發",
+      exclude: "",
+      mode: "SINGLE",
+      status: "DRAFT",
+    }),
+  });
+  const legacy = readDevWorkbench(current).profile;
+  assert(legacy?.language === "zh-TW", "legacy profile fills language");
+  assert(legacy?.priority === "NORMAL", "legacy profile fills priority");
+  assert(legacy?.sourceScope === "ALLOWED", "legacy profile fills source scope");
 }
 
 console.log("devActionPreview.test.ts PASS");

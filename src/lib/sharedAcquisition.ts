@@ -90,7 +90,7 @@ const TOKEN_ALIASES: Record<string, string[]> = {
 };
 
 function tokensOf(profile: DevProfile): { include: string[]; exclude: string[] } {
-  const raw = [profile.product, profile.industry, profile.keywords, profile.market]
+  const raw = [profile.product, profile.industry, profile.keywords, profile.market, profile.language, profile.sourceScope]
     .join(" ")
     .split(/[\s,，、]+/g)
     .map((item) => item.trim())

@@ -869,6 +869,9 @@ export async function applyWorkbenchAction(
         market: "",
         keywords: "",
         exclude: "",
+        language: "zh-TW",
+        priority: "NORMAL" as const,
+        sourceScope: "ALLOWED",
         mode: "SINGLE" as const,
         status: "DRAFT" as const,
       };

@@ -25,6 +25,9 @@ const rows = [
     market: "",
     keywords: "電視",
     exclude: "",
+    language: "zh-TW",
+    priority: "NORMAL",
+    sourceScope: "ALLOWED",
     mode: "SINGLE",
     status: "ACTIVE",
   };
@@ -47,6 +50,9 @@ const rows = [
     market: "",
     keywords: "",
     exclude: "有線",
+    language: "zh-TW",
+    priority: "NORMAL",
+    sourceScope: "ALLOWED",
     mode: "SINGLE",
     status: "ACTIVE",
   };
@@ -79,6 +85,9 @@ const rows = [
     market: "",
     keywords: "",
     exclude: "",
+    language: "zh-TW",
+    priority: "NORMAL",
+    sourceScope: "ALLOWED",
     mode: "SINGLE",
     status: "ACTIVE",
   }, source);
@@ -112,6 +121,9 @@ const rows = [
     market: "",
     keywords: "",
     exclude: "",
+    language: "zh-TW",
+    priority: "NORMAL",
+    sourceScope: "ALLOWED",
     mode: "SINGLE",
     status: "ACTIVE",
   }, source);

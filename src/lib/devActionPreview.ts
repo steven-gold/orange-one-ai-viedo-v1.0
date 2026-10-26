@@ -13,7 +13,7 @@ import {
   DEV_SIGNALS_UID,
   activeEmailContact,
   companyEligibleForMessage,
-  eligibleAudience,
+  searchAudienceProjection,
   type DevCampaign,
   type DevCandidate,
   type DevCompany,
@@ -28,7 +28,7 @@ import {
   type DevRecipient,
   type DevSignal,
   type DevWorkbench,
-  filterCompanies,
+  searchDirectoryProjection,
   identityResolved,
   newUid,
   nowIso,
@@ -234,6 +234,9 @@ export function previewDevAction(
       market: usable(payload.market) || prior?.market || "",
       keywords: usable(payload.keywords) || prior?.keywords || "",
       exclude: usable(payload.exclude) || prior?.exclude || "",
+      language: usable(payload.language) || prior?.language || "zh-TW",
+      priority: payload.priority === "HIGH" || payload.priority === "LOW" || payload.priority === "NORMAL" ? payload.priority : prior?.priority ?? "NORMAL",
+      sourceScope: usable(payload.sourceScope) || prior?.sourceScope || "ALLOWED",
       mode: modeFrom(payload.mode, prior?.mode ?? "SINGLE"),
       status: "DRAFT",
     };
@@ -285,7 +288,7 @@ export function previewDevAction(
     const signal = workbench.signals.find((item) => item.signalId === signalId);
     if (!signal) return fail(workbench, "DEV_SIGNAL_REQUIRED");
     if (signal.status !== "NEW") return fail(workbench, "DEV_SIGNAL_NOT_NEW");
-    const nextSignal: DevSignal = { ...signal, status: "QUALIFIED", version: signal.version + 1 };
+    const nextSignal: DevSignal = { ...signal, status: "QUALIFIED", opportunity: "OPEN", version: signal.version + 1 };
     const company = qualifyCompany(nextSignal, workbench.companies);
     return patchFrom(
       clearError({
@@ -363,7 +366,7 @@ export function previewDevAction(
   }
 
   if (actionUid === "DEV-01-ACT-EXPORT") {
-    const matched = filterCompanies(workbench.companies, workbench.query);
+    const matched = searchDirectoryProjection(workbench.companies, workbench.query);
     return patchFrom(
       clearError({
         ...workbench,
@@ -497,7 +500,7 @@ export function previewDevAction(
     if (workbench.campaign && (workbench.campaign.status === "REVIEW" || workbench.campaign.status === "APPROVED" || workbench.campaign.status === "QUEUED")) {
       return fail(workbench, "DEV_CAMPAIGN_ALREADY_OPEN");
     }
-    const matched = eligibleAudience(workbench.companies, workbench.audienceQuery);
+    const matched = searchAudienceProjection(workbench.companies, workbench.audienceQuery);
     if (!matched.length) return fail(workbench, "DEV_CAMPAIGN_RECIPIENT_REQUIRED");
     const recipients: DevRecipient[] = matched.map(({ company, contact }) => ({
       recipientId: newUid("RCP"),

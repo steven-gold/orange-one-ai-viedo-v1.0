@@ -7,7 +7,8 @@ import { DevClientError, fetchDevReadModel, postDevAction, type DevFieldValue } 
 import {
   activeEmailContact,
   companyEligibleForMessage,
-  filterCompanies,
+  searchAudienceProjection,
+  searchDirectoryProjection,
   type DevCampaignStatus,
   type DevCandidate,
   type DevCandidateStatus,
@@ -36,6 +37,9 @@ const EMPTY_PROFILE: DevProfile = {
   market: "",
   keywords: "",
   exclude: "",
+  language: "zh-TW",
+  priority: "NORMAL",
+  sourceScope: "ALLOWED",
   mode: "SINGLE",
   status: "DRAFT",
 };
@@ -212,12 +216,12 @@ export function DevVisual() {
   const tx = (key: TranslationKey, params?: Record<string, string | number>) => t(key, params);
   const dash = displayDevValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(DEV_VISIBLE_CONTROLS), []);
-  const campaignView = stage === 4 || stage === 5;
   const workbench = useMemo(() => workbenchFromFields(fields), [fields]);
   const actionError = errorKey(workbench.error?.code);
   const jobStatus = workbench.job?.status ?? null;
   const jobLabel = jobStatus ? tx(JOB_LABEL[jobStatus]) : loading ? dash : tx("dev.job-idle");
-  const companies = filterCompanies(workbench.companies, query);
+  const companies = searchDirectoryProjection(workbench.companies, workbench.query);
+  const audiencePreview = searchAudienceProjection(workbench.companies, workbench.audienceQuery);
   const selectedCompanyId = selectedCompanyIds[0] ?? companies[0]?.companyId ?? "";
   const selectedCompany = workbench.companies.find((company) => company.companyId === selectedCompanyId) ?? null;
   const selectedHasEmail = selectedCompany ? Boolean(activeEmailContact(selectedCompany)) : false;
@@ -264,8 +268,8 @@ export function DevVisual() {
       ) : null}
 
       <header className={styles.heading} data-component-uid="DEV-01-CMP-CONTEXT" data-section-uid="DEV-01-SEC-01">
-        <h1 className={styles.headingTitle}>{tx(campaignView ? "dev.campaign-title" : "dev.title")}</h1>
-        <p className={styles.headingMeta}>{tx(campaignView ? "dev.campaign-meta" : "dev.meta")}</p>
+        <h1 className={styles.headingTitle}>{tx("dev.title")}</h1>
+        <p className={styles.headingMeta}>{tx("dev.meta")}</p>
       </header>
 
       <nav className={styles.stages} data-section-uid="DEV-01-SEC-02" data-component-uid="DEV-01-CMP-STAGE-NAV">
@@ -286,11 +290,10 @@ export function DevVisual() {
         })}
       </nav>
 
-      {campaignView ? null : (
-        <section className={styles.context} data-section-uid="DEV-01-SEC-01">
+      <section className={styles.context} data-section-uid="DEV-01-SEC-01">
           <div className={styles.ctx}>
             <span>{tx("dev.ctx-stage")}</span>
-            <strong className={styles.ctxOk}>{tx("dev.ctx-stage-discovery")}</strong>
+            <strong className={styles.ctxOk}>{tx(DEV_STAGES[stage - 1].labelKey)}</strong>
           </div>
           <div className={styles.ctx}>
             <span>{tx("dev.ctx-scope")}</span>
@@ -305,7 +308,6 @@ export function DevVisual() {
             <strong className={styles.ctxOk}>{tx("dev.ctx-policy-value")}</strong>
           </div>
         </section>
-      )}
 
       {stage === 1 ? (
         <div className={styles.cols}>
@@ -377,6 +379,43 @@ export function DevVisual() {
                 />
               </label>
               <label className={styles.field}>
+                <span>{tx("dev.field-language")}</span>
+                <select
+                  className={styles.fieldSelect}
+                  value={draft.language}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, language: event.target.value }))}
+                >
+                  <option value="zh-TW">{tx("dev.language-zh-tw")}</option>
+                  <option value="zh-CN">{tx("dev.language-zh-cn")}</option>
+                  <option value="en">{tx("dev.language-en")}</option>
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>{tx("dev.field-priority")}</span>
+                <select
+                  className={styles.fieldSelect}
+                  value={draft.priority}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, priority: event.target.value as DevProfile["priority"] }))}
+                >
+                  <option value="HIGH">{tx("dev.priority-high")}</option>
+                  <option value="NORMAL">{tx("dev.priority-normal")}</option>
+                  <option value="LOW">{tx("dev.priority-low")}</option>
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>{tx("dev.field-source-scope")}</span>
+                <select
+                  className={styles.fieldSelect}
+                  value={draft.sourceScope}
+                  disabled={disabled}
+                  onChange={(event) => setDraft((current) => ({ ...current, sourceScope: event.target.value }))}
+                >
+                  <option value="ALLOWED">{tx("dev.source-scope-allowed")}</option>
+                </select>
+              </label>
+              <label className={styles.field}>
                 <span>{tx("dev.field-mode")}</span>
                 <select
                   className={styles.fieldSelect}
@@ -432,9 +471,9 @@ export function DevVisual() {
                       <span>{signal.evidence}</span>
                       <span>{signal.freshness}</span>
                       <span>{signal.match}</span>
-                      <span>{tx(SIGNAL_LABEL[signal.status])}</span>
+                      <span>{tx(OPP_LABEL[(Object.prototype.hasOwnProperty.call(OPP_LABEL, signal.opportunity) ? signal.opportunity : "OPEN") as DevOpportunityState])}</span>
                       <span className={styles.rowAct}>
-                        {selectedSignalId === signal.signalId ? tx("dev.row-selected") : tx("dev.row-qualify")}
+                        {selectedSignalId === signal.signalId ? tx("dev.row-selected") : tx(SIGNAL_LABEL[signal.status])}
                       </span>
                     </div>
                   ))
@@ -462,7 +501,7 @@ export function DevVisual() {
               </div>
             </div>
             </div>
-            <div className={styles.actions} data-component-uid="DEV-01-CMP-DISCOVERY-ACTION">
+            <div className={styles.actions}>
               <button
                 type="button"
                 className={styles.btn}
@@ -474,38 +513,15 @@ export function DevVisual() {
                     market: draft.market,
                     keywords: draft.keywords,
                     exclude: draft.exclude,
+                    language: draft.language,
+                    priority: draft.priority,
+                    sourceScope: draft.sourceScope,
                     mode: draft.mode,
                   })
                 }
               >
                 {tx("dev.btn-profile-save")}
               </button>
-              <Btn
-                uid="DEV-01-BTN-DISCOVERY-START"
-                label={tx("dev.btn-start")}
-                onAct={(uid) => void act(uid)}
-                disabled={disabled || jobStatus === "RUNNING" || jobStatus === "EXTERNAL_PENDING"}
-                primary={jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING"}
-              />
-              <Btn
-                uid="DEV-01-BTN-DISCOVERY-PAUSE"
-                label={tx("dev.btn-pause")}
-                onAct={(uid) => void act(uid)}
-                disabled={disabled || jobStatus !== "RUNNING"}
-              />
-              <Btn
-                uid="DEV-01-BTN-DISCOVERY-RESUME"
-                label={tx("dev.btn-resume")}
-                onAct={(uid) => void act(uid)}
-                disabled={disabled || jobStatus !== "PAUSED"}
-              />
-              <Btn
-                uid="DEV-01-BTN-DISCOVERY-STOP"
-                label={tx("dev.btn-stop")}
-                onAct={(uid) => void act(uid)}
-                disabled={disabled || (jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING")}
-                danger
-              />
             </div>
           </section>
           <GovernanceRail
@@ -536,7 +552,6 @@ export function DevVisual() {
                   if (event.key === "Enter") void act("DEV-01-BTN-DIRECTORY-SEARCH", { query });
                 }}
               />
-              <Btn uid="DEV-01-BTN-DIRECTORY-SEARCH" label={tx("dev.btn-search")} onAct={() => void act("DEV-01-BTN-DIRECTORY-SEARCH", { query })} disabled={disabled} />
             </div>
             <div className={styles.table}>
               <div className={`${styles.thead} ${styles.dirHead}`}>
@@ -576,21 +591,9 @@ export function DevVisual() {
             <p className={styles.note}>{tx("dev.selected-count", { n: selectedCompanyIds.length })}</p>
             {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
             {workbench.exported ? <p className={styles.note}>{tx("dev.export-done", { n: workbench.exported.companyCount })}</p> : null}
-            <div className={styles.actions}>
-              <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
-            </div>
             </div>
             <div data-component-uid="DEV-01-CMP-MERGE">
             {workbench.merge ? <p className={styles.note}>{tx("dev.merge-ready")}</p> : null}
-            <div className={styles.actions}>
-              <Btn
-                uid="DEV-01-BTN-MERGE-PREVIEW"
-                label={tx("dev.btn-merge-preview")}
-                onAct={() => void act("DEV-01-BTN-MERGE-PREVIEW", { companyIds: selectedCompanyIds })}
-                disabled={disabled}
-              />
-              <Btn uid="DEV-01-BTN-MERGE" label={tx("dev.btn-merge")} onAct={(uid) => void act(uid)} disabled={disabled || !workbench.merge} primary />
-            </div>
             </div>
             <div className={styles.fields}>
               <label className={styles.field}>
@@ -710,40 +713,16 @@ export function DevVisual() {
                 <p className={styles.empty}>{loading ? dash : tx("dev.empty-candidates")}</p>
               )}
             </div>
-            <div className={styles.actions}>
-              {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
-              <Btn
-                uid="DEV-01-BTN-CANDIDATE-CREATE"
-                label={tx("dev.btn-candidate-create")}
-                onAct={() => void act("DEV-01-BTN-CANDIDATE-CREATE", { companyId: selectedCompanyId })}
-                disabled={disabled || !selectedCanMessage}
-                primary
-              />
+            {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
             </div>
-            </div>
-            <div data-component-uid="DEV-01-CMP-MESSAGE-REVIEW">
-            <div className={styles.actions}>
-              <Btn
-                uid="DEV-01-BTN-CANDIDATE-DECIDE"
-                label={tx("dev.btn-candidate-decide")}
-                onAct={() => void act("DEV-01-BTN-CANDIDATE-DECIDE", { candidateId: selectedCandidate?.candidateId })}
-                disabled={disabled || selectedCandidate?.status !== "REVIEW"}
-              />
-              <Btn
-                uid="DEV-01-BTN-CR-CREATE"
-                label={tx("dev.btn-cr")}
-                onAct={() => void act("DEV-01-BTN-CR-CREATE", { candidateId: selectedCandidate?.candidateId })}
-                disabled={disabled || selectedCandidate?.status !== "REVIEW"}
-              />
-            </div>
-            </div>
+            <div data-component-uid="DEV-01-CMP-MESSAGE-REVIEW" />
           </section>
           <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} connector={dash} blocker={dash} />
         </div>
       ) : null}
 
-      {campaignView ? (
-        <div className={styles.split}>
+      {stage === 4 ? (
+        <div className={styles.cols}>
           <section className={styles.workspace} data-section-uid="DEV-01-SEC-06">
             <div data-component-uid="DEV-01-CMP-CAMPAIGN">
             <h2>{tx("dev.campaign-stage")}</h2>
@@ -756,7 +735,7 @@ export function DevVisual() {
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.filter-contact")}</span>
-                  <strong>{campaign ? String(campaign.recipients.length) : dash}</strong>
+                  <strong>{String(audiencePreview.length)}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.filter-suppression")}</span>
@@ -791,8 +770,15 @@ export function DevVisual() {
                   <span>{tx("dev.col-message")}</span>
                   <span>{tx("dev.col-result")}</span>
                 </div>
-                {campaign?.recipients.length ? (
-                  campaign.recipients.map((recipient) => (
+                {(campaign?.recipients.length ? campaign.recipients : audiencePreview.map(({ company, contact }) => ({
+                  recipientId: company.companyId,
+                  companyName: company.name,
+                  contactValue: contact.value,
+                  suppression: company.suppression,
+                  messageVersion: approvedCandidate?.version ?? 0,
+                  previewed: false,
+                }))).length ? (
+                  (campaign?.recipients.length ? campaign.recipients.map((recipient) => (
                     <div className={`${styles.trow} ${styles.rcpRow}`} key={recipient.recipientId}>
                       <span>{recipient.companyName}</span>
                       <span>{recipient.contactValue}</span>
@@ -801,32 +787,20 @@ export function DevVisual() {
                       <span>{`v${recipient.messageVersion}`}</span>
                       <span>{campaign.previewed ? tx("dev.preview-ready") : dash}</span>
                     </div>
-                  ))
+                  )) : audiencePreview.map(({ company, contact }) => (
+                    <div className={`${styles.trow} ${styles.rcpRow}`} key={`${company.companyId}-${contact.contactId}`}>
+                      <span>{company.name}</span>
+                      <span>{contact.value}</span>
+                      <span>{company.suppression || dash}</span>
+                      <span>{tx("dev.policy-pass")}</span>
+                      <span>{approvedCandidate ? `v${approvedCandidate.version}` : dash}</span>
+                      <span>{dash}</span>
+                    </div>
+                  )))
                 ) : (
                   <p className={styles.empty}>{loading ? dash : tx("dev.empty-recipients")}</p>
                 )}
               </div>
-            </div>
-            <div className={styles.actions}>
-              <Btn
-                uid="DEV-01-BTN-CAMPAIGN-SEARCH"
-                label={tx("dev.btn-audience-search")}
-                onAct={() => void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery })}
-                disabled={disabled}
-              />
-              <Btn
-                uid="DEV-01-BTN-CAMPAIGN-CREATE"
-                label={tx("dev.btn-campaign-create")}
-                onAct={() => void act("DEV-01-BTN-CAMPAIGN-CREATE", { candidateId: approvedCandidate?.candidateId })}
-                disabled={disabled || !approvedCandidate}
-                primary
-              />
-              <Btn
-                uid="DEV-01-BTN-CAMPAIGN-APPROVE"
-                label={tx("dev.btn-campaign-approve")}
-                onAct={(uid) => void act(uid)}
-                disabled={disabled || campaign?.status !== "REVIEW"}
-              />
             </div>
             </div>
             <div data-component-uid="DEV-01-CMP-CAMPAIGN-REVIEW">
@@ -836,45 +810,160 @@ export function DevVisual() {
             </div>
             </div>
           </section>
-          <aside className={styles.rail} data-section-uid="DEV-01-SEC-07">
+          <GovernanceRail t={tx} dash={dash} disabled={disabled} onDrawer={() => setDrawerOpen(true)} connector={dash} blocker={dash} />
+        </div>
+      ) : null}
+
+      {stage === 5 ? (
+        <div className={styles.cols}>
+          <section className={styles.workspace} data-section-uid="DEV-01-SEC-07">
             <div data-component-uid="DEV-01-CMP-DELIVERY">
             <h2>{tx("dev.delivery-stage")}</h2>
-            <div className={styles.railCard}>
-              <span>{tx("dev.delivery-campaign")}</span>
-              <strong>{campaign ? tx(CAMPAIGN_LABEL[campaign.status]) : tx("dev.delivery-campaign-value")}</strong>
-            </div>
-            <div className={styles.railCard}>
-              <span>{tx("dev.delivery-policy")}</span>
-              <strong>{tx("dev.delivery-policy-value")}</strong>
-            </div>
-            <div className={styles.railCard}>
-              <span>{tx("dev.delivery-envelope")}</span>
-              <strong>{deliveries.length ? tx("dev.delivery-envelope-count", { n: deliveries.length }) : tx("dev.delivery-envelope-value")}</strong>
-            </div>
-            <div className={styles.railCard}>
-              <span>{tx("dev.col-suppression")}</span>
-              <strong>{campaign?.recipients.some((item) => item.suppression) ? tx("dev.policy-blocked") : tx("dev.delivery-suppression-value")}</strong>
-            </div>
-            <div className={styles.railCard}>
-              <span>{tx("dev.delivery-idempotency")}</span>
-              <strong>{deliveries[0]?.idempotencyKey || tx("dev.required")}</strong>
-            </div>
-            <div className={styles.railCard}>
-              <span>{tx("dev.delivery-audit")}</span>
-              <strong>{deliveries.length ? tx(DELIVERY_LABEL[deliveries[0].status]) : tx("dev.required")}</strong>
+            <div className={styles.card}>
+              <div className={styles.metaGrid}>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.delivery-campaign")}</span>
+                  <strong>{campaign ? tx(CAMPAIGN_LABEL[campaign.status]) : tx("dev.delivery-campaign-value")}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.delivery-policy")}</span>
+                  <strong>{tx("dev.delivery-policy-value")}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.delivery-envelope")}</span>
+                  <strong>{deliveries.length ? tx("dev.delivery-envelope-count", { n: deliveries.length }) : tx("dev.delivery-envelope-value")}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.col-suppression")}</span>
+                  <strong>{campaign?.recipients.some((item) => item.suppression) ? tx("dev.policy-blocked") : tx("dev.delivery-suppression-value")}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.delivery-idempotency")}</span>
+                  <strong>{deliveries[0]?.idempotencyKey || tx("dev.required")}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.delivery-audit")}</span>
+                  <strong>{deliveries.length ? tx(DELIVERY_LABEL[deliveries[0].status]) : tx("dev.required")}</strong>
+                </div>
+              </div>
             </div>
             {deliveries.some((item) => item.status === "EXTERNAL_PENDING") ? (
-              <div className={styles.railCard}>
-                <span>{tx("dev.rail-blockers")}</span>
-                <strong>{tx("dev.blocker-delivery")}</strong>
-              </div>
+              <p className={styles.note}>{tx("dev.blocker-delivery")}</p>
             ) : null}
-            <div className={styles.actions}>
-              <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary />
-              <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
             </div>
-            </div>
-            <div data-component-uid="DEV-01-CMP-KILL-SWITCH">
+            <div data-component-uid="DEV-01-CMP-KILL-SWITCH" />
+          </section>
+          <GovernanceRail
+            t={tx}
+            dash={dash}
+            disabled={disabled}
+            onDrawer={() => setDrawerOpen(true)}
+            connector={dash}
+            blocker={deliveries.some((item) => item.status === "EXTERNAL_PENDING") ? tx("dev.blocker-delivery") : dash}
+          />
+        </div>
+      ) : null}
+
+      <div
+        className={styles.dock}
+        data-section-uid="DEV-01-SEC-03"
+        data-component-uid="DEV-01-CMP-DISCOVERY-ACTION"
+        data-visual-uid="DEV-01-VIS-ACTION-DOCK"
+      >
+        {stage === 1 ? (
+          <>
+            <Btn
+              uid="DEV-01-BTN-DISCOVERY-START"
+              label={tx("dev.btn-start")}
+              onAct={(uid) => void act(uid)}
+              disabled={disabled || jobStatus === "RUNNING" || jobStatus === "EXTERNAL_PENDING"}
+              primary={jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING"}
+            />
+            <Btn
+              uid="DEV-01-BTN-DISCOVERY-PAUSE"
+              label={tx("dev.btn-pause")}
+              onAct={(uid) => void act(uid)}
+              disabled={disabled || jobStatus !== "RUNNING"}
+            />
+            <Btn
+              uid="DEV-01-BTN-DISCOVERY-RESUME"
+              label={tx("dev.btn-resume")}
+              onAct={(uid) => void act(uid)}
+              disabled={disabled || jobStatus !== "PAUSED"}
+            />
+            <Btn
+              uid="DEV-01-BTN-DISCOVERY-STOP"
+              label={tx("dev.btn-stop")}
+              onAct={(uid) => void act(uid)}
+              disabled={disabled || (jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING")}
+              danger
+            />
+          </>
+        ) : null}
+        {stage === 2 ? (
+          <>
+            <Btn uid="DEV-01-BTN-DIRECTORY-SEARCH" label={tx("dev.btn-search")} onAct={() => void act("DEV-01-BTN-DIRECTORY-SEARCH", { query })} disabled={disabled} primary />
+            <Btn
+              uid="DEV-01-BTN-MERGE-PREVIEW"
+              label={tx("dev.btn-merge-preview")}
+              onAct={() => void act("DEV-01-BTN-MERGE-PREVIEW", { companyIds: selectedCompanyIds })}
+              disabled={disabled}
+            />
+            <Btn uid="DEV-01-BTN-MERGE" label={tx("dev.btn-merge")} onAct={(uid) => void act(uid)} disabled={disabled || !workbench.merge} />
+            <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
+          </>
+        ) : null}
+        {stage === 3 ? (
+          <>
+            <Btn
+              uid="DEV-01-BTN-CANDIDATE-CREATE"
+              label={tx("dev.btn-candidate-create")}
+              onAct={() => void act("DEV-01-BTN-CANDIDATE-CREATE", { companyId: selectedCompanyId })}
+              disabled={disabled || !selectedCanMessage}
+              primary
+            />
+            <Btn
+              uid="DEV-01-BTN-CANDIDATE-DECIDE"
+              label={tx("dev.btn-candidate-decide")}
+              onAct={() => void act("DEV-01-BTN-CANDIDATE-DECIDE", { candidateId: selectedCandidate?.candidateId })}
+              disabled={disabled || selectedCandidate?.status !== "REVIEW"}
+            />
+            <Btn
+              uid="DEV-01-BTN-CR-CREATE"
+              label={tx("dev.btn-cr")}
+              onAct={() => void act("DEV-01-BTN-CR-CREATE", { candidateId: selectedCandidate?.candidateId })}
+              disabled={disabled || selectedCandidate?.status !== "REVIEW"}
+            />
+          </>
+        ) : null}
+        {stage === 4 ? (
+          <>
+            <Btn
+              uid="DEV-01-BTN-CAMPAIGN-SEARCH"
+              label={tx("dev.btn-audience-search")}
+              onAct={() => void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery })}
+              disabled={disabled}
+            />
+            <Btn
+              uid="DEV-01-BTN-CAMPAIGN-CREATE"
+              label={tx("dev.btn-campaign-create")}
+              onAct={() => void act("DEV-01-BTN-CAMPAIGN-CREATE", { candidateId: approvedCandidate?.candidateId })}
+              disabled={disabled || !approvedCandidate}
+              primary={!campaign || campaign.status !== "REVIEW"}
+            />
+            <Btn
+              uid="DEV-01-BTN-CAMPAIGN-APPROVE"
+              label={tx("dev.btn-campaign-approve")}
+              onAct={(uid) => void act(uid)}
+              disabled={disabled || campaign?.status !== "REVIEW"}
+              primary={campaign?.status === "REVIEW"}
+            />
+          </>
+        ) : null}
+        {stage === 5 ? (
+          <>
+            <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary={campaign?.status === "APPROVED"} />
+            <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
             <Btn
               uid="DEV-01-BTN-KILL-SWITCH"
               label={tx("dev.btn-kill")}
@@ -882,22 +971,9 @@ export function DevVisual() {
               disabled={disabled || (campaign?.status !== "QUEUED" && campaign?.status !== "APPROVED")}
               danger
             />
-            <div className={styles.killNote}>{tx("dev.kill-note")}</div>
-            </div>
-          </aside>
-        </div>
-      ) : null}
-
-      {campaignView ? (
-        <div className={styles.chain}>
-          {tx("dev.chain")}
-        </div>
-      ) : (
-        <div className={styles.dock}>
-          <strong>{tx("dev.dock-title")}</strong>
-          <p>{tx("dev.dock-hint")}</p>
-        </div>
-      )}
+          </>
+        ) : null}
+      </div>
 
       <section
         className={styles.card}
@@ -926,7 +1002,6 @@ export function DevVisual() {
         <>
           <div data-component-uid="DEV-01-CMP-DISCOVERY-SETUP" hidden />
           <div data-component-uid="DEV-01-CMP-DISCOVERY-RUNTIME" hidden />
-          <div data-component-uid="DEV-01-CMP-DISCOVERY-ACTION" hidden />
         </>
       )}
       {stage === 2 ? null : (
@@ -941,15 +1016,18 @@ export function DevVisual() {
           <div data-component-uid="DEV-01-CMP-MESSAGE-REVIEW" hidden />
         </>
       )}
-      {campaignView ? null : (
+      {stage === 4 ? null : (
         <>
           <div data-component-uid="DEV-01-CMP-CAMPAIGN" hidden />
           <div data-component-uid="DEV-01-CMP-CAMPAIGN-REVIEW" hidden />
+        </>
+      )}
+      {stage === 5 ? null : (
+        <>
           <div data-component-uid="DEV-01-CMP-DELIVERY" hidden />
           <div data-component-uid="DEV-01-CMP-KILL-SWITCH" hidden />
         </>
       )}
-      {campaignView ? <div data-component-uid="DEV-01-CMP-GOVERNANCE" hidden /> : null}
     </div>
   );
 }
