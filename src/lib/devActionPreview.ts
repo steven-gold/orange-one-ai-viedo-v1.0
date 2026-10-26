@@ -238,7 +238,12 @@ export function previewDevAction(
       priority: payload.priority === "HIGH" || payload.priority === "LOW" || payload.priority === "NORMAL" ? payload.priority : prior?.priority ?? "NORMAL",
       sourceScope: usable(payload.sourceScope) || prior?.sourceScope || "ALLOWED",
       mode: modeFrom(payload.mode, prior?.mode ?? "SINGLE"),
-      status: "DRAFT",
+      status:
+        workbench.job?.status === "RUNNING" || workbench.job?.status === "EXTERNAL_PENDING"
+          ? "ACTIVE"
+          : workbench.job?.status === "PAUSED"
+            ? "PAUSED"
+            : "DRAFT",
     };
     if (!profileIsReady(next)) return fail(workbench, "DEV_PROFILE_INCOMPLETE");
     return patchFrom(clearError({ ...workbench, profile: next }));

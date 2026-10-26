@@ -412,6 +412,12 @@ function store(seed: Record<string, string> = {}): {
   );
   apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
   assert(parseJson<DevJob | null>(current(DEV_JOB_UID), null)?.status === "RUNNING", "loop start binds acquisition");
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({ product: "影像工作臺", industry: "媒體", keywords: "企業開發", mode: "SINGLE" }),
+  );
+  assert(parseJson<DevProfile | null>(current(DEV_PROFILE_UID), null)?.status === "ACTIVE", "profile save keeps ACTIVE while job runs");
   apply("DEV-01-BTN-SIGNAL-QUALIFY", "DEV-01-ACT-SIGNAL-QUALIFY", JSON.stringify({ signalId: "SIG-LOOP" }));
   const companyId = parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), [])[0].companyId;
   apply(

@@ -404,6 +404,7 @@ const MIGRATION_FILES = [
   "027_reset_aiapi_registry.sql",
   "028_conversation_file.sql",
   "029_seed_aiapi_route_policy.sql",
+  "030_reset_dev_drafts.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -433,6 +434,10 @@ const RESET_AIAPI_REGISTRY = [
   "DELETE FROM ghsn_aiapi_credential",
 ];
 
+const RESET_DEV_DRAFTS = [
+  "UPDATE ghsn_dev_field_projection SET value_text = NULL",
+];
+
 const SEED_AIAPI_ROUTE_POLICY = [
   `INSERT INTO ghsn_aiapi_field_projection (control_uid, value_text)
    VALUES ('AIAPI-01-FLD-PF-RIGHTS', 'APPROVED')
@@ -456,6 +461,7 @@ const RESET_MIGRATIONS: Record<string, string[]> = {
   "026_reset_aiapi_drafts.sql": RESET_AIAPI_DRAFTS,
   "027_reset_aiapi_registry.sql": RESET_AIAPI_REGISTRY,
   "029_seed_aiapi_route_policy.sql": SEED_AIAPI_ROUTE_POLICY,
+  "030_reset_dev_drafts.sql": RESET_DEV_DRAFTS,
 };
 
 async function runBootstrap(): Promise<MigrationResult> {
