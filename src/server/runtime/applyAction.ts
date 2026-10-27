@@ -837,8 +837,10 @@ export async function applyWorkbenchAction(
   }
   if (page === "dev") {
     const written = await applyProjectedAction(FIELD_TABLE.dev, previewDevAction, controlUid, actionUid, nextValue);
+    const errorRaw = await readField(FIELD_TABLE.dev, "DEV-01-STATE-ERROR");
     const triggersCollection =
       written &&
+      !errorRaw &&
       (actionUid === "DEV-01-ACT-DISCOVERY-START" ||
         actionUid === "DEV-01-ACT-DISCOVERY-RESUME" ||
         (actionUid === "DEV-01-ACT-REFRESH" && nextValue === "CONTINUOUS_PULL"));
