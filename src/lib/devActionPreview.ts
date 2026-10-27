@@ -105,6 +105,8 @@ function startJob(profile: DevProfile): DevJob {
     status: accepted.status,
     mode: profile.mode,
     blocker: accepted.blocker,
+    cursor: 0,
+    collected: 0,
     startedAt: nowIso(),
     updatedAt: nowIso(),
   };
@@ -128,17 +130,21 @@ export function applyDiscoveryCollection(
     };
     return patchFrom(clearError({ ...workbench, job }));
   }
+  const signals = mergeDiscoverySignals(workbench.signals, result.signals);
+  const continuous = workbench.job.mode === "CONTINUOUS";
   const job: DevJob = {
     ...workbench.job,
-    status: "RUNNING",
+    status: continuous ? "RUNNING" : "COMPLETE",
     blocker: "",
+    cursor: result.nextCursor ?? workbench.job.cursor ?? 0,
+    collected: signals.length,
     updatedAt: nowIso(),
   };
   return patchFrom(
     clearError({
       ...workbench,
       job,
-      signals: mergeDiscoverySignals(workbench.signals, result.signals),
+      signals,
     }),
   );
 }

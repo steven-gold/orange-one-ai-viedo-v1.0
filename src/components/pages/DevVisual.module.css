@@ -312,6 +312,29 @@
   font-weight: 600;
 }
 
+.signalScroll {
+  max-height: 416px;
+  overflow-y: auto;
+}
+
+.signalScroll .thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pagerStatus {
+  font-size: 12px;
+  color: var(--dev-muted);
+}
+
 .thead span,
 .trow span {
   padding: 10px 10px;

@@ -95,6 +95,7 @@ export type AcquisitionCollectOk = {
   run: AcquisitionRun;
   signals: DevSignal[];
   items: AcquisitionResultItem[];
+  nextCursor?: number;
 };
 
 export type AcquisitionCollectFail = {

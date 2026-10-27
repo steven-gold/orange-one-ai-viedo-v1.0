@@ -27,7 +27,7 @@ export const DEV_EXTRA_PROJECTION_KEYS = [
 ] as const;
 
 export type DevProfileStatus = "DRAFT" | "ACTIVE" | "PAUSED" | "RETIRED";
-export type DevJobStatus = "RUNNING" | "PAUSED" | "STOPPED" | "EXTERNAL_PENDING";
+export type DevJobStatus = "RUNNING" | "PAUSED" | "STOPPED" | "COMPLETE" | "EXTERNAL_PENDING";
 export type DevSignalStatus = "NEW" | "QUALIFIED" | "IGNORED" | "ENGAGED" | "CONVERTED" | "SUPPRESSED";
 export type DevOpportunityState =
   | "OPEN"
@@ -69,6 +69,8 @@ export interface DevJob {
   status: DevJobStatus;
   mode: DevMode;
   blocker: string;
+  cursor?: number;
+  collected?: number;
   startedAt: string;
   updatedAt: string;
 }

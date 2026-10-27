@@ -129,9 +129,13 @@ function store(seed: Record<string, string> = {}): {
     run: completedRun(PUBLIC_JSON_SOURCES[0].sourceId, 1),
     signals: [liveSignal],
     items: [],
+    nextCursor: 100,
   });
   assert(parseJson<DevSignal[]>(patch[DEV_SIGNALS_UID], []).length === 1, "collection writes verified signals");
-  assert(parseJson<DevJob | null>(patch[DEV_JOB_UID], null)?.status === "RUNNING", "successful collection keeps RUNNING");
+  const patchedJob = parseJson<DevJob | null>(patch[DEV_JOB_UID], null);
+  assert(patchedJob?.status === "COMPLETE", "single-shot collection completes the job");
+  assert(patchedJob?.cursor === 100, "single-shot collection stores the cursor");
+  assert(patchedJob?.collected === 1, "single-shot collection stores the count");
   const blocked = applyDiscoveryCollection(current, {
     ok: false,
     source: sourceRecordFrom(PUBLIC_JSON_SOURCES[0], "UNAVAILABLE"),
@@ -140,6 +144,42 @@ function store(seed: Record<string, string> = {}): {
   });
   assert(parseJson<DevJob | null>(blocked[DEV_JOB_UID], null)?.status === "EXTERNAL_PENDING", "failed collection waits externally");
   assert(parseJson<DevJob | null>(blocked[DEV_JOB_UID], null)?.blocker === "SHARED_ACQUISITION_UNAVAILABLE", "failed collection records blocker");
+  bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
+  const { current, apply } = store();
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({ product: "影像工作臺", industry: "媒體", keywords: "企業開發", mode: "CONTINUOUS" }),
+  );
+  apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
+  const liveSignal: DevSignal = {
+    signalId: "SIG-LIVE-C",
+    companyName: "中華電視股份有限公司",
+    intent: "影像工作臺",
+    evidence: "臺灣證券交易所上市基本資料 9926 文化創意業",
+    freshness: "2026-10-24",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-03793901",
+    match: "resolved",
+    opportunity: "OPEN",
+    status: "NEW",
+    version: 1,
+  };
+  const patch = applyDiscoveryCollection(current, {
+    ok: true,
+    source: sourceRecordFrom(PUBLIC_JSON_SOURCES[0], "ACTIVE"),
+    run: completedRun(PUBLIC_JSON_SOURCES[0].sourceId, 1),
+    signals: [liveSignal],
+    items: [],
+    nextCursor: 100,
+  });
+  const patchedJob = parseJson<DevJob | null>(patch[DEV_JOB_UID], null);
+  assert(patchedJob?.status === "RUNNING", "continuous collection keeps polling");
+  assert(patchedJob?.cursor === 100, "continuous collection advances the cursor");
   bindSharedOwnersForTest(null);
 }
 

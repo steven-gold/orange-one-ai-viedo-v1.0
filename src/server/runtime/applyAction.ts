@@ -837,16 +837,18 @@ export async function applyWorkbenchAction(
   }
   if (page === "dev") {
     const written = await applyProjectedAction(FIELD_TABLE.dev, previewDevAction, controlUid, actionUid, nextValue);
-    if (
+    const triggersCollection =
       written &&
-      (actionUid === "DEV-01-ACT-DISCOVERY-START" || actionUid === "DEV-01-ACT-DISCOVERY-RESUME")
-    ) {
+      (actionUid === "DEV-01-ACT-DISCOVERY-START" ||
+        actionUid === "DEV-01-ACT-DISCOVERY-RESUME" ||
+        (actionUid === "DEV-01-ACT-REFRESH" && nextValue === "CONTINUOUS_PULL"));
+    if (triggersCollection) {
       const jobRaw = await readField(FIELD_TABLE.dev, "DEV-01-STATE-JOB");
-      const job = parseJson<{ status?: string }>(jobRaw, {});
+      const job = parseJson<{ status?: string; cursor?: number }>(jobRaw, {});
       if (job.status === "RUNNING") {
         const profile = parseJson<DevProfile | null>(await readField(FIELD_TABLE.dev, "DEV-01-STATE-PROFILE"), null);
         if (profile) {
-          const collected = await collectDiscoverySignals(profile);
+          const collected = await collectDiscoverySignals(profile, job.cursor ?? 0);
           const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
             `SELECT control_uid, value_text FROM ${FIELD_TABLE.dev}`,
           );

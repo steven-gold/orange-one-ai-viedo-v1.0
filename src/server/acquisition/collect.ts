@@ -18,9 +18,10 @@ import {
 import type { DevProfile, DevSignal } from "@/lib/devState";
 
 const FETCH_MS = 12000;
-const GCIS_QUERY_TOP = 20;
+const GCIS_QUERY_TOP = 100;
 const GCIS_CALL_CONCURRENCY = 2;
 const GCIS_ITEMS_ENRICH_LIMIT = 6;
+const GCIS_CURSOR_WRAP = 1000;
 
 function timeoutSignal(ms: number): { signal: AbortSignal; done: () => void } {
   const controller = new AbortController();
@@ -28,10 +29,10 @@ function timeoutSignal(ms: number): { signal: AbortSignal; done: () => void } {
   return { signal: controller.signal, done: () => clearTimeout(timer) };
 }
 
-function gcisUrl(endpointId: string, filter: string, top: number): string {
+function gcisUrl(endpointId: string, filter: string, top: number, skip = 0): string {
   const source = PUBLIC_JSON_SOURCES.find((item) => item.sourceId === endpointId);
   if (!source) throw new Error(`UNKNOWN_SOURCE:${endpointId}`);
-  const params = [`$format=json`, `$filter=${encodeURIComponent(filter)}`, `$skip=0`, `$top=${top}`].join("&");
+  const params = [`$format=json`, `$filter=${encodeURIComponent(filter)}`, `$skip=${skip}`, `$top=${top}`].join("&");
   return `${source.url}?${params}`;
 }
 
@@ -75,21 +76,25 @@ async function queryGcisKeyword(
   statusField: string,
   statusCode: string,
   token: string,
+  skip: number,
 ): Promise<unknown> {
   const filter = `${keywordField} like ${token} and ${statusField} eq ${statusCode}`;
-  return fetchJson(gcisUrl(endpointId, filter, GCIS_QUERY_TOP));
+  return fetchJson(gcisUrl(endpointId, filter, GCIS_QUERY_TOP, skip));
 }
 
 async function collectGcisKeywordBatch(
   endpointId: string,
   profile: DevProfile,
   tokens: string[],
+  skip: number,
   statusFilter: { keywordField: string; statusField: string; statusCode: string },
 ): Promise<CollectedBatch> {
   const batches: unknown[] = [];
   for (const slice of chunk(tokens, GCIS_CALL_CONCURRENCY)) {
     const settled = await Promise.allSettled(
-      slice.map((token) => queryGcisKeyword(endpointId, statusFilter.keywordField, statusFilter.statusField, statusFilter.statusCode, token)),
+      slice.map((token) =>
+        queryGcisKeyword(endpointId, statusFilter.keywordField, statusFilter.statusField, statusFilter.statusCode, token, skip),
+      ),
     );
     for (const item of settled) {
       if (item.status === "fulfilled") batches.push(item.value);
@@ -121,18 +126,18 @@ async function enrichBusinessItems(signals: DevSignal[]): Promise<Map<string, st
   return enriched;
 }
 
-export async function collectDiscoverySignals(profile: DevProfile): Promise<AcquisitionCollectResult> {
+export async function collectDiscoverySignals(profile: DevProfile, cursor = 0): Promise<AcquisitionCollectResult> {
   const tokens = searchTokensOf(profile);
   const tasks: Promise<CollectedBatch>[] = [
     collectTwse(profile),
     ...(tokens.length
       ? [
-          collectGcisKeywordBatch(SHARED_SOURCE_IDS.gcisCompany, profile, tokens, {
+          collectGcisKeywordBatch(SHARED_SOURCE_IDS.gcisCompany, profile, tokens, cursor, {
             keywordField: "Company_Name",
             statusField: "Company_Status",
             statusCode: "01",
           }),
-          collectGcisKeywordBatch(SHARED_SOURCE_IDS.gcisBusiness, profile, tokens, {
+          collectGcisKeywordBatch(SHARED_SOURCE_IDS.gcisBusiness, profile, tokens, cursor, {
             keywordField: "Business_Name",
             statusField: "Business_Current_Status",
             statusCode: "1",
@@ -185,6 +190,7 @@ export async function collectDiscoverySignals(profile: DevProfile): Promise<Acqu
   }
   const signals = [...deduped.values()];
 
+  const nextCursor = (cursor + GCIS_QUERY_TOP) % GCIS_CURSOR_WRAP;
   const primaryLabel = okSourceIds.map((sourceId) => sourceNameById(sourceId)).join("、") || "公開來源";
   const items: AcquisitionResultItem[] = itemsFromSignals(signals, primaryLabel);
   return {
@@ -193,5 +199,6 @@ export async function collectDiscoverySignals(profile: DevProfile): Promise<Acqu
     run: completedRun(okSourceIds[0], signals.length),
     signals,
     items,
+    nextCursor,
   };
 }

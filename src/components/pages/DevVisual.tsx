@@ -71,8 +71,12 @@ const JOB_LABEL: Record<DevJobStatus, TranslationKey> = {
   RUNNING: "dev.job-running",
   PAUSED: "dev.job-paused",
   STOPPED: "dev.job-stopped",
+  COMPLETE: "dev.job-complete",
   EXTERNAL_PENDING: "dev.job-pending",
 };
+
+const PAGE_SIZE = 20;
+const CONTINUOUS_PULL_INTERVAL_MS = 15000;
 
 const OPP_LABEL: Record<DevOpportunityState, TranslationKey> = {
   OPEN: "dev.opp-open",
@@ -155,6 +159,8 @@ export function DevVisual() {
   const [contactSource, setContactSource] = useState("人工");
   const [selectedCandidateId, setSelectedCandidateId] = useState("");
   const [audienceQuery, setAudienceQuery] = useState("");
+  const [signalPage, setSignalPage] = useState(0);
+  const [dirPage, setDirPage] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -219,9 +225,29 @@ export function DevVisual() {
   const workbench = useMemo(() => workbenchFromFields(fields), [fields]);
   const actionError = errorKey(workbench.error?.code);
   const jobStatus = workbench.job?.status ?? null;
+  const jobPolling = jobStatus === "RUNNING" || jobStatus === "EXTERNAL_PENDING";
+  useEffect(() => {
+    if (!jobPolling) return;
+    const timer = setInterval(() => {
+      postDevAction(DEFAULT_ACCOUNT, "DEV-01-BTN-REFRESH", "DEV-01-ACT-REFRESH", DEFAULT_SESSION, "CONTINUOUS_PULL")
+        .then(() => setTick((n) => n + 1))
+        .catch(() => {
+          // Fail-closed: the next interval retries the continuous pull.
+        });
+    }, CONTINUOUS_PULL_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [jobPolling]);
   const jobLabel = jobStatus ? tx(JOB_LABEL[jobStatus]) : loading ? dash : tx("dev.job-idle");
   const companies = searchDirectoryProjection(workbench.companies, workbench.query);
   const audiencePreview = searchAudienceProjection(workbench.companies, workbench.audienceQuery);
+  const signalTotal = workbench.signals.length;
+  const signalPages = Math.max(1, Math.ceil(signalTotal / PAGE_SIZE));
+  const safeSignalPage = Math.min(signalPage, signalPages - 1);
+  const signalSlice = workbench.signals.slice(safeSignalPage * PAGE_SIZE, (safeSignalPage + 1) * PAGE_SIZE);
+  const dirTotal = companies.length;
+  const dirPages = Math.max(1, Math.ceil(dirTotal / PAGE_SIZE));
+  const safeDirPage = Math.min(dirPage, dirPages - 1);
+  const dirSlice = companies.slice(safeDirPage * PAGE_SIZE, (safeDirPage + 1) * PAGE_SIZE);
   const selectedCompanyId = selectedCompanyIds[0] ?? companies[0]?.companyId ?? "";
   const selectedCompany = workbench.companies.find((company) => company.companyId === selectedCompanyId) ?? null;
   const selectedHasEmail = selectedCompany ? Boolean(activeEmailContact(selectedCompany)) : false;
@@ -460,28 +486,53 @@ export function DevVisual() {
                   <span>{tx("dev.col-opportunity")}</span>
                   <span>{tx("dev.col-action")}</span>
                 </div>
-                {workbench.signals.length ? (
-                  workbench.signals.map((signal: DevSignal) => (
-                    <div
-                      className={`${styles.trow} ${styles.signalRow} ${selectedSignalId === signal.signalId ? styles.trowSelected : ""}`}
-                      key={signal.signalId}
-                      onClick={() => setSelectedSignalId(signal.signalId)}
-                    >
-                      <span>{signal.companyName}</span>
-                      <span>{[signal.email, signal.phone, signal.address].filter(Boolean).join("、") || dash}</span>
-                      <span>{signal.intent}</span>
-                      <span>{signal.evidence}</span>
-                      <span>{signal.freshness}</span>
-                      <span>{signal.match}</span>
-                      <span>{tx(OPP_LABEL[(Object.prototype.hasOwnProperty.call(OPP_LABEL, signal.opportunity) ? signal.opportunity : "OPEN") as DevOpportunityState])}</span>
-                      <span className={styles.rowAct}>
-                        {selectedSignalId === signal.signalId ? tx("dev.row-selected") : tx(SIGNAL_LABEL[signal.status])}
-                      </span>
-                    </div>
-                  ))
+                {signalTotal ? (
+                  <div className={styles.signalScroll}>
+                    {signalSlice.map((signal: DevSignal) => (
+                      <div
+                        className={`${styles.trow} ${styles.signalRow} ${selectedSignalId === signal.signalId ? styles.trowSelected : ""}`}
+                        key={signal.signalId}
+                        onClick={() => setSelectedSignalId(signal.signalId)}
+                      >
+                        <span>{signal.companyName}</span>
+                        <span>{[signal.email, signal.phone, signal.address].filter(Boolean).join("、") || dash}</span>
+                        <span>{signal.intent}</span>
+                        <span>{signal.evidence}</span>
+                        <span>{signal.freshness}</span>
+                        <span>{signal.match}</span>
+                        <span>{tx(OPP_LABEL[(Object.prototype.hasOwnProperty.call(OPP_LABEL, signal.opportunity) ? signal.opportunity : "OPEN") as DevOpportunityState])}</span>
+                        <span className={styles.rowAct}>
+                          {selectedSignalId === signal.signalId ? tx("dev.row-selected") : tx(SIGNAL_LABEL[signal.status])}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <p className={styles.empty}>{loading ? dash : tx("dev.empty-signals")}</p>
                 )}
+                {signalTotal ? (
+                  <div className={styles.pager}>
+                    <button
+                      type="button"
+                      className={styles.btn}
+                      disabled={safeSignalPage === 0}
+                      onClick={() => setSignalPage(safeSignalPage - 1)}
+                    >
+                      {tx("dev.page-prev")}
+                    </button>
+                    <span className={styles.pagerStatus}>
+                      {tx("dev.page-status", { x: safeSignalPage + 1, y: signalPages })}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.btn}
+                      disabled={safeSignalPage >= signalPages - 1}
+                      onClick={() => setSignalPage(safeSignalPage + 1)}
+                    >
+                      {tx("dev.page-next")}
+                    </button>
+                  </div>
+                ) : null}
               </div>
               <div className={styles.actions}>
                 <button
@@ -564,31 +615,56 @@ export function DevVisual() {
                 <span>{tx("dev.col-suppression")}</span>
                 <span>{tx("dev.col-action")}</span>
               </div>
-              {companies.length ? (
-                companies.map((company: DevCompany) => (
-                  <div
-                    className={`${styles.trow} ${styles.dirRow} ${selectedCompanyIds.includes(company.companyId) ? styles.trowSelected : ""}`}
-                    key={company.companyId}
-                  >
-                    <span className={styles.check}>
-                      <input
-                        type="checkbox"
-                        checked={selectedCompanyIds.includes(company.companyId)}
-                        disabled={disabled}
-                        onChange={() => toggleCompany(company.companyId)}
-                      />
-                      {company.name}／{tx(IDENTITY_LABEL[company.identityKind])}
-                    </span>
-                    <span>{company.contacts.map((item) => item.value).join("、") || dash}</span>
-                    <span>{company.evidence || dash}</span>
-                    <span>{tx(OPP_LABEL[company.opportunity.state])}</span>
-                    <span>{company.suppression || dash}</span>
-                    <span className={styles.rowAct}>{tx("dev.row-open")}</span>
-                  </div>
-                ))
+              {dirTotal ? (
+                <div className={styles.signalScroll}>
+                  {dirSlice.map((company: DevCompany) => (
+                    <div
+                      className={`${styles.trow} ${styles.dirRow} ${selectedCompanyIds.includes(company.companyId) ? styles.trowSelected : ""}`}
+                      key={company.companyId}
+                    >
+                      <span className={styles.check}>
+                        <input
+                          type="checkbox"
+                          checked={selectedCompanyIds.includes(company.companyId)}
+                          disabled={disabled}
+                          onChange={() => toggleCompany(company.companyId)}
+                        />
+                        {company.name}／{tx(IDENTITY_LABEL[company.identityKind])}
+                      </span>
+                      <span>{company.contacts.map((item) => item.value).join("、") || dash}</span>
+                      <span>{company.evidence || dash}</span>
+                      <span>{tx(OPP_LABEL[company.opportunity.state])}</span>
+                      <span>{company.suppression || dash}</span>
+                      <span className={styles.rowAct}>{tx("dev.row-open")}</span>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <p className={styles.empty}>{loading ? dash : tx("dev.empty-companies")}</p>
               )}
+              {dirTotal ? (
+                <div className={styles.pager}>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    disabled={safeDirPage === 0}
+                    onClick={() => setDirPage(safeDirPage - 1)}
+                  >
+                    {tx("dev.page-prev")}
+                  </button>
+                  <span className={styles.pagerStatus}>
+                    {tx("dev.page-status", { x: safeDirPage + 1, y: dirPages })}
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    disabled={safeDirPage >= dirPages - 1}
+                    onClick={() => setDirPage(safeDirPage + 1)}
+                  >
+                    {tx("dev.page-next")}
+                  </button>
+                </div>
+              ) : null}
             </div>
             <p className={styles.note}>{tx("dev.selected-count", { n: selectedCompanyIds.length })}</p>
             {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
