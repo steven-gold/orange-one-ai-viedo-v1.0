@@ -452,6 +452,7 @@ export function DevVisual() {
               <div className={styles.table}>
                 <div className={`${styles.thead} ${styles.signalHead}`}>
                   <span>{tx("dev.col-company")}</span>
+                  <span>{tx("dev.col-contact")}</span>
                   <span>{tx("dev.col-intent")}</span>
                   <span>{tx("dev.col-evidence")}</span>
                   <span>{tx("dev.col-freshness")}</span>
@@ -467,6 +468,7 @@ export function DevVisual() {
                       onClick={() => setSelectedSignalId(signal.signalId)}
                     >
                       <span>{signal.companyName}</span>
+                      <span>{[signal.email, signal.phone, signal.address].filter(Boolean).join("、") || dash}</span>
                       <span>{signal.intent}</span>
                       <span>{signal.evidence}</span>
                       <span>{signal.freshness}</span>
