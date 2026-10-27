@@ -29,7 +29,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(DEV_VISIBLE_CONTROLS.length === 22, "DEV stays at 22 visible controls");
+  assert(DEV_VISIBLE_CONTROLS.length === 24, "DEV stays at 24 visible controls");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-PROFILE-SAVE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "TBL10 profile save stays off the visible denominator");
 }
 
@@ -216,7 +216,11 @@ function store(seed: Record<string, string> = {}): {
   apply("DEV-01-BTN-SIGNAL-IGNORE", "DEV-01-ACT-SIGNAL-IGNORE", JSON.stringify({ signalId: "missing" }));
   assert(parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), []).length === 1, "ignore never creates a company");
 
-  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: companies[0].companyId }));
+  apply(
+    "DEV-01-BTN-CANDIDATE-CREATE",
+    "DEV-01-ACT-CANDIDATE-CREATE",
+    JSON.stringify({ companyId: companies[0].companyId, subject: "合作提案", body: "您好，我們想介紹影像工作臺。" }),
+  );
   assert(parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].contactValue === "ir@example.com", "qualify email is enough to create a candidate");
 }
 
@@ -336,7 +340,11 @@ function store(seed: Record<string, string> = {}): {
   const noSend = apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
   assert(parseJson<{ code: string }>(noSend["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_CAMPAIGN_REQUIRED", "message stage never sends");
 
-  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-M" }));
+  apply(
+    "DEV-01-BTN-CANDIDATE-CREATE",
+    "DEV-01-ACT-CANDIDATE-CREATE",
+    JSON.stringify({ companyId: "CO-M", subject: "合作提案", body: "您好，我們想介紹影像工作臺。" }),
+  );
   const created = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
   assert(created.status === "REVIEW", "candidate starts in review");
   assert(created.contactValue === "demo@example.com", "candidate binds email contact");
@@ -392,7 +400,7 @@ function store(seed: Record<string, string> = {}): {
     version: 1,
   };
   const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company]) });
-  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-D" }));
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-D", subject: "合作提案", body: "您好，我們想介紹影像工作臺。" }));
   const candidateId = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].candidateId;
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId }));
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
@@ -419,7 +427,7 @@ function store(seed: Record<string, string> = {}): {
     version: 1,
   };
   const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company]) });
-  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-DEFAULT" }));
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId: "CO-DEFAULT", subject: "合作提案", body: "您好，我們想介紹影像工作臺。" }));
   const candidateId = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].candidateId;
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId }));
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
@@ -465,7 +473,7 @@ function store(seed: Record<string, string> = {}): {
     "DEV-01-ACT-CONTACT-UPSERT",
     JSON.stringify({ companyId, contactType: "EMAIL", contactValue: "loop@example.com", contactSource: "MANUAL" }),
   );
-  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId }));
+  apply("DEV-01-BTN-CANDIDATE-CREATE", "DEV-01-ACT-CANDIDATE-CREATE", JSON.stringify({ companyId, subject: "合作提案", body: "您好，我們想介紹影像工作臺。" }));
   const loopCandidate = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId: loopCandidate.candidateId }));
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
@@ -520,6 +528,85 @@ function store(seed: Record<string, string> = {}): {
   assert(legacy?.language === "zh-TW", "legacy profile fills language");
   assert(legacy?.priority === "NORMAL", "legacy profile fills priority");
   assert(legacy?.sourceScope === "ALLOWED", "legacy profile fills source scope");
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: false });
+  const company: DevCompany = {
+    companyId: "CO-EDIT",
+    name: "編輯示範公司",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-555",
+    aliases: [],
+    contacts: [{ contactId: "CT-EDIT", type: "EMAIL", value: "edit@example.com", source: "MANUAL", status: "ACTIVE" }],
+    opportunity: { opportunityId: "OPP-EDIT", state: "QUALIFIED" },
+    suppression: "",
+    evidence: "公開招標",
+    mergedFrom: [],
+    version: 1,
+  };
+  const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company]) });
+  apply(
+    "DEV-01-BTN-CANDIDATE-CREATE",
+    "DEV-01-ACT-CANDIDATE-CREATE",
+    JSON.stringify({ companyId: "CO-EDIT", subject: "初稿主旨", body: "初稿內文。" }),
+  );
+  const candidate = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
+  apply(
+    "DEV-01-BTN-CANDIDATE-EDIT",
+    "DEV-01-ACT-CANDIDATE-EDIT",
+    JSON.stringify({ candidateId: candidate.candidateId, subject: "修改後主旨", body: "修改後內文。" }),
+  );
+  const edited = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
+  assert(edited.subject === "修改後主旨", "candidate edit updates the subject");
+  assert(edited.version === 2, "candidate edit bumps the version");
+  apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId: candidate.candidateId }));
+  apply("DEV-01-BTN-SEND-ONE", "DEV-01-ACT-SEND-ONE", JSON.stringify({ candidateId: candidate.candidateId }));
+  const deliveries = parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), []);
+  assert(deliveries.length === 1, "one-to-one send records a delivery");
+  assert(deliveries[0].to === "edit@example.com", "one-to-one send targets the active email");
+  assert(deliveries[0].status === "EXTERNAL_PENDING", "one-to-one send stays fail-closed without delivery owner");
+  const companies = parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), []);
+  assert(companies[0].opportunity.state === "CONTACTED", "one-to-one send advances the opportunity");
+  bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
+  const liveSignal: DevSignal = {
+    signalId: "SIG-AUTO",
+    companyName: "自動登錄企業",
+    intent: "保養品",
+    evidence: "GCIS 公司登記",
+    freshness: "2026-10-27",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-90909090",
+    match: "resolved",
+    opportunity: "OPEN",
+    status: "NEW",
+    version: 1,
+    address: "臺北市中正區重慶南路一段122號",
+  };
+  const { current, apply } = store();
+  apply(
+    "DEV-01-BTN-PROFILE-SAVE",
+    "DEV-01-ACT-PROFILE-SAVE",
+    JSON.stringify({ product: "保養品", industry: "媒體", keywords: "保養品", mode: "SINGLE" }),
+  );
+  apply("DEV-01-BTN-DISCOVERY-START", "DEV-01-ACT-DISCOVERY-START");
+  const patch = applyDiscoveryCollection(current, {
+    ok: true,
+    source: sourceRecordFrom(PUBLIC_JSON_SOURCES[0], "ACTIVE"),
+    run: completedRun(PUBLIC_JSON_SOURCES[0].sourceId, 1),
+    signals: [liveSignal],
+    items: [],
+    nextCursor: 100,
+  });
+  const companies = JSON.parse(patch[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
+  assert(companies.length === 1, "collected signals auto-register into the company database");
+  assert(companies[0].name === "自動登錄企業", "auto-registered company keeps the discovered name");
+  assert(companies[0].contacts.some((item) => item.type === "ADDRESS"), "auto-registered company carries discovered contacts");
+  bindSharedOwnersForTest(null);
 }
 
 console.log("devActionPreview.test.ts PASS");

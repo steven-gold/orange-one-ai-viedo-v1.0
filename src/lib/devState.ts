@@ -147,6 +147,8 @@ export interface DevCandidate {
   contactId: string;
   contactValue: string;
   personalization: string;
+  subject: string;
+  body: string;
   policy: "PASS" | "BLOCKED";
   status: DevCandidateStatus;
   version: number;
@@ -230,6 +232,8 @@ export interface DevActionPayload {
   reason?: string;
   candidateId?: string;
   audienceQuery?: string;
+  subject?: string;
+  body?: string;
 }
 
 export function parseJson<T>(raw: string | null | undefined, fallback: T): T {

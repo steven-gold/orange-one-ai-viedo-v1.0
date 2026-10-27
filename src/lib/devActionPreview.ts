@@ -131,6 +131,10 @@ export function applyDiscoveryCollection(
     return patchFrom(clearError({ ...workbench, job }));
   }
   const signals = mergeDiscoverySignals(workbench.signals, result.signals);
+  let companies = workbench.companies;
+  for (const signal of signals) {
+    companies = upsertCompany(companies, qualifyCompany(signal, companies));
+  }
   const continuous = workbench.job.mode === "CONTINUOUS";
   const job: DevJob = {
     ...workbench.job,
@@ -145,6 +149,7 @@ export function applyDiscoveryCollection(
       ...workbench,
       job,
       signals,
+      companies,
     }),
   );
 }
@@ -209,6 +214,18 @@ function qualifyCompany(signal: DevSignal, existing: DevCompany[]): DevCompany {
 
 function replaceCompany(companies: DevCompany[], next: DevCompany): DevCompany[] {
   return companies.map((company) => (company.companyId === next.companyId ? next : company));
+}
+
+function advanceContacted(companies: DevCompany[], companyIds: string[]): DevCompany[] {
+  const ids = new Set(companyIds);
+  return companies.map((company) => {
+    if (!ids.has(company.companyId) || company.opportunity.state !== "QUALIFIED") return company;
+    return {
+      ...company,
+      opportunity: { ...company.opportunity, state: "CONTACTED" },
+      version: company.version + 1,
+    };
+  });
 }
 
 function upsertCompany(companies: DevCompany[], next: DevCompany): DevCompany[] {
@@ -447,6 +464,9 @@ export function previewDevAction(
     const company = workbench.companies.find((item) => item.companyId === companyId);
     if (!company) return fail(workbench, "DEV_CANDIDATE_COMPANY_REQUIRED");
     if (!companyEligibleForMessage(company)) return fail(workbench, "DEV_CANDIDATE_CONTACT_REQUIRED");
+    const subject = usable(payload.subject);
+    const body = usable(payload.body);
+    if (!subject || !body) return fail(workbench, "DEV_CANDIDATE_CONTENT_REQUIRED");
     const contact = activeEmailContact(company)!;
     const existing = workbench.candidates.find(
       (item) => item.companyId === company.companyId && item.status === "REVIEW",
@@ -460,12 +480,31 @@ export function previewDevAction(
       contactId: contact.contactId,
       contactValue: contact.value,
       personalization: company.name,
+      subject,
+      body,
       policy: "PASS",
       status: "REVIEW",
       version: 1,
       evidence: company.evidence,
     };
     return patchFrom(clearError({ ...workbench, candidates: [...workbench.candidates, next] }));
+  }
+
+  if (actionUid === "DEV-01-ACT-CANDIDATE-EDIT") {
+    const candidateId = usable(payload.candidateId);
+    const candidate = workbench.candidates.find((item) => item.candidateId === candidateId);
+    if (!candidate) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
+    if (candidate.status !== "REVIEW") return fail(workbench, "DEV_CANDIDATE_NOT_REVIEW");
+    const subject = usable(payload.subject) ?? candidate.subject;
+    const body = usable(payload.body) ?? candidate.body;
+    if (!subject || !body) return fail(workbench, "DEV_CANDIDATE_CONTENT_REQUIRED");
+    const next: DevCandidate = { ...candidate, subject, body, version: candidate.version + 1 };
+    return patchFrom(
+      clearError({
+        ...workbench,
+        candidates: workbench.candidates.map((item) => (item.candidateId === next.candidateId ? next : item)),
+      }),
+    );
   }
 
   if (actionUid === "DEV-01-ACT-CANDIDATE-DECIDE") {
@@ -577,7 +616,47 @@ export function previewDevAction(
       version: 1,
     }));
     const next: DevCampaign = { ...campaign, status: "QUEUED", version: campaign.version + 1, updatedAt: nowIso() };
-    return patchFrom(clearError({ ...workbench, campaign: next, deliveries }));
+    return patchFrom(
+      clearError({
+        ...workbench,
+        campaign: next,
+        deliveries,
+        companies: advanceContacted(workbench.companies, campaign.recipients.map((item) => item.companyId)),
+      }),
+    );
+  }
+
+  if (actionUid === "DEV-01-ACT-SEND-ONE") {
+    const candidateId = usable(payload.candidateId);
+    const candidate = workbench.candidates.find((item) => item.candidateId === candidateId);
+    if (!candidate) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
+    if (candidate.status !== "APPROVED") return fail(workbench, "DEV_DISPATCH_NOT_APPROVED");
+    const company = workbench.companies.find((item) => item.companyId === candidate.companyId);
+    if (!company) return fail(workbench, "DEV_CANDIDATE_COMPANY_REQUIRED");
+    if (company.suppression) return fail(workbench, "DEV_CAMPAIGN_SUPPRESSED");
+    const contact = company.contacts.find((item) => item.contactId === candidate.contactId && item.status === "ACTIVE");
+    if (!contact) return fail(workbench, "DEV_CANDIDATE_CONTACT_REQUIRED");
+    const accepted = acceptDeliveryIntent();
+    const delivery: DevDelivery = {
+      deliveryId: newUid("DLV"),
+      campaignId: "",
+      recipientId: candidate.candidateId,
+      companyId: company.companyId,
+      to: contact.value,
+      cc: 0,
+      bcc: 0,
+      status: accepted.status,
+      result: accepted.result,
+      idempotencyKey: `one:${candidate.candidateId}:${candidate.version}`,
+      version: 1,
+    };
+    return patchFrom(
+      clearError({
+        ...workbench,
+        deliveries: [...workbench.deliveries, delivery],
+        companies: advanceContacted(workbench.companies, [company.companyId]),
+      }),
+    );
   }
 
   if (actionUid === "DEV-01-ACT-REFRESH") {

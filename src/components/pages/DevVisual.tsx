@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { DevClientError, fetchDevReadModel, postDevAction, type DevFieldValue } from "@/lib/client";
+import { downloadDevCsv } from "@/lib/devExport";
 import {
   activeEmailContact,
   companyEligibleForMessage,
@@ -161,6 +162,8 @@ export function DevVisual() {
   const [audienceQuery, setAudienceQuery] = useState("");
   const [signalPage, setSignalPage] = useState(0);
   const [dirPage, setDirPage] = useState(0);
+  const [candSubject, setCandSubject] = useState("");
+  const [candBody, setCandBody] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -792,6 +795,36 @@ export function DevVisual() {
               )}
             </div>
             {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
+            <div className={styles.fields}>
+              <label className={styles.field}>
+                <span>{tx("dev.cand-subject")}</span>
+                <input
+                  className={styles.fieldInput}
+                  value={candSubject}
+                  disabled={disabled}
+                  onChange={(event) => setCandSubject(event.target.value)}
+                  placeholder={tx("dev.cand-subject")}
+                />
+              </label>
+              <label className={styles.field}>
+                <span>{tx("dev.cand-body")}</span>
+                <textarea
+                  className={styles.fieldInput}
+                  value={candBody}
+                  disabled={disabled}
+                  rows={6}
+                  onChange={(event) => setCandBody(event.target.value)}
+                  placeholder={tx("dev.cand-body")}
+                />
+              </label>
+            </div>
+            {selectedCandidate ? (
+              <div className={styles.card}>
+                <h3>{tx("dev.cand-view")}</h3>
+                <p className={styles.note}>{selectedCandidate.subject}</p>
+                <p className={styles.note} style={{ whiteSpace: "pre-wrap" }}>{selectedCandidate.body}</p>
+              </div>
+            ) : null}
             </div>
             <div data-component-uid="DEV-01-CMP-MESSAGE-REVIEW" />
           </section>
@@ -993,7 +1026,15 @@ export function DevVisual() {
               disabled={disabled}
             />
             <Btn uid="DEV-01-BTN-MERGE" label={tx("dev.btn-merge")} onAct={(uid) => void act(uid)} disabled={disabled || !workbench.merge} />
-            <Btn uid="DEV-01-BTN-EXPORT" label={tx("dev.btn-export")} onAct={(uid) => void act(uid)} disabled={disabled} />
+            <Btn
+              uid="DEV-01-BTN-EXPORT"
+              label={tx("dev.btn-export")}
+              onAct={(uid) => {
+                void act(uid);
+                downloadDevCsv(searchDirectoryProjection(workbench.companies, workbench.query));
+              }}
+              disabled={disabled}
+            />
           </>
         ) : null}
         {stage === 3 ? (
@@ -1001,9 +1042,27 @@ export function DevVisual() {
             <Btn
               uid="DEV-01-BTN-CANDIDATE-CREATE"
               label={tx("dev.btn-candidate-create")}
-              onAct={() => void act("DEV-01-BTN-CANDIDATE-CREATE", { companyId: selectedCompanyId })}
-              disabled={disabled || !selectedCanMessage}
+              onAct={() =>
+                void act("DEV-01-BTN-CANDIDATE-CREATE", {
+                  companyId: selectedCompanyId,
+                  subject: candSubject,
+                  body: candBody,
+                })
+              }
+              disabled={disabled || !selectedCanMessage || !candSubject || !candBody}
               primary
+            />
+            <Btn
+              uid="DEV-01-BTN-CANDIDATE-EDIT"
+              label={tx("dev.btn-candidate-edit")}
+              onAct={() =>
+                void act("DEV-01-BTN-CANDIDATE-EDIT", {
+                  candidateId: selectedCandidate?.candidateId,
+                  subject: candSubject,
+                  body: candBody,
+                })
+              }
+              disabled={disabled || selectedCandidate?.status !== "REVIEW" || !candSubject || !candBody}
             />
             <Btn
               uid="DEV-01-BTN-CANDIDATE-DECIDE"
@@ -1046,6 +1105,12 @@ export function DevVisual() {
         {stage === 5 ? (
           <>
             <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary={campaign?.status === "APPROVED"} />
+            <Btn
+              uid="DEV-01-BTN-SEND-ONE"
+              label={tx("dev.btn-send-one")}
+              onAct={() => void act("DEV-01-BTN-SEND-ONE", { candidateId: approvedCandidate?.candidateId })}
+              disabled={disabled || !approvedCandidate}
+            />
             <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
             <Btn
               uid="DEV-01-BTN-KILL-SWITCH"
