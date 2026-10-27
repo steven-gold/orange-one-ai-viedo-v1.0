@@ -1,4 +1,4 @@
-import { acceptSocialDiscoveryIntent, acceptSocialPublishIntent } from "./socSharedOwners";
+import { acceptSocialDiscoveryIntent, acceptSocialPublishIntent, probeSocialAdapter } from "./socSharedOwners";
 import {
   SOC_ACCOUNTS_UID,
   SOC_DISCOVERY_UID,
@@ -100,6 +100,10 @@ function replaceAccount(accounts: SocAccount[], next: SocAccount): SocAccount[] 
 
 function replaceTarget(targets: SocTarget[], next: SocTarget): SocTarget[] {
   return targets.map((item) => (item.targetId === next.targetId ? next : item));
+}
+
+function replaceRequest(requests: SocRequest[], next: SocRequest): SocRequest[] {
+  return requests.map((item) => (item.requestId === next.requestId ? next : item));
 }
 
 function maskSecret(value: string): string {
@@ -258,6 +262,46 @@ export function previewSocAction(
     return patchFrom(clearError({ ...workbench, discovery }));
   }
 
+  if (actionUid === "SOC-01-ACT-DISCOVERY-STOP") {
+    const discovery = workbench.discovery;
+    if (!discovery || (discovery.status !== "RUNNING" && discovery.status !== "EXTERNAL_PENDING")) {
+      return fail(workbench, "SOC_DISCOVERY_NOT_ACTIVE");
+    }
+    const next: SocDiscovery = {
+      ...discovery,
+      status: "STOPPED",
+      blocker: usable(payload.reason) || "OPERATOR_STOP",
+      version: discovery.version + 1,
+      updatedAt: nowIso(),
+    };
+    return patchFrom(clearError({ ...workbench, discovery: next }));
+  }
+
+  if (actionUid === "SOC-01-ACT-TARGET-CREATE") {
+    const platformKey = usable(payload.platformKey);
+    const name = usable(payload.name);
+    const targetType = usable(payload.targetType);
+    if (!platformKey || !name || !targetType) return fail(workbench, "SOC_TARGET_CREATE_REQUIRED");
+    const platform = workbench.platforms.find((item) => item.platformKey === platformKey);
+    if (!platform || !platformEnabled(platform)) return fail(workbench, "SOC_PLATFORM_UNAVAILABLE");
+    const duplicate = workbench.targets.find(
+      (item) => item.platformKey === platformKey && item.name === name,
+    );
+    if (duplicate) return fail(workbench, "SOC_TARGET_DUPLICATE");
+    const next: SocTarget = {
+      targetId: newUid("TGT"),
+      platformKey,
+      name,
+      targetType,
+      capability: platform.capability,
+      status: "DISCOVERED",
+      signal: "人工新增",
+      evidence: "操作員登記",
+      version: 1,
+    };
+    return patchFrom(clearError({ ...workbench, targets: [...workbench.targets, next] }));
+  }
+
   if (actionUid === "SOC-01-ACT-SEARCH") {
     if (controlUid === "SOC-01-INP-RECORD-SEARCH") {
       return patchFrom(clearError({ ...workbench, recordQuery: usable(payload.query) }));
@@ -282,9 +326,46 @@ export function previewSocAction(
     const targetId = usable(payload.targetId);
     const target = workbench.targets.find((item) => item.targetId === targetId);
     if (!target) return fail(workbench, "SOC_TARGET_REQUIRED");
-    if (target.status !== "MANUAL_ACTION_REQUIRED") return fail(workbench, "SOC_MANUAL_NOT_PENDING");
-    const next: SocTarget = { ...target, status: "JOINED", version: target.version + 1 };
-    return patchFrom(clearError({ ...workbench, targets: replaceTarget(workbench.targets, next) }));
+    if (target.status === "MANUAL_ACTION_REQUIRED") {
+      const next: SocTarget = { ...target, status: "JOINED", version: target.version + 1 };
+      return patchFrom(clearError({ ...workbench, targets: replaceTarget(workbench.targets, next) }));
+    }
+    if (target.status === "PENDING_EXTERNAL") {
+      const nextTarget: SocTarget = { ...target, status: "POSTED", version: target.version + 1 };
+      const requests = workbench.requests.map((item) =>
+        item.targetId === targetId && item.status === "PENDING_EXTERNAL"
+          ? { ...item, status: "POSTED" as const, external: "POSTED" as const, callback: "OPERATOR_COMPLETED", version: item.version + 1 }
+          : item,
+      );
+      return patchFrom(clearError({ ...workbench, targets: replaceTarget(workbench.targets, nextTarget), requests }));
+    }
+    return fail(workbench, "SOC_MANUAL_NOT_PENDING");
+  }
+
+  if (actionUid === "SOC-01-ACT-RECORD-REPORT") {
+    const requestId = usable(payload.requestId);
+    const request = workbench.requests.find((item) => item.requestId === requestId);
+    if (!request) return fail(workbench, "SOC_REQUEST_REQUIRED");
+    if (request.status !== "PENDING_EXTERNAL") return fail(workbench, "SOC_REQUEST_NOT_PENDING");
+    const metrics = usable(payload.metrics);
+    const interaction = usable(payload.interaction);
+    if (!metrics || !interaction) return fail(workbench, "SOC_REPORT_REQUIRED");
+    const next: SocRequest = {
+      ...request,
+      status: "POSTED",
+      external: "POSTED",
+      metrics,
+      interaction,
+      callback: "OPERATOR_REPORT",
+      incident: "",
+      version: request.version + 1,
+    };
+    const target = workbench.targets.find((item) => item.targetId === request.targetId);
+    const targets =
+      target && target.status === "PENDING_EXTERNAL"
+        ? replaceTarget(workbench.targets, { ...target, status: "POSTED", version: target.version + 1 })
+        : workbench.targets;
+    return patchFrom(clearError({ ...workbench, requests: replaceRequest(workbench.requests, next), targets }));
   }
 
   if (actionUid === "SOC-01-ACT-CONTENT-SAVE") {
@@ -397,7 +478,19 @@ export function previewSocAction(
     );
   }
 
+  if (actionUid === "SOC-01-ACT-TARGET-EXPORT" || actionUid === "SOC-01-ACT-RECORD-EXPORT") {
+    return patchFrom(clearError(workbench));
+  }
+
   if (actionUid === "SOC-01-ACT-REFRESH") {
+    const discovery = workbench.discovery;
+    if (discovery && discovery.status === "EXTERNAL_PENDING") {
+      const probe = probeSocialAdapter();
+      const next: SocDiscovery = probe.available
+        ? { ...discovery, status: "RUNNING", blocker: "", version: discovery.version + 1, updatedAt: nowIso() }
+        : { ...discovery, blocker: probe.reason, updatedAt: nowIso() };
+      return patchFrom(clearError({ ...workbench, discovery: next }));
+    }
     return patchFrom(clearError(workbench));
   }
 

@@ -26,6 +26,7 @@ import {
 } from "@/lib/socState";
 import { displaySocValue } from "./socFormat";
 import { SOC_CONTROL_ACTIONS, SOC_STAGES, SOC_VISIBLE_CONTROLS, type SocStage } from "./socControls";
+import { downloadSocCsv, socRequestsCsv, socTargetsCsv } from "@/lib/socExport";
 import styles from "./SocVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -102,6 +103,7 @@ const CANDIDATE_LABEL: Record<SocCandidateState, TranslationKey> = {
 const REQUEST_LABEL: Record<SocRequestStatus, TranslationKey> = {
   PENDING_EXTERNAL: "soc.request-pending",
   STOPPED: "soc.request-stopped",
+  POSTED: "soc.request-posted",
 };
 
 function errorKey(code: string | null | undefined): TranslationKey | null {
@@ -172,6 +174,10 @@ export function SocVisual() {
   const [dailyLimit, setDailyLimit] = useState("1");
   const [weeklyLimit, setWeeklyLimit] = useState("3");
   const [revealReason, setRevealReason] = useState("");
+  const [targetName, setTargetName] = useState("");
+  const [targetType, setTargetType] = useState("");
+  const [reportMetrics, setReportMetrics] = useState("");
+  const [reportInteraction, setReportInteraction] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -269,11 +275,24 @@ export function SocVisual() {
   const policy = workbench.policy;
   const discovery = workbench.discovery;
   const killOn = Boolean(workbench.kill?.active);
+  const discoveryPending = discovery?.status === "EXTERNAL_PENDING" || discovery?.status === "RUNNING";
+  useEffect(() => {
+    if (!discoveryPending) return;
+    const timer = setInterval(() => {
+      postSocAction(DEFAULT_ACCOUNT, "SOC-01-BTN-REFRESH", "SOC-01-ACT-REFRESH", DEFAULT_SESSION)
+        .then(() => setTick((n) => n + 1))
+        .catch(() => {
+          // Fail-closed: the next interval retries the adapter probe.
+        });
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [discoveryPending]);
   const risky = highRiskActive(workbench);
   const boundAccount = selectedTarget ? boundAccountForPlatform(accounts, selectedTarget.platformKey) : selectedAccount;
   const publishAccount = boundAccount;
   const canJoin = selectedTarget?.status === "DISCOVERED" || selectedTarget?.status === "READY_TO_JOIN";
-  const canManual = selectedTarget?.status === "MANUAL_ACTION_REQUIRED";
+  const canManual =
+    selectedTarget?.status === "MANUAL_ACTION_REQUIRED" || selectedTarget?.status === "PENDING_EXTERNAL";
   const canPublish =
     targetReadyToPost(selectedTarget) &&
     packageApproved(content) &&
@@ -494,6 +513,29 @@ export function SocVisual() {
                   <button type="button" className={styles.btn} disabled={disabled} onClick={() => void act("SOC-01-INP-TARGET-SEARCH", { query })}>
                     {tx("soc.btn-search")}
                   </button>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    data-control-uid="SOC-01-BTN-TARGET-EXPORT"
+                    disabled={disabled}
+                    onClick={() => {
+                      void act("SOC-01-BTN-TARGET-EXPORT");
+                      downloadSocCsv(socTargetsCsv(workbench.targets), "soc-targets.csv");
+                    }}
+                  >
+                    {tx("soc.btn-target-export")}
+                  </button>
+                </div>
+                <p className={styles.note}>{tx("soc.target-create-hint")}</p>
+                <div className={styles.fields}>
+                  <label className={styles.field}>
+                    <span>{tx("soc.field-target-name")}</span>
+                    <input className={styles.fieldInput} value={targetName} disabled={disabled} onChange={(event) => setTargetName(event.target.value)} />
+                  </label>
+                  <label className={styles.field}>
+                    <span>{tx("soc.field-target-kind")}</span>
+                    <input className={styles.fieldInput} value={targetType} disabled={disabled} onChange={(event) => setTargetType(event.target.value)} />
+                  </label>
                 </div>
                 <div className={styles.table}>
                   <div className={`${styles.thead} ${styles.targetHead}`}>
@@ -604,7 +646,13 @@ export function SocVisual() {
               </label>
               <label className={styles.field}>
                 <span>{tx("soc.field-variants")}</span>
-                <input className={styles.fieldInput} value={variant} disabled={disabled} onChange={(event) => setVariant(event.target.value)} />
+                <textarea
+                  className={styles.fieldInput}
+                  rows={4}
+                  value={variant}
+                  disabled={disabled}
+                  onChange={(event) => setVariant(event.target.value)}
+                />
               </label>
               <div className={styles.kv}>
                 <span>{tx("soc.field-policy-check")}</span>
@@ -732,6 +780,29 @@ export function SocVisual() {
                 <button type="button" className={styles.btn} disabled={disabled} onClick={() => void act("SOC-01-INP-RECORD-SEARCH", { query: recordQuery })}>
                   {tx("soc.btn-search")}
                 </button>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  data-control-uid="SOC-01-BTN-RECORD-EXPORT"
+                  disabled={disabled}
+                  onClick={() => {
+                    void act("SOC-01-BTN-RECORD-EXPORT");
+                    downloadSocCsv(socRequestsCsv(workbench.requests), "soc-requests.csv");
+                  }}
+                >
+                  {tx("soc.btn-record-export")}
+                </button>
+              </div>
+              <p className={styles.note}>{tx("soc.record-report-hint")}</p>
+              <div className={styles.fields}>
+                <label className={styles.field}>
+                  <span>{tx("soc.field-metrics")}</span>
+                  <input className={styles.fieldInput} value={reportMetrics} disabled={disabled} onChange={(event) => setReportMetrics(event.target.value)} />
+                </label>
+                <label className={styles.field}>
+                  <span>{tx("soc.field-interaction")}</span>
+                  <input className={styles.fieldInput} value={reportInteraction} disabled={disabled} onChange={(event) => setReportInteraction(event.target.value)} />
+                </label>
               </div>
               <div className={styles.table}>
                 <div className={`${styles.thead} ${styles.recHead}`}>
@@ -824,6 +895,24 @@ export function SocVisual() {
               }
               disabled={disabled || !activePlatformKey || !targetTypes || !categories || !keywords}
               primary
+            />
+            <Btn
+              uid="SOC-01-BTN-DISCOVERY-STOP"
+              label={tx("soc.btn-discovery-stop")}
+              onAct={() => void act("SOC-01-BTN-DISCOVERY-STOP", { reason: "OPERATOR_STOP" })}
+              disabled={disabled || !discoveryPending}
+            />
+            <Btn
+              uid="SOC-01-BTN-TARGET-CREATE"
+              label={tx("soc.btn-target-create")}
+              onAct={() =>
+                void act("SOC-01-BTN-TARGET-CREATE", {
+                  platformKey: activePlatformKey,
+                  name: targetName,
+                  targetType,
+                })
+              }
+              disabled={disabled || !activePlatformKey || !targetName || !targetType}
             />
             <Btn
               uid="SOC-01-BTN-ACCOUNT-BIND"
@@ -929,7 +1018,22 @@ export function SocVisual() {
           </>
         ) : null}
         {stage === 5 ? (
-          <Btn uid="SOC-01-BTN-REFRESH" label={tx("soc.btn-refresh")} onAct={() => void act("SOC-01-BTN-REFRESH")} disabled={disabled} />
+          <>
+            <Btn
+              uid="SOC-01-BTN-RECORD-REPORT"
+              label={tx("soc.btn-record-report")}
+              onAct={() =>
+                void act("SOC-01-BTN-RECORD-REPORT", {
+                  requestId: selectedRequest?.requestId,
+                  metrics: reportMetrics,
+                  interaction: reportInteraction,
+                })
+              }
+              disabled={disabled || !selectedRequest || !reportMetrics || !reportInteraction}
+              primary
+            />
+            <Btn uid="SOC-01-BTN-REFRESH" label={tx("soc.btn-refresh")} onAct={() => void act("SOC-01-BTN-REFRESH")} disabled={disabled} />
+          </>
         ) : null}
       </div>
 

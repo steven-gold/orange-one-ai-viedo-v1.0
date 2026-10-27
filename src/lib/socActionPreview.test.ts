@@ -30,8 +30,13 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(SOC_VISIBLE_CONTROLS.length === 21, "SOC stays at 21 visible controls");
+  assert(SOC_VISIBLE_CONTROLS.length === 26, "SOC stays at 26 visible controls");
   assert(SOC_VISIBLE_CONTROLS.includes("SOC-01-BTN-PUBLISH"), "publish remains a visible control");
+  assert(SOC_VISIBLE_CONTROLS.includes("SOC-01-BTN-TARGET-CREATE"), "manual target create is visible");
+  assert(SOC_VISIBLE_CONTROLS.includes("SOC-01-BTN-DISCOVERY-STOP"), "discovery stop is visible");
+  assert(SOC_VISIBLE_CONTROLS.includes("SOC-01-BTN-RECORD-REPORT"), "record report is visible");
+  assert(SOC_VISIBLE_CONTROLS.includes("SOC-01-BTN-TARGET-EXPORT"), "target export is visible");
+  assert(SOC_VISIBLE_CONTROLS.includes("SOC-01-BTN-RECORD-EXPORT"), "record export is visible");
 }
 
 function store(seed: Record<string, string> = {}): {
@@ -375,6 +380,116 @@ function seedReady(apply: (controlUid: string, actionUid: string, nextValue?: st
   assert(unbound.binding === "UNBOUND", "unbind clears binding");
   assert(unbound.credentialStatus === "NOT_SET", "unbind clears credential status");
   assert(unbound.credentialMasked === "", "unbind drops masked secret");
+}
+
+{
+  bindSocialAdapterForTest(null);
+  const { current, apply } = store();
+  seedReady(apply);
+  const stopIdle = apply("SOC-01-BTN-DISCOVERY-STOP", "SOC-01-ACT-DISCOVERY-STOP", JSON.stringify({ reason: "OPERATOR_STOP" }));
+  assert(parseJson<{ code: string }>(stopIdle[SOC_ERROR_UID], { code: "" }).code === "SOC_DISCOVERY_NOT_ACTIVE", "stop without job is rejected");
+
+  apply(
+    "SOC-01-BTN-TARGET-DISCOVERY",
+    "SOC-01-ACT-TARGET-DISCOVERY",
+    JSON.stringify({ jobName: "媒體社團", platformKey: "linkedin", targetTypes: "GROUP", categories: "媒體", keywords: "影像工作臺", mode: "SINGLE_RUN" }),
+  );
+  apply("SOC-01-BTN-DISCOVERY-STOP", "SOC-01-ACT-DISCOVERY-STOP", JSON.stringify({ reason: "OPERATOR_STOP" }));
+  const stopped = parseJson<SocDiscovery | null>(current(SOC_DISCOVERY_UID), null);
+  assert(stopped?.status === "STOPPED", "operator can stop a pending discovery");
+  assert(stopped?.blocker === "OPERATOR_STOP", "stop reason is recorded honestly");
+}
+
+{
+  bindSocialAdapterForTest(null);
+  const { current, apply } = store();
+  seedReady(apply);
+  const missing = apply("SOC-01-BTN-TARGET-CREATE", "SOC-01-ACT-TARGET-CREATE", JSON.stringify({ platformKey: "linkedin" }));
+  assert(parseJson<{ code: string }>(missing[SOC_ERROR_UID], { code: "" }).code === "SOC_TARGET_CREATE_REQUIRED", "manual target needs name and type");
+
+  apply("SOC-01-BTN-TARGET-CREATE", "SOC-01-ACT-TARGET-CREATE", JSON.stringify({ platformKey: "linkedin", name: "攝影後製社", targetType: "GROUP" }));
+  const targets = parseJson<SocTarget[]>(current(SOC_TARGETS_UID), []);
+  assert(targets[0]?.status === "DISCOVERED", "manual target enters as discovered");
+  assert(targets[0]?.signal === "人工新增", "manual target records its signal honestly");
+  assert(targets[0]?.targetId.startsWith("TGT-"), "manual target gets an id");
+
+  const duplicate = apply("SOC-01-BTN-TARGET-CREATE", "SOC-01-ACT-TARGET-CREATE", JSON.stringify({ platformKey: "linkedin", name: "攝影後製社", targetType: "GROUP" }));
+  assert(parseJson<{ code: string }>(duplicate[SOC_ERROR_UID], { code: "" }).code === "SOC_TARGET_DUPLICATE", "duplicate manual target is blocked");
+}
+
+{
+  bindSocialAdapterForTest(null);
+  const target: SocTarget = {
+    targetId: "TGT-REPORT",
+    platformKey: "linkedin",
+    name: "媒體社團",
+    targetType: "GROUP",
+    capability: "GOVERNED",
+    status: "JOINED",
+    signal: "公開社團",
+    evidence: "目錄投影",
+    version: 1,
+  };
+  const { current, apply } = store({ [SOC_TARGETS_UID]: JSON.stringify([target]) });
+  seedReady(apply);
+  apply("SOC-01-BTN-CONTENT-SAVE", "SOC-01-ACT-CONTENT-SAVE", JSON.stringify({ releaseSource: "REL-RPT", platformKey: "linkedin", variant: "原生貼文" }));
+  const pkg = parseJson<SocPackage | null>(current(SOC_PACKAGE_UID), null);
+  apply("SOC-01-BTN-CANDIDATE-DECIDE", "SOC-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ packageId: pkg?.packageId, decision: "APPROVE" }));
+  apply("SOC-01-BTN-POLICY-CONFIG", "SOC-01-ACT-POLICY-CONFIG", JSON.stringify({ targetId: "TGT-REPORT", minIntervalHours: 24, dailyLimit: 1, weeklyLimit: 3 }));
+  apply("SOC-01-BTN-PUBLISH", "SOC-01-ACT-PUBLISH-REQUEST", JSON.stringify({ targetId: "TGT-REPORT" }));
+  const requestId = parseJson<SocRequest[]>(current(SOC_REQUESTS_UID), [])[0].requestId;
+
+  const noFields = apply("SOC-01-BTN-RECORD-REPORT", "SOC-01-ACT-RECORD-REPORT", JSON.stringify({ requestId }));
+  assert(parseJson<{ code: string }>(noFields[SOC_ERROR_UID], { code: "" }).code === "SOC_REPORT_REQUIRED", "report requires metrics and interaction");
+
+  apply("SOC-01-BTN-RECORD-REPORT", "SOC-01-ACT-RECORD-REPORT", JSON.stringify({ requestId, metrics: "48 views", interaction: "3 comments" }));
+  const reported = parseJson<SocRequest[]>(current(SOC_REQUESTS_UID), [])[0];
+  assert(reported?.status === "POSTED", "operator report marks the request POSTED");
+  assert(reported?.external === "POSTED", "reported request records external POSTED");
+  assert(reported?.callback === "OPERATOR_REPORT", "operator report is recorded as the callback");
+  assert(reported?.metrics === "48 views" && reported?.interaction === "3 comments", "report persists exact metrics and interaction");
+  assert(parseJson<SocTarget[]>(current(SOC_TARGETS_UID), [])[0].status === "POSTED", "target moves to POSTED with the request");
+}
+
+{
+  bindSocialAdapterForTest(null);
+  const target: SocTarget = {
+    targetId: "TGT-MANUAL",
+    platformKey: "linkedin",
+    name: "媒體社團",
+    targetType: "GROUP",
+    capability: "GOVERNED",
+    status: "PENDING_EXTERNAL",
+    signal: "公開社團",
+    evidence: "目錄投影",
+    version: 1,
+  };
+  const request: SocRequest = {
+    requestId: "REQ-MANUAL",
+    targetId: "TGT-MANUAL",
+    accountId: "ACC-1",
+    packageId: "PKG-1",
+    packageVersion: 1,
+    packageHash: "pkg-test",
+    status: "PENDING_EXTERNAL",
+    external: "PENDING_EXTERNAL",
+    callback: "SHARED_ADAPTER_UNAVAILABLE",
+    version: 1,
+    metrics: "",
+    interaction: "",
+    incident: "",
+    idempotencyKey: "idem-manual-1",
+    createdAt: "2026-10-27T00:00:00.000Z",
+  };
+  const { current, apply } = store({
+    [SOC_TARGETS_UID]: JSON.stringify([target]),
+    [SOC_REQUESTS_UID]: JSON.stringify([request]),
+  });
+  seedReady(apply);
+  apply("SOC-01-BTN-MANUAL-COMPLETE", "SOC-01-ACT-MANUAL-COMPLETE", JSON.stringify({ targetId: "TGT-MANUAL" }));
+  assert(parseJson<SocTarget[]>(current(SOC_TARGETS_UID), [])[0].status === "POSTED", "manual completion from pending external posts the target");
+  const req = parseJson<SocRequest[]>(current(SOC_REQUESTS_UID), [])[0];
+  assert(req?.status === "POSTED" && req?.callback === "OPERATOR_COMPLETED", "manual completion marks the request POSTED with operator callback");
 }
 
 console.log("socActionPreview.test.ts PASS");

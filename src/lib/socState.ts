@@ -44,7 +44,7 @@ export type SocTargetStatus =
   | "UNAVAILABLE";
 export type SocCandidateState = "DRAFT" | "REVIEW" | "APPROVED" | "REJECTED" | "RETURN";
 export type SocPolicyCheck = "PASS" | "BLOCKED" | "";
-export type SocRequestStatus = "PENDING_EXTERNAL" | "STOPPED";
+export type SocRequestStatus = "PENDING_EXTERNAL" | "STOPPED" | "POSTED";
 export type SocCandidateDecision = "APPROVE" | "REJECT" | "RETURN";
 
 export interface SocPlatform {
@@ -197,6 +197,11 @@ export interface SocActionPayload {
   notes?: string;
   channelAccountId?: string;
   contentPackageId?: string;
+  name?: string;
+  targetType?: string;
+  requestId?: string;
+  metrics?: string;
+  interaction?: string;
 }
 
 export function parseJson<T>(raw: string | null | undefined, fallback: T): T {
