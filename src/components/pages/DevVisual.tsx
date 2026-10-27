@@ -542,14 +542,6 @@ export function DevVisual() {
                   type="button"
                   className={styles.btn}
                   disabled={disabled || !selectedSignalId}
-                  onClick={() => void act("DEV-01-BTN-SIGNAL-QUALIFY", { signalId: selectedSignalId })}
-                >
-                  {tx("dev.btn-qualify")}
-                </button>
-                <button
-                  type="button"
-                  className={styles.btn}
-                  disabled={disabled || !selectedSignalId}
                   onClick={() => void act("DEV-01-BTN-SIGNAL-IGNORE", { signalId: selectedSignalId })}
                 >
                   {tx("dev.btn-ignore")}
@@ -674,6 +666,7 @@ export function DevVisual() {
             {workbench.exported ? <p className={styles.note}>{tx("dev.export-done", { n: workbench.exported.companyCount })}</p> : null}
             </div>
             <div data-component-uid="DEV-01-CMP-MERGE">
+            <p className={styles.note}>{tx("dev.merge-hint")}</p>
             {workbench.merge ? <p className={styles.note}>{tx("dev.merge-ready")}</p> : null}
             </div>
             <div className={styles.fields}>
