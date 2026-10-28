@@ -399,6 +399,7 @@ async function postProvider(
     messages,
     temperature,
     stream,
+    maxTokens: 8192,
     httpMethod: config.httpMethod,
   });
   if (!request) throw new AiProviderError("AI_PROVIDER_UNREACHABLE", `${config.provider} adapter is unsupported`);

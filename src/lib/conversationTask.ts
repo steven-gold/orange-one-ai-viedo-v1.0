@@ -299,7 +299,7 @@ export function formatContractForPrompt(contract: ConversationTaskContract): str
     contract.format ? `格式：${contract.format}` : "",
     contract.constraints.length ? `限制：${contract.constraints.join("；")}` : "",
     contract.forbidden.length ? `禁止：${contract.forbidden.join("；")}` : "",
-    contract.nextBatch ? `本批次只產出：${contract.nextBatch}` : "",
+    contract.nextBatch ? `本批次只產出：${contract.nextBatch}。必須逐集完整涵蓋本批次全部範圍，每一集都要有章節名稱與內容，缺集視為未完成。` : "",
     contract.pendingItems.length ? `尚未完成：${contract.pendingItems.join("；")}` : "",
     contract.resumeCursor ? `從上次結尾續寫，禁止重複。` : "",
     "未完成範圍必須標示。禁止宣稱全部完成。",
@@ -466,15 +466,18 @@ export function batchLooksDelivered(text: string, contract: ConversationTaskCont
   const match = /第\s*(\d+)\s*[–-]\s*(\d+)\s*(集|章|篇|回)/u.exec(contract.nextBatch);
   if (!match) return Boolean(clean(text));
   const start = Number.parseInt(match[1], 10);
+  const end = Number.parseInt(match[2], 10);
   const unit = match[3];
   const units = unit === "集" ? ["集", "章"] : [unit];
+  const total = Math.max(1, end - start + 1);
+  const window = Math.min(total, 50);
   let hits = 0;
   for (const label of units) {
-    for (let index = start; index < start + 3; index += 1) {
+    for (let index = start; index < start + window; index += 1) {
       if (new RegExp(`第\\s*${index}\\s*${label}(?![–\\d])`, "u").test(text)) hits += 1;
     }
   }
-  return hits >= 2;
+  return hits >= Math.ceil(window * 0.8);
 }
 
 export function detectGenerationLoop(text: string): GenerationMonitor {
@@ -814,7 +817,7 @@ export function temperatureFor(kind: ConversationTaskKind, fallback = 0.2): numb
 
 export function continuationUserMessage(contract: ConversationTaskContract): string {
   const range = contract.nextBatch ? `本批次範圍：${contract.nextBatch}。` : "從上次結尾繼續。";
-  return `從上次結尾繼續寫，不要重複已寫內容。${range}未完成不得宣稱全部完成。`;
+  return `從上次結尾繼續寫，不要重複已寫內容。${range}請逐集補齊本批次尚未產出的集數，未完成不得宣稱全部完成。`;
 }
 
 export function loopRepairUserMessage(): string {
