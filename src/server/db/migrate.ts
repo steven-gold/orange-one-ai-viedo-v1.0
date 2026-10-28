@@ -405,6 +405,7 @@ const MIGRATION_FILES = [
   "028_conversation_file.sql",
   "029_seed_aiapi_route_policy.sql",
   "030_reset_dev_drafts.sql",
+  "031_reset_conversation_legacy.sql",
 ];
 
 const RESET_CORE_DRAFTS = [
@@ -438,6 +439,13 @@ const RESET_DEV_DRAFTS = [
   "UPDATE ghsn_dev_field_projection SET value_text = NULL",
 ];
 
+const RESET_CONVERSATION_LEGACY = [
+  `UPDATE ghsn_core_field_projection SET value_text = NULL WHERE control_uid IN (
+    'CORE-01-FLD-MESSAGE','CORE-01-FLD-ASSISTANT-SUMMARY','CORE-01-BTN-NEW-THREAD','CORE-01-LST-THREADS',
+    'CORE-01-FLD-RUNTIME-STAGE','CORE-01-FLD-HUMAN-DECISION','CORE-01-FLD-STRUCTURED-DECISION'
+  )`,
+];
+
 const SEED_AIAPI_ROUTE_POLICY = [
   `INSERT INTO ghsn_aiapi_field_projection (control_uid, value_text)
    VALUES ('AIAPI-01-FLD-PF-RIGHTS', 'APPROVED')
@@ -462,6 +470,7 @@ const RESET_MIGRATIONS: Record<string, string[]> = {
   "027_reset_aiapi_registry.sql": RESET_AIAPI_REGISTRY,
   "029_seed_aiapi_route_policy.sql": SEED_AIAPI_ROUTE_POLICY,
   "030_reset_dev_drafts.sql": RESET_DEV_DRAFTS,
+  "031_reset_conversation_legacy.sql": RESET_CONVERSATION_LEGACY,
 };
 
 async function runBootstrap(): Promise<MigrationResult> {
