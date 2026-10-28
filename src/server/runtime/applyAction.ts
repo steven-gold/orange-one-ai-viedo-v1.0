@@ -614,7 +614,7 @@ export async function applyWorkbenchAction(
         );
         const afterNote = (uid: string) => notebookPatch[uid] ?? patchedCurrent(uid);
         const taskPatch = nextContract
-          ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(afterNote(notebookUid)), nextContract))
+          ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
           : {};
         for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
         return;
@@ -659,7 +659,7 @@ export async function applyWorkbenchAction(
       );
       const afterNote = (uid: string) => notebookPatch[uid] ?? patchedCurrent(uid);
       const taskPatch = nextContract
-        ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(afterNote(notebookUid)), nextContract))
+        ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
         : {};
       for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
     }

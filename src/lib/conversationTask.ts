@@ -287,7 +287,7 @@ export function latestOpenTask(
     const row = scoped[index];
     if (row.status === "OPEN" || row.status === "PARTIAL" || row.status === "STOPPED" || row.status === "FAILED") return row;
   }
-  return scoped[scoped.length - 1] ?? null;
+  return null;
 }
 
 export function formatContractForPrompt(contract: ConversationTaskContract): string {
