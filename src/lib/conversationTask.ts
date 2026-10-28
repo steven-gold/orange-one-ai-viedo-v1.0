@@ -125,7 +125,7 @@ export function classifyTaskKind(text: string): ConversationTaskKind {
   return "question";
 }
 
-function parseQuantity(text: string): { count: number; unit: string } | undefined {
+export function parseQuantity(text: string): { count: number; unit: string } | undefined {
   const episode = EPISODE_RE.exec(text);
   if (episode) {
     const count = Number.parseInt(episode[1], 10);
@@ -825,7 +825,7 @@ export function collectEpisodeLabels(text: string, unit: string): number[] {
   return labels;
 }
 
-function advanceFrontierContract(
+export function advanceFrontierContract(
   contract: ConversationTaskContract,
   output: string,
 ): ConversationTaskContract {

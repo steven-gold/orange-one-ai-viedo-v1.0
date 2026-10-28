@@ -42,12 +42,16 @@ import {
 } from "../db/conversationFileStore";
 import {
   annotateUnverifiedClaims,
+  advanceFrontierContract,
   buildTaskContract,
+  collectEpisodeLabels,
   detectUnusableOutput,
   diagnoseGenerationFailure,
   formatDeliveryFooter,
+  isContinueRequest,
   latestOpenTask,
   parseNotebookTasks,
+  parseQuantity,
   shouldAttachFooter,
   unverifiedExecutionClaims,
   updateContractAfterGeneration,
@@ -212,6 +216,29 @@ function resolveTaskContract(
   return prompt ? buildTaskContract(prompt, prior, thread) : prior;
 }
 
+function rebuildTaskContractFromThread(
+  prompt: string,
+  messages: Array<{ role?: string; text?: unknown }>,
+  thread: string,
+): ConversationTaskContract | null {
+  if (!prompt || !isContinueRequest(prompt)) return null;
+  const demand = [...messages]
+    .reverse()
+    .find((row) => row.role === "user" && parseQuantity(String(row.text ?? "")));
+  if (!demand) return null;
+  const base = buildTaskContract(String(demand.text ?? ""), null, thread);
+  if (!base.quantity?.count) return null;
+  const labels = new Set<number>();
+  for (const row of messages) {
+    if (row.role !== "assistant") continue;
+    for (const value of collectEpisodeLabels(String(row.text ?? ""), "[集章]")) {
+      if (value <= base.quantity.count) labels.add(value);
+    }
+  }
+  if (!labels.size) return null;
+  return advanceFrontierContract({ ...base, deliveredLabels: [...labels] }, "");
+}
+
 function applyGeneratedContract(
   contract: ConversationTaskContract | null,
   generated: { text: string; truncated?: boolean; loop?: boolean } | null,
@@ -342,7 +369,13 @@ async function fillConversationReply(
   if (!thread) return;
   const history = conversationGenerationHistory(conversationMessagesForThread(current(bindings.messageUid), thread), prompt);
   const context = formatConversationContext(bindings, current);
-  const contract = resolveTaskContract(prompt, current(bindings.notebookUid), thread);
+  const contract =
+    resolveTaskContract(prompt, current(bindings.notebookUid), thread) ??
+    rebuildTaskContractFromThread(
+      prompt,
+      conversationMessagesForThread(current(bindings.messageUid), thread),
+      thread,
+    );
   if (contract) stream?.status(contract.status);
   let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
   let failed = false;
@@ -512,7 +545,9 @@ export async function applyWorkbenchAction(
       const history = generationHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), prompt);
       const context = formatCoreChatContext(current);
       const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
-      const contract = resolveTaskContract(prompt, current(notebookUid), thread);
+      const contract =
+        resolveTaskContract(prompt, current(notebookUid), thread) ??
+        rebuildTaskContractFromThread(prompt, messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), thread);
       if (contract) stream?.status(contract.status);
       if (isMultiAiMode(current)) {
         const aliases = targetedParticipantAliases(tokens, current);
