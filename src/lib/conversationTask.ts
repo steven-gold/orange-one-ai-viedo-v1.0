@@ -304,7 +304,7 @@ export function formatContractForPrompt(contract: ConversationTaskContract): str
     contract.nextBatch ? `本批次「只」產出：${contract.nextBatch}。禁止輸出本批次範圍以外的任何集數，包括重寫、改寫或補寫先前集數；本批次內每一集都必須以「第N${contract.quantity?.unit ?? ""}」標題逐集完整呈現，缺集視為未完成。` : "",
     contract.deliveredLabels?.length ? `系統已追蹤已產出集數（以系統追蹤為準，即使對話歷史看似不一致也禁止重寫）：第${Math.min(...contract.deliveredLabels)}–${Math.max(...contract.deliveredLabels)}集。` : "",
     contract.quantity && contract.quantity.count >= 3
-      ? `輸出格式硬性要求：每一${contract.quantity.unit}都必須以「第N${contract.quantity.unit}」標題開頭（例如：第3${contract.quantity.unit}），標題下才寫章節名稱與內容；禁止用散文、表格或摘要取代逐${contract.quantity.unit}標題結構。`
+      ? `輸出格式硬性要求：每一${contract.quantity.unit}都必須以「第N${contract.quantity.unit}」標題開頭（例如：第3${contract.quantity.unit}），標題下才寫章節名稱與內容；標題保持純文字，禁止用粗體符號（**）或表格、散文、摘要取代逐${contract.quantity.unit}標題結構。`
       : "",
     contract.pendingItems.length ? `尚未完成：${contract.pendingItems.join("；")}` : "",
     contract.resumeCursor ? `從上次結尾續寫，禁止重複。` : "",
@@ -818,7 +818,7 @@ function batchUnitPattern(unit: string): string {
 
 export function collectEpisodeLabels(text: string, unit: string): number[] {
   const labels: number[] = [];
-  for (const match of text.matchAll(new RegExp(`^\\s*(?:#{1,4}\\s*)?第\\s*(\\d+)\\s*${unit}`, "gmu"))) {
+  for (const match of text.matchAll(new RegExp(`^\\s*(?:#{1,4}\\s*)?[*_\`]{0,3}\\s*第\\s*(\\d+)\\s*${unit}[*_\`]{0,3}`, "gmu"))) {
     const value = Number.parseInt(match[1], 10);
     if (Number.isFinite(value) && value > 0) labels.push(value);
   }
