@@ -210,10 +210,13 @@ function promptFromValue(raw?: string): string {
 function resolveTaskContract(
   prompt: string,
   notebookRaw: string | null,
+  messages: Array<{ role?: string; text?: unknown }>,
   thread: string,
 ): ConversationTaskContract | null {
   const prior = latestOpenTask(parseNotebookTasks(notebookRaw), thread);
-  return prompt ? buildTaskContract(prompt, prior, thread) : prior;
+  const contract = prompt ? buildTaskContract(prompt, prior, thread) : prior;
+  if (contract?.quantity?.count) return contract;
+  return rebuildTaskContractFromThread(prompt, messages, thread) ?? contract;
 }
 
 function rebuildTaskContractFromThread(
@@ -369,13 +372,12 @@ async function fillConversationReply(
   if (!thread) return;
   const history = conversationGenerationHistory(conversationMessagesForThread(current(bindings.messageUid), thread), prompt);
   const context = formatConversationContext(bindings, current);
-  const contract =
-    resolveTaskContract(prompt, current(bindings.notebookUid), thread) ??
-    rebuildTaskContractFromThread(
-      prompt,
-      conversationMessagesForThread(current(bindings.messageUid), thread),
-      thread,
-    );
+  const contract = resolveTaskContract(
+    prompt,
+    current(bindings.notebookUid),
+    conversationMessagesForThread(current(bindings.messageUid), thread),
+    thread,
+  );
   if (contract) stream?.status(contract.status);
   let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
   let failed = false;
@@ -545,9 +547,12 @@ export async function applyWorkbenchAction(
       const history = generationHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), prompt);
       const context = formatCoreChatContext(current);
       const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
-      const contract =
-        resolveTaskContract(prompt, current(notebookUid), thread) ??
-        rebuildTaskContractFromThread(prompt, messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), thread);
+      const contract = resolveTaskContract(
+        prompt,
+        current(notebookUid),
+        messagesForThread(current("CORE-01-FLD-MESSAGE"), thread),
+        thread,
+      );
       if (contract) stream?.status(contract.status);
       if (isMultiAiMode(current)) {
         const aliases = targetedParticipantAliases(tokens, current);

@@ -818,7 +818,7 @@ function batchUnitPattern(unit: string): string {
 
 export function collectEpisodeLabels(text: string, unit: string): number[] {
   const labels: number[] = [];
-  for (const match of text.matchAll(new RegExp(`第\\s*(\\d+)\\s*${unit}`, "gu"))) {
+  for (const match of text.matchAll(new RegExp(`^\\s*(?:#{1,4}\\s*)?第\\s*(\\d+)\\s*${unit}`, "gmu"))) {
     const value = Number.parseInt(match[1], 10);
     if (Number.isFinite(value) && value > 0) labels.push(value);
   }
