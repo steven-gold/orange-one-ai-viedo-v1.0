@@ -815,7 +815,10 @@ export function AiapiVisual() {
           ? displayAiapiStatus(selected.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN", tx, loading)
           : dash;
       case "AIAPI-01-PRO-DESC-LAST-TEST":
-        return selected.lastTest ? displayAiapiStatus(selected.lastTest, tx, loading) : dash;
+        if (!selected.lastTest) return dash;
+        return selected.lastTestDetail
+          ? `${displayAiapiStatus(selected.lastTest, tx, loading)} · ${displayAiapiValue(selected.lastTestDetail, loading)}`
+          : displayAiapiStatus(selected.lastTest, tx, loading);
       case "AIAPI-01-FLD-OV-PROVIDER":
         return profileValue(selected.providerName || selected.providerId);
       case "AIAPI-01-FLD-OV-CAPABILITY":

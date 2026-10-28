@@ -28,6 +28,7 @@ function profile(partial: Partial<AiapiProfile> & Pick<AiapiProfile, "profileId"
     credentialSet: true,
     lastTest: "",
     lastTestAt: "",
+    lastTestDetail: "",
     seq: 1,
     ...partial,
   };

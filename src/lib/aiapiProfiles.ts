@@ -59,6 +59,7 @@ export interface AiapiProfile {
   credentialSet: boolean;
   lastTest: string;
   lastTestAt: string;
+  lastTestDetail: string;
   seq: number;
 }
 
@@ -133,6 +134,7 @@ const TEXT_FIELDS = [
   "maxContext",
   "lastTest",
   "lastTestAt",
+  "lastTestDetail",
 ] as const satisfies readonly (keyof AiapiProfile)[];
 
 export type FieldReader = (uid: string) => string | null;
@@ -209,6 +211,7 @@ function normalize(value: unknown): AiapiProfile | null {
     credentialSet: value.credentialSet === true,
     lastTest: readText(value, "lastTest"),
     lastTestAt: readText(value, "lastTestAt"),
+    lastTestDetail: readText(value, "lastTestDetail"),
     seq: num(value.seq),
   };
 }
@@ -297,6 +300,7 @@ export function synthesizeLegacyProfile(read: FieldReader): AiapiProfile | null 
     credentialSet: clean(read("AIAPI-01-FLD-OPS-CREDENTIAL")) === "SET",
     lastTest: clean(read("AIAPI-01-PRO-DESC-LAST-TEST")),
     lastTestAt: "",
+    lastTestDetail: "",
     seq: 1,
   };
 }

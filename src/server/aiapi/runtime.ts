@@ -42,6 +42,7 @@ export interface AiapiOutcome {
   ok: boolean;
   code?: string;
   imported?: number;
+  detail?: string;
 }
 
 const FIELD_TABLE = "ghsn_aiapi_field_projection";
@@ -168,10 +169,24 @@ async function callProvider(profile: AiapiProfile, credential: string, instructi
   const timer = setTimeout(() => controller.abort(), timeoutOf(profile));
   try {
     const response = await fetch(call.url, { ...call.init, signal: controller.signal, cache: "no-store" });
-    if (!response.ok) return { ok: false, code: "AIAPI_PROVIDER_HTTP_ERROR" };
+    if (!response.ok) {
+      const body = (await response.text().catch(() => "")).replace(/\s+/g, " ").trim().slice(0, 160);
+      return {
+        ok: false,
+        code: "AIAPI_PROVIDER_HTTP_ERROR",
+        detail: `HTTP ${response.status}${body ? ` · ${body}` : ""}`,
+      };
+    }
     const payload = (await response.json().catch(() => null)) as unknown;
     const text = call.read(payload) || readByPath(payload, profile.responseTextPath);
-    if (!text) return { ok: false, code: "AIAPI_PROVIDER_EMPTY_RESPONSE" };
+    if (!text) {
+      const body = JSON.stringify(payload ?? {}).slice(0, 160);
+      return {
+        ok: false,
+        code: "AIAPI_PROVIDER_EMPTY_RESPONSE",
+        detail: `HTTP ${response.status} · no text at ${profile.responseTextPath}${body && body !== "{}" ? ` · ${body}` : ""}`,
+      };
+    }
     return { ok: true, evidence: text.slice(0, 120) };
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") return { ok: false, code: "AIAPI_PROVIDER_TIMEOUT" };
@@ -281,6 +296,7 @@ export async function runCreateProviderProfile(raw?: string): Promise<AiapiOutco
       credentialSet: Boolean(secret),
       lastTest: "",
       lastTestAt: "",
+      lastTestDetail: "",
       seq: nextSeq(profiles),
     };
     const invalid = validateCandidate(candidate);
@@ -437,6 +453,7 @@ async function importModules(
       credentialSet: true,
       lastTest: "",
       lastTestAt: "",
+      lastTestDetail: "",
       seq,
     };
     const fingerprint = profileFingerprint(candidate);
@@ -798,6 +815,7 @@ export async function runConnectionTest(profileIdRaw: string | undefined): Promi
     ...target,
     lastTest: result.ok ? "PASS" : "FAIL",
     lastTestAt: nowIso(),
+    lastTestDetail: result.ok ? (result.evidence ?? "").slice(0, 200) : (result.detail ?? result.code ?? "").slice(0, 200),
   };
   await persistProfile(profiles, updated);
   return result.ok ? { ok: true } : { ok: false, code: result.code };

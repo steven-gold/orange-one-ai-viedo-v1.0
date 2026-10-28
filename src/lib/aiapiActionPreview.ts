@@ -118,14 +118,16 @@ export function mirrorProfile(profile: AiapiProfile): Record<string, string> {
     "AIAPI-01-PRO-DESC-LIMITS": join([profile.timeoutSeconds, profile.maxContext]),
     "AIAPI-01-PRO-DESC-ENDPOINT": join([profile.baseUrl, profile.endpointPath, profile.httpMethod]),
     "AIAPI-01-PRO-DESC-AUTH": profile.credentialSet ? "SET" : "NOT_SET",
-    "AIAPI-01-PRO-DESC-LAST-TEST": profile.lastTest,
+    "AIAPI-01-PRO-DESC-LAST-TEST": profile.lastTestDetail
+      ? join([profile.lastTest, profile.lastTestDetail])
+      : profile.lastTest,
     "AIAPI-01-PRO-DESC-HEALTH": profile.lastTest === "PASS" ? "HEALTHY" : "UNKNOWN",
   };
 }
 
 type ProfileText = Omit<
   AiapiProfile,
-  "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "seq"
+  "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "lastTestDetail" | "seq"
 >;
 
 function textFrom(payload: AiapiPayload, base: AiapiProfile | null): ProfileText {
@@ -161,7 +163,7 @@ function isHttpUrl(value: string): boolean {
 
 export type AiapiValidationResult = { ok: true } | { ok: false; code: string };
 
-function validateFields(profile: Omit<AiapiProfile, "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "seq">): AiapiValidationResult {
+function validateFields(profile: Omit<AiapiProfile, "profileId" | "version" | "enabled" | "credentialSet" | "lastTest" | "lastTestAt" | "lastTestDetail" | "seq">): AiapiValidationResult {
   if (!profile.providerId) return { ok: false, code: "AIAPI_PROFILE_PROVIDER_REQUIRED" };
   if (!profile.modelId) return { ok: false, code: "AIAPI_PROFILE_MODEL_REQUIRED" };
   if (!isAiapiCapability(profile.capabilityType) && !isCapabilityToken(profile.capabilityType)) {
