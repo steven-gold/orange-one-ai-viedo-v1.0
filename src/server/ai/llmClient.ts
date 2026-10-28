@@ -9,6 +9,7 @@ import {
 } from "@/lib/aiapiAdapter";
 import { AIAPI_PROMPT_TEMPLATE_TOKEN, eligibleProfiles, readProfiles, type AiapiProfile } from "@/lib/aiapiProfiles";
 import {
+  MAX_BATCH_CONTINUATIONS,
   MAX_GENERATION_CONTINUATIONS,
   MAX_LOOP_REPAIRS,
   batchRangeNeedsMore,
@@ -487,7 +488,8 @@ async function completeTurn(
     return { text, truncated, loop: true, finishReason };
   }
   let continuations = 0;
-  while ((truncated || (contract?.batched ? batchRangeNeedsMore(contract, text) : false)) && continuations < MAX_GENERATION_CONTINUATIONS) {
+  const maxContinuations = contract?.batched ? MAX_BATCH_CONTINUATIONS : MAX_GENERATION_CONTINUATIONS;
+  while ((truncated || (contract?.batched ? batchRangeNeedsMore(contract, text) : false)) && continuations < maxContinuations) {
     continuations += 1;
     const follow = contract ? continuationUserMessage(contract) : "從上次結尾繼續寫，不要重複已寫內容。未完成不得宣稱全部完成。";
     try {

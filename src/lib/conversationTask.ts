@@ -1,5 +1,6 @@
 export const LARGE_TASK_BATCH_ITEMS = 20;
 export const MAX_GENERATION_CONTINUATIONS = 3;
+export const MAX_BATCH_CONTINUATIONS = 5;
 export const MAX_LOOP_REPAIRS = 1;
 export const STREAM_LOOP_CHECK_MIN_CHARS = 80;
 export const STREAM_LOOP_CHECK_EVERY_CHARS = 32;
