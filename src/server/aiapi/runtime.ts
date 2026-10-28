@@ -150,7 +150,7 @@ function buildCall(profile: AiapiProfile, credential: string, instruction: strin
     temperature: 0,
     stream: false,
     httpMethod: profile.httpMethod,
-    maxTokens: 16,
+    maxTokens: 64,
   });
   if (!request) return null;
   return {

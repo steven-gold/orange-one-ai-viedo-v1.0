@@ -207,11 +207,11 @@ export function readProviderText(payload: unknown, family: AdapterFamily): Adapt
     };
   }
   const data = payload as {
-    choices?: Array<{ message?: { content?: string }; finish_reason?: string; finishReason?: string }>;
+    choices?: Array<{ message?: { content?: string; reasoning?: string }; finish_reason?: string; finishReason?: string }>;
   };
   const choice = data.choices?.[0];
   return {
-    content: clean(choice?.message?.content),
+    content: clean(choice?.message?.content) || clean(choice?.message?.reasoning),
     finishReason: finishOf(choice?.finish_reason ?? choice?.finishReason ?? ""),
   };
 }
