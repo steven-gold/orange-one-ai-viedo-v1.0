@@ -51,6 +51,7 @@ export type ConversationTaskContract = {
   status: ConversationTaskStatus;
   completedItems: string[];
   pendingItems: string[];
+  deliveredLabels?: number[];
   nextBatch?: string;
   resumeCursor?: string;
   fileId?: string;
@@ -300,6 +301,7 @@ export function formatContractForPrompt(contract: ConversationTaskContract): str
     contract.constraints.length ? `限制：${contract.constraints.join("；")}` : "",
     contract.forbidden.length ? `禁止：${contract.forbidden.join("；")}` : "",
     contract.nextBatch ? `本批次只產出：${contract.nextBatch}。必須逐集完整涵蓋本批次全部範圍，每一集都要有章節名稱與內容，缺集視為未完成。` : "",
+    contract.deliveredLabels?.length ? `系統已追蹤已產出集數：第${Math.min(...contract.deliveredLabels)}–${Math.max(...contract.deliveredLabels)}集（以實際集數為準，禁止重複已產出內容）。` : "",
     contract.pendingItems.length ? `尚未完成：${contract.pendingItems.join("；")}` : "",
     contract.resumeCursor ? `從上次結尾續寫，禁止重複。` : "",
     "未完成範圍必須標示。禁止宣稱全部完成。",
@@ -787,27 +789,90 @@ export function updateContractAfterGeneration(
       resumeCursor: flags.truncated ? output.slice(-80) : undefined,
     };
   }
-  if (!batchLooksDelivered(output, contract)) {
-    return {
-      ...contract,
-      status: "PARTIAL",
-      resumeCursor: clean(output).slice(-80) || contract.resumeCursor,
-    };
-  }
   const through = Math.min(completedCount(contract) + contract.batchSize, contract.quantity?.count ?? 0);
   const planned = planQuantityBatches(contract.quantity, contract.batchSize, through);
   const falseComplete = claimsFullCompletion(output, contract) && (planned.pendingItems.length > 0 || flags.truncated);
   const status: ConversationTaskStatus = planned.pendingItems.length || flags.truncated || falseComplete
     ? "PARTIAL"
     : "COMPLETE";
+  if (!contract.quantity?.count) {
+    return {
+      ...contract,
+      status,
+      completedItems: planned.completedItems.length ? planned.completedItems : contract.completedItems,
+      pendingItems: status === "COMPLETE" ? [] : planned.pendingItems,
+      nextBatch: status === "COMPLETE" ? undefined : planned.nextBatch,
+      resumeCursor: flags.truncated ? output.slice(-80) : undefined,
+    };
+  }
+  return advanceFrontierContract(contract, output);
+}
+
+function batchUnitPattern(unit: string): string {
+  return unit === "集" ? "[集章]" : unit;
+}
+
+export function collectEpisodeLabels(text: string, unit: string): number[] {
+  const labels: number[] = [];
+  for (const match of text.matchAll(new RegExp(`第\\s*(\\d+)\\s*${unit}`, "gu"))) {
+    const value = Number.parseInt(match[1], 10);
+    if (Number.isFinite(value) && value > 0) labels.push(value);
+  }
+  return labels;
+}
+
+function advanceFrontierContract(
+  contract: ConversationTaskContract,
+  output: string,
+): ConversationTaskContract {
+  const total = contract.quantity?.count ?? 0;
+  const unit = contract.quantity?.unit ?? "集";
+  const unitPattern = batchUnitPattern(unit);
+  const seen = new Set(contract.deliveredLabels ?? []);
+  for (const value of collectEpisodeLabels(output, unitPattern)) {
+    if (total > 0 && value > total) continue;
+    seen.add(value);
+  }
+  const labels = [...seen].sort((a, b) => a - b);
+  const present = new Set(labels);
+  const limit = total > 0 ? total : Math.max(0, ...labels);
+  let frontier = 1;
+  while (frontier <= limit && present.has(frontier)) frontier += 1;
+  const complete = frontier > limit;
+  const start = frontier;
+  const end = Math.min(start + Math.max(1, contract.batchSize) - 1, limit);
+  const nextBatch = complete ? undefined : `第${start}–${end}${unit}`;
+  const completedItems = complete || start <= 1 ? [] : [`第1–${start - 1}${unit}`];
   return {
     ...contract,
-    status,
-    completedItems: planned.completedItems.length ? planned.completedItems : contract.completedItems,
-    pendingItems: status === "COMPLETE" ? [] : planned.pendingItems,
-    nextBatch: status === "COMPLETE" ? undefined : planned.nextBatch,
-    resumeCursor: flags.truncated ? output.slice(-80) : undefined,
+    status: complete ? "COMPLETE" : "PARTIAL",
+    deliveredLabels: labels,
+    completedItems,
+    pendingItems: complete ? [] : [nextBatch ?? ""].filter(Boolean),
+    nextBatch,
+    resumeCursor: complete ? undefined : clean(output).slice(-80) || contract.resumeCursor,
   };
+}
+
+export function batchRangeNeedsMore(contract: ConversationTaskContract, text: string): boolean {
+  if (!contract.batched || !contract.nextBatch) return false;
+  const match = /第\s*(\d+)\s*[–-]\s*(\d+)\s*(集|章|篇|回)/u.exec(contract.nextBatch);
+  if (!match) return false;
+  const start = Number.parseInt(match[1], 10);
+  const end = Number.parseInt(match[2], 10);
+  const unit = match[3];
+  const units = unit === "集" ? ["集", "章"] : [unit];
+  for (const label of units) {
+    let covered = true;
+    for (let index = start; index <= end; index += 1) {
+      if (!new RegExp(`第\\s*${index}\\s*${label}(?![–\\d])`, "u").test(text)) {
+        covered = false;
+        break;
+      }
+    }
+    if (covered) return false;
+  }
+  return true;
 }
 
 export function temperatureFor(kind: ConversationTaskKind, fallback = 0.2): number {
