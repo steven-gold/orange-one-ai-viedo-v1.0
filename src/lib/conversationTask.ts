@@ -302,6 +302,9 @@ export function formatContractForPrompt(contract: ConversationTaskContract): str
     contract.forbidden.length ? `禁止：${contract.forbidden.join("；")}` : "",
     contract.nextBatch ? `本批次只產出：${contract.nextBatch}。必須逐集完整涵蓋本批次全部範圍，每一集都要有章節名稱與內容，缺集視為未完成。` : "",
     contract.deliveredLabels?.length ? `系統已追蹤已產出集數：第${Math.min(...contract.deliveredLabels)}–${Math.max(...contract.deliveredLabels)}集（以實際集數為準，禁止重複已產出內容）。` : "",
+    contract.quantity && contract.quantity.count >= 3
+      ? `輸出格式硬性要求：每一${contract.quantity.unit}都必須以「第N${contract.quantity.unit}」標題開頭（例如：第3${contract.quantity.unit}），標題下才寫章節名稱與內容；禁止用散文、表格或摘要取代逐${contract.quantity.unit}標題結構。`
+      : "",
     contract.pendingItems.length ? `尚未完成：${contract.pendingItems.join("；")}` : "",
     contract.resumeCursor ? `從上次結尾續寫，禁止重複。` : "",
     "未完成範圍必須標示。禁止宣稱全部完成。",
