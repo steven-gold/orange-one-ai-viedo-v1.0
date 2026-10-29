@@ -446,6 +446,34 @@ async function buildUpstreamDeliverableContext(
     : "";
 }
 
+async function buildThreadContinuityContext(
+  bindings: ConversationBindings,
+  page: AiPageUid,
+  accountUid: string | undefined,
+  current: (uid: string) => string | null,
+  thread: string,
+): Promise<string> {
+  if (!accountUid || !thread) return "";
+  const pageUid = conversationFilePage(page);
+  if (!pageUid) return "";
+  const tasks = parseNotebookTasks(current(bindings.notebookUid)).filter((row) => row.thread === thread);
+  const task = [...tasks].reverse().find((row) => (row.fileId ?? "").trim());
+  const fileId = task?.fileId?.trim();
+  if (!fileId) return "";
+  const file = await persistFindConversationFile(fileId, accountUid).catch(() => null);
+  const body = (file?.body ?? "").trim();
+  if (body.length < 80) return "";
+  const head = body.slice(0, 2000);
+  const tail = body.length > 2400 ? body.slice(-1600) : "";
+  const gap = body.length - head.length - tail.length;
+  const middle = gap > 0 ? `\n……（中段省略 ${gap} 字）……\n` : "";
+  return [
+    `以下為本對話先前已交付的成品節錄（開頭與最新進度），本次回覆必須延續其設定、人物、情節與風格，禁止與既有內容產生矛盾：`,
+    `【既有成品｜${file?.fileName ?? fileId}】`,
+    `${head}${middle}${tail}`,
+  ].join("\n");
+}
+
 async function fillConversationReply(
   table: string,
   bindings: ConversationBindings,
@@ -679,7 +707,8 @@ export async function applyWorkbenchAction(
       const thread = activeThreadUid(current);
       const history = generationHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), prompt);
       const upstreamContext = await buildUpstreamDeliverableContext(CORE_CONVERSATION, page, accountUid, current, thread);
-      const context = [formatCoreChatContext(current), upstreamContext].filter(Boolean).join("\n\n");
+      const continuityContext = await buildThreadContinuityContext(CORE_CONVERSATION, page, accountUid, current, thread);
+      const context = [formatCoreChatContext(current), upstreamContext, continuityContext].filter(Boolean).join("\n\n");
       const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
       const contract = resolveTaskContract(
         prompt,
