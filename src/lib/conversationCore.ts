@@ -143,6 +143,17 @@ function usableMessage(value: string | undefined): string {
   return text;
 }
 
+function isNotebookPayloadText(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith("{")) return false;
+  try {
+    const parsed = JSON.parse(trimmed) as { kind?: unknown } | null;
+    return parsed?.kind === "NOTEBOOK";
+  } catch {
+    return false;
+  }
+}
+
 export function isPlaceholderName(value: string | null | undefined): boolean {
   const name = value?.trim() ?? "";
   return PLACEHOLDER_NAMES.has(name);
@@ -1327,7 +1338,9 @@ export function previewConversationSend(
   if (!records.some((row) => row.thread === thread && row.role === "assistant")) {
     const priorSummary = current(bindings.notebookUid);
     const priorNotebook = parseNotebookRecords(priorSummary ?? null);
-    const prior = priorNotebook.length ? "" : usableMessage(priorSummary ?? undefined);
+    const summaryText = usableMessage(priorSummary ?? undefined);
+    const prior =
+      priorNotebook.length || isNotebookPayloadText(summaryText) ? "" : summaryText;
     const scopedMessages = records.filter((row) => row.thread === thread);
     const last = scopedMessages[scopedMessages.length - 1]?.text;
     if (prior && prior !== last && prior !== payload) {
