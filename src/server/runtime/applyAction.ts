@@ -635,7 +635,33 @@ export async function applyWorkbenchAction(
     );
     if (actionUid === "CORE-01-ACT-THREAD-DELETE" && accountUid) {
       const threadTitle = String(nextValue ?? "").trim();
-      if (threadTitle) await persistDeleteConversationFilesByThread(accountUid, threadTitle).catch(() => 0);
+      if (threadTitle) {
+        await persistDeleteConversationFilesByThread(accountUid, threadTitle).catch(() => 0);
+        const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
+        const notebookRows = await getSqlClient().all<{ value_text: string | null }>(
+          `SELECT value_text FROM ${FIELD_TABLE.core} WHERE control_uid = ?`,
+          [notebookUid],
+        );
+        const notebookRaw = notebookRows[0]?.value_text ?? null;
+        if (notebookRaw && notebookRaw.startsWith("{")) {
+          try {
+            const parsed = JSON.parse(notebookRaw) as {
+              kind?: string;
+              records?: Array<{ thread?: string }>;
+              tasks?: Array<{ thread?: string }>;
+            };
+            if (parsed.kind === "NOTEBOOK") {
+              const records = (parsed.records ?? []).filter((row) => row?.thread !== threadTitle);
+              const tasks = (parsed.tasks ?? []).filter((row) => row?.thread !== threadTitle);
+              await writeField(
+                FIELD_TABLE.core,
+                notebookUid,
+                JSON.stringify({ kind: "NOTEBOOK", records, ...(tasks.length ? { tasks } : {}) }),
+              );
+            }
+          } catch {}
+        }
+      }
     }
     const analyze = actionUid === "CORE-01-ACT-MSG-ANALYZE";
     if ((actionUid === "CORE-01-ACT-SEND" || analyze) && written) {
