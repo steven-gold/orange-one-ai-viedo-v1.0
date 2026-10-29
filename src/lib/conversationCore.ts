@@ -50,6 +50,7 @@ function usableName(value: string | undefined): string {
 export const CONVERSATION_RECENT_HISTORY_ROWS = 30;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = 2200;
 export const CONVERSATION_STORED_MESSAGE_TEXT_CHARS = 4000;
+export const CONVERSATION_NOTEBOOK_STORED_CHARS = 16000;
 
 export type CurrentFn = (uid: string) => string | null;
 
@@ -545,8 +546,7 @@ function buildNotebookBody(
   const openQuestions = operation === "OPEN_QUESTIONS" ? citedLine(cited) : "—";
   const followUps = operation === "FOLLOW_UPS" ? citedLine(cited) : "—";
   const sourceIndex = operation === "SOURCE_INDEX" || operation === "IMPORTANT_REF_INDEX" ? citedLine(cited) : exactRefs;
-  const confirmedLine = operation === "CONFIRMED_CONCLUSION_RECORD" ? confirmed : "—";
-  const header = [
+  const confirmedLine = operation === "CONFIRMED_CONCLUSION_RECORD" ? confirmed : "—";  const header = [
     `會議紀錄 版本 ${version}`,
     `秘書動作：${operation}`,
     "狀態：現行",
@@ -584,7 +584,28 @@ function buildNotebookBody(
     used += piece;
   }
   if (!refs.length) refs.push("—");
-  return `${headerText}\n${refs.join("\n")}\n${footerText}`.slice(0, CONVERSATION_STORED_MESSAGE_TEXT_CHARS);
+  const overflowRows = covered.length > CONVERSATION_RECENT_HISTORY_ROWS
+    ? covered.slice(0, covered.length - CONVERSATION_RECENT_HISTORY_ROWS)
+    : [];
+  const digestLines: string[] = [];
+  let digestUsed = 0;
+  for (const row of overflowRows) {
+    const role = row.role === "user" ? "使用者" : "AI";
+    const flat = row.text.replace(/\s+/gu, " ").trim();
+    const digest = flat.length > 120 ? `${flat.slice(0, 120)}…` : flat;
+    const line = `- ${row.ref || "—"}（${role}）：${digest}`;
+    if (digestUsed + line.length > 12000) {
+      digestLines.push(`……（另有 ${overflowRows.length - digestLines.length} 則較早訊息僅存索引）……`);
+      break;
+    }
+    digestLines.push(line);
+    digestUsed += line.length;
+  }
+  const digestSection = digestLines.length
+    ? `溢出內容節錄（歷史窗口外 ${overflowRows.length} 則，為記憶延續之依據）：\n${digestLines.join("\n")}`
+    : "";
+  const middle = [refs.join("\n"), digestSection].filter(Boolean).join("\n");
+  return [headerText, middle, footerText].filter(Boolean).join("\n").slice(0, CONVERSATION_NOTEBOOK_STORED_CHARS);
 }
 
 function serializeNotebookRecords(
@@ -593,17 +614,17 @@ function serializeNotebookRecords(
 ): string {
   const tasks = extra?.tasks?.length ? extra.tasks : undefined;
   const payload = JSON.stringify({ kind: "NOTEBOOK", records, ...(tasks ? { tasks } : {}) });
-  if (payload.length <= CONVERSATION_STORED_MESSAGE_TEXT_CHARS) return payload;
+  if (payload.length <= CONVERSATION_NOTEBOOK_STORED_CHARS) return payload;
   const shrunk = records.map((row) => ({
     ...row,
     body:
       row.status === "STALE"
         ? row.body.slice(0, 120)
-        : row.body.slice(0, Math.max(200, Math.floor(CONVERSATION_STORED_MESSAGE_TEXT_CHARS / Math.max(records.length, 1) - 120))),
+        : row.body.slice(0, Math.max(200, Math.floor(CONVERSATION_NOTEBOOK_STORED_CHARS / Math.max(records.length, 1) - 120))),
   }));
   return JSON.stringify({ kind: "NOTEBOOK", records: shrunk, ...(tasks ? { tasks } : {}) }).slice(
     0,
-    CONVERSATION_STORED_MESSAGE_TEXT_CHARS,
+    CONVERSATION_NOTEBOOK_STORED_CHARS,
   );
 }
 
