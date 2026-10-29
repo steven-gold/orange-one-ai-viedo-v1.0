@@ -42,7 +42,7 @@ const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
 const FILE_STATUS = new Set(["attached", "created", "selected", "已附加", "已上傳", "參考資料", "已引用", "Attached", "Reference"]);
 
-type NameDialogKind = "project" | "topic" | "thread" | "blueprint" | "rename-project" | "rename-topic";
+type NameDialogKind = "project" | "topic" | "thread" | "blueprint" | "rename-project" | "rename-topic" | "rename-project-manage";
 
 const WORK_ITEM_KEYS: Record<string, TranslationKey> = {
   STORY: "core.work.story",
@@ -119,6 +119,7 @@ export function CoreVisual() {
   const [fields, setFields] = useState<CoreFieldValue[]>(emptyFields);
   const [dialog, setDialog] = useState<NameDialogKind | null>(null);
   const [dialogName, setDialogName] = useState("");
+  const [renameTarget, setRenameTarget] = useState("");
   const [draftMessage, setDraftMessage] = useState("");
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
@@ -296,6 +297,12 @@ export function CoreVisual() {
     }
     if (dialog === "blueprint") void act("CORE-01-BTN-BLUEPRINT-CREATE", name || undefined);
     if (dialog === "rename-project") void act("CORE-01-CTL-PROJECT", name || undefined);
+    if (dialog === "rename-project-manage") {
+      if (renameTarget && name && name !== renameTarget) {
+        void act("CORE-01-BTN-PROJECT-RENAME", JSON.stringify({ from: renameTarget, to: name }));
+      }
+      setRenameTarget("");
+    }
     if (dialog === "rename-topic") {
       const topic = exactName(name);
       if (confirmed && topic) void act("CORE-01-CTL-TOPIC", topic);
@@ -384,6 +391,14 @@ export function CoreVisual() {
   const currentFields = (uid: string) => valueOf(uid);
   const canCreateThread = threadScopeReady(currentFields);
   const threadItems = threadsForCurrentWorkItem(currentFields).map((row) => row.title);
+  const projectManageItems = (() => {
+    try {
+      const parsed = JSON.parse(valueOf("CORE-01-BTN-PROJECT-CREATE") || "[]") as unknown;
+      return Array.isArray(parsed) ? parsed.filter((row): row is string => typeof row === "string" && row.trim().length > 0) : [];
+    } catch {
+      return [];
+    }
+  })();
   const activeThread = activeThreadUid(currentFields) || null;
   const attachedFile = valueOf("CORE-01-BTN-ATTACHMENT");
   const referenceFile = valueOf("CORE-01-BTN-REFERENCE");
@@ -425,7 +440,7 @@ export function CoreVisual() {
           ? "core.dialog_thread"
           : dialog === "blueprint"
             ? "core.dialog_blueprint"
-            : dialog === "rename-project"
+            : dialog === "rename-project" || dialog === "rename-project-manage"
               ? "core.dialog_rename_project"
               : "core.dialog_project";
   const dialogDefault =
@@ -488,10 +503,13 @@ export function CoreVisual() {
               {threadItems.map((threadUid) => {
                 const selected = activeThread === threadUid;
                 return (
-                  <button key={threadUid} type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("CORE-01-LST-THREADS", threadUid)}>
-                    <span>{threadUid}</span>
-                    <small>{currentWorkLabel}</small>
-                  </button>
+                  <div key={threadUid} className={styles.threadRow}>
+                    <button type="button" className={selected ? `${styles.thread} ${styles.active}` : styles.thread} disabled={disabled} onClick={() => void act("CORE-01-LST-THREADS", threadUid)}>
+                      <span>{threadUid}</span>
+                      <small>{currentWorkLabel}</small>
+                    </button>
+                    <button type="button" className={styles.threadDelete} title={tx("core.thread_delete")} aria-label={tx("core.thread_delete")} disabled={disabled} onClick={(event) => { event.stopPropagation(); if (window.confirm(`${tx("core.thread_delete_confirm")}「${threadUid}」？`)) void act("CORE-01-BTN-THREAD-DELETE", threadUid); }}>×</button>
+                  </div>
                 );
               })}
             </div>
@@ -728,6 +746,19 @@ export function CoreVisual() {
         </main>
 
         <aside className={styles.rail}>
+          <section className={styles.railBlock} data-component-uid="CORE-01-CMP-PROJECT-MANAGE">
+            <h2 className={styles.title}>{tx("core.project_manage")}</h2>
+            {projectManageItems.length === 0 ? <p className={styles.meta}>{tx("core.project_manage_empty")}</p> : null}
+            {projectManageItems.map((name) => (
+              <div key={name} className={styles.manageRow}>
+                <span className={styles.manageName} title={name}>{name}</span>
+                <span className={styles.manageActions}>
+                  <button type="button" className={styles.manageBtn} disabled={disabled} onClick={() => { setRenameTarget(name); openNameDialog("rename-project-manage", name); }}>{tx("core.manage_edit")}</button>
+                  <button type="button" className={`${styles.manageBtn} ${styles.manageDanger}`} disabled={disabled} onClick={() => { if (window.confirm(`${tx("core.project_delete_confirm")}「${name}」？`)) void act("CORE-01-BTN-PROJECT-DELETE", name); }}>{tx("core.manage_delete")}</button>
+                </span>
+              </div>
+            ))}
+          </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-PROJECT-STATE" hidden={topicMode}>
             <h2 className={styles.title}>{tx("core.project_rail")}</h2>
             <h3>{tx("core.project_state")}</h3>
@@ -804,7 +835,7 @@ export function CoreVisual() {
         </div>
       ) : null}
       {dialog ? (
-        <div className={styles.dialogScrim} role="presentation" onClick={() => setDialog(null)}>
+        <div className={styles.dialogScrim} role="presentation" onClick={() => { setDialog(null); setRenameTarget(""); }}>
           <form
             className={styles.dialog}
             onClick={(event) => event.stopPropagation()}
@@ -824,7 +855,7 @@ export function CoreVisual() {
               />
             </label>
             <div className={styles.dialogActions}>
-              <button type="button" className={styles.btn} onClick={() => setDialog(null)}>{tx("core.cancel")}</button>
+              <button type="button" className={styles.btn} onClick={() => { setDialog(null); setRenameTarget(""); }}>{tx("core.cancel")}</button>
               <button
                 type="submit"
                 className={`${styles.btn} ${styles.btnPrimary}`}

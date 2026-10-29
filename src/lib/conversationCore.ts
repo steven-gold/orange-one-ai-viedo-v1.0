@@ -1167,6 +1167,42 @@ export function previewThreadCreateFor(
   };
 }
 
+export function previewThreadDeleteFor(
+  bindings: ConversationBindings,
+  current: CurrentFn,
+  nextValue?: string,
+): Record<string, string> {
+  const title = exactName(nextValue);
+  if (!title) return {};
+  const records = parseThreadRecords(current(bindings.threadStoreUid));
+  if (!records.some((row) => row.title === title)) return {};
+  const nextRecords = records.filter((row) => row.title !== title);
+  let messageValue = current(bindings.messageUid) ?? "";
+  try {
+    const parsed = JSON.parse(messageValue || "[]") as unknown;
+    if (Array.isArray(parsed)) messageValue = JSON.stringify(parsed.filter((row) => (row as { thread?: unknown })?.thread !== title));
+  } catch {
+    /* keep raw */
+  }
+  let notebookValue = current(bindings.notebookUid) ?? "";
+  try {
+    const parsed = JSON.parse(notebookValue || "null") as { kind?: unknown; tasks?: unknown } | null;
+    if (parsed?.kind === "NOTEBOOK" && Array.isArray(parsed.tasks)) {
+      notebookValue = JSON.stringify({ ...parsed, tasks: parsed.tasks.filter((row) => (row as { thread?: unknown })?.thread !== title) });
+    }
+  } catch {
+    /* keep raw */
+  }
+  const active = exactName(current(bindings.threadListUid));
+  const patch: Record<string, string> = {
+    [bindings.threadStoreUid]: JSON.stringify(nextRecords),
+    [bindings.messageUid]: messageValue,
+    [bindings.notebookUid]: notebookValue,
+  };
+  if (active === title) patch[bindings.threadListUid] = nextRecords[0]?.title ?? "";
+  return patch;
+}
+
 export function previewThreadSelectFor(
   bindings: ConversationBindings,
   current: CurrentFn,
@@ -1379,6 +1415,7 @@ export function isConversationAction(bindings: ConversationBindings, actionUid: 
     actionUid === `${bindings.prefix}-ACT-SEND` ||
     actionUid === `${bindings.prefix}-ACT-THREAD-CREATE` ||
     actionUid === `${bindings.prefix}-ACT-THREAD-SELECT` ||
+    actionUid === `${bindings.prefix}-ACT-THREAD-DELETE` ||
     actionUid === `${bindings.prefix}-ACT-ASSISTANT-RECORD` ||
     actionUid.startsWith(`${bindings.prefix}-ACT-MSG-`)
   );
@@ -1396,6 +1433,9 @@ export function previewConversationAction(
   }
   if (actionUid === `${bindings.prefix}-ACT-THREAD-SELECT`) {
     return previewThreadSelectFor(bindings, current, nextValue);
+  }
+  if (actionUid === `${bindings.prefix}-ACT-THREAD-DELETE`) {
+    return previewThreadDeleteFor(bindings, current, nextValue);
   }
   if (actionUid.startsWith(`${bindings.prefix}-ACT-MSG-`)) {
     const payload = parseMessageActionPayload(nextValue);

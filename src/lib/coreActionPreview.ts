@@ -438,6 +438,51 @@ export function previewCoreAction(
   if (controlUid === "CORE-01-FLD-ASSIGNED-AI") return {};
   const conversation = previewConversationAction(CORE_CONVERSATION, controlUid, actionUid, current, nextValue);
   if (conversation) return conversation;
+  if (actionUid === "CORE-01-ACT-PROJECT-RENAME") {
+    let from = "";
+    let to = "";
+    try {
+      const parsed = JSON.parse(nextValue || "null") as { from?: unknown; to?: unknown } | null;
+      from = exactName(typeof parsed?.from === "string" ? parsed.from : "");
+      to = exactName(typeof parsed?.to === "string" ? parsed.to : "");
+    } catch {
+      from = "";
+      to = "";
+    }
+    if (!from || !to || from === to) return {};
+    const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
+    if (!list.includes(from)) return {};
+    const nextList = [...new Set(list.map((row) => (row === from ? to : row)))];
+    const active = exactName(current("CORE-01-CTL-PROJECT"));
+    return {
+      "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+      ...(active === from ? { "CORE-01-CTL-PROJECT": to } : {}),
+    };
+  }
+  if (actionUid === "CORE-01-ACT-PROJECT-DELETE") {
+    const target = exactName(nextValue);
+    if (!target) return {};
+    const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
+    if (!list.includes(target)) return {};
+    const nextList = list.filter((row) => row !== target);
+    const active = exactName(current("CORE-01-CTL-PROJECT"));
+    if (active !== target) {
+      return { "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList) };
+    }
+    return {
+      "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+      "CORE-01-CTL-PROJECT": "",
+      "CORE-01-FLD-PAGE-MODE": "",
+      "CORE-01-FLD-NAMING-AUTHORITY": "",
+      "CORE-01-FLD-RUNTIME-STAGE": "",
+      "CORE-01-LST-WORK-ITEMS": "",
+      "CORE-01-BTN-PROJECT-CONFIRM": "",
+      "CORE-01-BTN-PROJECT-VALIDATE": "",
+      "CORE-01-CTL-TOPIC": "",
+      "CORE-01-FLD-TOPIC-SCOPE": "",
+      "CORE-01-BTN-CANONICAL-SCRIPT": "",
+    };
+  }
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
     const project = namedValue(nextValue, "新專案");
     const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
