@@ -80,6 +80,7 @@ const EMPTY_INBOUND: VideoInbound = {
   dna: "",
   script: "",
   assetVersion: "",
+  layerComposite: "",
   filename: "",
   checksum: "",
   instruction: "",

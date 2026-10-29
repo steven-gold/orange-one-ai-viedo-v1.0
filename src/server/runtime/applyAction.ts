@@ -942,6 +942,7 @@ export async function applyWorkbenchAction(
       "VIDEO-01-FLD-DNA-REFS": inbound.dna,
       "VIDEO-01-FLD-SCRIPT-SECTION": inbound.script,
       "VIDEO-01-FLD-ASSET-REFS": inbound.assetVersion,
+      "VIDEO-01-FLD-LAYER-VERSIONS": inbound.layerComposite,
       "VIDEO-01-FLD-FILENAME-CHECKSUM": [inbound.filename, inbound.checksum].filter(Boolean).join(" / "),
       "VIDEO-01-FLD-RIGHTS": inbound.rights,
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,

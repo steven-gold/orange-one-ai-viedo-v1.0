@@ -585,6 +585,7 @@ function overlayUpstreamOntoVideo(
     if (row.controlUid === "VIDEO-01-FLD-DNA-REFS") return { ...row, value: inbound.ready ? inbound.dna || null : null };
     if (row.controlUid === "VIDEO-01-FLD-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script || null : null };
     if (row.controlUid === "VIDEO-01-FLD-ASSET-REFS") return { ...row, value: inbound.ready ? inbound.assetVersion || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-LAYER-VERSIONS") return { ...row, value: inbound.ready ? inbound.layerComposite || null : null };
     if (row.controlUid === "VIDEO-01-FLD-FILENAME-CHECKSUM") return { ...row, value: inbound.ready ? bound || null : null };
     if (row.controlUid === "VIDEO-01-FLD-RIGHTS") return { ...row, value: inbound.ready ? inbound.rights || null : null };
     if (row.controlUid === "VIDEO-01-FLD-INSTRUCTION") return { ...row, value: inbound.ready ? inbound.instruction || null : null };

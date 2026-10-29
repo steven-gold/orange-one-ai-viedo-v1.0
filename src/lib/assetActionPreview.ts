@@ -561,7 +561,11 @@ export function previewAssetAction(
       ...(named(current("ASSET-01-FLD-OVERALL")) ? { "ASSET-01-FLD-HANDOFF-SCORECARD": named(current("ASSET-01-FLD-OVERALL")) } : {}),
       ...(named(current("ASSET-01-FLD-RIGHTS")) ? { "ASSET-01-FLD-HANDOFF-RIGHTS": named(current("ASSET-01-FLD-RIGHTS")) } : {}),
       "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS": keepName(undefined, current("ASSET-01-FLD-MANIFEST"), assets.join("、")),
-      ...(named(current("ASSET-01-BTN-LAYER-DOC-CREATE")) ? { "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": named(current("ASSET-01-BTN-LAYER-DOC-CREATE")) } : {}),
+      ...(named(current("ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE")).includes("LDOC-")
+        ? { "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": named(current("ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE")) }
+        : named(current("ASSET-01-BTN-LAYER-DOC-CREATE"))
+          ? { "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": named(current("ASSET-01-BTN-LAYER-DOC-CREATE")) }
+          : {}),
       ...(named(current("ASSET-01-FLD-SCRIPT")) ? { "ASSET-01-FLD-HANDOFF-SCRIPT-HASH": named(current("ASSET-01-FLD-SCRIPT")) } : {}),
       ...(named(current("ASSET-01-FLD-INPUT-FINGERPRINT")) ? { "ASSET-01-FLD-HANDOFF-CONTRACT-HASH": named(current("ASSET-01-FLD-INPUT-FINGERPRINT")) } : {}),
     };

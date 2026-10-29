@@ -11,6 +11,7 @@ export type VideoInbound = {
   dna: string;
   script: string;
   assetVersion: string;
+  layerComposite: string;
   filename: string;
   checksum: string;
   instruction: string;
@@ -27,6 +28,7 @@ export function resolveVideoInbound(
   const core = resolveAssetInbound(coreCurrent);
   const assetVersion =
     exactName(assetCurrent("ASSET-01-FLD-HANDOFF-ASSET-VERSION")) || exactName(assetCurrent("ASSET-01-FLD-MANIFEST"));
+  const layerComposite = exactName(assetCurrent("ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE"));
   const filename =
     exactName(assetCurrent("ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME")) ||
     exactName(assetCurrent("ASSET-01-FLD-CANONICAL-FILENAME"));
@@ -45,6 +47,7 @@ export function resolveVideoInbound(
     dna: core.dna,
     script: core.script,
     assetVersion,
+    layerComposite,
     filename,
     checksum,
     instruction,
