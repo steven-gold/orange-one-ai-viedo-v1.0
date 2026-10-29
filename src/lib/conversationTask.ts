@@ -93,7 +93,7 @@ function unique(values: string[]): string[] {
   return out;
 }
 
-function hashId(parts: string[]): string {
+export function hashId(parts: string[]): string {
   let hash = 2166136261;
   const joined = parts.join("\u0001");
   for (let index = 0; index < joined.length; index += 1) {
@@ -369,8 +369,11 @@ export function latestOpenTask(
   thread?: string,
 ): ConversationTaskContract | null {
   const scoped = thread ? tasks.filter((row) => !row.thread || row.thread === thread) : tasks;
-  for (let index = scoped.length - 1; index >= 0; index -= 1) {
-    const row = scoped[index];
+  const open = scoped.filter((row) => row.status === "OPEN" || row.status === "PARTIAL" || row.status === "STOPPED" || row.status === "FAILED");
+  const quantityBearing = open.filter((row) => (row.quantity?.count ?? 0) > 0);
+  const pool = quantityBearing.length ? quantityBearing : open;
+  for (let index = pool.length - 1; index >= 0; index -= 1) {
+    const row = pool[index];
     if (row.status === "OPEN" || row.status === "PARTIAL" || row.status === "STOPPED" || row.status === "FAILED") return row;
   }
   return null;
@@ -422,8 +425,9 @@ export function formatDeliveryFooter(contract: ConversationTaskContract): string
     contract.deliveredLabels?.length
       ? (() => {
           const progress = finalizedProgress(contract);
+          const done = progress.through > 0 ? `已定稿第1–${progress.through}集` : "已定稿：無";
           const review = progress.pendingReview ? `；待審查：第${progress.pendingReview[0]}–${progress.pendingReview[1]}集` : "；全部已定稿";
-          return `定稿進度：已定稿第1–${progress.through}集${review}`;
+          return `定稿進度：${done}${review}`;
         })()
       : "",
     contract.status === "PARTIAL" || contract.status === "OPEN" || contract.status === "STOPPED" ? "可續寫；未完成不得視為全部完成。" : "",

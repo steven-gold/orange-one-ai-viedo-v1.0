@@ -50,6 +50,7 @@ import {
   diagnoseGenerationFailure,
   finalizeEpisodes,
   formatDeliveryFooter,
+  hashId,
   isContinueRequest,
   isCorrectionRequest,
   latestOpenTask,
@@ -222,22 +223,28 @@ function resolveTaskContract(
   const prior = latestOpenTask(parseNotebookTasks(notebookRaw), thread);
   const contract = prompt ? buildTaskContract(prompt, prior, thread) : prior;
   if (contract?.quantity?.count) return contract;
-  return rebuildTaskContractFromThread(prompt, messages, thread) ?? contract;
+  return rebuildTaskContractFromThread(prompt, messages, thread, notebookRaw) ?? contract;
 }
 
 function rebuildTaskContractFromThread(
   prompt: string,
   messages: Array<{ role?: string; text?: unknown }>,
   thread: string,
+  notebookRaw: string | null,
 ): ConversationTaskContract | null {
   if (!prompt || !isContinueRequest(prompt)) return null;
   const demand = [...messages]
     .reverse()
     .find((row) => row.role === "user" && parseQuantity(String(row.text ?? "")));
   if (!demand) return null;
-  const base = buildTaskContract(String(demand.text ?? ""), null, thread);
+  const demandText = String(demand.text ?? "");
+  const existing = parseNotebookTasks(notebookRaw).find(
+    (row) => row.rawDemand === demandText || row.taskId === `TASK-${hashId([thread, demandText])}`,
+  );
+  const base = buildTaskContract(demandText, existing ?? null, thread);
   if (!base.quantity?.count) return null;
-  const labels = new Set<number>();
+  if (existing?.quantity?.count === base.quantity.count) return base;
+  const labels = new Set<number>(existing?.deliveredLabels ?? []);
   for (const row of messages) {
     if (row.role !== "assistant") continue;
     for (const value of collectEpisodeLabels(String(row.text ?? ""), "[集章]")) {
