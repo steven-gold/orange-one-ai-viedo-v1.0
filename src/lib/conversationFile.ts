@@ -1,4 +1,5 @@
 import {
+  batchUnitPattern,
   conversationFileUid,
   fileNameForContract,
   stripDeliveryFooter,
@@ -39,7 +40,7 @@ export function buildConversationFile(
   if (!body) return null;
   const nextBody = prior?.body
     ? contract.mode === "correction"
-      ? patchConversationFileBody(prior.body, body)
+      ? patchConversationFileBody(prior.body, body, batchUnitPattern(contract.quantity?.unit ?? "集"))
       : mergeFileBody(prior.body, body)
     : body;
   return {

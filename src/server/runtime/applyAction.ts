@@ -44,6 +44,7 @@ import {
 import {
   annotateUnverifiedClaims,
   advanceFrontierContract,
+  batchUnitPattern,
   buildTaskContract,
   collectEpisodeLabels,
   detectUnusableOutput,
@@ -220,9 +221,15 @@ function resolveTaskContract(
   messages: Array<{ role?: string; text?: unknown }>,
   thread: string,
 ): ConversationTaskContract | null {
-  const prior = latestOpenTask(parseNotebookTasks(notebookRaw), thread);
+  const tasks = parseNotebookTasks(notebookRaw);
+  const prior = latestOpenTask(tasks, thread);
   const contract = prompt ? buildTaskContract(prompt, prior, thread) : prior;
   if (contract?.quantity?.count) return contract;
+  if (prompt && isCorrectionRequest(prompt) && !isContinueRequest(prompt)) {
+    const scoped = tasks.filter((row) => row.thread === thread);
+    const latest = scoped.length ? scoped[scoped.length - 1] : null;
+    if (latest) return buildTaskContract(prompt, latest, thread);
+  }
   return rebuildTaskContractFromThread(prompt, messages, thread, notebookRaw) ?? contract;
 }
 
@@ -364,7 +371,7 @@ async function applyConversationReviewAction(
     if (prior?.body) {
       const range = parseLabelRange(nextValue ?? "") ?? parseLabelRange(contract.nextBatch ?? "");
       if (range) {
-        const body = removeEpisodeBlocks(prior.body, range[0], range[1]);
+        const body = removeEpisodeBlocks(prior.body, range[0], range[1], batchUnitPattern(contract.quantity?.unit ?? "集"));
         if (body !== prior.body) await persistUpsertConversationFile({ ...prior, body, version: prior.version + 1, updatedAt: new Date().toISOString() });
       }
     }

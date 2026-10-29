@@ -127,6 +127,11 @@ export function parseLabelRange(text: string, unit = "集"): [number, number] | 
     const value = Number.parseInt(single[1], 10);
     if (Number.isFinite(value) && value > 0) return [value, value];
   }
+  const bare = new RegExp(`^\\s*第?\\s*(\\d+)\\s*(?:${unit})?\\s*$`).exec(body);
+  if (bare) {
+    const value = Number.parseInt(bare[1], 10);
+    if (Number.isFinite(value) && value > 0) return [value, value];
+  }
   return null;
 }
 
@@ -137,6 +142,7 @@ function labelsInRange(labels: number[], from: number, to: number): number[] {
 export function finalizeEpisodes(contract: ConversationTaskContract, rangeText: string | undefined): ConversationTaskContract {
   const delivered = contract.deliveredLabels ?? [];
   const range = rangeText?.trim() ? parseLabelRange(rangeText) : null;
+  if (rangeText?.trim() && !range) return contract;
   const approved = range ? labelsInRange(delivered, range[0], range[1]) : [...delivered];
   if (!approved.length) return contract;
   const finalized = new Set([...(contract.finalizedLabels ?? []), ...approved]);
@@ -923,7 +929,7 @@ export function updateContractAfterGeneration(
   return advanceFrontierContract(contract, output);
 }
 
-function batchUnitPattern(unit: string): string {
+export function batchUnitPattern(unit: string): string {
   return unit === "集" ? "[集章]" : unit;
 }
 
