@@ -223,13 +223,13 @@ function resolveTaskContract(
 ): ConversationTaskContract | null {
   const tasks = parseNotebookTasks(notebookRaw);
   const prior = latestOpenTask(tasks, thread);
-  const contract = prompt ? buildTaskContract(prompt, prior, thread) : prior;
-  if (contract?.quantity?.count) return contract;
   if (prompt && isCorrectionRequest(prompt) && !isContinueRequest(prompt)) {
     const scoped = tasks.filter((row) => row.thread === thread);
-    const latest = scoped.length ? scoped[scoped.length - 1] : null;
-    if (latest) return buildTaskContract(prompt, latest, thread);
+    const target = prior ?? (scoped.length ? scoped[scoped.length - 1] : null);
+    if (target) return buildTaskContract(prompt, target, thread);
   }
+  const contract = prompt ? buildTaskContract(prompt, prior, thread) : prior;
+  if (contract?.quantity?.count) return contract;
   return rebuildTaskContractFromThread(prompt, messages, thread, notebookRaw) ?? contract;
 }
 
