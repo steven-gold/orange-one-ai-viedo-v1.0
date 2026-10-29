@@ -496,7 +496,7 @@ export function CoreVisual() {
             ))}
           </div>
           <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-NEW-THREAD" disabled={disabled || !canCreateThread} onClick={() => openNameDialog("thread")}>{tx("core.new_thread")}</button>
-          <div data-component-uid="CORE-01-CMP-THREADS">
+          <div className={styles.threadsBlock} data-component-uid="CORE-01-CMP-THREADS">
             <div className={styles.threadsLabel}>{tx("core.threads")}</div>
             <div className={styles.threadList} data-control-uid="CORE-01-LST-THREADS">
               {threadItems.length === 0 ? <p className={styles.threadEmpty}>{canCreateThread ? tx("core.no_threads") : tx("core.gate-thread")}</p> : null}

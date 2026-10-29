@@ -197,12 +197,29 @@
   white-space: nowrap;
 }
 
-.workList,
+.nav > * {
+  flex-shrink: 0;
+}
+
+.threadsBlock {
+  flex: 1 1 auto;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.workList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .threadList {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
 }
@@ -309,6 +326,7 @@
 
 .integrity {
   margin-top: auto;
+  flex-shrink: 0;
 }
 
 .integrity h3 {
