@@ -348,6 +348,8 @@ export function buildTaskContract(
     resumeCursor: prior?.resumeCursor,
     batchSize: LARGE_TASK_BATCH_ITEMS,
     version: (prior?.version ?? 0) + 1,
+    deliveredLabels: prior?.deliveredLabels ?? [],
+    finalizedLabels: prior?.finalizedLabels ?? [],
   };
 }
 
