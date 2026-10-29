@@ -86,3 +86,12 @@ export async function persistUpsertConversationFile(file: ConversationFileRecord
     ],
   );
 }
+
+export async function persistDeleteConversationFilesByThread(accountUid: string, thread: string): Promise<number> {
+  if (!accountUid || !thread) return 0;
+  const result = await getSqlClient().run(
+    `DELETE FROM ${CONVERSATION_FILE_TABLE} WHERE account_uid = ? AND thread = ?`,
+    [accountUid, thread],
+  );
+  return result?.changes ?? 0;
+}

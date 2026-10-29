@@ -40,7 +40,9 @@ export function buildConversationFile(
   if (!body) return null;
   const nextBody = prior?.body
     ? contract.mode === "correction"
-      ? patchConversationFileBody(prior.body, body, batchUnitPattern(contract.quantity?.unit ?? "集"))
+      ? contract.quantity?.count
+        ? patchConversationFileBody(prior.body, body, batchUnitPattern(contract.quantity.unit))
+        : body
       : mergeFileBody(prior.body, body)
     : body;
   return {

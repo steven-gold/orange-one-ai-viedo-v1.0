@@ -16,6 +16,7 @@ import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
 import {
   ASSET_CONVERSATION,
+  CORE_CONVERSATION,
   EDIT_CONVERSATION,
   VIDEO_CONVERSATION,
   type ConversationBindings,
@@ -24,6 +25,7 @@ import {
   formatConversationContext,
   messagesForThread as conversationMessagesForThread,
   parseMessageActionPayload as parseConversationMessageActionPayload,
+  parseThreadRecords,
   persistConversationTasksFor,
   generationHistoryPayload as conversationGenerationHistory,
   refreshAssistantNotebookFor,
@@ -37,6 +39,7 @@ import {
   removeEpisodeBlocks,
 } from "@/lib/conversationFile";
 import {
+  persistDeleteConversationFilesByThread,
   persistFindConversationFile,
   persistFindConversationFileByTask,
   persistUpsertConversationFile,
@@ -404,6 +407,45 @@ async function persistGeneratedFile(
   }
 }
 
+async function buildUpstreamDeliverableContext(
+  bindings: ConversationBindings,
+  page: AiPageUid,
+  accountUid: string | undefined,
+  current: (uid: string) => string | null,
+  thread: string,
+): Promise<string> {
+  if (!accountUid || !thread) return "";
+  const pageUid = conversationFilePage(page);
+  if (!pageUid) return "";
+  const currentWorkItem = bindings.workItemUid ? String(current(bindings.workItemUid) ?? "").trim() : "";
+  const workItemByThread = new Map<string, string>();
+  for (const row of parseThreadRecords(current(bindings.threadStoreUid))) {
+    workItemByThread.set(row.title, String(row.workItem ?? ""));
+  }
+  const candidates = parseNotebookTasks(current(bindings.notebookUid)).filter((row) => {
+    if (!row.fileId || row.thread === thread) return false;
+    if (!row.finalizedDoc && !(row.finalizedLabels ?? []).length) return false;
+    const workItem = workItemByThread.get(row.thread) ?? "";
+    return !currentWorkItem || !workItem || workItem !== currentWorkItem;
+  });
+  if (!candidates.length) return "";
+  const parts: string[] = [];
+  let budget = 9000;
+  for (const row of candidates.slice(0, 3)) {
+    if (budget <= 0) break;
+    const fileId = row.fileId ?? "";
+    if (!fileId) continue;
+    const file = await persistFindConversationFile(fileId, accountUid ?? "").catch(() => null);
+    if (!file?.body) continue;
+    const body = file.body.slice(0, Math.min(3200, budget));
+    budget -= body.length;
+    parts.push(`【上游成品參考｜${workItemByThread.get(row.thread) || "其他工作項"}｜對話：${row.thread}】\n${body}`);
+  }
+  return parts.length
+    ? `以下為同一專案其他工作項已定稿的成品，本次產出必須與其世界觀、人物與設定保持一致：\n${parts.join("\n\n")}`
+    : "";
+}
+
 async function fillConversationReply(
   table: string,
   bindings: ConversationBindings,
@@ -591,6 +633,10 @@ export async function applyWorkbenchAction(
       nextValue,
       { "CORE-01-FLD-ASSIGNED-AI": assigned },
     );
+    if (actionUid === "CORE-01-ACT-THREAD-DELETE" && accountUid) {
+      const threadTitle = String(nextValue ?? "").trim();
+      if (threadTitle) await persistDeleteConversationFilesByThread(accountUid, threadTitle).catch(() => 0);
+    }
     const analyze = actionUid === "CORE-01-ACT-MSG-ANALYZE";
     if ((actionUid === "CORE-01-ACT-SEND" || analyze) && written) {
       const prompt = analyze
@@ -606,7 +652,8 @@ export async function applyWorkbenchAction(
       if (tokens.some((row) => row.kind === "TARGET_ASSISTANT")) return;
       const thread = activeThreadUid(current);
       const history = generationHistoryPayload(messagesForThread(current("CORE-01-FLD-MESSAGE"), thread), prompt);
-      const context = formatCoreChatContext(current);
+      const upstreamContext = await buildUpstreamDeliverableContext(CORE_CONVERSATION, page, accountUid, current, thread);
+      const context = [formatCoreChatContext(current), upstreamContext].filter(Boolean).join("\n\n");
       const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
       const contract = resolveTaskContract(
         prompt,

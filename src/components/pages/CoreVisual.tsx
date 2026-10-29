@@ -451,6 +451,15 @@ export function CoreVisual() {
         : dialog === "blueprint"
           ? tx("core.default_blueprint")
           : tx("core.default_project");
+  const reviewTarget = (() => {
+    try {
+      const parsed = JSON.parse(valueOf("CORE-01-FLD-ASSISTANT-SUMMARY") || "null") as { tasks?: Array<{ thread?: unknown }> } | null;
+      const thread = valueOf("CORE-01-LST-THREADS");
+      return (parsed?.tasks ?? []).some((row) => row.thread === thread);
+    } catch {
+      return false;
+    }
+  })();
   const activeStage = valueOf("CORE-01-FLD-RUNTIME-STAGE") ?? "AI_RESPONSES";
   const singleActive = !multiActive;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
@@ -638,8 +647,8 @@ export function CoreVisual() {
                   />
                 </label>
                 <IconButton uid="CORE-01-BTN-SEND" label={generating ? tx("core.stop") : tooLong ? tx("core.message_too_long") : parserBlocked ? tx("core.parser_blocked") : routeBlocked ? tx("core.route_blocked") : multiBlocked ? tx("core.multi_route_blocked") : canSend ? tx("core.send") : tx("core.gate-message")} icon={generating ? "stop" : "send"} onAct={() => sendMessage()} disabled={generating ? false : disabled || !canSend} className={`${styles.btn} ${styles.iconBtn} ${styles.btnSend}`} />
-                <IconButton uid="CORE-01-BTN-FINALIZE" label={tx("core.finalize")} icon="check" onAct={(uid) => void act(uid, draftMessage.trim())} disabled={generating || disabled} className={`${styles.btn} ${styles.iconBtn}`} />
-                <IconButton uid="CORE-01-BTN-REVIEW-REJECT" label={tx("core.review_reject")} icon="undo" onAct={(uid) => void act(uid, draftMessage.trim())} disabled={generating || disabled || !draftMessage.trim()} className={`${styles.btn} ${styles.iconBtn}`} />
+                <IconButton uid="CORE-01-BTN-FINALIZE" label={tx("core.finalize")} icon="check" onAct={(uid) => void act(uid, draftMessage.trim())} disabled={generating || disabled || !reviewTarget} className={`${styles.btn} ${styles.iconBtn}`} />
+                <IconButton uid="CORE-01-BTN-REVIEW-REJECT" label={tx("core.review_reject")} icon="undo" onAct={(uid) => void act(uid, draftMessage.trim())} disabled={generating || disabled || !reviewTarget || !draftMessage.trim()} className={`${styles.btn} ${styles.iconBtn}`} />
               </div>
               {composerTokens.length ? (
                 <div className={styles.tokenRow} aria-live="polite">

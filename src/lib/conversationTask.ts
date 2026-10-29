@@ -54,6 +54,7 @@ export type ConversationTaskContract = {
   pendingItems: string[];
   deliveredLabels?: number[];
   finalizedLabels?: number[];
+  finalizedDoc?: boolean;
   mode?: "produce" | "correction";
   patchLabels?: number[];
   nextBatch?: string;
@@ -143,6 +144,10 @@ export function finalizeEpisodes(contract: ConversationTaskContract, rangeText: 
   const delivered = contract.deliveredLabels ?? [];
   const range = rangeText?.trim() ? parseLabelRange(rangeText) : null;
   if (rangeText?.trim() && !range) return contract;
+  if (!contract.quantity?.count) {
+    if (!contract.fileId || range) return contract;
+    return { ...contract, finalizedDoc: true, version: contract.version + 1 };
+  }
   const approved = range ? labelsInRange(delivered, range[0], range[1]) : [...delivered];
   if (!approved.length) return contract;
   const finalized = new Set([...(contract.finalizedLabels ?? []), ...approved]);
@@ -154,6 +159,10 @@ export function finalizeEpisodes(contract: ConversationTaskContract, rangeText: 
 }
 
 export function rejectEpisodes(contract: ConversationTaskContract, rangeText: string | undefined): ConversationTaskContract {
+  if (!contract.quantity?.count) {
+    if (!contract.finalizedDoc) return contract;
+    return { ...contract, finalizedDoc: false, version: contract.version + 1 };
+  }
   const range = rangeText?.trim() ? parseLabelRange(rangeText) : contract.nextBatch ? parseLabelRange(contract.nextBatch) : null;
   if (!range) return contract;
   const dropped = new Set(labelsInRange(contract.deliveredLabels ?? [], range[0], range[1]));
@@ -390,8 +399,14 @@ export function latestOpenTask(
 export function formatContractForPrompt(contract: ConversationTaskContract): string {
   if (contract.kind === "question" && !contract.batched) return "";
   if (contract.mode === "correction") {
+    if (!contract.quantity?.count) {
+      return [
+        "修正模式：輸出修正後的完整文件全文（包含所有小節與既有內容），以全文取代舊版。",
+        "禁止只輸出差異或摘要；禁止遺漏未修正的小節。",
+      ].join("\n");
+    }
     const targets = contract.patchLabels?.length
-      ? `第${contract.patchLabels.join("、第")}集`
+      ? `第${contract.patchLabels.join("、第")}${contract.quantity?.unit ?? "集"}`
       : "使用者指定的集數";
     return [
       `修正模式：只重寫${targets}，逐集以「第N${contract.quantity?.unit ?? "集"}」標題開頭，輸出修正後的完整內容。`,
@@ -423,6 +438,7 @@ export function formatContractForPrompt(contract: ConversationTaskContract): str
 }
 
 export function formatDeliveryFooter(contract: ConversationTaskContract): string {
+  if (contract.finalizedDoc) return "狀態：已定稿（人工確認鎖定）";
   if (contract.kind === "question" && !contract.batched && contract.status === "COMPLETE") return "";
   if (!contract.batched && contract.status === "COMPLETE") return "";
   const lines = [
