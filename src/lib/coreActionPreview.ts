@@ -515,8 +515,24 @@ export function previewCoreAction(
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
+      "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
       ...(pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {}),
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
+    };
+  }
+  if (actionUid === "CORE-01-ACT-TOPIC-DELETE") {
+    if (!projectConfirmed(current)) return {};
+    const target = exactName(current("CORE-01-CTL-TOPIC"));
+    if (!target) return {};
+    const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
+    if (!list.includes(target)) return {};
+    return {
+      "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(list.filter((row) => row !== target)),
+      "CORE-01-CTL-TOPIC": "",
+      "CORE-01-FLD-TOPIC-SCOPE": "",
+      "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
+      "CORE-01-LST-WORK-ITEMS": "STORY",
+      "CORE-01-BTN-CANONICAL-SCRIPT": "",
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-PAGE-MODE") {

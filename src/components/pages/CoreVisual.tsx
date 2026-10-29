@@ -483,6 +483,7 @@ export function CoreVisual() {
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-PROJECT-CREATE" disabled={disabled} onClick={() => openNameDialog("project")}>{tx("core.create_project")}</button>
         <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={() => openNameDialog("rename-topic", valueOf("CORE-01-CTL-TOPIC") ?? "")} disabled={disabled || !projectIsConfirmed} />
         <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => { if (projectIsConfirmed) openNameDialog("topic"); else void act("CORE-01-BTN-TOPIC-CREATE"); }}>{tx("core.create_topic")}</button>
+        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-DELETE" disabled={disabled || !topicName} onClick={() => { if (topicName && window.confirm(`${tx("core.topic_delete_confirm")}「${topicName}」？`)) void act("CORE-01-BTN-TOPIC-DELETE", topicName); }}>{tx("core.topic_delete")}</button>
         <button type="button" className={topicMode ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled>
           {topicMode ? tx("core.page_mode_topic") : tx("core.page_mode_project")}
         </button>
