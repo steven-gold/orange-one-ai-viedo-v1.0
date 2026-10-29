@@ -37,7 +37,11 @@ export function buildConversationFile(
   if (!contract.needsFile || !accountUid || !contract.taskId) return null;
   const body = stripDeliveryFooter(rawBody);
   if (!body) return null;
-  const nextBody = prior?.body ? mergeFileBody(prior.body, body) : body;
+  const nextBody = prior?.body
+    ? contract.mode === "correction"
+      ? patchConversationFileBody(prior.body, body)
+      : mergeFileBody(prior.body, body)
+    : body;
   return {
     fileUid: prior?.fileUid || conversationFileUid(accountUid, pageUid, contract.taskId),
     accountUid,
@@ -50,6 +54,58 @@ export function buildConversationFile(
     version: (prior?.version ?? 0) + 1,
     updatedAt: new Date().toISOString(),
   };
+}
+
+export function patchConversationFileBody(previous: string, patchText: string, unit = "集"): string {
+  const body = patchText.trim();
+  if (!body) return previous;
+  const headingRe = new RegExp(`^\\s*(?:#{1,4}\\s*)?[*_\`]{0,3}\\s*第\\s*(\\d+)\\s*${unit}[*_\`]{0,3}[^\\n]*`, "gmu");
+  const patchBlocks: Array<{ label: number; text: string }> = [];
+  const matches = [...body.matchAll(headingRe)];
+  for (let index = 0; index < matches.length; index += 1) {
+    const match = matches[index];
+    const start = match.index ?? 0;
+    const end = index + 1 < matches.length ? matches[index + 1].index ?? body.length : body.length;
+    const label = Number.parseInt(match[1], 10);
+    if (Number.isFinite(label) && label > 0) patchBlocks.push({ label, text: body.slice(start, end).trim() });
+  }
+  if (!patchBlocks.length) return mergeFileBody(previous, body);
+  let out = previous;
+  for (const block of patchBlocks) {
+    const spans = [...out.matchAll(headingRe)];
+    const foundIndex = spans.findIndex((m) => Number.parseInt(m[1], 10) === block.label);
+    if (foundIndex < 0) {
+      out = mergeFileBody(out, block.text);
+      continue;
+    }
+    const start = spans[foundIndex].index ?? 0;
+    const end = foundIndex + 1 < spans.length ? spans[foundIndex + 1].index ?? out.length : out.length;
+    out = `${out.slice(0, start)}${block.text}\n\n${out.slice(end).replace(/^\n+/, "")}`;
+  }
+  return out;
+}
+
+export function removeEpisodeBlocks(previous: string, from: number, to: number, unit = "集"): string {
+  const headingRe = new RegExp(`^\\s*(?:#{1,4}\\s*)?[*_\`]{0,3}\\s*第\\s*(\\d+)\\s*${unit}[*_\`]{0,3}[^\\n]*`, "gmu");
+  const matches = [...previous.matchAll(headingRe)];
+  if (!matches.length) return previous;
+  const cuts: Array<[number, number]> = [];
+  for (let index = 0; index < matches.length; index += 1) {
+    const label = Number.parseInt(matches[index][1], 10);
+    if (!Number.isFinite(label) || label < from || label > to) continue;
+    const start = matches[index].index ?? 0;
+    const end = index + 1 < matches.length ? matches[index + 1].index ?? previous.length : previous.length;
+    cuts.push([start, end]);
+  }
+  if (!cuts.length) return previous;
+  let out = "";
+  let cursor = 0;
+  for (const [start, end] of cuts) {
+    out += previous.slice(cursor, start);
+    cursor = end;
+  }
+  out += previous.slice(cursor);
+  return out.replace(/\n{3,}/g, "\n\n");
 }
 
 export function mergeFileBody(previous: string, next: string): string {

@@ -219,6 +219,8 @@ const catalog = {
     en: "Type a message; Enter inserts a line; use @ to call AI, data, citations, or the assistant",
   },
   "core.send": { "zh-TW": "傳送", "zh-CN": "传送", en: "Send" },
+  "core.finalize": { "zh-TW": "定稿通過", "zh-CN": "定稿通过", en: "Approve & Finalize" },
+  "core.review_reject": { "zh-TW": "退回重寫", "zh-CN": "退回重写", en: "Reject & Rewrite" },
   "core.stop": { "zh-TW": "停止", "zh-CN": "停止", en: "Stop" },
   "core.project_rail": { "zh-TW": "專案核心／藍圖狀態", "zh-CN": "项目核心／蓝图状态", en: "Project Core / Blueprint State" },
   "core.project_state": { "zh-TW": "專案核心狀態", "zh-CN": "项目核心状态", en: "Project Core State" },

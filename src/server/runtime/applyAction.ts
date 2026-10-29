@@ -34,6 +34,7 @@ import {
   buildConversationFile,
   conversationFilePage,
   conversationFileVerified,
+  removeEpisodeBlocks,
 } from "@/lib/conversationFile";
 import {
   persistFindConversationFile,
@@ -47,14 +48,19 @@ import {
   collectEpisodeLabels,
   detectUnusableOutput,
   diagnoseGenerationFailure,
+  finalizeEpisodes,
   formatDeliveryFooter,
   isContinueRequest,
+  isCorrectionRequest,
   latestOpenTask,
+  parseLabelRange,
   parseNotebookTasks,
   parseQuantity,
+  rejectEpisodes,
   shouldAttachFooter,
   unverifiedExecutionClaims,
   updateContractAfterGeneration,
+  withNotebookTasks,
   withTaskObservation,
   type ConversationTaskContract,
   type GenerationStreamSink,
@@ -324,6 +330,42 @@ function attachFooter(text: string, contract: ConversationTaskContract | null): 
   return annotated;
 }
 
+async function applyConversationReviewAction(
+  actionUid: string,
+  nextValue: string | undefined,
+  accountUid?: string,
+): Promise<boolean> {
+  const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+    `SELECT control_uid, value_text FROM ${FIELD_TABLE.core}`,
+  );
+  const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+  const current = (uid: string) => cache.get(uid) ?? null;
+  const thread = activeThreadUid(current);
+  const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
+  const tasks = parseNotebookTasks(current(notebookUid));
+  const contract = latestOpenTask(tasks, thread);
+  if (!contract) return false;
+  const next =
+    actionUid === "CORE-01-ACT-FINALIZE"
+      ? finalizeEpisodes(contract, nextValue)
+      : rejectEpisodes(contract, nextValue);
+  if (next === contract) return false;
+  if (actionUid === "CORE-01-ACT-REVIEW-REJECT" && accountUid) {
+    const pageUid = conversationFilePage("core");
+    const prior = pageUid ? await persistFindConversationFileByTask(accountUid, pageUid, contract.taskId) : null;
+    if (prior?.body) {
+      const range = parseLabelRange(nextValue ?? "") ?? parseLabelRange(contract.nextBatch ?? "");
+      if (range) {
+        const body = removeEpisodeBlocks(prior.body, range[0], range[1]);
+        if (body !== prior.body) await persistUpsertConversationFile({ ...prior, body, version: prior.version + 1, updatedAt: new Date().toISOString() });
+      }
+    }
+  }
+  const updated = tasks.map((row) => (row.taskId === contract.taskId ? next : row));
+  await writeField(FIELD_TABLE.core, notebookUid, JSON.stringify(withNotebookTasks(current(notebookUid), updated)));
+  return true;
+}
+
 async function persistGeneratedFile(
   accountUid: string | undefined,
   page: AiPageUid,
@@ -521,6 +563,10 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "core") {
+    if (actionUid === "CORE-01-ACT-FINALIZE" || actionUid === "CORE-01-ACT-REVIEW-REJECT") {
+      await applyConversationReviewAction(actionUid, nextValue, accountUid);
+      return;
+    }
     const assigned = await assignedAiRouteSnapshot().catch(() => "");
     const written = await applyProjectedAction(
       FIELD_TABLE.core,

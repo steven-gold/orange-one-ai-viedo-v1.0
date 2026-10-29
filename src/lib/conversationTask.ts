@@ -53,6 +53,9 @@ export type ConversationTaskContract = {
   completedItems: string[];
   pendingItems: string[];
   deliveredLabels?: number[];
+  finalizedLabels?: number[];
+  mode?: "produce" | "correction";
+  patchLabels?: number[];
   nextBatch?: string;
   resumeCursor?: string;
   fileId?: string;
@@ -103,6 +106,76 @@ function hashId(parts: string[]): string {
 export function isContinueRequest(text: string): boolean {
   const body = clean(text);
   return CONTINUE_RE.test(body) || CATALOG_RE.test(body);
+}
+
+export function isCorrectionRequest(text: string): boolean {
+  const body = clean(text);
+  return /修正|改寫|重寫|替換|更正|補強|調整第/u.test(body);
+}
+
+export function parseLabelRange(text: string, unit = "集"): [number, number] | null {
+  const body = clean(text);
+  if (!body) return null;
+  const range = new RegExp(`第?\\s*(\\d+)\\s*(?:[-–—~至到]|、)\\s*第?\\s*(\\d+)\\s*${unit}?`).exec(body);
+  if (range) {
+    const from = Number.parseInt(range[1], 10);
+    const to = Number.parseInt(range[2], 10);
+    if (Number.isFinite(from) && Number.isFinite(to) && from > 0 && to >= from) return [from, to];
+  }
+  const single = new RegExp(`第?\\s*(\\d+)\\s*${unit}`).exec(body);
+  if (single) {
+    const value = Number.parseInt(single[1], 10);
+    if (Number.isFinite(value) && value > 0) return [value, value];
+  }
+  return null;
+}
+
+function labelsInRange(labels: number[], from: number, to: number): number[] {
+  return labels.filter((value) => value >= from && value <= to);
+}
+
+export function finalizeEpisodes(contract: ConversationTaskContract, rangeText: string | undefined): ConversationTaskContract {
+  const delivered = contract.deliveredLabels ?? [];
+  const range = rangeText?.trim() ? parseLabelRange(rangeText) : null;
+  const approved = range ? labelsInRange(delivered, range[0], range[1]) : [...delivered];
+  if (!approved.length) return contract;
+  const finalized = new Set([...(contract.finalizedLabels ?? []), ...approved]);
+  return {
+    ...contract,
+    finalizedLabels: [...finalized].sort((a, b) => a - b),
+    version: contract.version + 1,
+  };
+}
+
+export function rejectEpisodes(contract: ConversationTaskContract, rangeText: string | undefined): ConversationTaskContract {
+  const range = rangeText?.trim() ? parseLabelRange(rangeText) : contract.nextBatch ? parseLabelRange(contract.nextBatch) : null;
+  if (!range) return contract;
+  const dropped = new Set(labelsInRange(contract.deliveredLabels ?? [], range[0], range[1]));
+  const finalized = new Set(labelsInRange(contract.finalizedLabels ?? [], range[0], range[1]));
+  const delivered = (contract.deliveredLabels ?? []).filter((value) => !dropped.has(value));
+  const next: ConversationTaskContract = {
+    ...contract,
+    deliveredLabels: delivered,
+    finalizedLabels: (contract.finalizedLabels ?? []).filter((value) => !finalized.has(value)),
+    status: delivered.length ? "PARTIAL" : "OPEN",
+    version: contract.version + 1,
+  };
+  return advanceFrontierContract(next, "");
+}
+
+export function finalizedProgress(contract: ConversationTaskContract): { through: number; pendingReview: [number, number] | null } {
+  const delivered = [...(contract.deliveredLabels ?? [])].sort((a, b) => a - b);
+  const finalized = new Set(contract.finalizedLabels ?? []);
+  let through = 0;
+  for (const value of delivered) {
+    if (value === through + 1 && finalized.has(value)) through += 1;
+    else break;
+  }
+  const unreviewed = delivered.filter((value) => !finalized.has(value));
+  return {
+    through,
+    pendingReview: unreviewed.length ? [Math.min(...unreviewed), Math.max(...unreviewed)] : null,
+  };
 }
 
 export function modelBlockedForLanguage(model: string, language = "zh-TW"): boolean {
@@ -197,6 +270,18 @@ export function buildTaskContract(
   thread = "",
 ): ConversationTaskContract {
   const raw = clean(prompt);
+  if (prior && isCorrectionRequest(raw) && !isContinueRequest(raw)) {
+    const unit = prior.quantity?.unit ?? "集";
+    const patchLabels = [...new Set([...raw.matchAll(new RegExp(`第\\s*(\\d+)\\s*${unit}`, "gu"))].map((m) => Number.parseInt(m[1], 10)).filter((v) => Number.isFinite(v) && v > 0))];
+    return {
+      ...prior,
+      thread: prior.thread || thread,
+      mode: "correction",
+      patchLabels,
+      status: prior.status === "COMPLETE" ? "COMPLETE" : "PARTIAL",
+      version: prior.version + 1,
+    };
+  }
   if (prior && isContinueRequest(raw)) {
     const restart = CATALOG_RE.test(raw) && !CONTINUE_RE.test(raw);
     const planned = planQuantityBatches(prior.quantity, prior.batchSize, restart ? 0 : completedCount(prior));
@@ -293,6 +378,16 @@ export function latestOpenTask(
 
 export function formatContractForPrompt(contract: ConversationTaskContract): string {
   if (contract.kind === "question" && !contract.batched) return "";
+  if (contract.mode === "correction") {
+    const targets = contract.patchLabels?.length
+      ? `第${contract.patchLabels.join("、第")}集`
+      : "使用者指定的集數";
+    return [
+      `修正模式：只重寫${targets}，逐集以「第N${contract.quantity?.unit ?? "集"}」標題開頭，輸出修正後的完整內容。`,
+      "禁止產出指定範圍以外的任何集數；禁止重複未修正的集數。",
+      "未完成範圍必須標示。禁止宣稱全部完成。",
+    ].join("\n");
+  }
   const lines = [
     `目標：${contract.goal}`,
     `類型：${contract.kind}`,
@@ -303,6 +398,9 @@ export function formatContractForPrompt(contract: ConversationTaskContract): str
     contract.forbidden.length ? `禁止：${contract.forbidden.join("；")}` : "",
     contract.nextBatch ? `本批次「只」產出：${contract.nextBatch}。禁止輸出本批次範圍以外的任何集數，包括重寫、改寫或補寫先前集數；本批次內每一集都必須以「第N${contract.quantity?.unit ?? ""}」標題逐集完整呈現，缺集視為未完成。` : "",
     contract.deliveredLabels?.length ? `系統已追蹤已產出集數（以系統追蹤為準，即使對話歷史看似不一致也禁止重寫）：第${Math.min(...contract.deliveredLabels)}–${Math.max(...contract.deliveredLabels)}集。` : "",
+    contract.finalizedLabels?.length
+      ? `已定稿集數：第${Math.min(...contract.finalizedLabels)}–${Math.max(...contract.finalizedLabels)}集（已通過人工審查定稿，禁止重寫或改動）。`
+      : "",
     contract.quantity && contract.quantity.count >= 3
       ? `輸出格式硬性要求：每一${contract.quantity.unit}都必須以「第N${contract.quantity.unit}」標題開頭（例如：第3${contract.quantity.unit}），標題下才寫章節名稱與內容；標題保持純文字，禁止用粗體符號（**）或表格、散文、摘要取代逐${contract.quantity.unit}標題結構。`
       : "",
@@ -321,6 +419,13 @@ export function formatDeliveryFooter(contract: ConversationTaskContract): string
     contract.completedItems.length ? `已完成：${contract.completedItems.join("；")}` : "",
     contract.pendingItems.length ? `未完成：${contract.pendingItems.join("；")}` : "",
     contract.nextBatch && contract.status !== "COMPLETE" ? `下一合法批次：${contract.nextBatch}` : "",
+    contract.deliveredLabels?.length
+      ? (() => {
+          const progress = finalizedProgress(contract);
+          const review = progress.pendingReview ? `；待審查：第${progress.pendingReview[0]}–${progress.pendingReview[1]}集` : "；全部已定稿";
+          return `定稿進度：已定稿第1–${progress.through}集${review}`;
+        })()
+      : "",
     contract.status === "PARTIAL" || contract.status === "OPEN" || contract.status === "STOPPED" ? "可續寫；未完成不得視為全部完成。" : "",
     contract.fileName ? `成品：${contract.fileName}` : "",
     contract.fileId ? `檔案：${contract.fileId}` : "",
