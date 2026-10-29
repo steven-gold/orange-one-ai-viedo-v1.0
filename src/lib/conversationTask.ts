@@ -207,7 +207,7 @@ export function classifyTaskKind(text: string): ConversationTaskKind {
   if (/(計算|比較|分析|統計|驗證)/u.test(body)) return "analysis";
   if (/(程式|代碼|code|function|修 bug)/iu.test(body)) return "code";
   if (EPISODE_RE.test(body) || /(完整故事|系列|長篇|全部集)/u.test(body)) return "large";
-  if (/(寫|製作|創作|劇本|故事|影片|大綱)/u.test(body)) return "creation";
+  if (/(寫|製作|創作|劇本|故事|影片|大綱|設定|世界觀|藍圖|框架|設計|規劃|整理|條列)/u.test(body)) return "creation";
   if (/(什麼是|為什麼|如何定義|誰是)/u.test(body)) return "knowledge";
   if (body.length < 40 && /[?？]$/u.test(body)) return "question";
   return "question";
