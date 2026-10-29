@@ -13,11 +13,77 @@ import {
   withCorrectionStatus,
   withPreserveCheck,
 } from "./correctionScript";
+import {
+  createAssetPatch,
+  createLayerDocument,
+  parseAssetPatch,
+  parseLayerDocument,
+  serializeAssetPatch,
+  serializeLayerDocument,
+  withLayerAdded,
+  withLayerContent,
+  withLayerDuplicated,
+  withLayerMask,
+  withLayerProperties,
+  withLayerRemoved,
+  withLayerReordered,
+  withLayerSelected,
+  withLayerDocTouched,
+  withPatchPreview,
+  withPatchStatus,
+  type LayerDocument,
+} from "./layerDocument";
 
 export { parseThreadList };
 
 export function usableList(raw: string | null): string[] {
   return parseThreadList(raw).filter((item) => Boolean(namedValue(item, "")));
+}
+
+function layerDocFrom(current: (uid: string) => string | null): LayerDocument | undefined {
+  return parseLayerDocument(current("ASSET-01-BTN-LAYER-ADD"));
+}
+
+function propertiesText(layer: { opacity: number; blend: string; transform: string }): string {
+  return [layer.transform?.trim(), `不透明度 ${layer.opacity}% / ${layer.blend}`]
+    .filter(Boolean)
+    .join(" / ");
+}
+
+function parsePropertiesInput(raw: string): { opacity?: number; blend?: string; transform?: string } {
+  const segments = raw.split("/").map((part) => part.trim()).filter(Boolean);
+  const parsed: { opacity?: number; blend?: string; transform?: string } = {};
+  for (const segment of segments) {
+    const opacityMatch = segment.match(/(\d{1,3})\s*%/);
+    if (opacityMatch && parsed.opacity === undefined) {
+      parsed.opacity = Math.min(Number.parseInt(opacityMatch[1], 10), 100);
+      continue;
+    }
+    if (/^(x|y|scale|rotate|translate)/i.test(segment) || /\d/.test(segment)) {
+      parsed.transform = parsed.transform ? `${parsed.transform} ${segment}` : segment;
+      continue;
+    }
+    if (parsed.blend === undefined) parsed.blend = segment;
+  }
+  return parsed;
+}
+
+function inspectorSync(doc: LayerDocument): Record<string, string> {
+  const layer = doc.layers.find((item) => item.layer_id === doc.selected_layer_id);
+  if (!layer) return { "ASSET-01-CTL-LAYER-PROPERTIES": "", "ASSET-01-CTL-LAYER-MASK": "" };
+  return {
+    "ASSET-01-CTL-LAYER-PROPERTIES": propertiesText(layer),
+    "ASSET-01-CTL-LAYER-MASK": layer.mask,
+  };
+}
+
+function nextAssetVersion(assets: string[]): string {
+  let max = 0;
+  for (const item of assets) {
+    const match = item.match(/ASSET-v(\d+)/i);
+    if (match) max = Math.max(max, Number.parseInt(match[1], 10));
+  }
+  return `ASSET-v${max + 1}`;
 }
 
 function named(value: string | null | undefined): string {
@@ -263,62 +329,175 @@ export function previewAssetAction(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DOC-CREATE") {
-    return { "ASSET-01-BTN-LAYER-DOC-CREATE": keepName(nextValue, current("ASSET-01-BTN-LAYER-DOC-CREATE"), "圖層文件") };
+    if (!named(current("ASSET-01-FLD-SCRIPT"))) return {};
+    const name = keepName(nextValue, current("ASSET-01-BTN-LAYER-DOC-CREATE"), "圖層文件");
+    const doc = createLayerDocument({
+      name,
+      asset_ref: named(current("ASSET-01-FLD-OUTPUT-ID")) || named(current("ASSET-01-FLD-MANIFEST")),
+      script_ref: named(current("ASSET-01-FLD-SCRIPT")),
+      dna_ref: named(current("ASSET-01-FLD-DNA")),
+    });
+    return {
+      "ASSET-01-BTN-LAYER-DOC-CREATE": name,
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(doc),
+      ...inspectorSync(doc),
+    };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DOC-UPDATE") {
-    return { "ASSET-01-BTN-LAYER-DOC-UPDATE": "saved" };
+    const doc = layerDocFrom(current);
+    if (!doc) return {};
+    const selection = doc.layers.find(
+      (layer) => layer.layer_id === String(nextValue ?? "").trim() || layer.name === String(nextValue ?? "").trim(),
+    );
+    if (selection) {
+      const nextDoc = withLayerSelected(doc, selection.layer_id);
+      return {
+        "ASSET-01-BTN-LAYER-DOC-UPDATE": "saved",
+        "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+        ...inspectorSync(nextDoc),
+      };
+    }
+    const nextDoc = withLayerDocTouched(doc, "圖層文件更新");
+    return {
+      "ASSET-01-BTN-LAYER-DOC-UPDATE": "saved",
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+    };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-ADD") {
-    const layers = usableList(current("ASSET-01-BTN-LAYER-ADD"));
-    const title = keepName(nextValue, current("ASSET-01-CTL-LAYER-PROPERTIES"), `圖層 ${layers.length + 1}`);
-    const nextList = [...layers, title];
+    const doc = layerDocFrom(current);
+    if (!doc) return {};
+    const name = named(nextValue) || `圖層 ${doc.layers.length + 1}`;
+    const nextDoc = withLayerAdded(doc, name);
     return {
-      "ASSET-01-BTN-LAYER-ADD": JSON.stringify(nextList),
-      "ASSET-01-CTL-LAYER-PROPERTIES": title,
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+      "ASSET-01-CTL-LAYER-PROPERTIES": propertiesText(nextDoc.layers[nextDoc.layers.length - 1]),
+      "ASSET-01-CTL-LAYER-MASK": "",
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DELETE") {
-    const layers = usableList(current("ASSET-01-BTN-LAYER-ADD"));
-    const nextList = layers.slice(0, -1);
+    const doc = layerDocFrom(current);
+    if (!doc || doc.layers.length === 0) return {};
+    const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id) ?? doc.layers[doc.layers.length - 1];
+    const nextDoc = withLayerRemoved(doc, target.layer_id);
     return {
-      "ASSET-01-BTN-LAYER-ADD": JSON.stringify(nextList),
-      "ASSET-01-CTL-LAYER-PROPERTIES": nextList[nextList.length - 1] ?? "",
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+      ...inspectorSync(nextDoc),
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DUPLICATE") {
-    const layers = usableList(current("ASSET-01-BTN-LAYER-ADD"));
-    const source = named(current("ASSET-01-CTL-LAYER-PROPERTIES")) || layers[layers.length - 1] || "圖層 1";
-    const copy = `${source} 副本`;
+    const doc = layerDocFrom(current);
+    if (!doc || doc.layers.length === 0) return {};
+    const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id) ?? doc.layers[doc.layers.length - 1];
+    const nextDoc = withLayerDuplicated(doc, target.layer_id);
     return {
-      "ASSET-01-BTN-LAYER-ADD": JSON.stringify([...layers, copy]),
-      "ASSET-01-CTL-LAYER-PROPERTIES": copy,
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+      ...inspectorSync(nextDoc),
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-REORDER") {
-    const layers = usableList(current("ASSET-01-BTN-LAYER-ADD"));
-    const nextList = layers.length > 1 ? [layers[layers.length - 1], ...layers.slice(0, -1)] : layers;
-    return { "ASSET-01-BTN-LAYER-ADD": JSON.stringify(nextList) };
+    const doc = layerDocFrom(current);
+    if (!doc || doc.layers.length < 2) return {};
+    return { "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(withLayerReordered(doc)) };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-PROPERTIES") {
-    return { "ASSET-01-CTL-LAYER-PROPERTIES": keepName(nextValue, current("ASSET-01-CTL-LAYER-PROPERTIES"), "不透明度 100%") };
+    const doc = layerDocFrom(current);
+    if (!doc) return {};
+    const raw = String(nextValue ?? "").trim();
+    const selection = doc.layers.find((layer) => raw.startsWith(`選取:${layer.layer_id}`));
+    if (selection) {
+      const nextDoc = withLayerSelected(doc, selection.layer_id);
+      return {
+        "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+        ...inspectorSync(nextDoc),
+      };
+    }
+    const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id);
+    if (!target || !raw) return {};
+    const properties = parsePropertiesInput(raw);
+    const nextDoc = withLayerProperties(doc, target.layer_id, properties);
+    const updated = nextDoc.layers.find((layer) => layer.layer_id === target.layer_id);
+    return {
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+      "ASSET-01-CTL-LAYER-PROPERTIES": updated ? propertiesText(updated) : raw,
+    };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-MASK") {
-    return { "ASSET-01-CTL-LAYER-MASK": keepName(nextValue, current("ASSET-01-CTL-LAYER-MASK"), "語意遮罩") };
+    const doc = layerDocFrom(current);
+    if (!doc) return {};
+    const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id);
+    const mask = String(nextValue ?? "").trim();
+    if (!target || !mask) return {};
+    const nextDoc = withLayerMask(doc, target.layer_id, mask);
+    return {
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(nextDoc),
+      "ASSET-01-CTL-LAYER-MASK": mask,
+    };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-CREATE") {
-    return { "ASSET-01-BTN-PATCH-CREATE": keepName(nextValue, current("ASSET-01-BTN-PATCH-CREATE"), "局部修補") };
+    const doc = layerDocFrom(current);
+    if (!doc) return {};
+    const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id);
+    const delta = String(nextValue ?? "").trim();
+    if (!target || !delta) return {};
+    const patch = createAssetPatch({
+      source_asset_version: named(current("ASSET-01-FLD-OUTPUT-ID")),
+      target_layer_id: target.layer_id,
+      target_layer_name: target.name,
+      region: target.mask,
+      requested_delta: delta,
+      blueprint_ref: named(current("ASSET-01-FLD-BLUEPRINT")),
+      dna_ref: named(current("ASSET-01-FLD-DNA")),
+    });
+    return { "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(patch) };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-PREVIEW") {
-    return { "ASSET-01-BTN-PATCH-PREVIEW": "preview" };
+    const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
+    if (!patch || patch.status === "ACCEPTED" || patch.status === "REJECTED") return {};
+    return {
+      "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(withPatchPreview(patch, "")),
+      "ASSET-01-BTN-PATCH-PREVIEW": "preview",
+    };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-ACCEPT") {
-    return { "ASSET-01-BTN-PATCH-ACCEPT": "confirmed" };
+    const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
+    const doc = layerDocFrom(current);
+    if (!patch || !doc || patch.status !== "PREVIEWED" || !patch.preview) return {};
+    const target = doc.layers.find((layer) => layer.layer_id === patch.target_layer_id);
+    if (!target) return {};
+    const versionedDoc = withLayerContent(
+      doc,
+      target.layer_id,
+      [target.content, `[補丁 ${patch.patch_id}] ${patch.requested_delta}`].filter(Boolean).join("\n"),
+      `接受補丁 ${patch.patch_id}（${patch.requested_delta}）`,
+    );
+    const assetVersion = nextAssetVersion(assets);
+    const accepted = withPatchStatus({ ...patch, resulting_layer_doc_version: versionedDoc.version, resulting_asset_version: assetVersion }, "ACCEPTED", "人工接受補丁");
+    const nextAssets = assets.includes(assetVersion) ? assets : [...assets, assetVersion];
+    return {
+      "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(accepted),
+      "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(versionedDoc),
+      "ASSET-01-LST-ASSET": JSON.stringify(nextAssets),
+      "ASSET-01-FLD-OUTPUT-ID": assetVersion,
+      "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": `${versionedDoc.layer_doc_id}#v${versionedDoc.version}`,
+      "ASSET-01-BTN-PATCH-ACCEPT": "confirmed",
+    };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-REJECT") {
-    return { "ASSET-01-BTN-PATCH-REJECT": "returned" };
+    const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
+    if (!patch || patch.status === "ACCEPTED" || patch.status === "REJECTED") return {};
+    return {
+      "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(withPatchStatus(patch, "REJECTED", "人工拒絕補丁")),
+      "ASSET-01-BTN-PATCH-REJECT": "returned",
+    };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-REVISE") {
-    return { "ASSET-01-BTN-PATCH-REVISE": "editing" };
+    const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
+    if (!patch || patch.status === "ACCEPTED" || patch.status === "REJECTED") return {};
+    const note = String(nextValue ?? "").trim() || "人工要求修改補丁";
+    return {
+      "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(withPatchStatus(patch, "REVISED", note)),
+      "ASSET-01-BTN-PATCH-REVISE": "editing",
+    };
   }
   if (actionUid === "ASSET-01-ACT-RUNTIME-VIEW") {
     return {

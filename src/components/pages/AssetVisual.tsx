@@ -8,6 +8,7 @@ import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAct
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
 import { parseCorrectionScript } from "@/lib/correctionScript";
+import { parseAssetPatch, parseLayerDocument, type LayerEntry } from "@/lib/layerDocument";
 import {
   ASSET_CONVERSATION,
   ASSET_CONVERSATION_HIDDEN,
@@ -392,7 +393,9 @@ export function AssetVisual() {
   const selectedAsset = valueOf("ASSET-01-FLD-MANIFEST");
   const compareMode = valueOf("ASSET-01-LST-COMPARE-VERSIONS");
   const previewLabel = selectedAsset && selectedAsset !== "created" ? selectedAsset : tx("asset.preview_unbound");
-  const layers = usableList(valueOf("ASSET-01-BTN-LAYER-ADD"));
+  const layerDoc = parseLayerDocument(valueOf("ASSET-01-BTN-LAYER-ADD"));
+  const layers: string[] = layerDoc ? layerDoc.layers.map((layer) => layer.name) : usableList(valueOf("ASSET-01-BTN-LAYER-ADD"));
+  const patch = parseAssetPatch(valueOf("ASSET-01-BTN-PATCH-CREATE"));
   const dialogTitleKey: TranslationKey =
     dialog === "asset"
       ? "asset.dialog_asset"
@@ -755,17 +758,55 @@ export function AssetVisual() {
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DUPLICATE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-LAYER-DUPLICATE")}>{tx("asset.layer_duplicate")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-REORDER" disabled={disabled} onClick={() => void act("ASSET-01-BTN-LAYER-REORDER")}>{tx("asset.layer_reorder")}</button>
           </div>
-          <div className={styles.list}>
-            {layers.map((layer) => (
-              <div key={layer} className={styles.item}>
-                <span>{layer}</span>
-              </div>
-            ))}
-          </div>
+          {layerDoc ? (
+            <div className={styles.list}>
+              {layerDoc.layers.map((layer: LayerEntry) => (
+                <div
+                  key={layer.layer_id}
+                  className={`${styles.item} ${layer.layer_id === layerDoc.selected_layer_id ? styles.itemActive : ""}`}
+                  data-control-uid={`ASSET-01-BTN-LAYER-ADD:${layer.layer_id}`}
+                >
+                  <span>
+                    {layer.name} · {tx(`asset.layer_type_${layer.type}` as TranslationKey)} · v{layer.version} · {layer.opacity}% / {layer.blend}
+                    {layer.mask ? ` · ${layer.mask}` : ""}
+                    {layer.layer_id === layerDoc.selected_layer_id ? ` · ${tx("asset.layer_selected")}` : ""}
+                  </span>
+                  {layer.layer_id === layerDoc.selected_layer_id ? null : (
+                    <button
+                      type="button"
+                      className={styles.btn}
+                      disabled={disabled}
+                      onClick={() => void act("ASSET-01-CTL-LAYER-PROPERTIES", `選取:${layer.layer_id}`)}
+                    >
+                      {tx("asset.layer_select")}
+                    </button>
+                  )}
+                </div>
+              ))}
+              <p className={styles.note}>
+                {layerDoc.name} · {tx("asset.layer_doc_meta")} v{layerDoc.version} · {layerDoc.layer_doc_id}#{layerDoc.hash}
+              </p>
+            </div>
+          ) : (
+            <div className={styles.list}>
+              {layers.map((layer) => (
+                <div key={layer} className={styles.item}>
+                  <span>{layer}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <p className={styles.note}>{tx("asset.layer_na")}</p>
         </section>
         <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR">
           <h3 className={styles.sub}>{tx("asset.layer_inspector")}</h3>
+          {layerDoc?.selected_layer_id ? (
+            <p className={styles.note}>
+              {tx("asset.layer_selected")}: {layerDoc.layers.find((layer) => layer.layer_id === layerDoc.selected_layer_id)?.name}
+            </p>
+          ) : (
+            <p className={styles.note}>{tx("asset.layer_select_hint")}</p>
+          )}
           <Field uid="ASSET-01-CTL-LAYER-PROPERTIES" label={tx("asset.layer_properties")} value={valueOf("ASSET-01-CTL-LAYER-PROPERTIES")} loading={loading} onAct={() => openNameDialog("properties", valueOf("ASSET-01-CTL-LAYER-PROPERTIES") ?? "")} disabled={disabled} />
           <Field uid="ASSET-01-CTL-LAYER-MASK" label={tx("asset.layer_mask")} value={valueOf("ASSET-01-CTL-LAYER-MASK")} loading={loading} onAct={() => openNameDialog("mask", valueOf("ASSET-01-CTL-LAYER-MASK") ?? "")} disabled={disabled} />
         </section>
@@ -781,6 +822,29 @@ export function AssetVisual() {
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-REJECT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-PATCH-REJECT")}>{tx("asset.patch_reject")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-REVISE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-PATCH-REVISE")}>{tx("asset.patch_revise")}</button>
           </div>
+          {patch ? (
+            <div className={styles.list}>
+              <div className={styles.item}>
+                <span>
+                  {patch.patch_id} · {tx("asset.patch_state")}: {patch.status}
+                  {patch.target_layer_name ? ` · ${tx("asset.patch_target")}: ${patch.target_layer_name}` : ""}
+                  {patch.region ? ` · ${tx("asset.patch_region")}: ${patch.region}` : ""}
+                  {patch.resulting_asset_version ? ` · ${tx("asset.patch_result")}: ${patch.resulting_asset_version} / ${tx("asset.layer_doc_meta")} v${patch.resulting_layer_doc_version}` : ""}
+                </span>
+              </div>
+              <div className={styles.item}><span>{tx("asset.patch_delta")}: {patch.requested_delta}</span></div>
+              <div className={styles.item}><span>{tx("asset.patch_preserve")}: {patch.preserve_constraints}</span></div>
+              {patch.revision_note ? <div className={styles.item}><span>{tx("asset.patch_revise_note")}: {patch.revision_note}</span></div> : null}
+              {patch.preview ? (
+                <div className={styles.item}>
+                  <span>{tx("asset.patch_preview_body")}:</span>
+                  <pre className={styles.previewBody}>{patch.preview}</pre>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <p className={styles.note}>{tx("asset.patch_none")}</p>
+          )}
         </section>
         <section className={styles.block} data-component-uid="ASSET-01-CMP-RUNTIME">
           <h3 className={styles.sub}>{tx("asset.runtime")}</h3>

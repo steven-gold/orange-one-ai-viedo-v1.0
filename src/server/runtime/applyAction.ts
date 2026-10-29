@@ -14,6 +14,7 @@ import { parseJson, type DevProfile } from "@/lib/devState";
 import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
+import { parseAssetPatch, patchPrompt, serializeAssetPatch, withPatchPreview } from "@/lib/layerDocument";
 import {
   ASSET_CONVERSATION,
   CORE_CONVERSATION,
@@ -582,6 +583,22 @@ async function fillCorrectionScriptBody(
   await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
 }
 
+async function fillAssetPatchPreview(table: string, uid: string, signal?: AbortSignal): Promise<void> {
+  const patch = parseAssetPatch(await readField(table, uid));
+  if (!patch || patch.status !== "PREVIEWED" || patch.preview) return;
+  let body = "";
+  try {
+    body = (await generatePageReply("asset", patchPrompt(patch), "", [], { signal })).text;
+  } catch (error) {
+    if (error instanceof GenerationCancelled) body = error.partial;
+    else {
+      const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+      body = unavailableBody({ failed: true, empty: true, providerCode: code });
+    }
+  }
+  await writeField(table, uid, serializeAssetPatch(withPatchPreview(patch, body)));
+}
+
 async function credentialFromValue(raw?: string): Promise<string> {
   const text = (raw ?? "").trim();
   if (text.startsWith("{")) {
@@ -892,6 +909,9 @@ export async function applyWorkbenchAction(
     if (actionUid === "ASSET-01-ACT-CORRECTION-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.asset, "ASSET-01-TXT-CORRECTION-REQUEST")) || "";
       await fillCorrectionScriptBody(FIELD_TABLE.asset, ASSET_CORRECTION_RESPONSE_UID, "asset", prompt, signal);
+    }
+    if (actionUid === "ASSET-01-ACT-PATCH-PREVIEW" && written) {
+      await fillAssetPatchPreview(FIELD_TABLE.asset, "ASSET-01-BTN-PATCH-CREATE", signal);
     }
     if (actionUid === "ASSET-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.asset, "ASSET-01-BTN-LOCK");

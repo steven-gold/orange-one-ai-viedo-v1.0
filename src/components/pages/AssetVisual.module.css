@@ -621,3 +621,19 @@
   color: #e0b04a;
   background: rgba(224, 176, 74, 0.12);
 }
+
+.itemActive {
+  border-color: var(--asset-border-active, rgba(179, 140, 255, 0.46));
+  background: rgba(139, 92, 255, 0.14);
+}
+
+.previewBody {
+  margin: 4px 0 0;
+  padding: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  color: inherit;
+}
