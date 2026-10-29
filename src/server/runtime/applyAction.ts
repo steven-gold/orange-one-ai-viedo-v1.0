@@ -350,7 +350,8 @@ async function applyConversationReviewAction(
   const thread = activeThreadUid(current);
   const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
   const tasks = parseNotebookTasks(current(notebookUid));
-  const contract = latestOpenTask(tasks, thread);
+  const scoped = tasks.filter((row) => row.thread === thread);
+  const contract = latestOpenTask(tasks, thread) ?? (scoped.length ? scoped[scoped.length - 1] : null);
   if (!contract) return false;
   const next =
     actionUid === "CORE-01-ACT-FINALIZE"
