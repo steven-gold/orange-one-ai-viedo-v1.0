@@ -95,7 +95,6 @@ export function buildProductionPackage(input: {
     ...viewRefs,
     continuity?.starting_state ?? "",
     continuity?.ending_state ?? "",
-    input.at,
   ]);
 
   return {

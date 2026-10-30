@@ -245,6 +245,7 @@ const catalog = {
   "core.child_approve": { "zh-TW": "子鎖核准", "zh-CN": "子锁核准", en: "Child Lock Approve" },
   "core.change_request": { "zh-TW": "變更請求", "zh-CN": "变更请求", en: "Change Request" },
   "core.change_request_field": { "zh-TW": "變更請求狀態", "zh-CN": "变更请求状态", en: "Change Request Status" },
+  "core.idempotency": { "zh-TW": "冪等日志", "zh-CN": "幂等日志", en: "Idempotency Ledger" },
   "core.package": { "zh-TW": "生產包", "zh-CN": "生产包", en: "Production Package" },
   "core.core_review": { "zh-TW": "送出核心審查", "zh-CN": "送出核心审查", en: "Submit Core Review" },
   "core.project_lock": { "zh-TW": "提出專案鎖定", "zh-CN": "提出项目锁定", en: "Request Project Lock" },

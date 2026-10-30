@@ -88,6 +88,41 @@ function stableHash8(parts: string[]): string {
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
+export type IdempotencyEntry = { key: string; result_ref: string; at: string };
+
+function parseIdempotencyLedger(raw: string | null | undefined): IdempotencyEntry[] {
+  try {
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(parsed)) {
+      return parsed.filter((row) => row && typeof row === "object" && typeof row.key === "string") as IdempotencyEntry[];
+    }
+  } catch {
+    return [];
+  }
+  return [];
+}
+
+function idempotencySeen(raw: string | null | undefined, key: string): boolean {
+  return parseIdempotencyLedger(raw).some((row) => row.key === key);
+}
+
+function recordIdempotency(raw: string | null | undefined, key: string, resultRef: string, at: string): string {
+  const ledger = parseIdempotencyLedger(raw).filter((row) => row.key !== key);
+  ledger.push({ key, result_ref: resultRef, at });
+  return JSON.stringify(ledger.slice(-50));
+}
+
+function parseExpectedVersion(nextValue: unknown): string {
+  const raw = String(nextValue ?? "").trim();
+  if (!raw.startsWith("{")) return "";
+  try {
+    const parsed = JSON.parse(raw) as { expected_version?: unknown };
+    return typeof parsed.expected_version === "string" ? parsed.expected_version : "";
+  } catch {
+    return "";
+  }
+}
+
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
 export const CONVERSATION_STORED_MESSAGE_TEXT_CHARS = KERNEL_STORED_CHARS;
@@ -727,15 +762,35 @@ export function previewCoreAction(
   if (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT") {
     const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
     if (!candidate) return {};
+    const priorDoc = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    const expected = parseExpectedVersion(nextValue);
+    if (expected && priorDoc && expected !== priorDoc.version) {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_VERSION_CONFLICT", `CANDIDATE-ACCEPT: expected=${expected} current=${priorDoc.version}; recompare`, nowStamp())!,
+        ),
+      };
+    }
     const patched = (uid: string) => (uid === "CORE-01-BTN-CANDIDATE-CONFIRM" ? "confirmed" : current(uid));
     const script = buildCanonicalScript(patched);
-    const priorDoc = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    if (priorDoc && script && script.version === priorDoc.version) {
+      const versionKey = `ACCEPT:${script.version}`;
+      const base = {
+        "CORE-01-BTN-CANDIDATE-CONFIRM": "confirmed",
+        "CORE-01-FLD-LOCK-REVIEW": "ready",
+        "CORE-01-FLD-HUMAN-DECISION": current("CORE-01-FLD-HUMAN-DECISION") || "confirmed",
+      };
+      if (idempotencySeen(current("CORE-01-FLD-IDEMPOTENCY"), versionKey)) return base;
+      return { ...base, "CORE-01-FLD-IDEMPOTENCY": recordIdempotency(current("CORE-01-FLD-IDEMPOTENCY"), versionKey, script.version, nowStamp()) };
+    }
     const priorRef =
       priorDoc && script && priorDoc.version !== script.version ? priorDoc.version : priorDoc?.prior_version_ref;
     return {
       "CORE-01-BTN-CANDIDATE-CONFIRM": "confirmed",
       "CORE-01-FLD-LOCK-REVIEW": "ready",
       "CORE-01-FLD-HUMAN-DECISION": current("CORE-01-FLD-HUMAN-DECISION") || "confirmed",
+      "CORE-01-FLD-IDEMPOTENCY": recordIdempotency(current("CORE-01-FLD-IDEMPOTENCY"), `ACCEPT:${script?.version ?? candidate}`, script?.version ?? "", nowStamp()),
       ...(script
         ? { "CORE-01-BTN-CANONICAL-SCRIPT": serializeCanonicalScript({ ...script, prior_version_ref: priorRef }) }
         : {}),
@@ -975,6 +1030,8 @@ export function previewCoreAction(
       lockState: String(current("CORE-01-FLD-LOCK-REVIEW") ?? ""),
       at,
     });
+    const existingPkg = parseProductionPackage(current("CORE-01-FLD-PACKAGE"));
+    if (existingPkg && existingPkg.version === pkg.version && existingPkg.status !== "BLOCKED") return {};
     return {
       "CORE-01-FLD-PACKAGE": serializeProductionPackage(pkg),
       "CORE-01-FLD-LIFECYCLE-STAGE": "PACKAGE_BUILDING",
@@ -1017,7 +1074,7 @@ export function previewCoreAction(
         ),
       };
     }
-    const at = nowStamp();
+    if (current("CORE-01-FLD-LIFECYCLE-STAGE") === "HANDED_OFF") return {};
     return {
       "CORE-01-FLD-PACKAGE": serializeProductionPackage({ ...pkg, status: "READY" }),
       "CORE-01-FLD-DOWNSTREAM-ASSET": exactName(current("CORE-01-FLD-DOWNSTREAM-ASSET")) || `ASSET←${pkg.version}`,
@@ -1030,6 +1087,7 @@ export function previewCoreAction(
   if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
     const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
     if (!blueprint) return {};
+    if (current("CORE-01-FLD-LIFECYCLE-STAGE") === "CHILD_LOCK_REVIEW") return {};
     return {
       "CORE-01-BTN-CHILD-LOCK": blueprint,
       "CORE-01-FLD-LOCK-REVIEW": `submitted@${nowStamp()}`,
@@ -1109,6 +1167,7 @@ export function previewCoreAction(
   if (actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
     const project = exactName(current("CORE-01-CTL-PROJECT"));
     if (!project) return {};
+    if (current("CORE-01-FLD-LIFECYCLE-STAGE") === "MOTHER_LOCK_REVIEW") return {};
     return {
       "CORE-01-BTN-PROJECT-LOCK": project,
       "CORE-01-FLD-LOCK-REVIEW": `submitted@${nowStamp()}`,

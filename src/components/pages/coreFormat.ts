@@ -12,6 +12,22 @@ export function formatCoreLifecycle(value: unknown, loading: boolean): string {
   return raw || "IDEA";
 }
 
+export function formatCoreIdempotency(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  try {
+    const ledger = JSON.parse(raw) as Array<{ key?: string; result_ref?: string }>;
+    if (Array.isArray(ledger) && ledger.length) {
+      return ledger
+        .slice(-3)
+        .map((row) => `${row.key ?? "?"}→${row.result_ref ?? ""}`)
+        .join(" / ");
+    }
+  } catch {
+    return raw.slice(0, 80);
+  }
+  return "";
+}
+
 export function formatCoreErrors(value: unknown, loading: boolean): string {
   const raw = displayBoundValue(value, loading);
   const log = parseCoreErrors(raw);
