@@ -70,7 +70,7 @@ import {
   parseScenesField,
 } from "./canonicalViews";
 import { dnaExactRef, parseBaseDna, parseDnaEnrichmentField, serializeBaseDna, type DnaEnrichment } from "./dnaDocument";
-import { evaluateCoreCandidate, QCP_CORE_PROFILE } from "./coreEvaluation";
+import { evaluateCoreCandidate, markScorecardStale, QCP_CORE_PROFILE } from "./coreEvaluation";
 import { appendCoreEvent, CORE_EVENT_NAMES } from "./coreEventLog";
 import { parseChapterArchitecture, parseStoryCore, serializeChapterArchitecture, serializeStoryCore } from "./storyChapterDocument";
 import { appendCoreError, buildCoreError } from "./coreErrorContract";
@@ -867,6 +867,12 @@ function previewCoreActionFields(
     }
     const priorRef =
       priorDoc && script && priorDoc.version !== script.version ? priorDoc.version : priorDoc?.prior_version_ref;
+    const scorecardChanged = Boolean(priorDoc && script && priorDoc.version !== script.version);
+    let evaluationStale: Record<string, string> = {};
+    if (scorecardChanged) {
+      const staleJson = markScorecardStale(current("CORE-01-FLD-EVALUATION"), priorDoc!.version, script!.version, nowStamp());
+      if (staleJson) evaluationStale = { "CORE-01-FLD-EVALUATION": staleJson };
+    }
     return {
       "CORE-01-BTN-CANDIDATE-CONFIRM": "confirmed",
       "CORE-01-FLD-LOCK-REVIEW": "ready",
@@ -875,6 +881,7 @@ function previewCoreActionFields(
       ...(script
         ? { "CORE-01-BTN-CANONICAL-SCRIPT": serializeCanonicalScript({ ...script, prior_version_ref: priorRef }) }
         : {}),
+      ...evaluationStale,
     };
   }
   if (actionUid === "CORE-01-ACT-STORY-CANDIDATE") {
@@ -1211,11 +1218,24 @@ function previewCoreActionFields(
     }
     const blueprint = exactName(current("CORE-01-BTN-CHILD-LOCK")) || blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
     if (!blueprint) return {};
+    const crRaw = current("CORE-01-FLD-CHANGE-REQUEST");
+    let crResolved: Record<string, string> = {};
+    try {
+      const cr = crRaw ? (JSON.parse(crRaw) as { kind?: unknown; status?: unknown; reverify_required?: unknown } | null) : null;
+      if (cr && cr.kind === "CORE_CHANGE_REQUEST" && cr.reverify_required === true) {
+        crResolved = {
+          "CORE-01-FLD-CHANGE-REQUEST": JSON.stringify({ ...cr, reverify_required: false, reverify_resolved_at: nowStamp() }),
+        };
+      }
+    } catch {
+      crResolved = {};
+    }
     return {
       "CORE-01-BTN-CHILD-LOCK": blueprint,
       "CORE-01-FLD-LOCK-REVIEW": "locked",
       "CORE-01-FLD-PACKAGE": blueprint,
       "CORE-01-FLD-LIFECYCLE-STAGE": "TOPIC_LOCKED",
+      ...crResolved,
     };
   }
   if (actionUid === "CORE-01-ACT-CHANGE-REQUEST") {
@@ -1292,7 +1312,7 @@ function previewCoreActionFields(
     let changePatch: Record<string, string> = {};
     if (changeRaw && changeRaw.startsWith("{")) {
       try {
-        const change = JSON.parse(changeRaw) as { kind?: string; status?: string; change_id?: string; reason?: string };
+        const change = JSON.parse(changeRaw) as { kind?: string; status?: string; change_id?: string; reason?: string; impacted?: unknown };
         if (change.kind === "CORE_CHANGE_REQUEST" && change.status === "CHANGE_REQUESTED") {
           changePatch = {
             "CORE-01-FLD-CHANGE-REQUEST": JSON.stringify({
@@ -1300,6 +1320,8 @@ function previewCoreActionFields(
               status: "SUPERSEDED",
               superseded_by: project,
               superseded_at: nowStamp(),
+              reverify_required: true,
+              reverify_targets: Array.isArray(change.impacted) ? change.impacted : [],
             }),
           };
         }

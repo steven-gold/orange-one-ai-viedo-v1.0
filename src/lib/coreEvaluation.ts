@@ -34,8 +34,7 @@ export function evaluateCoreCandidate(input: {
   namingAuthority: string | null;
   at: string;
   note?: string;
-}): CoreScorecard {
-  const projection = input.projection;
+}): CoreScorecard {  const projection = input.projection;
   const dnaDoc: BaseDnaVersion | undefined = parseBaseDna(input.dnaRaw);
   const dnaRef = dnaDoc?.version ?? input.dnaRaw;
   const boundary = projection?.structure?.boundary;
@@ -84,4 +83,24 @@ export function evaluateCoreCandidate(input: {
     evidence: rows.map((row) => ({ item: row.item, score: row.score, result: row.result })),
     verdict: !hardBlocked && total >= QCP_CORE_PASS_THRESHOLD ? "pass" : "blocked",
   };
+}
+
+export function markScorecardStale(
+  evaluationRaw: string | null | undefined,
+  priorVersion: string,
+  nextVersion: string,
+  at: string,
+): string | null {
+  try {
+    const parsed = evaluationRaw ? (JSON.parse(evaluationRaw) as { kind?: unknown; scorecard_stale?: unknown } | null) : null;
+    if (!parsed || parsed.kind !== "CORE_EVALUATION" || parsed.scorecard_stale === true) return null;
+    return JSON.stringify({
+      ...parsed,
+      scorecard_stale: true,
+      stale_reason: `canonical changed ${priorVersion}→${nextVersion}; resolve a fresh evaluation (QCP change impact)`,
+      stale_at: at,
+    });
+  } catch {
+    return null;
+  }
 }
