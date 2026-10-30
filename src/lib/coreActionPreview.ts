@@ -58,6 +58,17 @@ import {
   workItemFor,
   ASSISTANT_OPERATIONS as KERNEL_ASSISTANT_OPERATIONS,
 } from "./conversationCore";
+import {
+  type MachineScript,
+  type MediaViews,
+  type ScriptBoundary,
+  type ScriptContinuity,
+  type ScriptScene,
+  appendDecisionLog,
+  parseMachineScriptField,
+  parseMediaViewsField,
+  parseScenesField,
+} from "./canonicalViews";
 
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
@@ -198,6 +209,14 @@ export type CanonicalScriptProjection = {
   dna_ref: string;
   source_candidate_ref: string;
   hash: string;
+  change_summary?: string;
+  prior_version_ref?: string;
+  structure?: { scenes: ScriptScene[]; boundary: ScriptBoundary };
+  continuity?: ScriptContinuity;
+  audit?: { human_decision: string; candidate_ref?: string; reviewer_ref?: string; decided_at: string };
+  machine?: MachineScript;
+  views?: MediaViews;
+  coverage_gaps?: string[];
 };
 
 export function parseCanonicalScript(raw: string | null | undefined): CanonicalScriptProjection | undefined {
@@ -211,6 +230,45 @@ export function parseCanonicalScript(raw: string | null | undefined): CanonicalS
     const hash = typeof rec.hash === "string" ? rec.hash.trim() : "";
     if (!version || !hash) return undefined;
     const text = (key: string) => (typeof rec[key] === "string" ? String(rec[key]).trim() : "");
+    const structureRec = rec.structure && typeof rec.structure === "object" ? (rec.structure as Record<string, unknown>) : undefined;
+    const scenes = parseScenesField(structureRec?.scenes);
+    const boundaryRec = structureRec?.boundary && typeof structureRec.boundary === "object" ? (structureRec.boundary as Record<string, unknown>) : undefined;
+    const boundaryText = (key: string) => (boundaryRec && typeof boundaryRec[key] === "string" ? String(boundaryRec[key]) : "");
+    const structure = scenes
+      ? {
+          scenes,
+          boundary: {
+            withheld: boundaryText("withheld"),
+            open_loop: boundaryText("open_loop"),
+            expected_audience_effect: boundaryText("expected_audience_effect"),
+            next_content_pull: boundaryText("next_content_pull"),
+            next_start_state: boundaryText("next_start_state"),
+            payoff_target: boundaryText("payoff_target"),
+          },
+        }
+      : undefined;
+    const continuityRec = rec.continuity && typeof rec.continuity === "object" ? (rec.continuity as Record<string, unknown>) : undefined;
+    const continuityText = (key: string) => (continuityRec && typeof continuityRec[key] === "string" ? String(continuityRec[key]) : "");
+    const continuity = continuityRec
+      ? {
+          starting_state: continuityText("starting_state"),
+          ending_state: continuityText("ending_state"),
+          unresolved_refs: continuityText("unresolved_refs"),
+          payoff_refs: continuityText("payoff_refs"),
+        }
+      : undefined;
+    const auditRec = rec.audit && typeof rec.audit === "object" ? (rec.audit as Record<string, unknown>) : undefined;
+    const audit = auditRec
+      ? {
+          human_decision: typeof auditRec.human_decision === "string" ? auditRec.human_decision : "",
+          candidate_ref: typeof auditRec.candidate_ref === "string" ? auditRec.candidate_ref : undefined,
+          reviewer_ref: typeof auditRec.reviewer_ref === "string" ? auditRec.reviewer_ref : undefined,
+          decided_at: typeof auditRec.decided_at === "string" ? auditRec.decided_at : "",
+        }
+      : undefined;
+    const coverageGaps = Array.isArray(rec.coverage_gaps)
+      ? rec.coverage_gaps.filter((row): row is string => typeof row === "string")
+      : undefined;
     return {
       kind: "CANONICAL_SCRIPT",
       canonical_script_id: text("canonical_script_id"),
@@ -223,6 +281,14 @@ export function parseCanonicalScript(raw: string | null | undefined): CanonicalS
       dna_ref: text("dna_ref"),
       source_candidate_ref: text("source_candidate_ref"),
       hash,
+      change_summary: text("change_summary") || undefined,
+      prior_version_ref: text("prior_version_ref") || undefined,
+      structure,
+      continuity,
+      audit,
+      machine: parseMachineScriptField(rec.machine),
+      views: parseMediaViewsField(rec.views),
+      coverage_gaps: coverageGaps,
     };
   } catch {
     return undefined;
@@ -663,28 +729,77 @@ export function previewCoreAction(
   if (actionUid === "CORE-01-ACT-CANDIDATE-COMPARE") {
     const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
     if (!candidate) return {};
+    const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    const at = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const lhs = [
+      ["candidate", candidate, projection?.source_candidate_ref ?? ""],
+      ["blueprint", exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")), projection?.blueprint_ref ?? ""],
+      ["dna_lock", exactName(current("CORE-01-BTN-DNA-LOCK")), projection?.dna_ref ?? ""],
+    ] as const;
+    const differences = lhs
+      .filter(([, candidateValue, canonicalValue]) => candidateValue && canonicalValue && candidateValue !== canonicalValue)
+      .map(([field, candidateValue, canonicalValue]) => ({ field, candidate_value: candidateValue, canonical_value: canonicalValue }));
+    const comparison = {
+      kind: "CORE_COMPARE" as const,
+      at,
+      candidate,
+      canonical_version: projection?.version ?? "",
+      canonical_hash: projection?.hash ?? "",
+      differences,
+      coverage_gaps: projection ? [] : ["canonical_projection_missing"],
+    };
     return {
       "CORE-01-BTN-CANDIDATE-COMPARE": "comparing",
-      "CORE-01-FLD-EVALUATION": current("CORE-01-FLD-EVALUATION") || "evaluated",
+      "CORE-01-FLD-EVALUATION": JSON.stringify(comparison),
       "CORE-01-FLD-RUNTIME-STAGE": "CORE_EVALUATION",
     };
   }
   if (actionUid === "CORE-01-ACT-HUMAN-DECISION-RECORD") {
     const decision = exactName(nextValue) || current("CORE-01-FLD-HUMAN-DECISION") || "recorded";
+    const at = new Date().toISOString().slice(0, 19).replace("T", " ");
     return {
       "CORE-01-FLD-HUMAN-DECISION": decision,
+      "CORE-01-FLD-STRUCTURED-DECISION": appendDecisionLog(current("CORE-01-FLD-STRUCTURED-DECISION"), { at, actor: "HUMAN", decision }),
       "CORE-01-FLD-RUNTIME-STAGE": "HUMAN_DECISION",
     };
   }
   if (actionUid === "CORE-01-ACT-ASSISTANT-STRUCTURED-DECISION-CREATE") {
-    const decision = exactName(nextValue) || current("CORE-01-FLD-STRUCTURED-DECISION") || "recorded";
+    const decision = exactName(nextValue) || "recorded";
+    const at = new Date().toISOString().slice(0, 19).replace("T", " ");
     return {
-      "CORE-01-FLD-STRUCTURED-DECISION": decision,
+      "CORE-01-FLD-STRUCTURED-DECISION": appendDecisionLog(current("CORE-01-FLD-STRUCTURED-DECISION"), { at, actor: "ASSISTANT", decision }),
     };
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-EVALUATE") {
+    const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
+    const at = new Date().toISOString().slice(0, 19).replace("T", " ");
+    if (!candidate) {
+      return {
+        "CORE-01-FLD-EVALUATION": exactName(nextValue) || current("CORE-01-FLD-EVALUATION") || "evaluated",
+        "CORE-01-FLD-RUNTIME-STAGE": "CORE_EVALUATION",
+      };
+    }
+    const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+    const dna = exactName(current("CORE-01-BTN-DNA-LOCK"));
+    const evidence = [
+      { item: "canonical_script", result: projection ? `pass:${projection.version}` : "fail:missing" },
+      { item: "blueprint", result: blueprint ? `pass:${blueprint}` : "fail:missing" },
+      { item: "dna_lock", result: dna ? `pass:${dna}` : "fail:missing" },
+    ];
+    const verdict = evidence.every((row) => row.result.startsWith("pass")) ? "pass" : "blocked";
+    const note = exactName(nextValue);
+    const evaluation = {
+      kind: "CORE_EVALUATION" as const,
+      criteria_version: "CORE-CRITERIA-1",
+      at,
+      candidate,
+      evidence,
+      verdict,
+      ...(note ? { note } : {}),
+    };
     return {
-      "CORE-01-FLD-EVALUATION": exactName(nextValue) || current("CORE-01-FLD-EVALUATION") || "evaluated",
+      "CORE-01-FLD-EVALUATION": JSON.stringify(evaluation),
       "CORE-01-FLD-RUNTIME-STAGE": "CORE_EVALUATION",
     };
   }
@@ -734,9 +849,11 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT") {
+    const at = new Date().toISOString().slice(0, 19).replace("T", " ");
     return {
       "CORE-01-BTN-CORE-REVIEW": "sent",
-      "CORE-01-FLD-LOCK-REVIEW": current("CORE-01-FLD-LOCK-REVIEW") || "ready",
+      "CORE-01-FLD-LOCK-REVIEW": `submitted@${at}`,
+      "CORE-01-FLD-RUNTIME-STAGE": "REVIEW",
     };
   }
   if (actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {

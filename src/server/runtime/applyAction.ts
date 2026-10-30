@@ -15,6 +15,7 @@ import { previewAssetAction } from "@/lib/assetActionPreview";
 import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
 import { parseAssetPatch, patchPrompt, serializeAssetPatch, withPatchPreview } from "@/lib/layerDocument";
+import { buildEnrichedProjection } from "@/lib/canonicalViews";
 import {
   ASSET_CONVERSATION,
   CORE_CONVERSATION,
@@ -76,6 +77,9 @@ import {
   appendAssistantMessage,
   appendAssistantMessages,
   formatCoreChatContext,
+  buildCanonicalScript,
+  parseCanonicalScript,
+  serializeCanonicalScript,
   isMultiAiMode,
   messagesForThread,
   parseMessageActionPayload,
@@ -382,7 +386,44 @@ async function applyConversationReviewAction(
   }
   const updated = tasks.map((row) => (row.taskId === contract.taskId ? next : row));
   await writeField(FIELD_TABLE.core, notebookUid, JSON.stringify(withNotebookTasks(current(notebookUid), updated)));
+  if (actionUid === "CORE-01-ACT-REVIEW-REJECT") {
+    await writeField(FIELD_TABLE.core, "CORE-01-FLD-LOCK-REVIEW", "rejected");
+  }
   return true;
+}
+
+async function enrichCanonicalScriptProjection(accountUid: string, actionUid: string): Promise<void> {
+  const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+    `SELECT control_uid, value_text FROM ${FIELD_TABLE.core}`,
+  );
+  const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+  const current = (uid: string) => cache.get(uid) ?? null;
+  const existing = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+  const base = existing ?? buildCanonicalScript(current);
+  if (!base) return;
+  let fileBody = "";
+  try {
+    const notebookUid = "CORE-01-FLD-ASSISTANT-SUMMARY";
+    const thread = activeThreadUid(current);
+    const tasks = parseNotebookTasks(current(notebookUid));
+    const scoped = tasks.filter((row) => row.thread === thread);
+    const contract = latestOpenTask(tasks, thread) ?? (scoped.length ? scoped[scoped.length - 1] : null);
+    if (contract) {
+      const pageUid = conversationFilePage("core");
+      const file = pageUid ? await persistFindConversationFileByTask(accountUid, pageUid, contract.taskId) : null;
+      fileBody = file?.body ?? "";
+    }
+  } catch {}
+  const isAccept = actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT";
+  const priorVersionRef = isAccept && existing ? existing.version : (existing?.prior_version_ref ?? "");
+  const changeSummary = isAccept
+    ? `候選定稿 ${current("CORE-01-FLD-VERSION-STATE") ?? ""}`
+    : (existing?.change_summary ?? "");
+  const enriched = buildEnrichedProjection(base, { fileBody: fileBody || undefined, priorVersionRef, changeSummary });
+  await writeField(FIELD_TABLE.core, "CORE-01-BTN-CANONICAL-SCRIPT", serializeCanonicalScript(enriched));
+  if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
+    await writeField(FIELD_TABLE.core, "CORE-01-FLD-RUNTIME-STAGE", "SCRIPT_VIEW");
+  }
 }
 
 async function persistGeneratedFile(
@@ -678,6 +719,9 @@ export async function applyWorkbenchAction(
       nextValue,
       { "CORE-01-FLD-ASSIGNED-AI": assigned },
     );
+    if (accountUid && (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT" || actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW")) {
+      await enrichCanonicalScriptProjection(accountUid, actionUid);
+    }
     if (actionUid === "CORE-01-ACT-THREAD-DELETE" && accountUid) {
       const threadTitle = String(nextValue ?? "").trim();
       if (threadTitle) {

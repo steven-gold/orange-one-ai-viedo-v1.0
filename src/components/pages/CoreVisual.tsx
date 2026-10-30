@@ -28,7 +28,7 @@ import {
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
 import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
-import { displayCoreValue } from "./coreFormat";
+import { displayCoreValue, formatCoreDecisionLog, formatCoreStructured } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
   CORE_VISIBLE_CONTROLS,
@@ -714,7 +714,7 @@ export function CoreVisual() {
               </div>
               <div className={styles.evalBox} data-component-uid="CORE-01-CMP-EVALUATION" data-control-uid="CORE-01-FLD-EVALUATION">
                 <h3>{tx("core.evaluation")}</h3>
-                <p>{tx("core.evaluation_meta")} {displayCoreValue(valueOf("CORE-01-FLD-EVALUATION"), loading)}</p>
+                <p>{tx("core.evaluation_meta")} {formatCoreStructured(valueOf("CORE-01-FLD-EVALUATION"), loading)}</p>
                 <span className={styles.meta}>{tx("core.read_only")}</span>
               </div>
               <button type="button" className={styles.evalBox} data-component-uid="CORE-01-CMP-HUMAN-DECISION" data-control-uid="CORE-01-FLD-HUMAN-DECISION" disabled={disabled} onClick={() => void act("CORE-01-FLD-HUMAN-DECISION")}>
@@ -725,7 +725,7 @@ export function CoreVisual() {
             </div>
             <div className={styles.structuredRow}>
               <button type="button" className={`${styles.btn} ${styles.structured}`} data-control-uid="CORE-01-FLD-STRUCTURED-DECISION" disabled={disabled} onClick={() => void act("CORE-01-FLD-STRUCTURED-DECISION")}>
-                {tx("core.structured_decision")} {displayCoreValue(valueOf("CORE-01-FLD-STRUCTURED-DECISION"), loading)} {tx("core.no_self_approve")}
+                {tx("core.structured_decision")} {formatCoreDecisionLog(valueOf("CORE-01-FLD-STRUCTURED-DECISION"), loading)} {tx("core.no_self_approve")}
               </button>
             </div>
             <div className={styles.candidateRow}>
@@ -838,6 +838,45 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.canonical_dna")}</span><span>{displayCoreValue(scriptProjection?.dna_ref, false)}</span></div>
             <div className={styles.kv}><span>{tx("core.canonical_candidate")}</span><span>{displayCoreValue(scriptProjection?.source_candidate_ref, false)}</span></div>
             <div className={styles.kv}><span>{tx("core.canonical_hash")}</span><span>{displayCoreValue(scriptProjection?.hash, false)}</span></div>
+            {scriptProjection?.change_summary ? (
+              <div className={styles.kv}><span>{tx("core.canonical_change")}</span><span>{displayCoreValue(scriptProjection.change_summary, false)}</span></div>
+            ) : null}
+            {scriptProjection?.prior_version_ref ? (
+              <div className={styles.kv}><span>{tx("core.canonical_prior")}</span><span>{displayCoreValue(scriptProjection.prior_version_ref, false)}</span></div>
+            ) : null}
+            {scriptProjection?.structure?.scenes?.length ? (
+              <div className={styles.kv} data-component-uid="CORE-01-CMP-SCRIPT-STRUCTURE">
+                <span>{tx("core.canonical_structure")}</span>
+                <span>
+                  {scriptProjection.structure.scenes.slice(0, 6).map((scene) => `${scene.scene_id} ${scene.title}（${scene.beats.length}）`).join("、")}
+                  {scriptProjection.structure.scenes.length > 6 ? ` …+${scriptProjection.structure.scenes.length - 6}` : ""}
+                </span>
+              </div>
+            ) : null}
+            {scriptProjection?.continuity ? (
+              <div className={styles.kv} data-component-uid="CORE-01-CMP-SCRIPT-CONTINUITY">
+                <span>{tx("core.canonical_continuity")}</span>
+                <span>{tx("core.canonical_continuity_body")} {displayCoreValue(scriptProjection.continuity.starting_state || "—", false)} → {displayCoreValue(scriptProjection.continuity.ending_state || "—", false)}</span>
+              </div>
+            ) : null}
+            {scriptProjection?.views?.views?.length ? (
+              <div className={styles.kv} data-component-uid="CORE-01-CMP-SCRIPT-VIEWS">
+                <span>{tx("core.canonical_views")}</span>
+                <span>{scriptProjection.views.views.map((view) => `${view.view}:${view.items.length}`).join("、")}</span>
+              </div>
+            ) : null}
+            {scriptProjection?.machine ? (
+              <div className={styles.kv} data-component-uid="CORE-01-CMP-SCRIPT-MACHINE">
+                <span>{tx("core.canonical_machine")}</span>
+                <span>{scriptProjection.machine.schema} / {tx("core.canonical_machine_scenes")} {scriptProjection.machine.scene_count} / hash {scriptProjection.machine.output_hash}</span>
+              </div>
+            ) : null}
+            {scriptProjection?.coverage_gaps?.length ? (
+              <div className={styles.kv} data-component-uid="CORE-01-CMP-SCRIPT-GAPS">
+                <span>{tx("core.canonical_coverage")}</span>
+                <span>{scriptProjection.coverage_gaps.join("、")}</span>
+              </div>
+            ) : null}
             <div className={styles.dialogActions}>
               <button type="button" className={styles.btn} onClick={() => setScriptOpen(false)}>{tx("core.close")}</button>
             </div>
