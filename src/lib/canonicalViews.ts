@@ -5,6 +5,12 @@ export const MACHINE_SCHEMA = "MSS-1";
 export type ScriptBeat = { beat_id: string; action: string; dialogue: string; narration: string };
 export type ScriptScene = { scene_id: string; title: string; beats: ScriptBeat[] };
 export type ScriptBoundary = {
+  tension_state: string;
+  hook_intent: string;
+  curiosity_gap: string;
+  cut_setup: string;
+  visual_buildup: string;
+  audio_buildup: string;
   withheld: string;
   open_loop: string;
   expected_audience_effect: string;
@@ -90,6 +96,12 @@ function boundaryFrom(scenes: ScriptScene[]): ScriptBoundary {
   const lastBeat = last?.beats[last.beats.length - 1];
   const tail = lastBeat?.narration || lastBeat?.dialogue || lastBeat?.action || last?.title || "";
   return {
+    tension_state: "",
+    hook_intent: "",
+    curiosity_gap: "",
+    cut_setup: "",
+    visual_buildup: "",
+    audio_buildup: "",
     withheld: "",
     open_loop: "",
     expected_audience_effect: "",

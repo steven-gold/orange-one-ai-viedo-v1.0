@@ -28,6 +28,23 @@ export function formatCoreIdempotency(value: unknown, loading: boolean): string 
   return "";
 }
 
+export function formatCoreEventLog(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  try {
+    const rows = JSON.parse(raw) as Array<{ event?: string; ref?: string; at?: string }>;
+    if (Array.isArray(rows) && rows.length) {
+      return rows
+        .slice(-3)
+        .reverse()
+        .map((row) => `${row.event ?? "?"}·${row.ref ?? ""}`)
+        .join(" / ");
+    }
+  } catch {
+    return raw.slice(0, 80);
+  }
+  return "";
+}
+
 export function formatCoreErrors(value: unknown, loading: boolean): string {
   const raw = displayBoundValue(value, loading);
   const log = parseCoreErrors(raw);

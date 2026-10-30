@@ -70,6 +70,8 @@ import {
   parseScenesField,
 } from "./canonicalViews";
 import { dnaExactRef, parseBaseDna, parseDnaEnrichmentField, serializeBaseDna, type DnaEnrichment } from "./dnaDocument";
+import { evaluateCoreCandidate, QCP_CORE_PROFILE } from "./coreEvaluation";
+import { appendCoreEvent, CORE_EVENT_NAMES } from "./coreEventLog";
 import { parseChapterArchitecture, parseStoryCore, serializeChapterArchitecture, serializeStoryCore } from "./storyChapterDocument";
 import { appendCoreError, buildCoreError } from "./coreErrorContract";
 import { buildProductionPackage, parseProductionPackage, serializeProductionPackage } from "./productionPackage";
@@ -135,6 +137,20 @@ export const exactName = kernelExactName;
 export const namedValue = kernelNamedValue;
 export const namedList = kernelNamedList;
 export const parseThreadList = kernelParseThreadList;
+
+export function blueprintExactRef(value: string | null | undefined): string {
+  const raw = value?.trim() ?? "";
+  if (!raw || STATUS_TOKENS.has(raw)) return "";
+  try {
+    const parsed = JSON.parse(raw) as { version?: unknown; name?: unknown };
+    if (parsed && typeof parsed.version === "string" && parsed.version.trim()) return parsed.version.trim();
+    if (parsed && typeof parsed.name === "string" && parsed.name.trim()) return parsed.name.trim();
+  } catch {
+    return exactName(raw);
+  }
+  return exactName(raw);
+}
+
 export const MULTI_AI_ALIASES = KERNEL_MULTI_AI_ALIASES;
 export const quoteInsertText = kernelQuoteInsertText;
 export const composerHasBlockingToken = kernelComposerHasBlockingToken;
@@ -292,6 +308,12 @@ export function parseCanonicalScript(raw: string | null | undefined): CanonicalS
       ? {
           scenes,
           boundary: {
+            tension_state: boundaryText("tension_state"),
+            hook_intent: boundaryText("hook_intent"),
+            curiosity_gap: boundaryText("curiosity_gap"),
+            cut_setup: boundaryText("cut_setup"),
+            visual_buildup: boundaryText("visual_buildup"),
+            audio_buildup: boundaryText("audio_buildup"),
             withheld: boundaryText("withheld"),
             open_loop: boundaryText("open_loop"),
             expected_audience_effect: boundaryText("expected_audience_effect"),
@@ -375,7 +397,7 @@ export function buildCanonicalScript(current: (uid: string) => string | null): C
   const topic = exactName(current("CORE-01-CTL-TOPIC"));
   const candidate = exactName(current("CORE-01-FLD-VERSION-STATE"));
   if (!project || !topic || !candidate || !projectConfirmed(current)) return undefined;
-  const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+  const blueprint = blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
   const topicScope = exactName(current("CORE-01-FLD-TOPIC-SCOPE")) || topic;
   const dna = dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK"));
   const canon = [project, topic, blueprint, dna].filter(Boolean).join("、");
@@ -556,6 +578,65 @@ export function previewCoreAction(
   current: (uid: string) => string | null,
   nextValue?: string,
 ): Record<string, string> {
+  const result = previewCoreActionFields(controlUid, actionUid, current, nextValue);
+  return withCoreEventLog(actionUid, current, result);
+}
+
+type CoreEventRule = { events: Array<{ name: string; when?: (current: (uid: string) => string | null) => boolean }>; require: string; reset?: boolean };
+
+function changeRequestOpen(current: (uid: string) => string | null): boolean {
+  try {
+    const parsed = JSON.parse(current("CORE-01-FLD-CHANGE-REQUEST") || "null") as { status?: unknown } | null;
+    return parsed?.status === "CHANGE_REQUESTED";
+  } catch {
+    return false;
+  }
+}
+
+const CORE_EVENT_RULES: Record<string, CoreEventRule> = {
+  "CORE-01-ACT-PROJECT-CREATE": { events: [{ name: CORE_EVENT_NAMES.project_created }], require: "CORE-01-BTN-PROJECT-CREATE", reset: true },
+  "CORE-01-ACT-TOPIC-CREATE": { events: [{ name: CORE_EVENT_NAMES.topic_scope_confirmed }], require: "CORE-01-BTN-TOPIC-CREATE" },
+  "CORE-01-ACT-CANDIDATE-CREATE": { events: [{ name: CORE_EVENT_NAMES.story_candidate_set_created }], require: "CORE-01-BTN-CANDIDATE-CREATE" },
+  "CORE-01-ACT-STORY-CANDIDATE": { events: [{ name: CORE_EVENT_NAMES.story_candidate_set_created }], require: "CORE-01-BTN-STORY-CANDIDATE" },
+  "CORE-01-ACT-CANDIDATE-COMPARE": { events: [{ name: CORE_EVENT_NAMES.story_candidates_compared }], require: "CORE-01-FLD-EVALUATION" },
+  "CORE-01-ACT-CANDIDATE-ACCEPT": { events: [{ name: CORE_EVENT_NAMES.story_core_adopted }, { name: CORE_EVENT_NAMES.script_version_created }], require: "CORE-01-BTN-CANONICAL-SCRIPT" },
+  "CORE-01-ACT-CANDIDATE-RETURN": { events: [{ name: CORE_EVENT_NAMES.story_revision_requested }], require: "CORE-01-BTN-RETURN-MODIFY" },
+  "CORE-01-ACT-CHAPTER-ARCH-REQUEST": { events: [{ name: CORE_EVENT_NAMES.chapter_architecture_version_created }], require: "CORE-01-BTN-CHAPTER-ARCH" },
+  "CORE-01-ACT-DNA-LOCK-REQUEST": { events: [{ name: CORE_EVENT_NAMES.dna_candidate_created }, { name: CORE_EVENT_NAMES.dna_lock_requested }], require: "CORE-01-BTN-DNA-LOCK" },
+  "CORE-01-ACT-MOTHER-LOCK-APPROVE": { events: [{ name: CORE_EVENT_NAMES.project_lock_approved }, { name: CORE_EVENT_NAMES.dna_resolved }], require: "CORE-01-BTN-PROJECT-LOCK" },
+  "CORE-01-ACT-CHILD-LOCK-REQUEST": { events: [{ name: CORE_EVENT_NAMES.topic_child_lock_requested }], require: "CORE-01-BTN-CHILD-LOCK" },
+  "CORE-01-ACT-CHILD-LOCK-APPROVE": { events: [{ name: CORE_EVENT_NAMES.topic_blueprint_locked }], require: "CORE-01-BTN-CHILD-LOCK" },
+  "CORE-01-ACT-BLUEPRINT-CREATE": { events: [{ name: CORE_EVENT_NAMES.topic_blueprint_candidate_created }], require: "CORE-01-BTN-BLUEPRINT-CREATE" },
+  "CORE-01-ACT-PACKAGE-BUILD": { events: [{ name: CORE_EVENT_NAMES.production_package_ready }], require: "CORE-01-FLD-PACKAGE" },
+  "CORE-01-ACT-CHANGE-REQUEST": { events: [{ name: CORE_EVENT_NAMES.core_change_requested }], require: "CORE-01-FLD-CHANGE-REQUEST" },
+  "CORE-01-ACT-MOTHER-LOCK-REQUEST": { events: [{ name: CORE_EVENT_NAMES.core_version_superseded, when: changeRequestOpen }], require: "CORE-01-BTN-PROJECT-LOCK" },
+};
+
+function withCoreEventLog(
+  actionUid: string,
+  current: (uid: string) => string | null,
+  result: Record<string, string>,
+): Record<string, string> {
+  const rule = CORE_EVENT_RULES[actionUid];
+  if (!rule) return result;
+  if (Object.keys(result).length === 0) return result;
+  if (!Object.prototype.hasOwnProperty.call(result, rule.require)) return result;
+  const at = nowStamp();
+  let log = rule.reset ? "" : current("CORE-01-FLD-EVENT-LOG") ?? "";
+  for (const entry of rule.events) {
+    if (entry.when && !entry.when(current)) continue;
+    log = appendCoreEvent(log, entry.name, String(result[rule.require] ?? ""), at);
+  }
+  if (result["CORE-01-FLD-EVENT-LOG"] === log) return result;
+  return { ...result, "CORE-01-FLD-EVENT-LOG": log };
+}
+
+function previewCoreActionFields(
+  controlUid: string,
+  actionUid: string,
+  current: (uid: string) => string | null,
+  nextValue?: string,
+): Record<string, string> {
   if (controlUid === "CORE-01-FLD-ASSIGNED-AI") return {};
   const conversation = previewConversationAction(CORE_CONVERSATION, controlUid, actionUid, current, nextValue);
   if (conversation) return conversation;
@@ -638,7 +719,7 @@ export function previewCoreAction(
     if (!topic) return {};
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
     const nextList = list.includes(topic) ? list : [...list, topic];
-    const pkg = exactName(current("CORE-01-FLD-PACKAGE")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+    const pkg = exactName(current("CORE-01-FLD-PACKAGE")) || blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE"));
     return {
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
@@ -827,7 +908,7 @@ export function previewCoreAction(
     const at = new Date().toISOString().slice(0, 19).replace("T", " ");
     const lhs = [
       ["candidate", candidate, projection?.source_candidate_ref ?? ""],
-      ["blueprint", exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")), projection?.blueprint_ref ?? ""],
+      ["blueprint", blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")), projection?.blueprint_ref ?? ""],
       ["dna_lock", dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK")), projection?.dna_ref ?? ""],
     ] as const;
     const differences = lhs
@@ -874,24 +955,19 @@ export function previewCoreAction(
       };
     }
     const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
-    const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
-  const dna = dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK"));
-    const evidence = [
-      { item: "canonical_script", result: projection ? `pass:${projection.version}` : "fail:missing" },
-      { item: "blueprint", result: blueprint ? `pass:${blueprint}` : "fail:missing" },
-      { item: "dna_lock", result: dna ? `pass:${dna}` : "fail:missing" },
-    ];
-    const verdict = evidence.every((row) => row.result.startsWith("pass")) ? "pass" : "blocked";
+    const blueprint = blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+    const dna = current("CORE-01-BTN-DNA-LOCK");
+    const namingAuthority = exactName(current("CORE-01-FLD-NAMING-AUTHORITY"));
     const note = exactName(nextValue);
-    const evaluation = {
-      kind: "CORE_EVALUATION" as const,
-      criteria_version: "CORE-CRITERIA-1",
-      at,
+    const evaluation = evaluateCoreCandidate({
       candidate,
-      evidence,
-      verdict,
+      projection,
+      blueprint,
+      dnaRaw: dna,
+      namingAuthority,
+      at,
       ...(note ? { note } : {}),
-    };
+    });
     return {
       "CORE-01-FLD-EVALUATION": JSON.stringify(evaluation),
       "CORE-01-FLD-RUNTIME-STAGE": "CORE_EVALUATION",
@@ -909,18 +985,45 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-VALIDATE") {
-    const blueprint = exactName(nextValue) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+    const blueprint = blueprintExactRef(nextValue) || blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE"));
     if (!blueprint) return {};
     const pkg = exactName(current("CORE-01-FLD-PACKAGE")) || blueprint;
+    const existingRaw = current("CORE-01-BTN-BLUEPRINT-CREATE");
+    let existing: { name?: unknown } | null = null;
+    try {
+      existing = existingRaw ? (JSON.parse(existingRaw) as { name?: unknown }) : null;
+    } catch {
+      existing = null;
+    }
+    const baseName = existing && typeof existing.name === "string" ? existing.name : blueprint;
+    const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    const layers = {
+      project_structure: {
+        project: exactName(current("CORE-01-FLD-PROJECT")) || "unset",
+        structure_lock: current("CORE-01-FLD-LIFECYCLE-STAGE") === "PROJECT_LOCKED" ? "locked" : "unlocked",
+        base_dna: current("CORE-01-BTN-DNA-LOCK") ? "present" : "unset",
+        canon_rules: ["STORY", "WORLD", "CHARACTER", "NARRATIVE"],
+      },
+      topic_production: {
+        topic: current("CORE-01-FLD-TOPIC-LOCK") || current("CORE-01-FLD-TOPIC") || "unset",
+        topic_lock: current("CORE-01-FLD-LIFECYCLE-STAGE") === "TOPIC_LOCKED" ? "locked" : "unlocked",
+        canonical_script: projection ? projection.version : "unset",
+        views: (projection?.views?.views ?? []).map((view) => view.view),
+        continuity: projection?.continuity ? "present" : "unset",
+        qa_criteria: QCP_CORE_PROFILE,
+        dependency_closure: "topic_exact_refs",
+      },
+    };
+    const blueprintJson = JSON.stringify({ name: baseName, version: blueprint, layers });
     return {
       "CORE-01-BTN-BLUEPRINT-VALIDATE": "validated",
-      "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
+      "CORE-01-BTN-BLUEPRINT-CREATE": blueprintJson,
       "CORE-01-FLD-PACKAGE": pkg,
       "CORE-01-FLD-LIFECYCLE-STAGE": "SCRIPT_DRAFT",
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-APPROVE") {
-    const blueprint = exactName(nextValue) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+    const blueprint = blueprintExactRef(nextValue) || blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE"));
     if (!blueprint) return {};
     return {
       "CORE-01-BTN-BLUEPRINT-APPROVE": "approved",
@@ -1006,7 +1109,7 @@ export function previewCoreAction(
       }
     }
     const at = nowStamp();
-    const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")) || "";
+    const blueprint = blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")) || "";
     const dnaDoc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
     const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT")) ?? null;
     const enrichmentHash = projection?.dna_enrichment?.hash ?? "";
@@ -1085,14 +1188,14 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
-    const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+    const blueprint = blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
     if (!blueprint) return {};
     if (current("CORE-01-FLD-LIFECYCLE-STAGE") === "CHILD_LOCK_REVIEW") return {};
     return {
       "CORE-01-BTN-CHILD-LOCK": blueprint,
       "CORE-01-FLD-LOCK-REVIEW": `submitted@${nowStamp()}`,
       "CORE-01-FLD-PACKAGE": blueprint,
-      "CORE-01-BTN-BLUEPRINT-CREATE": exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || blueprint,
+      "CORE-01-BTN-BLUEPRINT-CREATE": blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || blueprint,
       "CORE-01-FLD-LIFECYCLE-STAGE": "CHILD_LOCK_REVIEW",
     };
   }
@@ -1106,7 +1209,7 @@ export function previewCoreAction(
         ),
       };
     }
-    const blueprint = exactName(current("CORE-01-BTN-CHILD-LOCK")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+    const blueprint = exactName(current("CORE-01-BTN-CHILD-LOCK")) || blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
     if (!blueprint) return {};
     return {
       "CORE-01-BTN-CHILD-LOCK": blueprint,
@@ -1219,7 +1322,7 @@ export function previewCoreAction(
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-PACKAGE") {
     const pkg =
-      exactName(nextValue) || exactName(current("CORE-01-FLD-PACKAGE")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE"));
+      exactName(nextValue) || exactName(current("CORE-01-FLD-PACKAGE")) || blueprintExactRef(current("CORE-01-BTN-BLUEPRINT-CREATE"));
     return pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {};
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid.startsWith("CORE-01-FLD-DOWNSTREAM")) {
