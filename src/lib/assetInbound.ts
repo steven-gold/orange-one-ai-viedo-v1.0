@@ -1,4 +1,5 @@
 import { canonicalScriptRef, exactName } from "./coreActionPreview";
+import { dnaExactRef } from "./dnaDocument";
 
 export type AssetInbound = {
   ready: boolean;
@@ -24,7 +25,7 @@ export function resolveAssetInbound(current: (uid: string) => string | null): As
   const blueprint =
     exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
   const childLock = exactName(current("CORE-01-BTN-CHILD-LOCK"));
-  const dna = exactName(current("CORE-01-BTN-DNA-LOCK"));
+  const dna = dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK"));
   const script = canonicalScriptRef(current("CORE-01-BTN-CANONICAL-SCRIPT"));
   const naming = exactName(current("CORE-01-FLD-NAMING-AUTHORITY")) || "ACPOS_SYSTEM";
   const ready = Boolean(project && confirmed && topic);

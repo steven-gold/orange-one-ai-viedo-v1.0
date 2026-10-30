@@ -16,6 +16,7 @@ import { resolveAssetInbound } from "@/lib/assetInbound";
 import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } from "@/lib/correctionScript";
 import { parseAssetPatch, patchPrompt, serializeAssetPatch, withPatchPreview } from "@/lib/layerDocument";
 import { buildEnrichedProjection } from "@/lib/canonicalViews";
+import { buildBaseDna, buildDnaEnrichment, dnaRequiredMissing, parseBaseDna, serializeBaseDna, withDnaStatus } from "@/lib/dnaDocument";
 import {
   ASSET_CONVERSATION,
   CORE_CONVERSATION,
@@ -85,6 +86,7 @@ import {
   parseMessageActionPayload,
   persistConversationTasks,
   previewCoreAction,
+  exactName,
   generationHistoryPayload,
   refreshAssistantNotebook,
   resolveComposerTokens,
@@ -415,15 +417,109 @@ async function enrichCanonicalScriptProjection(accountUid: string, actionUid: st
     }
   } catch {}
   const isAccept = actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT";
-  const priorVersionRef = isAccept && existing ? existing.version : (existing?.prior_version_ref ?? "");
+  const priorVersionRef =
+    isAccept && existing && existing.version !== base.version ? existing.version : (existing?.prior_version_ref ?? "");
   const changeSummary = isAccept
     ? `候選定稿 ${current("CORE-01-FLD-VERSION-STATE") ?? ""}`
     : (existing?.change_summary ?? "");
   const enriched = buildEnrichedProjection(base, { fileBody: fileBody || undefined, priorVersionRef, changeSummary });
-  await writeField(FIELD_TABLE.core, "CORE-01-BTN-CANONICAL-SCRIPT", serializeCanonicalScript(enriched));
+  const dnaDoc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
+  const withDna = dnaDoc ? { ...enriched, dna_enrichment: buildDnaEnrichment(dnaDoc, { topic: base.topic_id }) } : enriched;
+  await writeField(FIELD_TABLE.core, "CORE-01-BTN-CANONICAL-SCRIPT", serializeCanonicalScript(withDna));
   if (actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW") {
     await writeField(FIELD_TABLE.core, "CORE-01-FLD-RUNTIME-STAGE", "SCRIPT_VIEW");
   }
+}
+
+type CoreFieldReader = (uid: string) => string | null;
+
+async function loadCoreFields(): Promise<CoreFieldReader> {
+  const rows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+    `SELECT control_uid, value_text FROM ${FIELD_TABLE.core}`,
+  );
+  const cache = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+  return (uid: string) => cache.get(uid) ?? null;
+}
+
+function parseThreadWorkItems(raw: string | null): Map<string, string> {
+  const out = new Map<string, string>();
+  try {
+    const parsed = JSON.parse(raw ?? "") as unknown;
+    if (Array.isArray(parsed)) {
+      for (const row of parsed) {
+        if (!row || typeof row !== "object") continue;
+        const rec = row as Record<string, unknown>;
+        if (typeof rec.title === "string" && typeof rec.workItem === "string") out.set(rec.title, rec.workItem);
+      }
+    }
+  } catch {}
+  return out;
+}
+
+async function collectDnaThreadFiles(accountUid: string, current: CoreFieldReader): Promise<{ fileBodies: string[]; sourceFiles: string[] }> {
+  const fileBodies: string[] = [];
+  const sourceFiles: string[] = [];
+  const threadItems = parseThreadWorkItems(current("CORE-01-BTN-NEW-THREAD"));
+  const dnaThreads = new Set([...threadItems.entries()].filter(([, workItem]) => workItem === "DNA" || workItem === "WORLD_SETTING").map(([thread]) => thread));
+  if (!dnaThreads.size) return { fileBodies, sourceFiles };
+  const tasks = parseNotebookTasks(current("CORE-01-FLD-ASSISTANT-SUMMARY"));
+  const pageUid = conversationFilePage("core");
+  for (const task of tasks) {
+    if (!dnaThreads.has(task.thread)) continue;
+    const file = pageUid ? await persistFindConversationFileByTask(accountUid, pageUid, task.taskId) : null;
+    if (file?.body) {
+      fileBodies.push(file.body);
+      sourceFiles.push(file.fileUid);
+    }
+  }
+  return { fileBodies, sourceFiles };
+}
+
+async function enrichDnaDocument(accountUid: string): Promise<void> {
+  const current = await loadCoreFields();
+  const raw = current("CORE-01-BTN-DNA-LOCK") ?? "";
+  if (parseBaseDna(raw)) return;
+  const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
+  if (!project || parseBaseDna(raw)) return;
+  const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const doc = buildBaseDna({
+    project,
+    fileBodies,
+    sourceFiles,
+    changeSummary: "DNA 候選建立（制式清單掃描定稿文件）",
+    status: "CANDIDATE",
+    createdAt: now,
+  });
+  await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(doc));
+}
+
+async function enforceDnaCoverageGate(accountUid: string): Promise<{ ok: boolean; missing: string[] }> {
+  const current = await loadCoreFields();
+  const raw = current("CORE-01-BTN-DNA-LOCK") ?? "";
+  let doc = parseBaseDna(raw);
+  if (!doc) {
+    const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
+    if (!project) return { ok: false, missing: ["NO_DNA_DOCUMENT"] };
+    const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current);
+    const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+    doc = buildBaseDna({ project, fileBodies, sourceFiles, changeSummary: "母鎖門禁掃描", status: "CANDIDATE", createdAt: now });
+  }
+  if (!doc) return { ok: false, missing: ["NO_DNA_DOCUMENT"] };
+  const missing = dnaRequiredMissing(doc);
+  if (missing.length) {
+    await writeField(
+      FIELD_TABLE.core,
+      "CORE-01-BTN-DNA-LOCK",
+      serializeBaseDna({ ...doc, coverage_gaps: [...new Set([...doc.coverage_gaps, `mother_lock_blocked:${missing.join(";")}`])] }),
+    );
+    await writeField(FIELD_TABLE.core, "CORE-01-FLD-RUNTIME-STAGE", "DNA_BLOCKED");
+    return { ok: false, missing };
+  }
+  if (!parseBaseDna(raw)) {
+    await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(doc));
+  }
+  return { ok: true, missing: [] };
 }
 
 async function persistGeneratedFile(
@@ -710,6 +806,10 @@ export async function applyWorkbenchAction(
       await applyConversationReviewAction(actionUid, nextValue, accountUid);
       return;
     }
+    if (accountUid && actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
+      const gate = await enforceDnaCoverageGate(accountUid);
+      if (!gate.ok) return;
+    }
     const assigned = await assignedAiRouteSnapshot().catch(() => "");
     const written = await applyProjectedAction(
       FIELD_TABLE.core,
@@ -719,6 +819,17 @@ export async function applyWorkbenchAction(
       nextValue,
       { "CORE-01-FLD-ASSIGNED-AI": assigned },
     );
+    if (accountUid && actionUid === "CORE-01-ACT-DNA-LOCK-REQUEST") {
+      await enrichDnaDocument(accountUid);
+    }
+    if (accountUid && written && actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
+      const current = await loadCoreFields();
+      const doc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
+      if (doc && doc.status === "CANDIDATE") {
+        const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+        await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(withDnaStatus(doc, "LOCKED", exactName(current("CORE-01-BTN-PROJECT-LOCK")), now)));
+      }
+    }
     if (accountUid && (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT" || actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW")) {
       await enrichCanonicalScriptProjection(accountUid, actionUid);
     }

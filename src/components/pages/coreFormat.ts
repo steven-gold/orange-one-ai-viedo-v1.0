@@ -1,7 +1,14 @@
 import { displayBoundValue } from "./displayValue";
+import { formatDnaDigest, parseBaseDna } from "@/lib/dnaDocument";
 
 export function displayCoreValue(value: unknown, loading: boolean): string {
   return displayBoundValue(value, loading);
+}
+
+export function formatCoreDna(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  const doc = parseBaseDna(raw);
+  return doc ? formatDnaDigest(doc) : raw;
 }
 
 function compactJson(value: string): Record<string, unknown> | undefined {

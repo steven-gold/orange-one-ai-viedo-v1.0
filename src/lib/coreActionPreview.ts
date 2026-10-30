@@ -69,6 +69,7 @@ import {
   parseMediaViewsField,
   parseScenesField,
 } from "./canonicalViews";
+import { dnaExactRef, parseBaseDna, parseDnaEnrichmentField, serializeBaseDna, type DnaEnrichment } from "./dnaDocument";
 
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
@@ -216,6 +217,7 @@ export type CanonicalScriptProjection = {
   audit?: { human_decision: string; candidate_ref?: string; reviewer_ref?: string; decided_at: string };
   machine?: MachineScript;
   views?: MediaViews;
+  dna_enrichment?: DnaEnrichment;
   coverage_gaps?: string[];
 };
 
@@ -288,6 +290,7 @@ export function parseCanonicalScript(raw: string | null | undefined): CanonicalS
       audit,
       machine: parseMachineScriptField(rec.machine),
       views: parseMediaViewsField(rec.views),
+      dna_enrichment: parseDnaEnrichmentField(rec.dna_enrichment),
       coverage_gaps: coverageGaps,
     };
   } catch {
@@ -322,7 +325,7 @@ export function buildCanonicalScript(current: (uid: string) => string | null): C
   if (!project || !topic || !candidate || !projectConfirmed(current)) return undefined;
   const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
   const topicScope = exactName(current("CORE-01-FLD-TOPIC-SCOPE")) || topic;
-  const dna = exactName(current("CORE-01-BTN-DNA-LOCK"));
+  const dna = dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK"));
   const canon = [project, topic, blueprint, dna].filter(Boolean).join("、");
   const hash = sourceHash([project, topic, topicScope, blueprint, dna, candidate, canon]);
   return {
@@ -697,11 +700,16 @@ export function previewCoreAction(
     if (!candidate) return {};
     const patched = (uid: string) => (uid === "CORE-01-BTN-CANDIDATE-CONFIRM" ? "confirmed" : current(uid));
     const script = buildCanonicalScript(patched);
+    const priorDoc = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
+    const priorRef =
+      priorDoc && script && priorDoc.version !== script.version ? priorDoc.version : priorDoc?.prior_version_ref;
     return {
       "CORE-01-BTN-CANDIDATE-CONFIRM": "confirmed",
       "CORE-01-FLD-LOCK-REVIEW": "ready",
       "CORE-01-FLD-HUMAN-DECISION": current("CORE-01-FLD-HUMAN-DECISION") || "confirmed",
-      ...(script ? { "CORE-01-BTN-CANONICAL-SCRIPT": serializeCanonicalScript(script) } : {}),
+      ...(script
+        ? { "CORE-01-BTN-CANONICAL-SCRIPT": serializeCanonicalScript({ ...script, prior_version_ref: priorRef }) }
+        : {}),
     };
   }
   if (actionUid === "CORE-01-ACT-STORY-CANDIDATE") {
@@ -734,7 +742,7 @@ export function previewCoreAction(
     const lhs = [
       ["candidate", candidate, projection?.source_candidate_ref ?? ""],
       ["blueprint", exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")), projection?.blueprint_ref ?? ""],
-      ["dna_lock", exactName(current("CORE-01-BTN-DNA-LOCK")), projection?.dna_ref ?? ""],
+      ["dna_lock", dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK")), projection?.dna_ref ?? ""],
     ] as const;
     const differences = lhs
       .filter(([, candidateValue, canonicalValue]) => candidateValue && canonicalValue && candidateValue !== canonicalValue)
@@ -781,7 +789,7 @@ export function previewCoreAction(
     }
     const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT"));
     const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
-    const dna = exactName(current("CORE-01-BTN-DNA-LOCK"));
+  const dna = dnaExactRef(current("CORE-01-BTN-DNA-LOCK")) || exactName(current("CORE-01-BTN-DNA-LOCK"));
     const evidence = [
       { item: "canonical_script", result: projection ? `pass:${projection.version}` : "fail:missing" },
       { item: "blueprint", result: blueprint ? `pass:${blueprint}` : "fail:missing" },
@@ -833,10 +841,19 @@ export function previewCoreAction(
     };
   }
   if (actionUid === "CORE-01-ACT-DNA-LOCK-REQUEST") {
-    const dna = exactName(nextValue) || exactName(current("CORE-01-BTN-DNA-LOCK"));
-    if (dna) return { "CORE-01-BTN-DNA-LOCK": dna };
     const project = exactName(current("CORE-01-CTL-PROJECT"));
-    return project ? { "CORE-01-BTN-DNA-LOCK": "locked" } : {};
+    if (!project) return {};
+    const rawValue = String(nextValue ?? "").trim();
+    const structured = parseBaseDna(rawValue);
+    if (structured) {
+      return {
+        "CORE-01-BTN-DNA-LOCK": serializeBaseDna({ ...structured, status: "CANDIDATE", locked_at: "" }),
+        "CORE-01-FLD-RUNTIME-STAGE": "DNA_CANDIDATE",
+      };
+    }
+    const dna = exactName(rawValue) || exactName(current("CORE-01-BTN-DNA-LOCK"));
+    if (!dna) return {};
+    return { "CORE-01-BTN-DNA-LOCK": dna, "CORE-01-FLD-RUNTIME-STAGE": "DNA_CANDIDATE" };
   }
   if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
     const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));

@@ -28,7 +28,7 @@ import {
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
 import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
-import { displayCoreValue, formatCoreDecisionLog, formatCoreStructured } from "./coreFormat";
+import { displayCoreValue, formatCoreDna, formatCoreDecisionLog, formatCoreStructured } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
   CORE_VISIBLE_CONTROLS,
@@ -774,7 +774,7 @@ export function CoreVisual() {
             <h3>{tx("core.project_state")}</h3>
             <div className={styles.kv}><span>{tx("core.project_version_ref")}</span><span>{displayCoreValue(valueOf("CORE-01-CTL-PROJECT"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.story_world")}</span><span>{displayCoreValue(valueOf("CORE-01-LST-WORK-ITEMS"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.dna_version")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.dna_version")}</span><span className={styles.dnaDigest}>{formatCoreDna(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CORE-REVIEW"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
@@ -801,7 +801,7 @@ export function CoreVisual() {
             <h3>{tx("core.topic_package")}</h3>
             <div className={styles.kv}><span>{tx("core.topic_scope")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-TOPIC-SCOPE"), loading)}</span></div>
             <div className={styles.kv} data-control-uid="CORE-01-FLD-PACKAGE"><span>{tx("core.blueprint_label")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-PACKAGE"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.dna_label")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.dna_label")}</span><span className={styles.dnaDigest}>{formatCoreDna(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.canonical_script")}</span><span>{displayCoreValue(scriptName, loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.naming")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-NAMING-AUTHORITY"), loading)}</span></div>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANONICAL-SCRIPT" disabled={disabled || !scriptName} onClick={() => setScriptOpen(true)}>{tx("core.view_canonical")}</button>
