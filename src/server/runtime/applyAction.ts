@@ -18,6 +18,18 @@ import { parseAssetPatch, patchPrompt, serializeAssetPatch, withPatchPreview } f
 import { buildEnrichedProjection } from "@/lib/canonicalViews";
 import { buildBaseDna, buildDnaEnrichment, dnaRequiredMissing, parseBaseDna, serializeBaseDna, withDnaStatus } from "@/lib/dnaDocument";
 import {
+  buildChapterArchitecture,
+  buildStoryCore,
+  chapterArchRequiredMissing,
+  parseChapterArchitecture,
+  parseStoryCore,
+  serializeChapterArchitecture,
+  serializeStoryCore,
+  storyCoreRequiredMissing,
+  withChapterArchStatus,
+  withStoryCoreStatus,
+} from "@/lib/storyChapterDocument";
+import {
   ASSET_CONVERSATION,
   CORE_CONVERSATION,
   EDIT_CONVERSATION,
@@ -390,6 +402,7 @@ async function applyConversationReviewAction(
   await writeField(FIELD_TABLE.core, notebookUid, JSON.stringify(withNotebookTasks(current(notebookUid), updated)));
   if (actionUid === "CORE-01-ACT-REVIEW-REJECT") {
     await writeField(FIELD_TABLE.core, "CORE-01-FLD-LOCK-REVIEW", "rejected");
+    await writeField(FIELD_TABLE.core, "CORE-01-FLD-LIFECYCLE-STAGE", "REVISION_REQUIRED");
   }
   return true;
 }
@@ -456,11 +469,12 @@ function parseThreadWorkItems(raw: string | null): Map<string, string> {
   return out;
 }
 
-async function collectDnaThreadFiles(accountUid: string, current: CoreFieldReader): Promise<{ fileBodies: string[]; sourceFiles: string[] }> {
+async function collectDnaThreadFiles(accountUid: string, current: CoreFieldReader, workItems: string[] = ["DNA", "WORLD_SETTING"]): Promise<{ fileBodies: string[]; sourceFiles: string[] }> {
   const fileBodies: string[] = [];
   const sourceFiles: string[] = [];
   const threadItems = parseThreadWorkItems(current("CORE-01-BTN-NEW-THREAD"));
-  const dnaThreads = new Set([...threadItems.entries()].filter(([, workItem]) => workItem === "DNA" || workItem === "WORLD_SETTING").map(([thread]) => thread));
+  const wanted = new Set(workItems);
+  const dnaThreads = new Set([...threadItems.entries()].filter(([, workItem]) => wanted.has(workItem)).map(([thread]) => thread));
   if (!dnaThreads.size) return { fileBodies, sourceFiles };
   const tasks = parseNotebookTasks(current("CORE-01-FLD-ASSISTANT-SUMMARY"));
   const pageUid = conversationFilePage("core");
@@ -480,7 +494,7 @@ async function enrichDnaDocument(accountUid: string): Promise<void> {
   const raw = current("CORE-01-BTN-DNA-LOCK") ?? "";
   if (parseBaseDna(raw)) return;
   const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
-  if (!project || parseBaseDna(raw)) return;
+  if (!project) return;
   const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current);
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
   const doc = buildBaseDna({
@@ -494,31 +508,90 @@ async function enrichDnaDocument(accountUid: string): Promise<void> {
   await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(doc));
 }
 
-async function enforceDnaCoverageGate(accountUid: string): Promise<{ ok: boolean; missing: string[] }> {
+async function enrichStoryCoreDocument(accountUid: string): Promise<void> {
   const current = await loadCoreFields();
-  const raw = current("CORE-01-BTN-DNA-LOCK") ?? "";
-  let doc = parseBaseDna(raw);
-  if (!doc) {
-    const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
-    if (!project) return { ok: false, missing: ["NO_DNA_DOCUMENT"] };
+  const raw = current("CORE-01-BTN-STORY-CORE") ?? "";
+  if (parseStoryCore(raw)) return;
+  const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
+  if (!project) return;
+  const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current, ["STORY"]);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const doc = buildStoryCore({
+    project,
+    fileBodies,
+    sourceFiles,
+    changeSummary: "故事核心候選建立（§9 制式掃描 STORY 線程定稿文件）",
+    status: "CANDIDATE",
+    createdAt: now,
+  });
+  await writeField(FIELD_TABLE.core, "CORE-01-BTN-STORY-CORE", serializeStoryCore(doc));
+}
+
+async function enrichChapterArchDocument(accountUid: string): Promise<void> {
+  const current = await loadCoreFields();
+  const raw = current("CORE-01-BTN-CHAPTER-ARCH") ?? "";
+  if (parseChapterArchitecture(raw)) return;
+  const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
+  if (!project) return;
+  const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current, ["CHAPTER"]);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const doc = buildChapterArchitecture({
+    project,
+    fileBodies,
+    sourceFiles,
+    changeSummary: "章節架構候選建立（§10 制式掃描 CHAPTER 線程定稿文件）",
+    status: "CANDIDATE",
+    createdAt: now,
+  });
+  await writeField(FIELD_TABLE.core, "CORE-01-BTN-CHAPTER-ARCH", serializeChapterArchitecture(doc));
+}
+
+async function enforceCoreCoverageGate(accountUid: string, transition: "REVIEW" | "MOTHER_LOCK"): Promise<{ ok: boolean; missing: string[] }> {
+  const current = await loadCoreFields();
+  const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
+  if (!project) return { ok: false, missing: ["NO_PROJECT"] };
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  const dnaRaw = current("CORE-01-BTN-DNA-LOCK") ?? "";
+  let dnaDoc = parseBaseDna(dnaRaw);
+  if (!dnaDoc) {
     const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current);
-    const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-    doc = buildBaseDna({ project, fileBodies, sourceFiles, changeSummary: "母鎖門禁掃描", status: "CANDIDATE", createdAt: now });
+    dnaDoc = buildBaseDna({ project, fileBodies, sourceFiles, changeSummary: "門禁掃描", status: "CANDIDATE", createdAt: now });
   }
-  if (!doc) return { ok: false, missing: ["NO_DNA_DOCUMENT"] };
-  const missing = dnaRequiredMissing(doc);
+  const storyRaw = current("CORE-01-BTN-STORY-CORE") ?? "";
+  let storyDoc = parseStoryCore(storyRaw);
+  if (!storyDoc) {
+    const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current, ["STORY"]);
+    storyDoc = buildStoryCore({ project, fileBodies, sourceFiles, changeSummary: "門禁掃描（§9）", status: "CANDIDATE", createdAt: now });
+  }
+  const chapterRaw = current("CORE-01-BTN-CHAPTER-ARCH") ?? "";
+  let chapterDoc = parseChapterArchitecture(chapterRaw);
+  if (!chapterDoc) {
+    const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current, ["CHAPTER"]);
+    chapterDoc = buildChapterArchitecture({ project, fileBodies, sourceFiles, changeSummary: "門禁掃描（§10）", status: "CANDIDATE", createdAt: now });
+  }
+  if (!dnaDoc || !storyDoc || !chapterDoc) return { ok: false, missing: ["NO_CORE_DOCUMENT"] };
+
+  const missing = [
+    ...dnaRequiredMissing(dnaDoc),
+    ...storyCoreRequiredMissing(storyDoc).map((row) => `STORY_CORE:${row}`),
+    ...chapterArchRequiredMissing(chapterDoc).map((row) => `CHAPTER_ARCHITECTURE:${row}`),
+  ];
   if (missing.length) {
     await writeField(
       FIELD_TABLE.core,
       "CORE-01-BTN-DNA-LOCK",
-      serializeBaseDna({ ...doc, coverage_gaps: [...new Set([...doc.coverage_gaps, `mother_lock_blocked:${missing.join(";")}`])] }),
+      serializeBaseDna({ ...dnaDoc, coverage_gaps: [...new Set([...dnaDoc.coverage_gaps, `mother_lock_blocked:${missing.join(";")}`])] }),
     );
+    if (!parseStoryCore(storyRaw)) await writeField(FIELD_TABLE.core, "CORE-01-BTN-STORY-CORE", serializeStoryCore(storyDoc));
+    if (!parseChapterArchitecture(chapterRaw)) await writeField(FIELD_TABLE.core, "CORE-01-BTN-CHAPTER-ARCH", serializeChapterArchitecture(chapterDoc));
     await writeField(FIELD_TABLE.core, "CORE-01-FLD-RUNTIME-STAGE", "DNA_BLOCKED");
+    if (transition === "MOTHER_LOCK") await writeField(FIELD_TABLE.core, "CORE-01-FLD-LIFECYCLE-STAGE", "REVISION_REQUIRED");
     return { ok: false, missing };
   }
-  if (!parseBaseDna(raw)) {
-    await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(doc));
-  }
+  if (!parseBaseDna(dnaRaw)) await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(dnaDoc));
+  if (!parseStoryCore(storyRaw)) await writeField(FIELD_TABLE.core, "CORE-01-BTN-STORY-CORE", serializeStoryCore(storyDoc));
+  if (!parseChapterArchitecture(chapterRaw)) await writeField(FIELD_TABLE.core, "CORE-01-BTN-CHAPTER-ARCH", serializeChapterArchitecture(chapterDoc));
   return { ok: true, missing: [] };
 }
 
@@ -806,8 +879,8 @@ export async function applyWorkbenchAction(
       await applyConversationReviewAction(actionUid, nextValue, accountUid);
       return;
     }
-    if (accountUid && actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
-      const gate = await enforceDnaCoverageGate(accountUid);
+    if (accountUid && (actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST" || actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT")) {
+      const gate = await enforceCoreCoverageGate(accountUid, actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST" ? "MOTHER_LOCK" : "REVIEW");
       if (!gate.ok) return;
     }
     const assigned = await assignedAiRouteSnapshot().catch(() => "");
@@ -822,12 +895,27 @@ export async function applyWorkbenchAction(
     if (accountUid && actionUid === "CORE-01-ACT-DNA-LOCK-REQUEST") {
       await enrichDnaDocument(accountUid);
     }
+    if (accountUid && actionUid === "CORE-01-ACT-STORY-CORE-REQUEST") {
+      await enrichStoryCoreDocument(accountUid);
+    }
+    if (accountUid && actionUid === "CORE-01-ACT-CHAPTER-ARCH-REQUEST") {
+      await enrichChapterArchDocument(accountUid);
+    }
     if (accountUid && written && actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
       const current = await loadCoreFields();
+      const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+      const reviewer = exactName(current("CORE-01-BTN-PROJECT-LOCK"));
       const doc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
       if (doc && doc.status === "CANDIDATE") {
-        const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-        await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(withDnaStatus(doc, "LOCKED", exactName(current("CORE-01-BTN-PROJECT-LOCK")), now)));
+        await writeField(FIELD_TABLE.core, "CORE-01-BTN-DNA-LOCK", serializeBaseDna(withDnaStatus(doc, "LOCKED", reviewer, now)));
+      }
+      const storyDoc = parseStoryCore(current("CORE-01-BTN-STORY-CORE"));
+      if (storyDoc && storyDoc.status === "CANDIDATE") {
+        await writeField(FIELD_TABLE.core, "CORE-01-BTN-STORY-CORE", serializeStoryCore(withStoryCoreStatus(storyDoc, "LOCKED", reviewer, now)));
+      }
+      const chapterDoc = parseChapterArchitecture(current("CORE-01-BTN-CHAPTER-ARCH"));
+      if (chapterDoc && chapterDoc.status === "CANDIDATE") {
+        await writeField(FIELD_TABLE.core, "CORE-01-BTN-CHAPTER-ARCH", serializeChapterArchitecture(withChapterArchStatus(chapterDoc, "LOCKED", reviewer, now)));
       }
     }
     if (accountUid && (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT" || actionUid === "CORE-01-ACT-CANONICAL-SCRIPT-VIEW")) {

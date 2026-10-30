@@ -1,5 +1,6 @@
 import { displayBoundValue } from "./displayValue";
 import { formatDnaDigest, parseBaseDna } from "@/lib/dnaDocument";
+import { formatChapterDigest, formatStoryCoreDigest, parseChapterArchitecture, parseStoryCore } from "@/lib/storyChapterDocument";
 
 export function displayCoreValue(value: unknown, loading: boolean): string {
   return displayBoundValue(value, loading);
@@ -9,6 +10,18 @@ export function formatCoreDna(value: unknown, loading: boolean): string {
   const raw = displayBoundValue(value, loading);
   const doc = parseBaseDna(raw);
   return doc ? formatDnaDigest(doc) : raw;
+}
+
+export function formatCoreStoryCore(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  const doc = parseStoryCore(raw);
+  return doc ? formatStoryCoreDigest(doc) : raw;
+}
+
+export function formatCoreChapterArch(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  const doc = parseChapterArchitecture(raw);
+  return doc ? formatChapterDigest(doc) : raw;
 }
 
 function compactJson(value: string): Record<string, unknown> | undefined {

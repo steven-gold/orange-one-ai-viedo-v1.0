@@ -70,6 +70,7 @@ import {
   parseScenesField,
 } from "./canonicalViews";
 import { dnaExactRef, parseBaseDna, parseDnaEnrichmentField, serializeBaseDna, type DnaEnrichment } from "./dnaDocument";
+import { parseChapterArchitecture, parseStoryCore, serializeChapterArchitecture, serializeStoryCore } from "./storyChapterDocument";
 
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
@@ -561,6 +562,7 @@ export function previewCoreAction(
       "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
       "CORE-01-FLD-NAMING-AUTHORITY": "ACPOS_SYSTEM",
       "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "PROJECT_DRAFT",
       "CORE-01-LST-WORK-ITEMS": "STORY",
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
       "CORE-01-BTN-PROJECT-CONFIRM": "",
@@ -585,6 +587,7 @@ export function previewCoreAction(
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
       "CORE-01-FLD-TOPIC-SCOPE": topic,
       "CORE-01-LST-WORK-ITEMS": "TOPIC_SCOPE",
+      "CORE-01-FLD-LIFECYCLE-STAGE": pkg ? "PACKAGE_READY" : "TOPIC_DRAFT",
       ...(pkg ? { "CORE-01-FLD-PACKAGE": pkg } : {}),
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
     };
@@ -672,7 +675,9 @@ export function previewCoreAction(
   }
   if (actionUid === "CORE-01-ACT-PROJECT-VALIDATE") {
     const project = exactName(current("CORE-01-CTL-PROJECT"));
-    return project ? { "CORE-01-BTN-PROJECT-VALIDATE": "validated" } : {};
+    return project
+      ? { "CORE-01-BTN-PROJECT-VALIDATE": "validated", "CORE-01-FLD-LIFECYCLE-STAGE": "PROJECT_VALIDATING" }
+      : {};
   }
   if (actionUid === "CORE-01-ACT-PROJECT-CONFIRM") {
     if (!projectValidated(current)) return {};
@@ -681,6 +686,7 @@ export function previewCoreAction(
       ? {
           "CORE-01-BTN-PROJECT-CONFIRM": "confirmed",
           "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
+          "CORE-01-FLD-LIFECYCLE-STAGE": "CORE_MODELING",
           ...(current("CORE-01-FLD-RUNTIME-STAGE") === "TOPIC_LINEAGE_BLOCKED"
             ? { "CORE-01-FLD-RUNTIME-STAGE": "AI_RESPONSES" }
             : {}),
@@ -693,6 +699,7 @@ export function previewCoreAction(
       "CORE-01-FLD-VERSION-STATE": candidate,
       "CORE-01-BTN-CANDIDATE-CREATE": "created",
       "CORE-01-FLD-RUNTIME-STAGE": "CANDIDATE",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "SCRIPT_CANDIDATE",
     };
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT") {
@@ -721,6 +728,7 @@ export function previewCoreAction(
       "CORE-01-FLD-VERSION-STATE": candidate,
       "CORE-01-LST-WORK-ITEMS": "STORY",
       "CORE-01-FLD-RUNTIME-STAGE": "CANDIDATE",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "SCRIPT_CANDIDATE",
       "CORE-01-BTN-CANDIDATE-CREATE": current("CORE-01-BTN-CANDIDATE-CREATE") || "created",
     };
   }
@@ -732,6 +740,7 @@ export function previewCoreAction(
       "CORE-01-BTN-CANDIDATE-CONFIRM": "",
       "CORE-01-FLD-LOCK-REVIEW": "",
       "CORE-01-FLD-RUNTIME-STAGE": "HUMAN_DECISION",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "REVISION_REQUIRED",
     };
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-COMPARE") {
@@ -819,6 +828,7 @@ export function previewCoreAction(
     return {
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": blueprint,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "TOPIC_BLUEPRINT_CANDIDATE",
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-VALIDATE") {
@@ -829,6 +839,7 @@ export function previewCoreAction(
       "CORE-01-BTN-BLUEPRINT-VALIDATE": "validated",
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": pkg,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "CROSS_REVIEW",
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-APPROVE") {
@@ -838,6 +849,7 @@ export function previewCoreAction(
       "CORE-01-BTN-BLUEPRINT-APPROVE": "approved",
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": blueprint,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "TOPIC_BLUEPRINT_CANDIDATE",
     };
   }
   if (actionUid === "CORE-01-ACT-DNA-LOCK-REQUEST") {
@@ -855,6 +867,32 @@ export function previewCoreAction(
     if (!dna) return {};
     return { "CORE-01-BTN-DNA-LOCK": dna, "CORE-01-FLD-RUNTIME-STAGE": "DNA_CANDIDATE" };
   }
+  if (actionUid === "CORE-01-ACT-STORY-CORE-REQUEST") {
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    if (!project) return {};
+    const rawValue = String(nextValue ?? "").trim();
+    const structured = parseStoryCore(rawValue);
+    if (structured) {
+      return { "CORE-01-BTN-STORY-CORE": serializeStoryCore({ ...structured, status: "CANDIDATE", locked_at: "" }) };
+    }
+    const story = exactName(rawValue) || exactName(current("CORE-01-BTN-STORY-CORE"));
+    if (!story) return {};
+    return { "CORE-01-BTN-STORY-CORE": story };
+  }
+  if (actionUid === "CORE-01-ACT-CHAPTER-ARCH-REQUEST") {
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    if (!project) return {};
+    const rawValue = String(nextValue ?? "").trim();
+    const structured = parseChapterArchitecture(rawValue);
+    if (structured) {
+      return {
+        "CORE-01-BTN-CHAPTER-ARCH": serializeChapterArchitecture({ ...structured, status: "CANDIDATE", locked_at: "" }),
+      };
+    }
+    const chapters = exactName(rawValue) || exactName(current("CORE-01-BTN-CHAPTER-ARCH"));
+    if (!chapters) return {};
+    return { "CORE-01-BTN-CHAPTER-ARCH": chapters };
+  }
   if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
     const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
     if (!blueprint) return {};
@@ -863,6 +901,7 @@ export function previewCoreAction(
       "CORE-01-FLD-LOCK-REVIEW": "locked",
       "CORE-01-FLD-PACKAGE": blueprint,
       "CORE-01-BTN-BLUEPRINT-CREATE": exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || blueprint,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "TOPIC_LOCKED",
     };
   }
   if (actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT") {
@@ -871,6 +910,7 @@ export function previewCoreAction(
       "CORE-01-BTN-CORE-REVIEW": "sent",
       "CORE-01-FLD-LOCK-REVIEW": `submitted@${at}`,
       "CORE-01-FLD-RUNTIME-STAGE": "REVIEW",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "PROJECT_REVIEW_PENDING",
     };
   }
   if (actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
@@ -879,6 +919,7 @@ export function previewCoreAction(
     return {
       "CORE-01-BTN-PROJECT-LOCK": project,
       "CORE-01-FLD-LOCK-REVIEW": "locked",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "PROJECT_LOCKED",
     };
   }
   if (actionUid === "CORE-01-ACT-ATTACHMENT") {

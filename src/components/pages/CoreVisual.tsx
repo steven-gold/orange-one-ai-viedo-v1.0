@@ -28,7 +28,7 @@ import {
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
 import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
-import { displayCoreValue, formatCoreDna, formatCoreDecisionLog, formatCoreStructured } from "./coreFormat";
+import { displayCoreValue, formatCoreChapterArch, formatCoreDna, formatCoreDecisionLog, formatCoreStoryCore, formatCoreStructured } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
   CORE_VISIBLE_CONTROLS,
@@ -775,12 +775,17 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.project_version_ref")}</span><span>{displayCoreValue(valueOf("CORE-01-CTL-PROJECT"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.story_world")}</span><span>{displayCoreValue(valueOf("CORE-01-LST-WORK-ITEMS"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.dna_version")}</span><span className={styles.dnaDigest}>{formatCoreDna(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.story_core")}</span><span className={styles.dnaDigest}>{formatCoreStoryCore(valueOf("CORE-01-BTN-STORY-CORE"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.chapter_arch")}</span><span className={styles.dnaDigest}>{formatCoreChapterArch(valueOf("CORE-01-BTN-CHAPTER-ARCH"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.lifecycle_stage")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-LIFECYCLE-STAGE"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CORE-REVIEW"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-CONFIRM" disabled={disabled || !projectIsValidated} onClick={() => void act("CORE-01-BTN-PROJECT-CONFIRM")}>{tx("core.confirm_project")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-STORY-CANDIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-STORY-CANDIDATE")}>{tx("core.story_candidate")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-DNA-LOCK" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-DNA-LOCK")}>{tx("core.dna_lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-STORY-CORE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-STORY-CORE")}>{tx("core.story_core")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHAPTER-ARCH" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-CHAPTER-ARCH")}>{tx("core.chapter_arch")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CORE-REVIEW" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-CORE-REVIEW")}>{tx("core.core_review")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-LOCK" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-LOCK")}>{tx("core.project_lock")}</button>
             </div>
