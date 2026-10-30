@@ -28,7 +28,7 @@ import {
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
 import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
-import { displayCoreValue, formatCoreChapterArch, formatCoreDna, formatCoreDecisionLog, formatCoreStoryCore, formatCoreStructured } from "./coreFormat";
+import { displayCoreValue, formatCoreChapterArch, formatCoreDna, formatCoreDecisionLog, formatCoreErrors, formatCoreStoryCore, formatCoreStructured } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
   CORE_VISIBLE_CONTROLS,
@@ -778,6 +778,7 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.story_core")}</span><span className={styles.dnaDigest}>{formatCoreStoryCore(valueOf("CORE-01-BTN-STORY-CORE"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.chapter_arch")}</span><span className={styles.dnaDigest}>{formatCoreChapterArch(valueOf("CORE-01-BTN-CHAPTER-ARCH"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.lifecycle_stage")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-LIFECYCLE-STAGE"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.core_errors")}</span><span>{formatCoreErrors(valueOf("CORE-01-FLD-CORE-ERRORS"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CORE-REVIEW"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>

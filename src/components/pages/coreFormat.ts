@@ -1,9 +1,20 @@
 import { displayBoundValue } from "./displayValue";
 import { formatDnaDigest, parseBaseDna } from "@/lib/dnaDocument";
 import { formatChapterDigest, formatStoryCoreDigest, parseChapterArchitecture, parseStoryCore } from "@/lib/storyChapterDocument";
+import { parseCoreErrors } from "@/lib/coreErrorContract";
 
 export function displayCoreValue(value: unknown, loading: boolean): string {
   return displayBoundValue(value, loading);
+}
+
+export function formatCoreErrors(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  const log = parseCoreErrors(raw);
+  if (!log.length) return raw ? raw.slice(0, 80) : "";
+  return log
+    .slice(-3)
+    .map((row) => `${row.at} ${row.code}`)
+    .join(" / ");
 }
 
 export function formatCoreDna(value: unknown, loading: boolean): string {

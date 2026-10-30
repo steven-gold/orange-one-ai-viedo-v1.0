@@ -17,6 +17,7 @@ import { parseCorrectionScript, serializeCorrectionScript, withCorrectionBody } 
 import { parseAssetPatch, patchPrompt, serializeAssetPatch, withPatchPreview } from "@/lib/layerDocument";
 import { buildEnrichedProjection } from "@/lib/canonicalViews";
 import { buildBaseDna, buildDnaEnrichment, dnaRequiredMissing, parseBaseDna, serializeBaseDna, withDnaStatus } from "@/lib/dnaDocument";
+import { appendCoreError, buildCoreError, type CoreErrorRecord } from "@/lib/coreErrorContract";
 import {
   buildChapterArchitecture,
   buildStoryCore,
@@ -546,10 +547,22 @@ async function enrichChapterArchDocument(accountUid: string): Promise<void> {
   await writeField(FIELD_TABLE.core, "CORE-01-BTN-CHAPTER-ARCH", serializeChapterArchitecture(doc));
 }
 
+async function recordCoreErrors(current: (uid: string) => string | null, errors: CoreErrorRecord[]): Promise<void> {
+  if (!errors.length) return;
+  let log = "";
+  for (const error of errors) log = appendCoreError(current("CORE-01-FLD-CORE-ERRORS") ?? log, error);
+  await writeField(FIELD_TABLE.core, "CORE-01-FLD-CORE-ERRORS", log);
+}
+
 async function enforceCoreCoverageGate(accountUid: string, transition: "REVIEW" | "MOTHER_LOCK"): Promise<{ ok: boolean; missing: string[] }> {
   const current = await loadCoreFields();
   const project = (current("CORE-01-CTL-PROJECT") ?? "").trim().slice(0, 80);
-  if (!project) return { ok: false, missing: ["NO_PROJECT"] };
+  if (!project) {
+    await recordCoreErrors(current, [
+      buildCoreError("CORE_CONTEXT_INVALID", "gate: NO_PROJECT", new Date().toISOString().slice(0, 19).replace("T", " "))!,
+    ]);
+    return { ok: false, missing: ["NO_PROJECT"] };
+  }
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   const dnaRaw = current("CORE-01-BTN-DNA-LOCK") ?? "";
@@ -570,7 +583,10 @@ async function enforceCoreCoverageGate(accountUid: string, transition: "REVIEW" 
     const { fileBodies, sourceFiles } = await collectDnaThreadFiles(accountUid, current, ["CHAPTER"]);
     chapterDoc = buildChapterArchitecture({ project, fileBodies, sourceFiles, changeSummary: "門禁掃描（§10）", status: "CANDIDATE", createdAt: now });
   }
-  if (!dnaDoc || !storyDoc || !chapterDoc) return { ok: false, missing: ["NO_CORE_DOCUMENT"] };
+  if (!dnaDoc || !storyDoc || !chapterDoc) {
+    await recordCoreErrors(current, [buildCoreError("CORE_UNDEFINED_AUTHORITY_GAP", "gate: NO_CORE_DOCUMENT", now)!]);
+    return { ok: false, missing: ["NO_CORE_DOCUMENT"] };
+  }
 
   const missing = [
     ...dnaRequiredMissing(dnaDoc),
@@ -578,6 +594,11 @@ async function enforceCoreCoverageGate(accountUid: string, transition: "REVIEW" 
     ...chapterArchRequiredMissing(chapterDoc).map((row) => `CHAPTER_ARCHITECTURE:${row}`),
   ];
   if (missing.length) {
+    const errorCodes = new Set<string>();
+    if (missing.some((row) => row.startsWith("STORY_CORE:"))) errorCodes.add("CORE_STORY_CONTRACT_INCOMPLETE");
+    if (missing.some((row) => row.startsWith("CHAPTER_ARCHITECTURE:"))) errorCodes.add("CORE_CHAPTER_CONTRACT_INVALID");
+    if (missing.some((row) => !row.startsWith("STORY_CORE:") && !row.startsWith("CHAPTER_ARCHITECTURE:"))) errorCodes.add("CORE_DNA_CONTRACT_INVALID");
+    await recordCoreErrors(current, [...errorCodes].map((code) => buildCoreError(code, `gate ${transition}: ${missing.join(";")}`, now)!));
     await writeField(
       FIELD_TABLE.core,
       "CORE-01-BTN-DNA-LOCK",

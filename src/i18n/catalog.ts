@@ -240,6 +240,8 @@ const catalog = {
   "core.story_core": { "zh-TW": "建立故事核心", "zh-CN": "建立故事核心", en: "Build Story Core" },
   "core.chapter_arch": { "zh-TW": "建立章節架構", "zh-CN": "建立章节架构", en: "Build Chapter Architecture" },
   "core.lifecycle_stage": { "zh-TW": "生命週期階段", "zh-CN": "生命周期阶段", en: "Lifecycle Stage" },
+  "core.core_errors": { "zh-TW": "核心錯誤碼", "zh-CN": "核心错误码", en: "Core Error Codes" },
+  "core.package": { "zh-TW": "生產包", "zh-CN": "生产包", en: "Production Package" },
   "core.core_review": { "zh-TW": "送出核心審查", "zh-CN": "送出核心审查", en: "Submit Core Review" },
   "core.project_lock": { "zh-TW": "提出專案鎖定", "zh-CN": "提出项目锁定", en: "Request Project Lock" },
   "core.blueprint_state": { "zh-TW": "藍圖狀態", "zh-CN": "蓝图状态", en: "Blueprint State" },

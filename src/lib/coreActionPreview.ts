@@ -71,6 +71,12 @@ import {
 } from "./canonicalViews";
 import { dnaExactRef, parseBaseDna, parseDnaEnrichmentField, serializeBaseDna, type DnaEnrichment } from "./dnaDocument";
 import { parseChapterArchitecture, parseStoryCore, serializeChapterArchitecture, serializeStoryCore } from "./storyChapterDocument";
+import { appendCoreError, buildCoreError } from "./coreErrorContract";
+import { buildProductionPackage, parseProductionPackage, serializeProductionPackage } from "./productionPackage";
+
+function nowStamp(): string {
+  return new Date().toISOString().slice(0, 19).replace("T", " ");
+}
 
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
@@ -575,7 +581,13 @@ export function previewCoreAction(
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
     if (!projectConfirmed(current)) {
-      return { "CORE-01-FLD-RUNTIME-STAGE": "TOPIC_LINEAGE_BLOCKED" };
+      return {
+        "CORE-01-FLD-RUNTIME-STAGE": "TOPIC_LINEAGE_BLOCKED",
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_CONTEXT_INVALID", "TOPIC-CREATE: project unconfirmed (lineage guard §24)", nowStamp())!,
+        ),
+      };
     }
     const topic = exactName(nextValue);
     if (!topic) return {};
@@ -892,6 +904,102 @@ export function previewCoreAction(
     const chapters = exactName(rawValue) || exactName(current("CORE-01-BTN-CHAPTER-ARCH"));
     if (!chapters) return {};
     return { "CORE-01-BTN-CHAPTER-ARCH": chapters };
+  }
+  if (actionUid === "CORE-01-ACT-PACKAGE-BUILD") {
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    const topic = exactName(current("CORE-01-CTL-TOPIC"));
+    if (!project || !topic) {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_CONTEXT_INVALID", "PACKAGE-BUILD: project/topic unresolved", nowStamp())!,
+        ),
+      };
+    }
+    if (current("CORE-01-FLD-LIFECYCLE-STAGE") !== "TOPIC_LOCKED") {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_BLUEPRINT_INCOMPLETE", `PACKAGE-BUILD: child lock required, lifecycle=${current("CORE-01-FLD-LIFECYCLE-STAGE") || "unset"}`, nowStamp())!,
+        ),
+      };
+    }
+    const at = nowStamp();
+    const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")) || "";
+    const dnaDoc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
+    const projection = parseCanonicalScript(current("CORE-01-BTN-CANONICAL-SCRIPT")) ?? null;
+    const enrichmentHash = projection?.dna_enrichment?.hash ?? "";
+    const dnaRefs = [dnaDoc?.version ?? "", enrichmentHash ? `DNAE-${enrichmentHash}` : ""].filter(Boolean);
+    const pkg = buildProductionPackage({
+      projectId: project,
+      topicId: topic,
+      basedOnStructureRef: exactName(current("CORE-01-FLD-LOCK-REVIEW")) || "PROJECT_LOCKED",
+      blueprintRef: blueprint,
+      blueprintLockState: exactName(current("CORE-01-BTN-CHILD-LOCK")) ? "CHILD_LOCKED" : "UNLOCKED",
+      dnaRefs: dnaRefs.length ? dnaRefs : [dnaDoc?.version ?? ""],
+      projection,
+      preboundWorkspaces: {
+        asset: exactName(current("CORE-01-FLD-DOWNSTREAM-ASSET")) || "",
+        video: exactName(current("CORE-01-FLD-DOWNSTREAM-VIDEO")) || "",
+        edit: exactName(current("CORE-01-FLD-DOWNSTREAM-EDIT")) || "",
+      },
+      namingAuthority: exactName(current("CORE-01-FLD-NAMING-AUTHORITY")) || "",
+      candidateRef: projection?.audit?.candidate_ref ?? exactName(current("CORE-01-FLD-VERSION-STATE")) ?? "",
+      humanDecision: projection?.audit?.human_decision ?? "",
+      lockState: String(current("CORE-01-FLD-LOCK-REVIEW") ?? ""),
+      at,
+    });
+    return {
+      "CORE-01-FLD-PACKAGE": serializeProductionPackage(pkg),
+      "CORE-01-FLD-LIFECYCLE-STAGE": "PACKAGE_BUILDING",
+      "CORE-01-FLD-CORE-ERRORS": pkg.status === "BLOCKED"
+        ? appendCoreError(current("CORE-01-FLD-CORE-ERRORS"), buildCoreError("CORE_PACKAGE_NOT_READY", `PACKAGE-BUILD: ${pkg.readiness.missing_blockers.join(";")}`, at)!)
+        : current("CORE-01-FLD-CORE-ERRORS") ?? "",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-PACKAGE-READINESS-VALIDATE") {
+    const pkg = parseProductionPackage(current("CORE-01-FLD-PACKAGE"));
+    if (!pkg) {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_PACKAGE_NOT_READY", "READINESS: no package built", nowStamp())!,
+        ),
+      };
+    }
+    if (pkg.readiness.missing_blockers.length) {
+      return {
+        "CORE-01-FLD-PACKAGE": serializeProductionPackage({ ...pkg, status: "BLOCKED" }),
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_PACKAGE_NOT_READY", `READINESS: ${pkg.readiness.missing_blockers.join(";")}`, nowStamp())!,
+        ),
+      };
+    }
+    return {
+      "CORE-01-FLD-PACKAGE": serializeProductionPackage({ ...pkg, status: "READY" }),
+      "CORE-01-FLD-LIFECYCLE-STAGE": "PACKAGE_READY",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-PACKAGE-HANDOFF") {
+    const pkg = parseProductionPackage(current("CORE-01-FLD-PACKAGE"));
+    if (!pkg || pkg.status !== "READY") {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_PACKAGE_NOT_READY", `HANDOFF: package ${pkg?.status ?? "missing"}`, nowStamp())!,
+        ),
+      };
+    }
+    const at = nowStamp();
+    return {
+      "CORE-01-FLD-PACKAGE": serializeProductionPackage({ ...pkg, status: "READY" }),
+      "CORE-01-FLD-DOWNSTREAM-ASSET": exactName(current("CORE-01-FLD-DOWNSTREAM-ASSET")) || `ASSET←${pkg.version}`,
+      "CORE-01-FLD-DOWNSTREAM-VIDEO": exactName(current("CORE-01-FLD-DOWNSTREAM-VIDEO")) || `VIDEO←${pkg.version}`,
+      "CORE-01-FLD-DOWNSTREAM-EDIT": exactName(current("CORE-01-FLD-DOWNSTREAM-EDIT")) || `EDIT←${pkg.version}`,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "HANDED_OFF",
+      "CORE-01-FLD-CORE-ERRORS": current("CORE-01-FLD-CORE-ERRORS") ?? "",
+    };
   }
   if (actionUid === "CORE-01-ACT-CHILD-LOCK-REQUEST") {
     const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
