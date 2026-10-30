@@ -78,6 +78,16 @@ function nowStamp(): string {
   return new Date().toISOString().slice(0, 19).replace("T", " ");
 }
 
+function stableHash8(parts: string[]): string {
+  let hash = 2166136261;
+  const joined = parts.join("\u0001");
+  for (let index = 0; index < joined.length; index += 1) {
+    hash ^= joined.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, "0");
+}
+
 export const CONVERSATION_RECENT_HISTORY_ROWS = KERNEL_HISTORY_ROWS;
 export const CONVERSATION_RECENT_HISTORY_TEXT_CHARS = KERNEL_HISTORY_CHARS;
 export const CONVERSATION_STORED_MESSAGE_TEXT_CHARS = KERNEL_STORED_CHARS;
@@ -840,7 +850,7 @@ export function previewCoreAction(
     return {
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": blueprint,
-      "CORE-01-FLD-LIFECYCLE-STAGE": "TOPIC_BLUEPRINT_CANDIDATE",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "BOUNDARY_DECISION",
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-VALIDATE") {
@@ -851,7 +861,7 @@ export function previewCoreAction(
       "CORE-01-BTN-BLUEPRINT-VALIDATE": "validated",
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprint,
       "CORE-01-FLD-PACKAGE": pkg,
-      "CORE-01-FLD-LIFECYCLE-STAGE": "CROSS_REVIEW",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "SCRIPT_DRAFT",
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-APPROVE") {
@@ -923,6 +933,22 @@ export function previewCoreAction(
           buildCoreError("CORE_BLUEPRINT_INCOMPLETE", `PACKAGE-BUILD: child lock required, lifecycle=${current("CORE-01-FLD-LIFECYCLE-STAGE") || "unset"}`, nowStamp())!,
         ),
       };
+    }
+    const changeRaw = current("CORE-01-FLD-CHANGE-REQUEST");
+    if (changeRaw && changeRaw.startsWith("{")) {
+      try {
+        const change = JSON.parse(changeRaw) as { kind?: string; status?: string };
+        if (change.kind === "CORE_CHANGE_REQUEST" && change.status === "CHANGE_REQUESTED") {
+          return {
+            "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+              current("CORE-01-FLD-CORE-ERRORS"),
+              buildCoreError("CORE_VERSION_CONFLICT", "PACKAGE-BUILD: open change request blocks build until re-lock (REVERIFY_REQUIRED)", nowStamp())!,
+            ),
+          };
+        }
+      } catch {
+        // malformed change request evidence is ignored for the guard
+      }
     }
     const at = nowStamp();
     const blueprint = exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE")) || "";
@@ -1006,10 +1032,69 @@ export function previewCoreAction(
     if (!blueprint) return {};
     return {
       "CORE-01-BTN-CHILD-LOCK": blueprint,
-      "CORE-01-FLD-LOCK-REVIEW": "locked",
+      "CORE-01-FLD-LOCK-REVIEW": `submitted@${nowStamp()}`,
       "CORE-01-FLD-PACKAGE": blueprint,
       "CORE-01-BTN-BLUEPRINT-CREATE": exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || blueprint,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "CHILD_LOCK_REVIEW",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CHILD-LOCK-APPROVE") {
+    const review = String(current("CORE-01-FLD-LOCK-REVIEW") ?? "");
+    if (!review.startsWith("submitted@")) {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_LOCK_EVIDENCE_MISSING", `CHILD-LOCK-APPROVE: review=${review || "unset"}`, nowStamp())!,
+        ),
+      };
+    }
+    const blueprint = exactName(current("CORE-01-BTN-CHILD-LOCK")) || exactName(current("CORE-01-BTN-BLUEPRINT-CREATE")) || exactName(current("CORE-01-FLD-PACKAGE"));
+    if (!blueprint) return {};
+    return {
+      "CORE-01-BTN-CHILD-LOCK": blueprint,
+      "CORE-01-FLD-LOCK-REVIEW": "locked",
+      "CORE-01-FLD-PACKAGE": blueprint,
       "CORE-01-FLD-LIFECYCLE-STAGE": "TOPIC_LOCKED",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-CHANGE-REQUEST") {
+    const lifecycle = String(current("CORE-01-FLD-LIFECYCLE-STAGE") ?? "");
+    if (lifecycle !== "PROJECT_LOCKED" && lifecycle !== "TOPIC_LOCKED") {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_VERSION_CONFLICT", `CHANGE-REQUEST: no locked artifact (lifecycle=${lifecycle || "unset"})`, nowStamp())!,
+        ),
+      };
+    }
+    const reason = exactName(nextValue);
+    if (!reason) {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_DECISION_MISSING", "CHANGE-REQUEST: authorized reason required", nowStamp())!,
+        ),
+      };
+    }
+    const at = nowStamp();
+    const impacted = [
+      "CORE-01-BTN-BLUEPRINT-CREATE",
+      "CORE-01-FLD-PACKAGE",
+      "CORE-01-BTN-CANONICAL-SCRIPT",
+      "CORE-01-BTN-CHILD-LOCK",
+    ].filter((uid) => exactName(current(uid)));
+    const changeId = `CR-${stableHash8([lifecycle, reason, at])}`;
+    return {
+      "CORE-01-FLD-CHANGE-REQUEST": JSON.stringify({
+        kind: "CORE_CHANGE_REQUEST",
+        change_id: changeId,
+        change_class: lifecycle === "PROJECT_LOCKED" ? "CANON" : "TOPIC",
+        reason,
+        impacted,
+        status: "CHANGE_REQUESTED",
+        at,
+      }),
+      "CORE-01-FLD-LIFECYCLE-STAGE": "CHANGE_REQUESTED",
     };
   }
   if (actionUid === "CORE-01-ACT-CORE-REVIEW-SUBMIT") {
@@ -1026,8 +1111,45 @@ export function previewCoreAction(
     if (!project) return {};
     return {
       "CORE-01-BTN-PROJECT-LOCK": project,
+      "CORE-01-FLD-LOCK-REVIEW": `submitted@${nowStamp()}`,
+      "CORE-01-FLD-LIFECYCLE-STAGE": "MOTHER_LOCK_REVIEW",
+    };
+  }
+  if (actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE") {
+    const review = String(current("CORE-01-FLD-LOCK-REVIEW") ?? "");
+    const project = exactName(current("CORE-01-BTN-PROJECT-LOCK")) || exactName(current("CORE-01-CTL-PROJECT"));
+    if (!review.startsWith("submitted@") || !project) {
+      return {
+        "CORE-01-FLD-CORE-ERRORS": appendCoreError(
+          current("CORE-01-FLD-CORE-ERRORS"),
+          buildCoreError("CORE_LOCK_EVIDENCE_MISSING", `MOTHER-LOCK-APPROVE: review=${review || "unset"}`, nowStamp())!,
+        ),
+      };
+    }
+    const changeRaw = current("CORE-01-FLD-CHANGE-REQUEST");
+    let changePatch: Record<string, string> = {};
+    if (changeRaw && changeRaw.startsWith("{")) {
+      try {
+        const change = JSON.parse(changeRaw) as { kind?: string; status?: string; change_id?: string; reason?: string };
+        if (change.kind === "CORE_CHANGE_REQUEST" && change.status === "CHANGE_REQUESTED") {
+          changePatch = {
+            "CORE-01-FLD-CHANGE-REQUEST": JSON.stringify({
+              ...change,
+              status: "SUPERSEDED",
+              superseded_by: project,
+              superseded_at: nowStamp(),
+            }),
+          };
+        }
+      } catch {
+        changePatch = {};
+      }
+    }
+    return {
+      "CORE-01-BTN-PROJECT-LOCK": project,
       "CORE-01-FLD-LOCK-REVIEW": "locked",
       "CORE-01-FLD-LIFECYCLE-STAGE": "PROJECT_LOCKED",
+      ...changePatch,
     };
   }
   if (actionUid === "CORE-01-ACT-ATTACHMENT") {

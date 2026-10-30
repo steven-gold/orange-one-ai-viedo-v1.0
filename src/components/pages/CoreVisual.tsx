@@ -28,7 +28,7 @@ import {
   threadsForCurrentWorkItem,
 } from "@/lib/coreActionPreview";
 import { generationStatusKey, type ConversationTaskStatus } from "@/lib/conversationTask";
-import { displayCoreValue, formatCoreChapterArch, formatCoreDna, formatCoreDecisionLog, formatCoreErrors, formatCoreStoryCore, formatCoreStructured } from "./coreFormat";
+import { displayCoreValue, formatCoreChapterArch, formatCoreDna, formatCoreDecisionLog, formatCoreErrors, formatCoreLifecycle, formatCoreStoryCore, formatCoreStructured } from "./coreFormat";
 import {
   CORE_CONTROL_ACTIONS,
   CORE_VISIBLE_CONTROLS,
@@ -42,7 +42,7 @@ const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
 const FILE_STATUS = new Set(["attached", "created", "selected", "已附加", "已上傳", "參考資料", "已引用", "Attached", "Reference"]);
 
-type NameDialogKind = "project" | "topic" | "thread" | "blueprint" | "rename-project" | "rename-topic" | "rename-project-manage";
+type NameDialogKind = "project" | "topic" | "thread" | "blueprint" | "change_request" | "rename-project" | "rename-topic" | "rename-project-manage";
 
 const WORK_ITEM_KEYS: Record<string, TranslationKey> = {
   STORY: "core.work.story",
@@ -296,6 +296,9 @@ export function CoreVisual() {
       if (threadScopeReady(current)) void act("CORE-01-BTN-NEW-THREAD", name || undefined);
     }
     if (dialog === "blueprint") void act("CORE-01-BTN-BLUEPRINT-CREATE", name || undefined);
+    if (dialog === "change_request") {
+      if (name) void act("CORE-01-BTN-CHANGE-REQUEST", name);
+    }
     if (dialog === "rename-project") void act("CORE-01-CTL-PROJECT", name || undefined);
     if (dialog === "rename-project-manage") {
       if (renameTarget && name && name !== renameTarget) {
@@ -777,8 +780,9 @@ export function CoreVisual() {
             <div className={styles.kv}><span>{tx("core.dna_version")}</span><span className={styles.dnaDigest}>{formatCoreDna(valueOf("CORE-01-BTN-DNA-LOCK"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.story_core")}</span><span className={styles.dnaDigest}>{formatCoreStoryCore(valueOf("CORE-01-BTN-STORY-CORE"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.chapter_arch")}</span><span className={styles.dnaDigest}>{formatCoreChapterArch(valueOf("CORE-01-BTN-CHAPTER-ARCH"), loading)}</span></div>
-            <div className={styles.kv}><span>{tx("core.lifecycle_stage")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-LIFECYCLE-STAGE"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.lifecycle_stage")}</span><span>{formatCoreLifecycle(valueOf("CORE-01-FLD-LIFECYCLE-STAGE"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.core_errors")}</span><span>{formatCoreErrors(valueOf("CORE-01-FLD-CORE-ERRORS"), loading)}</span></div>
+            <div className={styles.kv}><span>{tx("core.change_request_field")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-CHANGE-REQUEST"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.core_review_state")}</span><span>{displayCoreValue(valueOf("CORE-01-BTN-CORE-REVIEW"), loading)}</span></div>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-VALIDATE" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-VALIDATE")}>{tx("core.validate_project")}</button>
@@ -789,6 +793,8 @@ export function CoreVisual() {
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHAPTER-ARCH" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-CHAPTER-ARCH")}>{tx("core.chapter_arch")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CORE-REVIEW" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-CORE-REVIEW")}>{tx("core.core_review")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-PROJECT-LOCK" disabled={disabled || !projectName} onClick={() => void act("CORE-01-BTN-PROJECT-LOCK")}>{tx("core.project_lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-MOTHER-APPROVE" disabled={disabled || !String(valueOf("CORE-01-FLD-LOCK-REVIEW") ?? "").startsWith("submitted@")} onClick={() => void act("CORE-01-BTN-MOTHER-APPROVE")}>{tx("core.mother_approve")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHANGE-REQUEST" disabled={disabled || (valueOf("CORE-01-FLD-LIFECYCLE-STAGE") !== "PROJECT_LOCKED" && valueOf("CORE-01-FLD-LIFECYCLE-STAGE") !== "TOPIC_LOCKED")} onClick={() => openNameDialog("change_request")}>{tx("core.change_request")}</button>
             </div>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-BLUEPRINT-STATE" hidden={topicMode}>
@@ -800,6 +806,7 @@ export function CoreVisual() {
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-VALIDATE" disabled={disabled || !blueprintName} onClick={() => void act("CORE-01-BTN-BLUEPRINT-VALIDATE")}>{tx("core.validate_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-BLUEPRINT-APPROVE" disabled={disabled || !blueprintName} onClick={() => void act("CORE-01-BTN-BLUEPRINT-APPROVE")}>{tx("core.approve_blueprint")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHILD-LOCK" disabled={disabled || !blueprintName} onClick={() => void act("CORE-01-BTN-CHILD-LOCK")}>{tx("core.child_lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CHILD-APPROVE" disabled={disabled || !String(valueOf("CORE-01-FLD-LOCK-REVIEW") ?? "").startsWith("submitted@")} onClick={() => void act("CORE-01-BTN-CHILD-APPROVE")}>{tx("core.child_approve")}</button>
             </div>
           </section>
           <section className={styles.railBlock} data-component-uid="CORE-01-CMP-TOPIC-PACKAGE" hidden={!topicMode}>

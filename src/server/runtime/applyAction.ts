@@ -904,6 +904,22 @@ export async function applyWorkbenchAction(
       const gate = await enforceCoreCoverageGate(accountUid, actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST" ? "MOTHER_LOCK" : "REVIEW");
       if (!gate.ok) return;
     }
+    if (accountUid && actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE") {
+      const current = await loadCoreFields();
+      const review = String(current("CORE-01-FLD-LOCK-REVIEW") ?? "");
+      const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+      if (!review.startsWith("submitted@")) {
+        await recordCoreErrors(current, [buildCoreError("CORE_LOCK_EVIDENCE_MISSING", `MOTHER-LOCK-APPROVE: review=${review || "unset"}`, now)!]);
+        return;
+      }
+      const dnaDoc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
+      const storyDoc = parseStoryCore(current("CORE-01-BTN-STORY-CORE"));
+      const chapterDoc = parseChapterArchitecture(current("CORE-01-BTN-CHAPTER-ARCH"));
+      if (!dnaDoc || !storyDoc || !chapterDoc) {
+        await recordCoreErrors(current, [buildCoreError("CORE_LOCK_EVIDENCE_MISSING", "MOTHER-LOCK-APPROVE: required documents missing", now)!]);
+        return;
+      }
+    }
     const assigned = await assignedAiRouteSnapshot().catch(() => "");
     const written = await applyProjectedAction(
       FIELD_TABLE.core,
@@ -922,7 +938,7 @@ export async function applyWorkbenchAction(
     if (accountUid && actionUid === "CORE-01-ACT-CHAPTER-ARCH-REQUEST") {
       await enrichChapterArchDocument(accountUid);
     }
-    if (accountUid && written && actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST") {
+    if (accountUid && written && actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE") {
       const current = await loadCoreFields();
       const now = new Date().toISOString().slice(0, 19).replace("T", " ");
       const reviewer = exactName(current("CORE-01-BTN-PROJECT-LOCK"));

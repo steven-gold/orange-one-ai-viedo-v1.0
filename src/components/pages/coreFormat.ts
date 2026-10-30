@@ -7,6 +7,11 @@ export function displayCoreValue(value: unknown, loading: boolean): string {
   return displayBoundValue(value, loading);
 }
 
+export function formatCoreLifecycle(value: unknown, loading: boolean): string {
+  const raw = displayBoundValue(value, loading);
+  return raw || "IDEA";
+}
+
 export function formatCoreErrors(value: unknown, loading: boolean): string {
   const raw = displayBoundValue(value, loading);
   const log = parseCoreErrors(raw);
