@@ -905,7 +905,7 @@ function previewCoreActionFields(
       "CORE-01-BTN-CANDIDATE-CONFIRM": "",
       "CORE-01-FLD-LOCK-REVIEW": "",
       "CORE-01-FLD-RUNTIME-STAGE": "HUMAN_DECISION",
-      "CORE-01-FLD-LIFECYCLE-STAGE": "REVISION_REQUIRED",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "SCRIPT_DRAFT",
     };
   }
   if (actionUid === "CORE-01-ACT-CANDIDATE-COMPARE") {
@@ -1026,7 +1026,7 @@ function previewCoreActionFields(
       "CORE-01-BTN-BLUEPRINT-VALIDATE": "validated",
       "CORE-01-BTN-BLUEPRINT-CREATE": blueprintJson,
       "CORE-01-FLD-PACKAGE": pkg,
-      "CORE-01-FLD-LIFECYCLE-STAGE": "SCRIPT_DRAFT",
+      "CORE-01-FLD-LIFECYCLE-STAGE": "CROSS_REVIEW",
     };
   }
   if (actionUid === "CORE-01-ACT-BLUEPRINT-APPROVE") {
