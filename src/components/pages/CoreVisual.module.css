@@ -59,7 +59,14 @@
 .projectSwitch {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
+}
+
+.switchLabel {
+  font-size: 12px;
+  color: var(--core-tertiary, var(--core-secondary));
+  margin-right: 4px;
 }
 
 .chip {
@@ -304,6 +311,8 @@
 
 .manageRow:last-child { border-bottom: 0; }
 
+.manageRowActive { background: transparent; }
+
 .manageName {
   flex: 1 1 auto;
   min-width: 0;
@@ -311,7 +320,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--core-secondary);
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
+
+.manageRowActive .manageName { cursor: default; color: var(--core-primary, var(--core-secondary)); }
 
 .manageActions { display: flex; gap: 6px; flex: 0 0 auto; }
 
@@ -324,6 +340,12 @@
   font-size: 12px;
   cursor: pointer;
 }
+
+.managePrimary { color: var(--core-primary, var(--core-secondary)); border-color: var(--core-primary, var(--core-border)); }
+
+.managePrimary:hover { background: var(--core-surface-2); }
+
+.manageActiveBadge { cursor: default; opacity: 0.75; }
 
 .manageDanger:hover { color: var(--core-danger); border-color: var(--core-danger); }
 

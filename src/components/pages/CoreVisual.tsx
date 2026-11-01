@@ -530,6 +530,7 @@ export function CoreVisual() {
 
       {projectManageItems.length > 0 ? (
         <div className={styles.projectSwitch} data-component-uid="CORE-01-CMP-PROJECT-SWITCH">
+          <span className={styles.switchLabel}>{tx("core.switch_project")}</span>
           {projectManageItems.map((item) => (
             <button
               key={item}
@@ -805,9 +806,22 @@ export function CoreVisual() {
             <h2 className={styles.title}>{tx("core.project_manage")}</h2>
             {projectManageItems.length === 0 ? <p className={styles.meta}>{tx("core.project_manage_empty")}</p> : null}
             {projectManageItems.map((name) => (
-              <div key={name} className={styles.manageRow}>
-                <span className={styles.manageName} title={name}>{name}</span>
+              <div key={name} className={name === projectName ? `${styles.manageRow} ${styles.manageRowActive}` : styles.manageRow}>
+                <button
+                  type="button"
+                  className={styles.manageName}
+                  title={name === projectName ? tx("core.manage_active") : tx("core.manage_select")}
+                  disabled={disabled || name === projectName}
+                  onClick={() => void act("CORE-01-CTL-PROJECT", name)}
+                >
+                  {name}
+                </button>
                 <span className={styles.manageActions}>
+                  {name === projectName ? (
+                    <span className={`${styles.manageBtn} ${styles.manageActiveBadge}`}>{tx("core.manage_active")}</span>
+                  ) : (
+                    <button type="button" className={`${styles.manageBtn} ${styles.managePrimary}`} disabled={disabled} onClick={() => void act("CORE-01-CTL-PROJECT", name)}>{tx("core.manage_select")}</button>
+                  )}
                   <button type="button" className={styles.manageBtn} disabled={disabled} onClick={() => { setRenameTarget(name); openNameDialog("rename-project-manage", name); }}>{tx("core.manage_edit")}</button>
                   <button type="button" className={`${styles.manageBtn} ${styles.manageDanger}`} disabled={disabled} onClick={() => { if (window.confirm(`${tx("core.project_delete_confirm")}「${name}」？`)) void act("CORE-01-BTN-PROJECT-DELETE", name); }}>{tx("core.manage_delete")}</button>
                 </span>
