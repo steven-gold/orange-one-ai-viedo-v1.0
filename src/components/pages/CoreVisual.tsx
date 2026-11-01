@@ -419,6 +419,7 @@ export function CoreVisual() {
   const currentFields = (uid: string) => valueOf(uid);
   const canCreateThread = threadScopeReady(currentFields);
   const threadItems = threadsForCurrentWorkItem(currentFields).map((row) => row.title);
+  const projectLockGate = valueOf("CORE-01-FLD-LIFECYCLE-STAGE") === "PROJECT_LOCKED";
   const projectManageItems = (() => {
     try {
       const parsed = JSON.parse(valueOf("CORE-01-BTN-PROJECT-CREATE") || "[]") as unknown;
@@ -515,7 +516,7 @@ export function CoreVisual() {
         <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={() => openNameDialog("rename-project", valueOf("CORE-01-CTL-PROJECT") ?? "")} disabled={disabled} />
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-PROJECT-CREATE" disabled={disabled} onClick={() => openNameDialog("project")}>{tx("core.create_project")}</button>
         <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={() => openNameDialog("rename-topic", valueOf("CORE-01-CTL-TOPIC") ?? "")} disabled={disabled || !projectIsConfirmed} />
-        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => { if (projectIsConfirmed) openNameDialog("topic"); else void act("CORE-01-BTN-TOPIC-CREATE"); }}>{tx("core.create_topic")}</button>
+        <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => { if (projectLockGate) openNameDialog("topic"); else void act("CORE-01-BTN-TOPIC-CREATE"); }}>{tx("core.create_topic")}</button>
         <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-DELETE" disabled={disabled || !topicName} onClick={() => { if (topicName && window.confirm(`${tx("core.topic_delete_confirm")}「${topicName}」？`)) void act("CORE-01-BTN-TOPIC-DELETE", topicName); }}>{tx("core.topic_delete")}</button>
         <button type="button" className={topicMode ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled>
           {topicMode ? tx("core.page_mode_topic") : tx("core.page_mode_project")}
@@ -526,6 +527,23 @@ export function CoreVisual() {
           <span className={styles.value}>{[displayCoreValue(valueOf("CORE-01-CTL-PROJECT"), loading), displayCoreValue(valueOf("CORE-01-CTL-TOPIC"), loading), currentWorkLabel, activeThread ? displayCoreValue(activeThread, loading) : tx("core.thread_n")].join(" / ")}</span>
         </div>
       </section>
+
+      {projectManageItems.length > 0 ? (
+        <div className={styles.projectSwitch} data-component-uid="CORE-01-CMP-PROJECT-SWITCH">
+          {projectManageItems.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={item === projectName ? `${styles.chip} ${styles.chipActive}` : styles.chip}
+              data-control-uid="CORE-01-CTL-PROJECT"
+              disabled={disabled || item === projectName}
+              onClick={() => void act("CORE-01-CTL-PROJECT", item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <div className={styles.body}>
         <aside className={styles.nav} data-component-uid="CORE-01-CMP-NAV">

@@ -75,6 +75,16 @@ import { appendCoreEvent, CORE_EVENT_NAMES } from "./coreEventLog";
 import { parseChapterArchitecture, parseStoryCore, serializeChapterArchitecture, serializeStoryCore } from "./storyChapterDocument";
 import { appendCoreError, buildCoreError } from "./coreErrorContract";
 import { buildProductionPackage, parseProductionPackage, serializeProductionPackage } from "./productionPackage";
+import {
+  CORE_SNAPSHOT_FIELD_UID,
+  captureProjectSnapshot,
+  dropProjectSnapshot,
+  parseProjectSnapshots,
+  renameProjectSnapshot,
+  restoreProjectPatch,
+  saveProjectSnapshot,
+  serializeProjectSnapshots,
+} from "./coreProjectSnapshot";
 
 export function nowStamp(): string {
   return new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -656,8 +666,10 @@ function previewCoreActionFields(
     if (!list.includes(from)) return {};
     const nextList = [...new Set(list.map((row) => (row === from ? to : row)))];
     const active = exactName(current("CORE-01-CTL-PROJECT"));
+    const snapshots = renameProjectSnapshot(parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID)), from, to);
     return {
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+      "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
       ...(active === from ? { "CORE-01-CTL-PROJECT": to } : {}),
     };
   }
@@ -666,13 +678,18 @@ function previewCoreActionFields(
     if (!target) return {};
     const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
     if (!list.includes(target)) return {};
+    const snapshots = dropProjectSnapshot(parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID)), target);
     const nextList = list.filter((row) => row !== target);
     const active = exactName(current("CORE-01-CTL-PROJECT"));
     if (active !== target) {
-      return { "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList) };
+      return {
+        "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+        "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
+      };
     }
     return {
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+      "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
       "CORE-01-CTL-PROJECT": "",
       "CORE-01-FLD-PAGE-MODE": "",
       "CORE-01-FLD-NAMING-AUTHORITY": "",
@@ -683,13 +700,19 @@ function previewCoreActionFields(
       "CORE-01-CTL-TOPIC": "",
       "CORE-01-FLD-TOPIC-SCOPE": "",
       "CORE-01-BTN-CANONICAL-SCRIPT": "",
+      ...restoreProjectPatch(snapshots, ""),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
     const project = namedValue(nextValue, "新專案");
     const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
     const nextList = list.includes(project) ? list : [...list, project];
+    const previous = exactName(current("CORE-01-CTL-PROJECT"));
+    let snapshots = parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID));
+    if (previous && previous !== project) snapshots = saveProjectSnapshot(snapshots, previous, captureProjectSnapshot(current));
+    if (previous === project) snapshots = dropProjectSnapshot(snapshots, previous);
     return {
+      ...restoreProjectPatch(snapshots, ""),
       "CORE-01-CTL-PROJECT": project,
       "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
       "CORE-01-FLD-NAMING-AUTHORITY": "ACPOS_SYSTEM",
@@ -703,15 +726,16 @@ function previewCoreActionFields(
       "CORE-01-BTN-TOPIC-CREATE": "[]",
       "CORE-01-FLD-TOPIC-SCOPE": "",
       "CORE-01-BTN-CANONICAL-SCRIPT": "",
+      "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-CREATE") {
-    if (!projectConfirmed(current)) {
+    if (current("CORE-01-FLD-LIFECYCLE-STAGE") !== "PROJECT_LOCKED") {
       return {
         "CORE-01-FLD-RUNTIME-STAGE": "TOPIC_LINEAGE_BLOCKED",
         "CORE-01-FLD-CORE-ERRORS": appendCoreError(
           current("CORE-01-FLD-CORE-ERRORS"),
-          buildCoreError("CORE_CONTEXT_INVALID", "TOPIC-CREATE: project unconfirmed (lineage guard §24)", nowStamp())!,
+          buildCoreError("CORE_CONTEXT_INVALID", "TOPIC-CREATE: mother lock required (§24 PROJECT_LOCKED→TOPIC_DRAFT)", nowStamp())!,
         ),
       };
     }
@@ -761,16 +785,19 @@ function previewCoreActionFields(
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-CTL-PROJECT") {
-    const previous = current("CORE-01-CTL-PROJECT");
+    const previous = exactName(current("CORE-01-CTL-PROJECT"));
     const project = namedValue(nextValue, previous || "新專案");
     const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), previous).map((item) =>
       item === previous ? project : item,
     );
     const nextList = list.includes(project) ? list : [...list, project];
+    let snapshots = parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID));
+    if (previous && previous !== project) snapshots = saveProjectSnapshot(snapshots, previous, captureProjectSnapshot(current));
     return {
       "CORE-01-CTL-PROJECT": project,
-      "CORE-01-FLD-PAGE-MODE": current("CORE-01-FLD-PAGE-MODE") || "PROJECT_CORE",
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
+      "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
+      ...restoreProjectPatch(snapshots, project),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-NAMING-AUTHORITY") {

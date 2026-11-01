@@ -98,9 +98,9 @@ const catalog = {
   "core.topic_delete": { "zh-TW": "刪除專題", "zh-CN": "删除专题", en: "Delete Topic" },
   "core.topic_delete_confirm": { "zh-TW": "確定刪除目前專題", "zh-CN": "确定删除当前专题", en: "Delete the current topic" },
   "core.topic_requires_confirmed_project": {
-    "zh-TW": "須先驗證並確認專案，才能建立專題。",
-    "zh-CN": "须先验证并确认项目，才能建立专题。",
-    en: "Validate and confirm the project before creating a topic.",
+    "zh-TW": "須先完成母鎖鎖定（PROJECT_LOCKED），才能建立專題。",
+    "zh-CN": "须先完成母锁锁定（PROJECT_LOCKED），才能建立专题。",
+    en: "Complete the mother lock (PROJECT_LOCKED) before creating a topic.",
   },
   "core.dialog_project": { "zh-TW": "建立專案", "zh-CN": "建立项目", en: "Create project" },
   "core.dialog_topic": { "zh-TW": "建立專題", "zh-CN": "建立专题", en: "Create topic" },

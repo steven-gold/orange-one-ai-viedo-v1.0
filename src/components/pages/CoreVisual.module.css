@@ -15,8 +15,8 @@
   min-width: 0;
   min-height: calc(100vh - 84px);
   height: calc(100vh - 84px);
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   padding: 16px;
   color: var(--core-text);
@@ -55,6 +55,33 @@
 
 .guideNext {
   color: var(--core-ok);
+}
+
+.projectSwitch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 3px 10px;
+  border: 1px solid var(--core-border);
+  border-radius: 999px;
+  background: var(--core-surface-2);
+  color: var(--core-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.chipActive {
+  border-color: var(--core-accent, #4a7dff);
+  color: var(--core-accent, #4a7dff);
+  font-weight: 600;
+}
+
+.chip:disabled {
+  cursor: default;
+  opacity: 0.9;
 }
 
 .context {
@@ -183,12 +210,12 @@
 }
 
 .body {
+  flex: 1 1 auto;
   display: grid;
   grid-template-columns: minmax(280px, 1.1fr) minmax(0, 3fr) minmax(240px, 1fr);
   gap: 16px;
   min-height: 0;
   min-width: 0;
-  height: 100%;
 }
 
 .nav {
