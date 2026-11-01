@@ -35,6 +35,28 @@
   line-height: 18px;
 }
 
+.guide {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--core-border);
+  border-radius: 10px;
+  background: var(--core-surface-2);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.guideStage {
+  color: var(--core-secondary);
+  font-weight: 600;
+}
+
+.guideNext {
+  color: var(--core-ok);
+}
+
 .context {
   display: flex;
   flex-wrap: wrap;

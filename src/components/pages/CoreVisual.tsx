@@ -62,6 +62,31 @@ const RUNTIME_STAGES: { id: string; key: TranslationKey }[] = [
   { id: "CANDIDATE", key: "core.stage.candidate" },
 ];
 
+const LIFECYCLE_NEXT_STEP: Record<string, TranslationKey> = {
+  "": "core.next.create_project",
+  IDEA: "core.next.create_project",
+  PROJECT_DRAFT: "core.next.confirm_project",
+  PROJECT_VALIDATING: "core.next.confirm_project",
+  CORE_MODELING: "core.next.modeling_loop",
+  PROJECT_REVIEW_PENDING: "core.next.mother_lock_request",
+  MOTHER_LOCK_REVIEW: "core.next.mother_lock_approve",
+  PROJECT_LOCKED: "core.next.create_topic",
+  TOPIC_DRAFT: "core.next.create_blueprint",
+  BOUNDARY_DECISION: "core.next.validate_blueprint",
+  CROSS_REVIEW: "core.next.approve_blueprint",
+  TOPIC_BLUEPRINT_CANDIDATE: "core.next.accept_candidate",
+  SCRIPT_DRAFT: "core.next.accept_candidate",
+  SCRIPT_CANDIDATE: "core.next.child_lock_request",
+  CHILD_LOCK_REVIEW: "core.next.child_lock_approve",
+  TOPIC_LOCKED: "core.next.build_package",
+  PACKAGE_BUILDING: "core.next.validate_readiness",
+  PACKAGE_READY: "core.next.handoff",
+  HANDED_OFF: "core.next.next_project",
+  REVISION_REQUIRED: "core.next.revise",
+  CHANGE_REQUESTED: "core.next.resolve_change",
+  SUPERSEDED: "core.next.superseded",
+};
+
 const MESSAGE_MENU: { uid: string; actionUid: string; key: TranslationKey }[] = [
   { uid: "CORE-01-MENU-QUOTE", actionUid: "CORE-01-ACT-MSG-QUOTE", key: "core.menu.quote" },
   { uid: "CORE-01-MENU-CONTINUE", actionUid: "CORE-01-ACT-MSG-CONTINUE", key: "core.menu.continue" },
@@ -480,6 +505,11 @@ export function CoreVisual() {
     >
       {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
       {topicBlocked ? <div className={styles.error} role="alert">{tx("core.topic_requires_confirmed_project")}</div> : null}
+
+      <div className={styles.guide} data-component-uid="CORE-01-CMP-LIFECYCLE-GUIDE">
+        <span className={styles.guideStage}>{tx("core.lifecycle_stage")}：{formatCoreLifecycle(valueOf("CORE-01-FLD-LIFECYCLE-STAGE"), loading)}</span>
+        <span className={styles.guideNext}>→ {tx("core.next_step")}：{tx(LIFECYCLE_NEXT_STEP[String(valueOf("CORE-01-FLD-LIFECYCLE-STAGE") ?? "")] ?? "core.next.create_project")}</span>
+      </div>
 
       <section className={styles.context} data-component-uid="CORE-01-CMP-CONTEXT">
         <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={() => openNameDialog("rename-project", valueOf("CORE-01-CTL-PROJECT") ?? "")} disabled={disabled} />
