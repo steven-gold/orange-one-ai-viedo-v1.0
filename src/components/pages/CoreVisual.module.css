@@ -162,15 +162,14 @@
 
 .body {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr) minmax(240px, 1fr);
+  grid-template-columns: minmax(280px, 1.1fr) minmax(0, 3fr) minmax(240px, 1fr);
   gap: 16px;
   min-height: 0;
   min-width: 0;
   height: 100%;
 }
 
-.nav,
-.integrity {
+.nav {
   border: 1px solid var(--core-border);
   border-radius: 14px;
   background: var(--core-surface);
@@ -206,7 +205,6 @@
   min-height: 96px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .workList {
@@ -221,7 +219,6 @@
   gap: 8px;
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
 }
 
 .threadRow {
@@ -323,30 +320,6 @@
   color: var(--core-muted);
   font-size: 11px;
 }
-
-.integrity {
-  margin-top: auto;
-  flex-shrink: 0;
-}
-
-.integrity h3 {
-  margin: 0 0 8px;
-  font-size: 13px;
-  line-height: 16px;
-  font-weight: 600;
-}
-
-.integrityRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--core-secondary);
-}
-
-.ok { color: var(--core-ok); }
-.warn { color: #f3b84b; }
-.danger { color: var(--core-danger); font-weight: 700; }
 
 .center {
   display: flex;
@@ -885,7 +858,7 @@ button.evalBox {
 
 @container core (max-width: 1180px) {
   .body {
-    grid-template-columns: minmax(200px, 0.9fr) minmax(0, 2.2fr) minmax(220px, 0.9fr);
+    grid-template-columns: minmax(240px, 0.9fr) minmax(0, 2.2fr) minmax(220px, 0.9fr);
     gap: 12px;
   }
   .context { grid-template-columns: repeat(4, minmax(0, 1fr)); }

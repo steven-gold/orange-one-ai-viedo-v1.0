@@ -527,12 +527,6 @@ export function CoreVisual() {
               })}
             </div>
           </div>
-          <section className={styles.integrity}>
-            <h3>{tx("core.integrity")}</h3>
-            <div className={styles.integrityRow}><span>{tx("core.project_topic")}</span><span className={styles.ok}>{tx("core.exact_refs")}</span></div>
-            <div className={styles.integrityRow}><span>{tx("core.work_item_thread")}</span><span className={styles.warn}>{tx("core.scoped")}</span></div>
-            <div className={styles.integrityRow}><span>{tx("core.cross_mix")}</span><span className={styles.danger}>{tx("core.forbidden")}</span></div>
-          </section>
         </aside>
 
         <main className={styles.center}>
