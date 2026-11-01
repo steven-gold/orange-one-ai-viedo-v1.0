@@ -787,9 +787,7 @@ function previewCoreActionFields(
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-CTL-PROJECT") {
     const previous = exactName(current("CORE-01-CTL-PROJECT"));
     const project = namedValue(nextValue, previous || "新專案");
-    const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), previous).map((item) =>
-      item === previous ? project : item,
-    );
+    const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), previous);
     const nextList = list.includes(project) ? list : [...list, project];
     let snapshots = parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID));
     if (previous && previous !== project) snapshots = saveProjectSnapshot(snapshots, previous, captureProjectSnapshot(current));

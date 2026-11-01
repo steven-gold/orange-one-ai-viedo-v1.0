@@ -564,6 +564,33 @@ async function enrichChapterArchDocument(accountUid: string): Promise<void> {
   await writeField(FIELD_TABLE.core, "CORE-01-BTN-CHAPTER-ARCH", serializeChapterArchitecture(doc));
 }
 
+async function autoRegisterGeneratedCandidate(
+  accountUid: string | undefined,
+  current: (uid: string) => string | null,
+  thread: string,
+): Promise<Record<string, string>> {
+  if (!accountUid || !thread) return {};
+  let workItem = "";
+  for (const row of parseThreadRecords(current(CORE_CONVERSATION.threadStoreUid))) {
+    if (row.title === thread) {
+      workItem = String(row.workItem ?? "");
+      break;
+    }
+  }
+  if (workItem === "STORY") {
+    const stamp = new Date().toISOString().slice(11, 19).replace(/:/g, "");
+    return {
+      "CORE-01-FLD-VERSION-STATE": `故事候選-${stamp}`,
+      "CORE-01-BTN-STORY-CANDIDATE": "created",
+      "CORE-01-FLD-RUNTIME-STAGE": "CANDIDATE",
+    };
+  }
+  if (workItem === "CHAPTER") {
+    await enrichChapterArchDocument(accountUid);
+  }
+  return {};
+}
+
 async function recordCoreErrors(current: (uid: string) => string | null, errors: CoreErrorRecord[]): Promise<void> {
   if (!errors.length) return;
   let log = "";
@@ -966,6 +993,10 @@ export async function applyWorkbenchAction(
     if (accountUid && actionUid === "CORE-01-ACT-CHAPTER-ARCH-REQUEST") {
       await enrichChapterArchDocument(accountUid);
     }
+    if (accountUid && actionUid === "CORE-01-ACT-CANDIDATE-ACCEPT") {
+      await enrichStoryCoreDocument(accountUid);
+      await enrichChapterArchDocument(accountUid);
+    }
     if (accountUid && written && actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE") {
       const current = await loadCoreFields();
       const now = new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -1144,7 +1175,8 @@ export async function applyWorkbenchAction(
         const taskPatch = nextContract
           ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
           : {};
-        for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
+        const coreAutoPatch = await autoRegisterGeneratedCandidate(accountUid, afterNote, thread);
+        for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch, ...coreAutoPatch })) await writeField(FIELD_TABLE.core, uid, value);
         return;
       }
       let generated: { text: string; truncated: boolean; loop: boolean; route: string } | null = null;
@@ -1189,7 +1221,8 @@ export async function applyWorkbenchAction(
       const taskPatch = nextContract
         ? persistConversationTasks(afterNote, upsertTask(parseNotebookTasks(current(notebookUid)), nextContract))
         : {};
-      for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch })) await writeField(FIELD_TABLE.core, uid, value);
+      const coreAutoPatch = await autoRegisterGeneratedCandidate(accountUid, afterNote, thread);
+      for (const [uid, value] of Object.entries({ ...patch, ...notebookPatch, ...taskPatch, ...coreAutoPatch })) await writeField(FIELD_TABLE.core, uid, value);
     }
     return;
   }
