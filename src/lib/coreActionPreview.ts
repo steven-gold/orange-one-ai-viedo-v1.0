@@ -76,7 +76,7 @@ import { parseChapterArchitecture, parseStoryCore, serializeChapterArchitecture,
 import { appendCoreError, buildCoreError } from "./coreErrorContract";
 import { buildProductionPackage, parseProductionPackage, serializeProductionPackage } from "./productionPackage";
 
-function nowStamp(): string {
+export function nowStamp(): string {
   return new Date().toISOString().slice(0, 19).replace("T", " ");
 }
 

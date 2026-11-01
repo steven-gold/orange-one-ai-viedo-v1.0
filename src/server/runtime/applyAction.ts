@@ -18,6 +18,10 @@ import { parseAssetPatch, patchPrompt, serializeAssetPatch, withPatchPreview } f
 import { buildEnrichedProjection } from "@/lib/canonicalViews";
 import { buildBaseDna, buildDnaEnrichment, dnaRequiredMissing, parseBaseDna, serializeBaseDna, withDnaStatus } from "@/lib/dnaDocument";
 import { appendCoreError, buildCoreError, type CoreErrorRecord } from "@/lib/coreErrorContract";
+import { appendCoreEvent, CORE_EVENT_NAMES } from "@/lib/coreEventLog";
+import { requiredPermissionFor } from "@/lib/coreActionPermission";
+import { pagePermissionEnforced } from "@/server/auth/pageAccess";
+import { persistHasCorePermission } from "../db/persist";
 import {
   buildChapterArchitecture,
   buildStoryCore,
@@ -96,6 +100,7 @@ import {
   serializeCanonicalScript,
   isMultiAiMode,
   messagesForThread,
+  nowStamp,
   parseMessageActionPayload,
   persistConversationTasks,
   previewCoreAction,
@@ -404,6 +409,18 @@ async function applyConversationReviewAction(
   if (actionUid === "CORE-01-ACT-REVIEW-REJECT") {
     await writeField(FIELD_TABLE.core, "CORE-01-FLD-LOCK-REVIEW", "rejected");
     await writeField(FIELD_TABLE.core, "CORE-01-FLD-LIFECYCLE-STAGE", "REVISION_REQUIRED");
+  }
+  if (actionUid === "CORE-01-ACT-FINALIZE" && next.finalizedDoc === true) {
+    const workItem = parseThreadWorkItems(current("CORE-01-BTN-NEW-THREAD")).get(thread) ?? "";
+    if (workItem === "WORLD_SETTING") {
+      const log = appendCoreEvent(
+        current("CORE-01-FLD-EVENT-LOG"),
+        CORE_EVENT_NAMES.world_bible_version_created,
+        contract.taskId,
+        nowStamp(),
+      );
+      await writeField(FIELD_TABLE.core, "CORE-01-FLD-EVENT-LOG", log);
+    }
   }
   return true;
 }
@@ -896,6 +913,15 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "core") {
+    if (accountUid && pagePermissionEnforced()) {
+      const permitted = await persistHasCorePermission(accountUid);
+      if (!permitted) {
+        const current = await loadCoreFields();
+        const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+        await recordCoreErrors(current, [buildCoreError("CORE_PERMISSION_DENIED", `${actionUid}: account=${accountUid} lacks ${requiredPermissionFor(actionUid)} (§30)`, now)!]);
+        return;
+      }
+    }
     if (actionUid === "CORE-01-ACT-FINALIZE" || actionUid === "CORE-01-ACT-REVIEW-REJECT") {
       await applyConversationReviewAction(actionUid, nextValue, accountUid);
       return;
@@ -904,20 +930,22 @@ export async function applyWorkbenchAction(
       const gate = await enforceCoreCoverageGate(accountUid, actionUid === "CORE-01-ACT-MOTHER-LOCK-REQUEST" ? "MOTHER_LOCK" : "REVIEW");
       if (!gate.ok) return;
     }
-    if (accountUid && actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE") {
+    if (accountUid && (actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE" || actionUid === "CORE-01-ACT-CHILD-LOCK-APPROVE")) {
       const current = await loadCoreFields();
       const review = String(current("CORE-01-FLD-LOCK-REVIEW") ?? "");
       const now = new Date().toISOString().slice(0, 19).replace("T", " ");
       if (!review.startsWith("submitted@")) {
-        await recordCoreErrors(current, [buildCoreError("CORE_LOCK_EVIDENCE_MISSING", `MOTHER-LOCK-APPROVE: review=${review || "unset"}`, now)!]);
+        await recordCoreErrors(current, [buildCoreError("CORE_LOCK_EVIDENCE_MISSING", `${actionUid}: review=${review || "unset"}`, now)!]);
         return;
       }
-      const dnaDoc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
-      const storyDoc = parseStoryCore(current("CORE-01-BTN-STORY-CORE"));
-      const chapterDoc = parseChapterArchitecture(current("CORE-01-BTN-CHAPTER-ARCH"));
-      if (!dnaDoc || !storyDoc || !chapterDoc) {
-        await recordCoreErrors(current, [buildCoreError("CORE_LOCK_EVIDENCE_MISSING", "MOTHER-LOCK-APPROVE: required documents missing", now)!]);
-        return;
+      if (actionUid === "CORE-01-ACT-MOTHER-LOCK-APPROVE") {
+        const dnaDoc = parseBaseDna(current("CORE-01-BTN-DNA-LOCK"));
+        const storyDoc = parseStoryCore(current("CORE-01-BTN-STORY-CORE"));
+        const chapterDoc = parseChapterArchitecture(current("CORE-01-BTN-CHAPTER-ARCH"));
+        if (!dnaDoc || !storyDoc || !chapterDoc) {
+          await recordCoreErrors(current, [buildCoreError("CORE_LOCK_EVIDENCE_MISSING", "MOTHER-LOCK-APPROVE: required documents missing", now)!]);
+          return;
+        }
       }
     }
     const assigned = await assignedAiRouteSnapshot().catch(() => "");
