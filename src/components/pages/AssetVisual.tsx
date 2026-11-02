@@ -7,6 +7,8 @@ import { ASSET_CORRECTION_RESPONSE_UID, displayAiReply } from "@/lib/aiReply";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
+import { parseAssetGates } from "@/lib/assetGateContract";
+import { formatCoreErrors } from "./coreFormat";
 import { parseCorrectionScript } from "@/lib/correctionScript";
 import { parseAssetPatch, parseLayerDocument, type LayerEntry } from "@/lib/layerDocument";
 import {
@@ -63,6 +65,7 @@ const EMPTY_INBOUND: AssetInbound = {
   dna: "",
   script: "",
   naming: "",
+  scriptProjection: "",
 };
 
 const CLIENT_FIELDS: string[] = [...ASSET_VISIBLE_CONTROLS, ASSET_CORRECTION_RESPONSE_UID, ...ASSET_CONVERSATION_HIDDEN];
@@ -555,6 +558,22 @@ export function AssetVisual() {
           <section data-component-uid="ASSET-01-CMP-SCRIPT">
             <h3 className={styles.sub}>{tx("asset.script_view")}</h3>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-SCRIPT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-SCRIPT")}>{tx("asset.view_script")}</button>
+          </section>
+          <section data-component-uid="ASSET-01-CMP-GATES">
+            <h3 className={styles.sub}>{tx("asset.gate_errors")}</h3>
+            <div className={styles.kv} data-control-uid="ASSET-01-FLD-GATES">
+              <span>{tx("asset.blocked_gates")}</span>
+              <span className={styles.value}>
+                {parseAssetGates(valueOf("ASSET-01-FLD-GATES"))
+                  .filter((row) => row.state === "BLOCK")
+                  .map((row) => `${row.gate.replace("ASSET-01-GATE-", "")}(${row.reason})`)
+                  .join("；") || "無"}
+              </span>
+            </div>
+            <div className={styles.kv} data-control-uid="ASSET-01-FLD-ASSET-ERRORS">
+              <span>{tx("asset.page_errors")}</span>
+              <span className={styles.value}>{formatCoreErrors(valueOf("ASSET-01-FLD-ASSET-ERRORS"), loading)}</span>
+            </div>
           </section>
           <section data-component-uid="ASSET-01-CMP-SCORE">
             <h3 className={styles.sub}>{tx("asset.scorecard")}</h3>

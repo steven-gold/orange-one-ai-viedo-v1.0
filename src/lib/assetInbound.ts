@@ -11,6 +11,7 @@ export type AssetInbound = {
   dna: string;
   script: string;
   naming: string;
+  scriptProjection: string;
 };
 
 // The ASSET page is unlocked once CORE has a confirmed Project and a Topic.
@@ -29,6 +30,16 @@ export function resolveAssetInbound(current: (uid: string) => string | null): As
   const script = canonicalScriptRef(current("CORE-01-BTN-CANONICAL-SCRIPT"));
   const naming = exactName(current("CORE-01-FLD-NAMING-AUTHORITY")) || "ACPOS_SYSTEM";
   const ready = Boolean(project && confirmed && topic);
+  const scriptRaw = current("CORE-01-BTN-CANONICAL-SCRIPT");
+  let scriptProjection = "";
+  if (scriptRaw && scriptRaw.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(scriptRaw) as { kind?: string };
+      if (parsed?.kind === "CANONICAL_SCRIPT") scriptProjection = scriptRaw;
+    } catch {
+      scriptProjection = "";
+    }
+  }
   return {
     ready,
     project,
@@ -39,5 +50,6 @@ export function resolveAssetInbound(current: (uid: string) => string | null): As
     dna,
     script,
     naming,
+    scriptProjection,
   };
 }

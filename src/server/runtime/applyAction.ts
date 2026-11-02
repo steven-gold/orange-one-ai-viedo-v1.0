@@ -847,12 +847,18 @@ async function fillCorrectionScriptBody(
   if (!candidate || candidate.status !== "CANDIDATE") return;
   let body = "";
   try {
-    if (prompt) body = (await generatePageReply(page, prompt, "", [], { signal })).text;
+    const reply = await generatePageReply(page, prompt, "", [], { signal });
+    body = reply.text;
+    if (page === "asset" && reply.route) await writeField(table, "ASSET-01-FLD-ROUTE", reply.route);
   } catch (error) {
     if (error instanceof GenerationCancelled) body = error.partial;
     else {
       const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
       body = unavailableBody({ failed: true, empty: true, providerCode: code });
+      if (page === "asset") {
+        await writeField(table, "ASSET-01-FLD-JOB", "failed");
+        await writeField(table, "ASSET-01-FLD-RETRY-ELIGIBILITY", "eligible");
+      }
     }
   }
   await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
@@ -863,12 +869,16 @@ async function fillAssetPatchPreview(table: string, uid: string, signal?: AbortS
   if (!patch || patch.status !== "PREVIEWED" || patch.preview) return;
   let body = "";
   try {
-    body = (await generatePageReply("asset", patchPrompt(patch), "", [], { signal })).text;
+    const reply = await generatePageReply("asset", patchPrompt(patch), "", [], { signal });
+    body = reply.text;
+    if (reply.route) await writeField(table, "ASSET-01-FLD-ROUTE", reply.route);
   } catch (error) {
     if (error instanceof GenerationCancelled) body = error.partial;
     else {
       const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
       body = unavailableBody({ failed: true, empty: true, providerCode: code });
+      await writeField(table, "ASSET-01-FLD-JOB", "failed");
+      await writeField(table, "ASSET-01-FLD-RETRY-ELIGIBILITY", "eligible");
     }
   }
   await writeField(table, uid, serializeAssetPatch(withPatchPreview(patch, body)));
@@ -921,8 +931,8 @@ async function applyProjectedAction(
   for (const [uid, value] of Object.entries(seed ?? {})) cache.set(uid, value);
   const patch = preview(controlUid, actionUid, (uid) => cache.get(uid) ?? null, nextValue);
   const keys = Object.keys(patch);
-  for (const [uid, value] of Object.entries(patch)) {
-    await writeField(table, uid, value);
+  for (const [uid, value] of Object.entries({ ...seed, ...patch })) {
+    await writeField(table, uid, value ?? "");
   }
   return keys.length > 0;
 }
@@ -1242,6 +1252,7 @@ export async function applyWorkbenchAction(
       "ASSET-01-FLD-DNA": inbound.dna,
       "ASSET-01-FLD-SCRIPT": inbound.script,
       "ASSET-01-FLD-NAMING-AUTHORITY": inbound.naming,
+      "ASSET-01-FLD-CANONICAL-PROJECTION": inbound.scriptProjection,
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {

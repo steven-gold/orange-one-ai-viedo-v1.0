@@ -1,9 +1,25 @@
-import { namedValue, parseThreadList, statusFromAction } from "./coreActionPreview";
+import { namedValue, nowStamp, parseThreadList, statusFromAction } from "./coreActionPreview";
 import {
   ASSET_CONVERSATION,
   ensureConversationThread,
   previewConversationAction,
 } from "./conversationCore";
+import {
+  appendAssetError,
+  assetChecksumOf,
+  assetContractHash,
+  assetGateContextFrom,
+  ASSET_ERRORS_UID,
+  ASSET_GATES_UID,
+  buildAssetManifest,
+  buildAssetScorecard,
+  deriveAssetPageState,
+  evaluateAssetGates,
+  parseAssetManifest,
+  serializeAssetGates,
+  type AssetErrorCode,
+  type AssetGateContext,
+} from "./assetGateContract";
 import {
   buildCorrectionCandidate,
   parseCorrectionScript,
@@ -112,6 +128,86 @@ function nextZoom(actionUid: string, current: string | null): string {
   return "100%";
 }
 
+const WORKSPACE_RESET_UIDS = [
+  "ASSET-01-BTN-EXECUTE",
+  "ASSET-01-BTN-EVALUATE",
+  "ASSET-01-BTN-CONFIRM",
+  "ASSET-01-BTN-LOCK",
+  "ASSET-01-BTN-HANDOFF",
+  "ASSET-01-BTN-RETRY",
+  "ASSET-01-BTN-SINGLE",
+  "ASSET-01-BTN-AB",
+  "ASSET-01-BTN-ABC",
+  "ASSET-01-BTN-ZOOM-IN",
+  "ASSET-01-BTN-ZOOM-OUT",
+  "ASSET-01-BTN-FIT",
+  "ASSET-01-BTN-REFERENCE",
+  "ASSET-01-BTN-RESULT-DETAIL",
+  "ASSET-01-BTN-SCRIPT",
+  "ASSET-01-BTN-CORRECTION-OPEN",
+  "ASSET-01-BTN-MODIFY",
+  "ASSET-01-BTN-CORRECTION-GENERATE",
+  "ASSET-01-BTN-CORRECTION-APPROVE",
+  "ASSET-01-BTN-CORRECTION-EXECUTE",
+  "ASSET-01-BTN-LAYER-DOC-CREATE",
+  "ASSET-01-BTN-LAYER-DOC-UPDATE",
+  "ASSET-01-BTN-LAYER-ADD",
+  "ASSET-01-BTN-LAYER-DELETE",
+  "ASSET-01-BTN-LAYER-DUPLICATE",
+  "ASSET-01-BTN-LAYER-REORDER",
+  "ASSET-01-BTN-PATCH-CREATE",
+  "ASSET-01-BTN-PATCH-PREVIEW",
+  "ASSET-01-BTN-PATCH-ACCEPT",
+  "ASSET-01-BTN-PATCH-REJECT",
+  "ASSET-01-BTN-PATCH-REVISE",
+  "ASSET-01-BTN-RUNTIME-DETAIL",
+  "ASSET-01-BTN-VERSION-HISTORY",
+  "ASSET-01-BTN-RESTORE-AS-NEW",
+  "ASSET-01-FLD-TASK-STATUS",
+  "ASSET-01-FLD-JOB",
+  "ASSET-01-FLD-RETRY-ELIGIBILITY",
+  "ASSET-01-FLD-OUTPUT-ID",
+  "ASSET-01-FLD-CANONICAL-FILENAME",
+  "ASSET-01-FLD-MANIFEST",
+  "ASSET-01-FLD-MANIFEST-REQUIRED",
+  "ASSET-01-FLD-MANIFEST-REUSE",
+  "ASSET-01-FLD-MANIFEST-MISSING",
+  "ASSET-01-FLD-MANIFEST-DEFERRED",
+  "ASSET-01-FLD-INPUT-FINGERPRINT",
+  "ASSET-01-FLD-RIGHTS",
+  "ASSET-01-FLD-ROUTE",
+  "ASSET-01-FLD-CRITERIA",
+  "ASSET-01-FLD-DIMENSIONS",
+  "ASSET-01-FLD-OVERALL",
+  "ASSET-01-FLD-ISSUES",
+  "ASSET-01-FLD-CHECKSUM",
+  "ASSET-01-FLD-CORRECTION-RESPONSE",
+  "ASSET-01-FLD-HANDOFF-CHECKSUM",
+  "ASSET-01-FLD-HANDOFF-CONTRACT-HASH",
+  "ASSET-01-FLD-HANDOFF-RIGHTS",
+  "ASSET-01-FLD-HANDOFF-SCORECARD",
+  "ASSET-01-FLD-HANDOFF-ASSET-VERSION",
+  "ASSET-01-FLD-HANDOFF-BLUEPRINT",
+  "ASSET-01-FLD-HANDOFF-DNA",
+  "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME",
+  "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE",
+  "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS",
+  "ASSET-01-FLD-HANDOFF-SCRIPT-HASH",
+  "ASSET-01-FLD-SEARCH",
+  "ASSET-01-FLD-STAGE",
+  "ASSET-01-FLD-ASSET-ERRORS",
+  "ASSET-01-FLD-GATES",
+  "ASSET-01-LST-ASSET",
+  "ASSET-01-LST-COMPARE-VERSIONS",
+  "ASSET-01-LST-THREADS",
+];
+
+function resetAssetWorkspace(): Record<string, string> {
+  const patch: Record<string, string> = {};
+  for (const uid of WORKSPACE_RESET_UIDS) patch[uid] = "";
+  return patch;
+}
+
 function inboundReady(current: (uid: string) => string | null): boolean {
   return Boolean(
     named(current("ASSET-01-CTL-PROJECT")) &&
@@ -130,7 +226,7 @@ function exactSource(current: (uid: string) => string | null): string {
   );
 }
 
-export function previewAssetAction(
+export function previewAssetActionInner(
   controlUid: string,
   actionUid: string,
   current: (uid: string) => string | null,
@@ -184,10 +280,10 @@ export function previewAssetAction(
   if (conversation) return ready ? conversation : {};
 
   if (actionUid === "ASSET-01-ACT-PROJECT-SELECT") {
-    return project ? { "ASSET-01-CTL-PROJECT": project } : {};
+    return project ? { "ASSET-01-CTL-PROJECT": project, ...resetAssetWorkspace() } : {};
   }
   if (actionUid === "ASSET-01-ACT-TOPIC-SELECT") {
-    return topic ? { "ASSET-01-CTL-TOPIC": topic } : {};
+    return topic ? { "ASSET-01-CTL-TOPIC": topic, ...resetAssetWorkspace() } : {};
   }
   if (actionUid === "ASSET-01-ACT-MODE-SET") {
     if (!ready) return {};
@@ -198,17 +294,29 @@ export function previewAssetAction(
     const inboundScript = named(current("ASSET-01-FLD-SCRIPT"));
     if (!inboundScript) return {};
     const selected = named(current("ASSET-01-FLD-MANIFEST")) || assets[assets.length - 1] || "";
+    const projectionJson = current("ASSET-01-FLD-CANONICAL-PROJECTION");
+    const manifest = buildAssetManifest(projectionJson, assets, current("ASSET-01-FLD-OUTPUT-ID"));
+    const fingerprint = assetContractHash({ blueprint: named(current("ASSET-01-FLD-BLUEPRINT")), dna: named(current("ASSET-01-FLD-DNA")), script: inboundScript });
     return {
-      "ASSET-01-BTN-EXECUTE": "running",
+      "ASSET-01-BTN-EXECUTE": "done",
       "ASSET-01-FLD-TASK": named(current("ASSET-01-FLD-TASK")) || `${project} / ${topic}`,
-      "ASSET-01-FLD-TASK-STATUS": "running",
+      "ASSET-01-FLD-TASK-STATUS": "done",
       "ASSET-01-FLD-STAGE": "running",
       "ASSET-01-CTL-PROJECT": project,
       "ASSET-01-CTL-TOPIC": topic,
       "ASSET-01-FLD-SCRIPT": inboundScript,
       ...(selected ? { "ASSET-01-FLD-MANIFEST": selected } : {}),
-      "ASSET-01-FLD-JOB": "running",
-      "ASSET-01-FLD-ROUTE": "ready",
+      "ASSET-01-FLD-JOB": "done",
+      ...(manifest
+        ? {
+            "ASSET-01-FLD-MANIFEST-REQUIRED": JSON.stringify(manifest),
+            "ASSET-01-FLD-MANIFEST-REUSE": JSON.stringify(manifest.reuse),
+            "ASSET-01-FLD-MANIFEST-MISSING": JSON.stringify(manifest.missing),
+            "ASSET-01-FLD-MANIFEST-DEFERRED": JSON.stringify(manifest.deferred),
+          }
+        : {}),
+      "ASSET-01-FLD-INPUT-FINGERPRINT": fingerprint,
+      "ASSET-01-FLD-RIGHTS": `ACPOS_SYSTEM / DNA:${named(current("ASSET-01-FLD-DNA"))} / script:${inboundScript}`,
     };
   }
   if (actionUid === "ASSET-01-ACT-ASSET-SEARCH") {
@@ -324,7 +432,7 @@ export function previewAssetAction(
     }
     return {
       "ASSET-01-BTN-CORRECTION-EXECUTE": "running",
-      "ASSET-01-FLD-TASK-STATUS": "running",
+      "ASSET-01-FLD-TASK-STATUS": "done",
       "ASSET-01-FLD-CORRECTION-RESPONSE": serializeCorrectionScript(withPreserveCheck(candidate, check)),
     };
   }
@@ -473,6 +581,7 @@ export function previewAssetAction(
     const assetVersion = nextAssetVersion(assets);
     const accepted = withPatchStatus({ ...patch, resulting_layer_doc_version: versionedDoc.version, resulting_asset_version: assetVersion }, "ACCEPTED", "人工接受補丁");
     const nextAssets = assets.includes(assetVersion) ? assets : [...assets, assetVersion];
+    const manifest = buildAssetManifest(current("ASSET-01-FLD-CANONICAL-PROJECTION"), nextAssets, assetVersion);
     return {
       "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(accepted),
       "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(versionedDoc),
@@ -480,6 +589,14 @@ export function previewAssetAction(
       "ASSET-01-FLD-OUTPUT-ID": assetVersion,
       "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": `${versionedDoc.layer_doc_id}#v${versionedDoc.version}`,
       "ASSET-01-BTN-PATCH-ACCEPT": "confirmed",
+      ...(manifest
+        ? {
+            "ASSET-01-FLD-MANIFEST-REQUIRED": JSON.stringify(manifest),
+            "ASSET-01-FLD-MANIFEST-REUSE": JSON.stringify(manifest.reuse),
+            "ASSET-01-FLD-MANIFEST-MISSING": JSON.stringify(manifest.missing),
+            "ASSET-01-FLD-MANIFEST-DEFERRED": JSON.stringify(manifest.deferred),
+          }
+        : {}),
     };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-REJECT") {
@@ -506,23 +623,30 @@ export function previewAssetAction(
     };
   }
   if (actionUid === "ASSET-01-ACT-TASK-RETRY") {
+    if (named(current("ASSET-01-FLD-RETRY-ELIGIBILITY")) !== "eligible") return {};
     return {
       "ASSET-01-BTN-RETRY": "retrying",
       "ASSET-01-FLD-ATTEMPT": String((Number.parseInt(current("ASSET-01-FLD-ATTEMPT") ?? "0", 10) || 0) + 1),
       "ASSET-01-FLD-JOB": "retrying",
+      "ASSET-01-FLD-RETRY-ELIGIBILITY": "",
     };
   }
   if (actionUid === "ASSET-01-ACT-EVALUATE") {
-    if (!ready || !(named(current("ASSET-01-FLD-MANIFEST")) || current("ASSET-01-BTN-EXECUTE") === "running")) return {};
+    if (!ready || !(named(current("ASSET-01-FLD-MANIFEST")) || named(current("ASSET-01-BTN-EXECUTE")))) return {};
+    const ctx = assetGateContextFrom(current);
+    const scorecard = buildAssetScorecard(ctx);
+    if (!scorecard) return {};
     return {
       "ASSET-01-BTN-EVALUATE": "evaluated",
-      "ASSET-01-FLD-OVERALL": keepName(undefined, current("ASSET-01-FLD-OVERALL"), "通過"),
-      "ASSET-01-FLD-ISSUES": keepName(undefined, current("ASSET-01-FLD-ISSUES"), "無阻擋"),
-      "ASSET-01-FLD-CRITERIA": keepName(undefined, current("ASSET-01-FLD-CRITERIA"), "素材評分"),
+      "ASSET-01-FLD-CRITERIA": JSON.stringify(scorecard),
+      "ASSET-01-FLD-DIMENSIONS": JSON.stringify(scorecard.dimensions),
+      "ASSET-01-FLD-OVERALL": scorecard.overall,
+      "ASSET-01-FLD-ISSUES": scorecard.issues.join("；") || "無阻擋",
     };
   }
   if (actionUid === "ASSET-01-ACT-CANDIDATE-CONFIRM") {
-    if (current("ASSET-01-BTN-EVALUATE") !== "evaluated") return {};
+    const ctx = assetGateContextFrom(current);
+    if (ctx.scorecard?.overall !== "PASS") return {};
     return {
       "ASSET-01-BTN-CONFIRM": "confirmed",
       "ASSET-01-FLD-OUTPUT-ID": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已確認版本"),
@@ -534,21 +658,48 @@ export function previewAssetAction(
   if (actionUid === "ASSET-01-ACT-RESTORE-AS-NEW") {
     const restored = keepName(nextValue, current("ASSET-01-FLD-MANIFEST"), "還原版本");
     const nextList = assets.includes(restored) ? assets : [...assets, restored];
+    const restoredVersion = nextAssetVersion(nextList);
+    const finalList = nextList.includes(restoredVersion) ? nextList : [...nextList, restoredVersion];
     return {
       "ASSET-01-BTN-RESTORE-AS-NEW": "created",
-      "ASSET-01-LST-ASSET": JSON.stringify(nextList),
+      "ASSET-01-LST-ASSET": JSON.stringify(finalList),
       "ASSET-01-FLD-MANIFEST": restored,
+      "ASSET-01-FLD-OUTPUT-ID": restoredVersion,
+      "ASSET-01-BTN-VERSION-HISTORY": keepName(undefined, current("ASSET-01-BTN-VERSION-HISTORY"), JSON.stringify({
+        kind: "ASSET_VERSION_HISTORY",
+        source_ref: restored,
+        restored_as: restoredVersion,
+        at: nowStamp(),
+      })),
     };
   }
   if (actionUid === "ASSET-01-ACT-VERSION-LOCK") {
     if (current("ASSET-01-BTN-CONFIRM") !== "confirmed") return {};
+    const outputId = keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已鎖定版本");
+    const doc = layerDocFrom(current);
+    const checksum = assetChecksumOf({
+      outputId,
+      manifestId: parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"))?.manifest_id ?? "",
+      layerDocVersion: doc ? `LDOCv${doc.version}` : "",
+    });
     return {
       "ASSET-01-BTN-LOCK": "locked",
-      "ASSET-01-FLD-HANDOFF-ASSET-VERSION": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已鎖定版本"),
+      "ASSET-01-FLD-OUTPUT-ID": outputId,
+      "ASSET-01-FLD-HANDOFF-ASSET-VERSION": outputId,
+      "ASSET-01-FLD-CHECKSUM": checksum,
     };
   }
   if (actionUid === "ASSET-01-ACT-HANDOFF") {
     if (current("ASSET-01-BTN-LOCK") !== "locked") return {};
+    const ctx = assetGateContextFrom(current);
+    const manifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+    const missing: string[] = [];
+    if (!ctx.checksum) missing.push("checksum");
+    if (!ctx.fingerprint) missing.push("input_fingerprint");
+    if (!ctx.rights) missing.push("rights");
+    if (!ctx.scorecard?.candidate_ref) missing.push("scorecard");
+    if (!manifest?.items.length) missing.push("manifest_items");
+    if (missing.length) return {};
     return {
       "ASSET-01-BTN-HANDOFF": "sent",
       "ASSET-01-FLD-HANDOFF-ASSET-VERSION": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || project),
@@ -560,7 +711,9 @@ export function previewAssetAction(
       ...(named(current("ASSET-01-FLD-CHECKSUM")) ? { "ASSET-01-FLD-HANDOFF-CHECKSUM": named(current("ASSET-01-FLD-CHECKSUM")) } : {}),
       ...(named(current("ASSET-01-FLD-OVERALL")) ? { "ASSET-01-FLD-HANDOFF-SCORECARD": named(current("ASSET-01-FLD-OVERALL")) } : {}),
       ...(named(current("ASSET-01-FLD-RIGHTS")) ? { "ASSET-01-FLD-HANDOFF-RIGHTS": named(current("ASSET-01-FLD-RIGHTS")) } : {}),
-      "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS": keepName(undefined, current("ASSET-01-FLD-MANIFEST"), assets.join("、")),
+      "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS": manifest
+        ? JSON.stringify({ manifest_id: manifest.manifest_id, reuse: manifest.reuse, missing: manifest.missing, items: manifest.items.map((item) => item.item_id) })
+        : keepName(undefined, current("ASSET-01-FLD-MANIFEST"), assets.join("、")),
       ...(named(current("ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE")).includes("LDOC-")
         ? { "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE": named(current("ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE")) }
         : named(current("ASSET-01-BTN-LAYER-DOC-CREATE"))
@@ -595,4 +748,67 @@ export function previewAssetAction(
   const existing = current(controlUid);
   if (!nextValue && named(existing)) return { [controlUid]: existing as string };
   return { [controlUid]: nextValue ?? statusFromAction(actionUid) };
+}
+
+type HardGate = { gate: string; code: AssetErrorCode; reason: (ctx: AssetGateContext) => string };
+
+const HARD_GATES: Record<string, HardGate> = {
+  "ASSET-01-ACT-FLOW-START": {
+    gate: "ASSET-01-GATE-EXECUTE",
+    code: "ASSET-01-ERR-CONTEXT-001",
+    reason: (ctx) =>
+      !ctx.project || !ctx.topic
+        ? "project/topic context missing"
+        : !ctx.blueprint
+          ? "blueprint binding missing"
+          : !ctx.dna
+            ? "DNA binding missing"
+            : !ctx.script
+              ? "canonical script ref missing"
+              : "upstream manifest unresolved (script ASSET view empty)",
+  },
+  "ASSET-01-ACT-EVALUATE": { gate: "ASSET-01-GATE-EVALUATION", code: "ASSET-01-ERR-CANDIDATE-001", reason: () => "no candidate output to evaluate" },
+  "ASSET-01-ACT-CANDIDATE-CONFIRM": { gate: "ASSET-01-GATE-CONFIRM", code: "ASSET-01-ERR-CRITERIA-001", reason: () => "scorecard must PASS before confirmation" },
+  "ASSET-01-ACT-VERSION-LOCK": { gate: "ASSET-01-GATE-LOCK", code: "ASSET-01-ERR-VERSION-001", reason: () => "confirmation required before exact-version lock" },
+  "ASSET-01-ACT-HANDOFF": {
+    gate: "ASSET-01-GATE-HANDOFF",
+    code: "ASSET-01-ERR-HANDOFF-001",
+    reason: (ctx) => (ctx.locked !== "locked" ? "exact version must be locked before handoff" : "handoff manifest incomplete (checksum/contract/rights/scorecard)"),
+  },
+  "ASSET-01-ACT-TASK-RETRY": { gate: "ASSET-01-GATE-RETRY", code: "ASSET-01-ERR-PROVIDER-001", reason: () => "no failed provider job recorded; retry not eligible" },
+  "ASSET-01-ACT-PATCH-ACCEPT": { gate: "ASSET-01-GATE-PATCH-DECISION", code: "ASSET-01-ERR-PATCH-001", reason: () => "patch must be PREVIEWED before acceptance" },
+  "ASSET-01-ACT-CORRECTION-APPROVE": { gate: "ASSET-01-GATE-CORRECTION", code: "ASSET-01-ERR-CORRECTION-001", reason: () => "correction candidate source mismatch or status is not CANDIDATE" },
+  "ASSET-01-ACT-CORRECTION-EXECUTE": { gate: "ASSET-01-GATE-CORRECTION", code: "ASSET-01-ERR-CORRECTION-001", reason: () => "correction candidate must be APPROVED before execute" },
+  "ASSET-01-ACT-LAYER-DOC-CREATE": { gate: "ASSET-01-GATE-SCRIPT", code: "ASSET-01-ERR-SCRIPT-001", reason: () => "canonical script ref required for layer document" },
+  "ASSET-01-ACT-LAYER-ADD": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "no versioned layer document; create one first" },
+  "ASSET-01-ACT-LAYER-DELETE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "no versioned layer document to mutate" },
+  "ASSET-01-ACT-LAYER-DUPLICATE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "no versioned layer document to mutate" },
+  "ASSET-01-ACT-LAYER-REORDER": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "need at least two layers to reorder" },
+  "ASSET-01-ACT-PATCH-CREATE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-PATCH-001", reason: () => "select a layer before creating a patch" },
+  "ASSET-01-ACT-PATCH-PREVIEW": { gate: "ASSET-01-GATE-PATCH-PREVIEW", code: "ASSET-01-ERR-PATCH-001", reason: () => "no patch candidate to preview" },
+};
+
+export function previewAssetAction(
+  controlUid: string,
+  actionUid: string,
+  current: (uid: string) => string | null,
+  nextValue?: string,
+): Record<string, string> {
+  const patch = previewAssetActionInner(controlUid, actionUid, current, nextValue);
+  const effective = (uid: string): string | null => (uid in patch ? (patch[uid] ?? null) : current(uid));
+  const ctx = assetGateContextFrom(effective);
+  const gates = evaluateAssetGates(ctx);
+  const stage = deriveAssetPageState(ctx);
+  const merged: Record<string, string> = { ...patch, [ASSET_GATES_UID]: serializeAssetGates(gates), "ASSET-01-FLD-STAGE": stage };
+  if (Object.keys(patch).length === 0) {
+    const hard = HARD_GATES[actionUid];
+    if (hard) {
+      const reason = hard.reason(ctx);
+      const gateRow = gates.find((row) => row.gate === hard.gate);
+      if (!gateRow || gateRow.state === "BLOCK") {
+        merged[ASSET_ERRORS_UID] = appendAssetError(current(ASSET_ERRORS_UID), hard.code, hard.gate, reason);
+      }
+    }
+  }
+  return merged;
 }
