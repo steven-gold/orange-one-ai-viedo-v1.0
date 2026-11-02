@@ -56,3 +56,14 @@ Entries discovered by the Agent during task execution should follow this format:
 - Instructions:
   - Asset gap probe: `node /tmp/opencode/probe_asset_gaps.mjs` (43 assertions, needs dev server + mock_llm + seeded credentials). Live variant: probe_asset_live.mjs (python-generated from it, pins IPv4 64.29.17.67, timestamped topic name 素材補齊線上-HHMMSS).
   - Probe relies on conversation-file chain: CORE-01-BTN-NEW-THREAD + CORE-01-BTN-SEND with a 劇本 prompt (scene heading 第N集) -> CANDIDATE-ACCEPT injects scenes into CANONICAL-PROJECTION -> manifest items S1...
+
+[Project Knowledge Summary]
+- Date: 2026-11-02
+- Context: Discovered by Agent while diagnosing live FLD-ROUTE=null despite successful core SEND (route-snapshot-empty trace evidence)
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - AIAPI routing is EXACT capability match (aiapi01.txt:459 silent downgrade forbidden). The page->capability mapping lives in AI_CAPABILITY_BY_PAGE (src/server/ai/llmClient.ts); all four pages map to "chat". Never invent capability names absent from aiapi01.txt (freeze rule line 723) - production profile registry only registers real catalog types (chat/video-generation/image-generation/audio-generation/embedding/operation...).
+  - Asset route snapshot writes FLD-TRACE on empty/fail (`route-snapshot-empty:<control>:<capability>:<action>`) and FLD-ROUTE on success; read FLD-TRACE first when AI-dependent asset behavior fails on an environment.
+  - Verify production deployment freshness via a code-format fingerprint (e.g. TRACE string format) + a fresh action write, since persisted field values keep old formats until a new write occurs.
+  - A failing commit (TS syntax error) pushed to main wedges Vercel auto-deploy at last-good for 15+ min; pushing a follow-up real commit retriggers the pipeline.
+  - Probe correction-flow assertion checks the action response envelope (kind/status), which can pass on stale CSC data; verify ASSET-01-FLD-JOB and CSC body freshness when validating generation success.
