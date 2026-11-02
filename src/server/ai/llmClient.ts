@@ -32,9 +32,9 @@ export type AiPageUid = "core" | "asset" | "video" | "edit";
 
 export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
   core: "chat",
-  asset: "correction",
-  video: "correction",
-  edit: "correction",
+  asset: "chat",
+  video: "chat",
+  edit: "chat",
 };
 
 export interface ProviderConfig {
