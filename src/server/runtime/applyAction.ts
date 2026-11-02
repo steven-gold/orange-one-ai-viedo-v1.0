@@ -116,7 +116,7 @@ import { previewQaAction } from "@/lib/qaActionPreview";
 import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { AiProviderError, assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, type AiPageUid } from "../ai/llmClient";
+import { AiProviderError, AI_CAPABILITY_BY_PAGE, assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, resolveProviderConfigs, routeLabelFor, type AiPageUid } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -1255,6 +1255,22 @@ export async function applyWorkbenchAction(
       "ASSET-01-FLD-CANONICAL-PROJECTION": inbound.scriptProjection,
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
+    const conversationActionControls = new Set([
+      ASSET_CONVERSATION.sendUid,
+      ASSET_CONVERSATION.assistantUid,
+      "ASSET-01-BTN-THREAD-CREATE",
+      "ASSET-01-BTN-THREAD-OPEN",
+      "ASSET-01-BTN-THREAD-DELETE",
+    ]);
+    if (written && !conversationActionControls.has(controlUid)) {
+      try {
+        const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE.asset);
+        if (configs.length) await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-ROUTE", routeLabelFor(configs[0]));
+        else await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-empty:${controlUid}`);
+      } catch (error) {
+        await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-fail:${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
       await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid, signal, stream);
     }

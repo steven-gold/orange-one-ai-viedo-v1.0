@@ -52,33 +52,49 @@ class NeonClient implements SqlClient {
 let active: SqlClient | null = null;
 let bindReason = "DATABASE_RUNTIME_NOT_BOUND";
 
+type ClientCarrier = typeof globalThis & { __acposSqlClient?: SqlClient };
+const carrier = globalThis as ClientCarrier;
+
+function bindClient(client: SqlClient): SqlClient {
+  active = client;
+  carrier.__acposSqlClient = client;
+  return client;
+}
+
+function boundClient(): SqlClient | null {
+  return active ?? carrier.__acposSqlClient ?? null;
+}
+
 export function getProductionNeonBindReason(): string {
   return bindReason;
 }
 
 export async function openSqlClient(): Promise<SqlClient> {
-  if (active) return active;
+  const shared = boundClient();
+  if (shared) {
+    active = shared;
+    return shared;
+  }
   if (!isNeonConfigured()) {
     // Local sandbox / preview without a provisioned database: fall back to an
     // in-memory engine so every workbench page is fully exercisable. Real
     // deployments always configure DATABASE_URL, so they never reach this path.
     if (process.env.NODE_ENV !== "production") {
       const { MemoryClient } = await import("./memoryClient");
-      active = new MemoryClient();
       bindReason = "BOUND_MEMORY";
-      return active;
+      return bindClient(new MemoryClient());
     }
     bindReason = "DATABASE_RUNTIME_ENV_INCOMPLETE";
     throw new Error(bindReason);
   }
-  active = new NeonClient(databaseUrl());
   bindReason = "BOUND";
-  return active;
+  return bindClient(new NeonClient(databaseUrl()));
 }
 
 export function getSqlClient(): SqlClient {
-  if (!active) {
+  const shared = boundClient();
+  if (!shared) {
     throw new Error("DATABASE_RUNTIME_NOT_BOUND");
   }
-  return active;
+  return shared;
 }

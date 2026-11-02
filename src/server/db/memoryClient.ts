@@ -22,7 +22,11 @@ export class MemoryClient implements SqlClient {
   private readonly db: DatabaseSync;
 
   constructor() {
-    this.db = new DatabaseSync(":memory:");
+    // File-backed SQLite keeps the "no provisioned database" sandbox usable
+    // across Next.js dev module instances (handlers may run in isolated module
+    // contexts where a module-level singleton would be duplicated per request).
+    const path = process.env.ACPOS_SANDBOX_SQLITE_PATH ?? "/tmp/acpos-sandbox-workbench.sqlite";
+    this.db = new DatabaseSync(path);
   }
 
   async all<T = Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<T[]> {

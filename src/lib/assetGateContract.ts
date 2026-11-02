@@ -119,6 +119,7 @@ export type AssetManifest = {
   reuse: string[];
   missing: string[];
   deferred: string[];
+  completed: Array<{ item_id: string; output_ref: string }>;
   created_at: string;
 };
 
@@ -155,20 +156,20 @@ export function buildAssetManifest(
   existingAssets: string[],
   outputId: string | null | undefined,
   at = nowStamp(),
+  completed: Array<{ item_id: string; output_ref: string }> = [],
 ): AssetManifest | null {
   const projection = parseScriptProjection(scriptJson);
   if (!projection) return null;
-  const produced = new Set(existingAssets.map((row) => row.trim()).filter(Boolean));
-  if (named(outputId)) produced.add(named(outputId));
+  const itemIds = new Set(projection.assetItems.map((item) => item.ref));
+  const done = new Map(completed.filter((row) => itemIds.has(row.item_id)).map((row) => [row.item_id, row.output_ref]));
   const items: AssetManifestItem[] = projection.assetItems.map((item) => ({
     item_id: item.ref,
     requirement: item.requirement,
     type: "SCENE",
     output_kind: "IMAGE",
   }));
-  const itemIds = new Set(items.map((item) => item.item_id));
-  const reuse = items.filter((item) => produced.has(item.item_id)).map((item) => item.item_id);
-  const missing = items.filter((item) => !produced.has(item.item_id)).map((item) => item.item_id);
+  const reuse = items.filter((item) => done.has(item.item_id)).map((item) => item.item_id);
+  const missing = items.filter((item) => !done.has(item.item_id)).map((item) => item.item_id);
   return {
     kind: "ASSET_MANIFEST",
     manifest_id: `ASM-${assetHash([projection.version, items.map((item) => item.item_id).join(",")])}`,
@@ -177,6 +178,7 @@ export function buildAssetManifest(
     reuse,
     missing,
     deferred: [],
+    completed: [...done.entries()].map(([item_id, output_ref]) => ({ item_id, output_ref })),
     created_at: at,
   };
 }
@@ -185,7 +187,9 @@ export function parseAssetManifest(raw: string | null | undefined): AssetManifes
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as AssetManifest;
-    return parsed?.kind === "ASSET_MANIFEST" && Array.isArray(parsed.items) ? parsed : null;
+    return parsed?.kind === "ASSET_MANIFEST" && Array.isArray(parsed.items)
+      ? { ...parsed, completed: Array.isArray(parsed.completed) ? parsed.completed : [] }
+      : null;
   } catch {
     return null;
   }
@@ -231,6 +235,7 @@ export type AssetGateContext = {
   layerDocJson: string;
   patchJson: string;
   executing: string;
+  compareSelection: string;
 };
 
 export function assetGateContextFrom(current: (uid: string) => string | null): AssetGateContext {
@@ -280,6 +285,7 @@ export function assetGateContextFrom(current: (uid: string) => string | null): A
     layerDocJson: named(current("ASSET-01-BTN-LAYER-ADD")),
     patchJson: named(current("ASSET-01-BTN-PATCH-CREATE")),
     executing: named(current("ASSET-01-BTN-EXECUTE")),
+    compareSelection: named(current("ASSET-01-LST-COMPARE-VERSIONS")),
   };
 }
 
@@ -335,6 +341,7 @@ export function evaluateAssetGates(ctx: AssetGateContext): AssetGateState[] {
     }
   })();
   const handoffComplete = Boolean(ctx.checksum && ctx.fingerprint && ctx.rights && named(String(ctx.scorecard?.candidate_ref ?? "")) && (ctx.manifest?.items.length ?? 0) > 0);
+  const lockComplete = Boolean(ctx.manifest?.items.length) && (ctx.manifest?.missing.length ?? 1) === 0;
   return [
     state("ASSET-01-GATE-PAGE", true, "workspace loaded"),
     state("ASSET-01-GATE-CONTEXT", Boolean(ctx.project && ctx.topic), ctx.project && ctx.topic ? `${ctx.project} / ${ctx.topic}` : "project/topic context missing"),
@@ -353,16 +360,15 @@ export function evaluateAssetGates(ctx: AssetGateContext): AssetGateState[] {
     state("ASSET-01-GATE-PATCH-PREVIEW", Boolean(patch && patch.status === "CANDIDATE"), patch ? `patch ${patch.status}` : "no patch candidate"),
     state("ASSET-01-GATE-PATCH-DECISION", Boolean(patch && (patch.status === "PREVIEWED" || patch.status === "CANDIDATE")), patch ? `patch ${patch.status}` : "no patch decision pending"),
     state("ASSET-01-GATE-CONFIRM", evaluatedPass && ctx.confirmed !== "confirmed", evaluatedPass ? "ready to confirm" : "evaluation must PASS"),
-    state("ASSET-01-GATE-LOCK", ctx.confirmed === "confirmed" && ctx.locked !== "locked", ctx.confirmed === "confirmed" ? "ready to lock exact version" : "confirmation required"),
+    state("ASSET-01-GATE-LOCK", ctx.confirmed === "confirmed" && ctx.locked !== "locked" && lockComplete, ctx.confirmed === "confirmed" ? (lockComplete ? "ready to lock exact version" : `manifest incomplete (${ctx.manifest?.missing.length ?? 0} missing of ${ctx.manifest?.items.length ?? 0})`) : "confirmation required"),
     state("ASSET-01-GATE-HANDOFF", ctx.locked === "locked" && handoffComplete, ctx.locked === "locked" ? (handoffComplete ? "handoff manifest complete" : "handoff manifest incomplete (checksum/contract/rights/scorecard)") : "lock exact version first"),
-    state("ASSET-01-GATE-RETRY", ctx.retryEligibility === "eligible", ctx.retryEligibility === "eligible" ? `job ${ctx.job} eligible for retry` : "no failed provider job"),
-    state("ASSET-01-GATE-COMPARE", ctx.assets.length >= 2, ctx.assets.length >= 2 ? `${ctx.assets.length} versions` : "need at least 2 versions"),
+    state("ASSET-01-GATE-RETRY", ctx.retryEligibility === "eligible" && ctx.job === "failed" && Boolean(ctx.route), ctx.retryEligibility === "eligible" ? (ctx.route ? `job ${ctx.job} eligible for retry via ${ctx.route}` : "route snapshot absent") : "no failed provider job"),
+    state("ASSET-01-GATE-COMPARE", Boolean(ctx.compareSelection) && ctx.assets.length >= 1 && ctx.assets.length <= 3, ctx.compareSelection ? `${ctx.assets.length} selected versions` : "no compare selection"),
   ];
 }
 
 export function serializeAssetGates(states: AssetGateState[]): string {
-  return JSON.stringify(states);
-}
+  return JSON.stringify(states);}
 
 export function parseAssetGates(raw: string | null | undefined): AssetGateState[] {
   if (!raw) return [];

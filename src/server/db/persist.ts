@@ -486,7 +486,9 @@ function overlayCoreNames(fields: AssetFieldValue[], coreFields: CoreFieldValue[
   const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
   const inbound = resolveAssetInbound((uid) => core.get(uid) ?? null);
   if (!inbound.ready) {
-    return fields.map((row) => ({ ...row, value: null }));
+    // Upstream core bindings absent: keep the workspace's own persisted state
+    // (gates, stage, manifest, ...) visible as-is; inbound fields stay null.
+    return fields;
   }
   return fields.map((row) => {
     if (row.controlUid === "ASSET-01-CTL-PROJECT") return { ...row, value: inbound.project };
@@ -520,7 +522,8 @@ export async function persistGetAssetReadModel(accountUid: string): Promise<Asse
 }
 
 export function knownAssetAction(controlUid: string, actionUid: string): boolean {
-  return ASSET_CONTROL_ACTIONS[controlUid] === actionUid;
+  const bound = ASSET_CONTROL_ACTIONS[controlUid];
+  return typeof bound === "string" && bound.split("|").includes(actionUid);
 }
 
 export async function persistRecordAssetAction(

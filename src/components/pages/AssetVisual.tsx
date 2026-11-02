@@ -233,9 +233,10 @@ export function AssetVisual() {
     });
   }, []);
 
-  const act = useCallback(async (controlUid: string, nextValue?: string) => {
-    const actionUid = ASSET_CONTROL_ACTIONS[controlUid];
-    if (!actionUid) return;
+  const act = useCallback(async (controlUid: string, nextValue?: string, actionOverride?: string) => {
+    const bound = ASSET_CONTROL_ACTIONS[controlUid] ?? "";
+    const actionUid = actionOverride ?? bound.split("|")[0];
+    if (!actionUid || !bound.split("|").includes(actionUid)) return;
     const generatingTurn = actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE";
     if (generatingTurn && (sendAbortRef.current || generating)) return;
     const patch = previewAssetAction(
@@ -584,6 +585,7 @@ export function AssetVisual() {
               </div>
             ))}
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-EVALUATE" disabled={disabled || !selectedAsset} onClick={() => void act("ASSET-01-BTN-EVALUATE")}>{tx("asset.evaluate")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-RESULT-DETAIL" disabled={disabled || !evaluated} onClick={() => void act("ASSET-01-BTN-RESULT-DETAIL", undefined, "ASSET-01-ACT-FINDING-CREATE")}>{tx("asset.create_finding")}</button>
           </section>
           <section data-component-uid="ASSET-01-CMP-VERSION">
             <h3 className={styles.sub}>{tx("asset.version")}</h3>

@@ -227,6 +227,7 @@ const catalog = {
   "asset.gate_errors": { "zh-TW": "閘門與錯誤", "zh-CN": "闸门与错误", en: "Gates & Errors" },
   "asset.blocked_gates": { "zh-TW": "阻擋閘門", "zh-CN": "阻挡闸门", en: "Blocked gates" },
   "asset.page_errors": { "zh-TW": "頁面錯誤", "zh-CN": "页面错误", en: "Page errors" },
+  "asset.create_finding": { "zh-TW": "登記發現", "zh-CN": "登记发现", en: "Create finding" },
   "core.thread_delete": { "zh-TW": "刪除對話", "zh-CN": "删除对话", en: "Delete thread" },
   "core.thread_delete_confirm": { "zh-TW": "確定要刪除對話", "zh-CN": "确定要删除对话", en: "Delete thread" },
   "core.project_delete_confirm": { "zh-TW": "確定要刪除專案", "zh-CN": "确定要删除项目", en: "Delete project" },

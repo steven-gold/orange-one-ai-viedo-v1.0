@@ -208,6 +208,47 @@ function resetAssetWorkspace(): Record<string, string> {
   return patch;
 }
 
+export type AssetFinding = {
+  finding_id: string;
+  issue_type: string;
+  asset: string;
+  layer: string;
+  region: string;
+  evidence: string;
+};
+
+function buildAssetFindings(
+  scorecard: { candidate_ref: string; issues: string[] },
+  manifest: ReturnType<typeof parseAssetManifest>,
+  layerDocJson: string,
+): AssetFinding[] {
+  const doc = layerDocJson ? parseLayerDocument(layerDocJson) : null;
+  const layerRef = doc ? `${doc.layer_doc_id}#v${doc.version}` : "";
+  const findings: AssetFinding[] = [];
+  for (const issue of scorecard.issues) {
+    const [issueType, ...rest] = issue.split(": ");
+    findings.push({
+      finding_id: `FND-${assetContractHash({ blueprint: issue, dna: scorecard.candidate_ref, script: "" })}`,
+      issue_type: issueType || "EVALUATION_ISSUE",
+      asset: scorecard.candidate_ref,
+      layer: layerRef,
+      region: "",
+      evidence: rest.join(": ") || issue,
+    });
+  }
+  for (const itemId of manifest?.missing ?? []) {
+    findings.push({
+      finding_id: `FND-${assetContractHash({ blueprint: `MANIFEST_MISSING:${itemId}`, dna: manifest?.canonical_script_version_ref ?? "", script: "" })}`,
+      issue_type: "MANIFEST_MISSING",
+      asset: itemId,
+      layer: "",
+      region: "",
+      evidence: "manifest item not produced yet",
+    });
+  }
+  return findings;
+}
+
 function inboundReady(current: (uid: string) => string | null): boolean {
   return Boolean(
     named(current("ASSET-01-CTL-PROJECT")) &&
@@ -581,7 +622,16 @@ export function previewAssetActionInner(
     const assetVersion = nextAssetVersion(assets);
     const accepted = withPatchStatus({ ...patch, resulting_layer_doc_version: versionedDoc.version, resulting_asset_version: assetVersion }, "ACCEPTED", "人工接受補丁");
     const nextAssets = assets.includes(assetVersion) ? assets : [...assets, assetVersion];
-    const manifest = buildAssetManifest(current("ASSET-01-FLD-CANONICAL-PROJECTION"), nextAssets, assetVersion);
+    const priorManifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+    const selectedRef = named(current("ASSET-01-FLD-MANIFEST"));
+    const selectedItem = priorManifest?.items.find((item) => item.item_id === selectedRef);
+    const completed = [
+      ...(priorManifest?.completed ?? []),
+      ...(selectedItem && !(priorManifest?.completed ?? []).some((row) => row.item_id === selectedItem.item_id)
+        ? [{ item_id: selectedItem.item_id, output_ref: assetVersion }]
+        : []),
+    ];
+    const manifest = buildAssetManifest(current("ASSET-01-FLD-CANONICAL-PROJECTION"), nextAssets, assetVersion, nowStamp(), completed);
     return {
       "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(accepted),
       "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(versionedDoc),
@@ -636,12 +686,33 @@ export function previewAssetActionInner(
     const ctx = assetGateContextFrom(current);
     const scorecard = buildAssetScorecard(ctx);
     if (!scorecard) return {};
+    const manifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+    const findings = buildAssetFindings(scorecard, manifest, named(current("ASSET-01-BTN-LAYER-ADD")));
     return {
       "ASSET-01-BTN-EVALUATE": "evaluated",
       "ASSET-01-FLD-CRITERIA": JSON.stringify(scorecard),
       "ASSET-01-FLD-DIMENSIONS": JSON.stringify(scorecard.dimensions),
       "ASSET-01-FLD-OVERALL": scorecard.overall,
-      "ASSET-01-FLD-ISSUES": scorecard.issues.join("；") || "無阻擋",
+      "ASSET-01-FLD-ISSUES": JSON.stringify({
+        kind: "ASSET_FINDINGS",
+        summary: scorecard.issues.join("；") || "無阻擋",
+        findings,
+      }),
+    };
+  }
+  if (actionUid === "ASSET-01-ACT-FINDING-CREATE") {
+    const ctx = assetGateContextFrom(current);
+    if (!ctx.scorecard) return {};
+    const manifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+    const findings = buildAssetFindings(ctx.scorecard, manifest, named(current("ASSET-01-BTN-LAYER-ADD")));
+    if (!findings.length) return {};
+    return {
+      "ASSET-01-FLD-ISSUES": JSON.stringify({
+        kind: "ASSET_FINDINGS",
+        summary: ctx.scorecard.issues.join("；") || "無阻擋",
+        findings,
+        created_at: nowStamp(),
+      }),
     };
   }
   if (actionUid === "ASSET-01-ACT-CANDIDATE-CONFIRM") {
@@ -675,11 +746,13 @@ export function previewAssetActionInner(
   }
   if (actionUid === "ASSET-01-ACT-VERSION-LOCK") {
     if (current("ASSET-01-BTN-CONFIRM") !== "confirmed") return {};
+    const manifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+    if (!manifest?.items.length || manifest.missing.length > 0) return {};
     const outputId = keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已鎖定版本");
     const doc = layerDocFrom(current);
     const checksum = assetChecksumOf({
       outputId,
-      manifestId: parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"))?.manifest_id ?? "",
+      manifestId: manifest.manifest_id,
       layerDocVersion: doc ? `LDOCv${doc.version}` : "",
     });
     return {
@@ -699,6 +772,7 @@ export function previewAssetActionInner(
     if (!ctx.rights) missing.push("rights");
     if (!ctx.scorecard?.candidate_ref) missing.push("scorecard");
     if (!manifest?.items.length) missing.push("manifest_items");
+    if (manifest?.items.length && manifest.missing.length > 0) missing.push(`manifest_missing:${manifest.missing.join(",")}`);
     if (missing.length) return {};
     return {
       "ASSET-01-BTN-HANDOFF": "sent",
@@ -724,6 +798,8 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-BINDING-VIEW") {
+    const explicit = (nextValue ?? "").trim();
+    if (explicit) return { [controlUid]: explicit };
     const existing = named(current(controlUid));
     if (existing) return { [controlUid]: existing };
     if (!ready) return {};
