@@ -1266,10 +1266,11 @@ export async function applyWorkbenchAction(
       try {
         const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE.asset);
         if (configs.length) await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-ROUTE", routeLabelFor(configs[0]));
-        else await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-empty:${controlUid}`);
+        else await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-empty:${controlUid}:${actionUid}`);
       } catch (error) {
-        await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-fail:${error instanceof Error ? error.message : String(error)}`);
+        await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-fail:${controlUid}:${error instanceof Error ? error.message : String(error)}`.slice(0, 400));
       }
+    }
     }
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
       await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid, signal, stream);
