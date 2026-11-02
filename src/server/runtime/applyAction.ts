@@ -1263,14 +1263,14 @@ export async function applyWorkbenchAction(
       "ASSET-01-BTN-THREAD-DELETE",
     ]);
     if (written && !conversationActionControls.has(controlUid)) {
+      const snapshotCapability = AI_CAPABILITY_BY_PAGE.asset;
       try {
-        const configs = await resolveProviderConfigs(AI_CAPABILITY_BY_PAGE.asset);
+        const configs = await resolveProviderConfigs(snapshotCapability);
         if (configs.length) await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-ROUTE", routeLabelFor(configs[0]));
-        else await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-empty:${controlUid}:${actionUid}`);
+        else await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-empty:${controlUid}:${snapshotCapability}:${actionUid}`);
       } catch (error) {
-        await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-fail:${controlUid}:${error instanceof Error ? error.message : String(error)}`.slice(0, 400));
+        await writeField(FIELD_TABLE.asset, "ASSET-01-FLD-TRACE", `route-snapshot-fail:${controlUid}:${snapshotCapability}:${error instanceof Error ? error.message : String(error)}`.slice(0, 400));
       }
-    }
     }
     if ((actionUid === "ASSET-01-ACT-SEND" || actionUid === "ASSET-01-ACT-MSG-ANALYZE") && written) {
       await fillConversationReply(FIELD_TABLE.asset, ASSET_CONVERSATION, "asset", actionUid, nextValue, accountUid, signal, stream);
