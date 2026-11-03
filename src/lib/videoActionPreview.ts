@@ -113,6 +113,7 @@ export function previewVideoAction(
       "VIDEO-01-FLD-SCRIPT-SECTION": inboundScript,
       "VIDEO-01-FLD-INPUT-FINGERPRINT": `VFP-${videoHashOf([ctx.project ?? "", ctx.topic ?? "", ctx.blueprint ?? "", ctx.script ?? "", ctx.assetVersion ?? ""])}`,
       "VIDEO-01-FLD-ROUTE": keep(undefined, current("VIDEO-01-FLD-ROUTE"), "就緒"),
+      "VIDEO-01-FLD-ERROR": "",
     };
   }
   if (actionUid === "VIDEO-01-ACT-LIST-SEARCH") {
@@ -180,6 +181,7 @@ export function previewVideoAction(
       "VIDEO-01-FLD-SCORE-TECH": dimensionScore("QA-DIM-VIDEO-TECH"),
       "VIDEO-01-FLD-SCORE-ASSET": dimensionScore("QA-DIM-VIDEO-ASSET"),
       "VIDEO-01-FLD-SCORE-RIGHTS": dimensionScore("QA-DIM-RIGHTS-POLICY"),
+      "VIDEO-01-FLD-ERROR": "",
     };
   }
   if (actionUid === "VIDEO-01-ACT-CANDIDATE-CONFIRM") {
