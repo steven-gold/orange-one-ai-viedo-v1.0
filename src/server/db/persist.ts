@@ -7,6 +7,11 @@ import { resolveAssetInbound } from "@/lib/assetInbound";
 import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
+import {
+  buildVideoGates,
+  deriveVideoPageState,
+  videoGateContextFrom,
+} from "@/lib/videoGateContract";
 import { exactName, namedList } from "@/lib/coreActionPreview";
 import { assignedAiRouteSnapshot } from "../ai/llmClient";
 import { ASSET_CORRECTION_RESPONSE_UID, VIDEO_CORRECTION_RESPONSE_UID } from "@/lib/aiReply";
@@ -579,6 +584,27 @@ function overlayUpstreamOntoVideo(
   const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
   const inbound = resolveVideoInbound((uid) => core.get(uid) ?? null, (uid) => asset.get(uid) ?? null);
   const bound = [inbound.filename, inbound.checksum].filter(Boolean).join(" / ");
+  const videoCurrent = (uid: string): string | null => {
+    const row = fields.find((item) => item.controlUid === uid);
+    if (!row || row.value === null || row.value === "") {
+      const inboundValue: Record<string, string | null> = {
+        "VIDEO-01-FLD-PROJECT": inbound.ready ? inbound.project || null : null,
+        "VIDEO-01-FLD-TOPIC": inbound.ready ? inbound.topic || null : null,
+        "VIDEO-01-FLD-BLUEPRINT-REF": inbound.ready ? inbound.blueprint || null : null,
+        "VIDEO-01-FLD-DNA-REFS": inbound.ready ? inbound.dna || null : null,
+        "VIDEO-01-FLD-SCRIPT-SECTION": inbound.ready ? inbound.script || null : null,
+        "VIDEO-01-FLD-ASSET-REFS": inbound.ready ? inbound.assetVersion || null : null,
+        "VIDEO-01-FLD-LAYER-VERSIONS": inbound.ready ? inbound.layerComposite || null : null,
+        "VIDEO-01-FLD-RIGHTS": inbound.ready ? inbound.rights || null : null,
+        "VIDEO-01-FLD-INSTRUCTION": inbound.ready ? inbound.instruction || null : null,
+      };
+      return inboundValue[uid] ?? null;
+    }
+    return row.value;
+  };
+  const gateCtx = videoGateContextFrom(videoCurrent);
+  const blockedGates = buildVideoGates(gateCtx).filter((row) => row.state === "BLOCK");
+  const pageState = deriveVideoPageState(gateCtx);
   return fields.map((row) => {
     if (row.controlUid === "VIDEO-01-FLD-PROJECT") return { ...row, value: inbound.ready ? inbound.project || null : null };
     if (row.controlUid === "VIDEO-01-FLD-TOPIC") return { ...row, value: inbound.ready ? inbound.topic || null : null };
@@ -592,6 +618,8 @@ function overlayUpstreamOntoVideo(
     if (row.controlUid === "VIDEO-01-FLD-FILENAME-CHECKSUM") return { ...row, value: inbound.ready ? bound || null : null };
     if (row.controlUid === "VIDEO-01-FLD-RIGHTS") return { ...row, value: inbound.ready ? inbound.rights || null : null };
     if (row.controlUid === "VIDEO-01-FLD-INSTRUCTION") return { ...row, value: inbound.ready ? inbound.instruction || null : null };
+    if (row.controlUid === "VIDEO-01-FLD-PAGE-STATE") return { ...row, value: inbound.ready ? pageState : null };
+    if (row.controlUid === "VIDEO-01-FLD-DISABLED-REASON") return { ...row, value: inbound.ready ? blockedGates.map((row2) => `${row2.gate.replace("VIDEO-01-GATE-", "")}(${row2.reason})`).join("；") || "—" : null };
     return row;
   });
 }

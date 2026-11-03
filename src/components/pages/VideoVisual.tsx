@@ -367,6 +367,11 @@ export function VideoVisual() {
   const locked = valueOf("VIDEO-01-BTN-LOCK") === "locked";
   const correctionOpen = valueOf("VIDEO-01-BTN-MODIFY") === "open";
   const disabled = !inboundReady;
+  const blockedReason = (() => {
+    const raw = valueOf("VIDEO-01-FLD-DISABLED-REASON");
+    if (!raw || raw === "—") return undefined;
+    return raw;
+  })();
   const generateDisabled = disabled || !correctionDraft.trim();
   const approveDisabled = disabled || correctionCandidate?.status !== "CANDIDATE";
   const executeDisabled = disabled || correctionCandidate?.status !== "APPROVED";
@@ -413,7 +418,7 @@ export function VideoVisual() {
           <span className={styles.label}>{tx("video.current_stage")}</span>
           <span className={styles.value}>{tx("video.stage_generate")}</span>
         </div>
-        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXECUTE" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-EXECUTE")}>{tx("video.execute")}</button>
+        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EXECUTE" disabled={disabled} title={blockedReason} onClick={() => void act("VIDEO-01-BTN-EXECUTE")}>{tx("video.execute")}</button>
         <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-BLUEPRINT" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-BLUEPRINT")}>{tx("video.view_blueprint")}</button>
         <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-PACKAGE" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-PACKAGE")}>{tx("video.view_package")}</button>
       </section>
@@ -531,10 +536,10 @@ export function VideoVisual() {
           </section>
           <section data-component-uid="VIDEO-01-CMP-DECISION">
             <div className={styles.decisionGrid}>
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-CONFIRM" disabled={disabled || !evaluated} onClick={() => void act("VIDEO-01-BTN-CONFIRM")}>{tx("video.confirm")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-CONFIRM" disabled={disabled || !evaluated} title={blockedReason} onClick={() => void act("VIDEO-01-BTN-CONFIRM")}>{tx("video.confirm")}</button>
               <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-MODIFY" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-MODIFY")}>{tx("video.modify")}</button>
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-LOCK" disabled={disabled || !confirmed} onClick={() => void act("VIDEO-01-BTN-LOCK")}>{tx("video.lock")}</button>
-              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-HANDOFF" disabled={disabled || !locked} onClick={() => void act("VIDEO-01-BTN-HANDOFF")}>{tx("video.handoff_edit")}</button>
+              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-LOCK" disabled={disabled || !confirmed} title={blockedReason} onClick={() => void act("VIDEO-01-BTN-LOCK")}>{tx("video.lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-HANDOFF" disabled={disabled || !locked} title={blockedReason} onClick={() => void act("VIDEO-01-BTN-HANDOFF")}>{tx("video.handoff_edit")}</button>
             </div>
           </section>
         </aside>
@@ -745,7 +750,7 @@ export function VideoVisual() {
             ))}
           </div>
           <div className={styles.evalActions}>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EVALUATE" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-EVALUATE")}>{tx("video.evaluate")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="VIDEO-01-BTN-EVALUATE" disabled={disabled} title={blockedReason} onClick={() => void act("VIDEO-01-BTN-EVALUATE")}>{tx("video.evaluate")}</button>
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-FINDING" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-FINDING")}>{tx("video.finding")}</button>
             <button type="button" className={styles.btn} data-control-uid="VIDEO-01-BTN-ISSUE-OPEN" disabled={disabled} onClick={() => void act("VIDEO-01-BTN-ISSUE-OPEN")}>{tx("video.issue_open")}</button>
           </div>
