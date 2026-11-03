@@ -388,7 +388,8 @@ export type AssetScorecard = {
   asset_type: string;
   candidate_ref: string;
   dimensions: AssetScoreDimension[];
-  overall: "PASS" | "BLOCKED";
+  weighted_total: number;
+  overall: "PASS" | "BLOCKED" | "REVIEW_PENDING";
   issues: string[];
   evaluated_at: string;
 };
@@ -448,6 +449,14 @@ export function buildAssetScorecard(ctx: AssetGateContext, at = nowStamp()): Ass
     return { uid: spec.uid, label: spec.label, weight: spec.weight, score: null, hard_block: false, evidence: REVIEW_PENDING };
   });
   const issues = dimensions.filter((row) => row.score === 0).map((row) => `${row.uid}: ${row.hard_block ? row.evidence : `${row.label} — ${row.evidence}`}`);
+  const scored = dimensions.filter((row) => typeof row.score === "number");
+  const weightedTotal = Math.round(scored.reduce((sum, row) => sum + ((row.score as number) * row.weight) / 100, 0));
+  const hardBlockFailed = dimensions.some((row) => row.hard_block && row.score === 0);
+  const pendingDims = dimensions.filter((row) => row.score === null).map((row) => row.uid);
+  const allScored = pendingDims.length === 0;
+  if (allScored && weightedTotal < 95 && !hardBlockFailed) {
+    issues.push(`QA-WEIGHTED-TOTAL: ${weightedTotal} < 95`);
+  }
   return {
     kind: "ASSET_SCORECARD",
     criteria_version: `ASSET-CRITERIA-${assetHash([ctx.project, ctx.topic, ctx.script])}`,
@@ -455,7 +464,8 @@ export function buildAssetScorecard(ctx: AssetGateContext, at = nowStamp()): Ass
     asset_type: assetType,
     candidate_ref: candidateRef,
     dimensions,
-    overall: issues.length ? "BLOCKED" : "PASS",
+    weighted_total: weightedTotal,
+    overall: hardBlockFailed ? "BLOCKED" : allScored ? (weightedTotal >= 95 ? "PASS" : "BLOCKED") : "REVIEW_PENDING",
     issues,
     evaluated_at: at,
   };
@@ -466,6 +476,8 @@ export function evaluateAssetGates(ctx: AssetGateContext): AssetGateState[] {
   const ready = Boolean(ctx.project && ctx.topic && ctx.blueprint && ctx.dna && ctx.script);
   const candidate = Boolean(ctx.outputId || ctx.manifestSelected || ctx.assets.length);
   const evaluatedPass = ctx.scorecard?.overall === "PASS";
+  const scorecardOverall = ctx.scorecard?.overall;
+  const gatePendingDims = (ctx.scorecard?.dimensions ?? []).filter((row) => row.score === null).map((row) => row.uid);
   const doc = layerDocFrom(ctx.layerDocJson);
   const patch = (() => {
     if (!ctx.patchJson.startsWith("{")) return null;
@@ -488,13 +500,13 @@ export function evaluateAssetGates(ctx: AssetGateContext): AssetGateState[] {
     state("ASSET-01-GATE-EXECUTE", ready && Boolean(ctx.manifest?.items.length), ready ? "inputs resolved" : "context/blueprint/DNA/script required"),
     state("ASSET-01-GATE-CANDIDATE", candidate, candidate ? (ctx.outputId || ctx.manifestSelected || ctx.assets[ctx.assets.length - 1]) : "no candidate output"),
     state("ASSET-01-GATE-EVALUATION", Boolean(ctx.scorecard), ctx.scorecard ? `scorecard ${ctx.scorecard.overall}` : "evaluation pending"),
-    state("ASSET-01-GATE-WAIT-CONFIRM", Boolean(ctx.scorecard) && ctx.confirmed !== "confirmed", evaluatedPass ? "awaiting human confirmation" : "scorecard must PASS before confirmation"),
+    state("ASSET-01-GATE-WAIT-CONFIRM", Boolean(ctx.scorecard) && ctx.confirmed !== "confirmed", scorecardOverall === "REVIEW_PENDING" ? `reviewer scores pending: ${gatePendingDims.join(", ")}` : evaluatedPass ? "awaiting human confirmation" : "scorecard must PASS before confirmation"),
     state("ASSET-01-GATE-CORRECTION", ctx.correctionOpen === "open", ctx.correctionOpen === "open" ? (ctx.correctionApproved === "approved" ? "correction approved" : "correction discussion open") : "correction not opened"),
     state("ASSET-01-GATE-LAYER-ELIGIBLE", assetLayerEligible(ctx.assetType), ctx.assetType === "UNRESOLVED" ? "asset type unresolved (manifest item type required)" : assetLayerEligible(ctx.assetType) ? `image-compatible asset type ${ctx.assetType}` : `asset type ${ctx.assetType} skips LayerRuntime (Not Applicable)`),
     state("ASSET-01-GATE-LAYER-WRITE", assetLayerEligible(ctx.assetType) && Boolean(doc), doc ? `${doc.layer_doc_id}#v${doc.version}` : assetLayerEligible(ctx.assetType) ? "no layer document" : `layer write Not Applicable for ${ctx.assetType}`),
     state("ASSET-01-GATE-PATCH-PREVIEW", Boolean(patch && patch.status === "CANDIDATE"), patch ? `patch ${patch.status}` : "no patch candidate"),
     state("ASSET-01-GATE-PATCH-DECISION", Boolean(patch && (patch.status === "PREVIEWED" || patch.status === "CANDIDATE")), patch ? `patch ${patch.status}` : "no patch decision pending"),
-    state("ASSET-01-GATE-CONFIRM", evaluatedPass && ctx.confirmed !== "confirmed", evaluatedPass ? "ready to confirm" : "evaluation must PASS"),
+    state("ASSET-01-GATE-CONFIRM", evaluatedPass && ctx.confirmed !== "confirmed", scorecardOverall === "REVIEW_PENDING" ? `reviewer scores pending: ${gatePendingDims.join(", ")}` : evaluatedPass ? "ready to confirm" : "evaluation must PASS per bound criteria"),
     state("ASSET-01-GATE-LOCK", ctx.confirmed === "confirmed" && ctx.locked !== "locked" && lockComplete, ctx.confirmed === "confirmed" ? (lockComplete ? "ready to lock exact version" : `manifest incomplete (${ctx.manifest?.missing.length ?? 0} missing of ${ctx.manifest?.items.length ?? 0})`) : "confirmation required"),
     state("ASSET-01-GATE-HANDOFF", ctx.locked === "locked" && handoffComplete, ctx.locked === "locked" ? (handoffComplete ? "handoff manifest complete" : "handoff manifest incomplete (checksum/contract/rights/scorecard)") : "lock exact version first"),
     state("ASSET-01-GATE-RETRY", ctx.retryEligibility === "eligible" && ctx.job === "failed" && Boolean(ctx.route), ctx.retryEligibility === "eligible" ? (ctx.route ? `job ${ctx.job} eligible for retry via ${ctx.route}` : "route snapshot absent") : "no failed provider job"),
@@ -521,7 +533,9 @@ export function deriveAssetPageState(ctx: AssetGateContext): string {
   if (ctx.confirmed === "confirmed") return "CONFIRMED";
   if (ctx.correctionOpen === "open" && ctx.correctionApproved !== "approved") return "CORRECTION_REQUIRED";
   if (ctx.executing === "running") return "EXECUTING";
-  if (ctx.scorecard && ctx.confirmed !== "confirmed") return ctx.scorecard.overall === "PASS" ? "WAIT_CONFIRMATION" : "ERROR";
+  if (ctx.scorecard && ctx.confirmed !== "confirmed") {
+    return ctx.scorecard.overall === "PASS" || ctx.scorecard.overall === "REVIEW_PENDING" ? "WAIT_CONFIRMATION" : "ERROR";
+  }
   if (ctx.outputId && ctx.evaluated !== "evaluated") return "CANDIDATE_OUTPUT";
   if (ctx.project && ctx.topic && ctx.blueprint && ctx.dna && ctx.script) return "READY";
   return "LOADING";

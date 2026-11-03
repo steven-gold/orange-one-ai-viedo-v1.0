@@ -857,7 +857,14 @@ const HARD_GATES: Record<string, HardGate> = {
               : "upstream manifest unresolved (script ASSET view empty)",
   },
   "ASSET-01-ACT-EVALUATE": { gate: "ASSET-01-GATE-EVALUATION", code: "ASSET-01-ERR-CANDIDATE-001", reason: () => "no candidate output to evaluate" },
-  "ASSET-01-ACT-CANDIDATE-CONFIRM": { gate: "ASSET-01-GATE-CONFIRM", code: "ASSET-01-ERR-CRITERIA-001", reason: () => "scorecard must PASS before confirmation" },
+  "ASSET-01-ACT-CANDIDATE-CONFIRM": {
+    gate: "ASSET-01-GATE-CONFIRM",
+    code: "ASSET-01-ERR-CRITERIA-001",
+    reason: (ctx) => {
+      const pending = (ctx.scorecard?.dimensions ?? []).filter((row) => row.score === null).map((row) => row.uid);
+      return pending.length ? `reviewer scores pending: ${pending.join(", ")}` : "scorecard must PASS before confirmation";
+    },
+  },
   "ASSET-01-ACT-VERSION-LOCK": { gate: "ASSET-01-GATE-LOCK", code: "ASSET-01-ERR-VERSION-001", reason: () => "confirmation required before exact-version lock" },
   "ASSET-01-ACT-HANDOFF": {
     gate: "ASSET-01-GATE-HANDOFF",
