@@ -116,3 +116,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - Scorecards carry the QA-SYNC-01 triple: exact profile UID + criteria_version (VIDEO-CRITERIA-*/ASSET-CRITERIA-*) + quality_gate_policy_version (QGP-V1). New pages adding scorecards must include all three fields.
   - CORE 8-dim and QA 17-dim dimension definitions are absent from the spec (counts only); registry stores them with dimensions: null (metadata rows, authority pending). EDIT 12-dim names come from the spec list; weights are implementation authority (spec says weights are new authority and does not enumerate them).
   - Verify QGP field writes with /tmp/opencode/verify_qgp.mjs (seeds candidate, EVALUATE, waits 9s, asserts scorecard triple, cleans up). Video projection table is ghsn_video_field_projection(control_uid, value_text) - value column name is value_text, and /api/video read model is model.fields[].controlUid/value.
+
+[Project Knowledge Summary]
+- Date: 2026-11-03
+- Context: Discovered by Agent while wiring the video-generation provider and the asset display-delivery filter
+- Category: Build Methods
+- Instructions:
+  - Video execute phase runs through the registered "video-generation" capability (capabilityType catalog in src/server/aiapi/surface.ts; spec all_0c2c0a.txt:552 "registered capability through AI03" - TEXT_TO_VIDEO literal is not in the catalog). llmClient.generateVideoExecution() + applyAction fillVideoExecution; local testing needs seed_cred5.mjs (mock-video profile, capabilityType video-generation, mock_llm branch "影片生成執行").
+  - Asset page project/topic chips implement the display-delivery mode (docasset.txt:1706): a project is listed only when its CORE upstream state has PROJECT-CONFIRM/PROJECT-LOCK plus a topic - current project via live CORE fields, others via CORE-01-FLD-PROJECT-SNAPSHOTS; topic list follows the selected project's snapshot. Filter criteria deliberately match inbound ready (fail-closed parity): listed = selectable-ready. NOTE: local dev projects all have full lock chains, so the filter's exclusion path only shows on the live deployment (e.g. 天堂 excluded).
+  - CORE project snapshots carry per-project state including CORE-01-BTN-PROJECT-LOCK and CORE-01-CTL-TOPIC; global fields like PROJECT-CONFIRM reflect only the current project, so per-project judgement MUST go through snapshots for non-current projects.
+  - A CORE-01-FLD-CANONICAL-FILENAME is assigned by assetCanonicalFilenameOf() at CANDIDATE-CONFIRM (deterministic ACPOS-ASSET-{hash}); before confirm GATE-NAMING reads "canonical filename pending" which is the correct pre-reservation state.
