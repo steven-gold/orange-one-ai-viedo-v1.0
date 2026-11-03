@@ -1,4 +1,5 @@
 import { nowStamp } from "./coreActionPreview";
+import { QGP_POLICY_VERSION, resolveApprovedCriteria } from "./qcpRegistry";
 
 export type VideoScoreDimension = {
   uid: string;
@@ -13,6 +14,7 @@ export type VideoScorecard = {
   kind: "VIDEO_SCORECARD";
   criteria_version: string;
   profile: "QCP-VIDEO-BASELINE-V1";
+  quality_gate_policy_version: string;
   candidate_ref: string;
   dimensions: VideoScoreDimension[];
   weighted_total: number;
@@ -23,17 +25,8 @@ export type VideoScorecard = {
 
 type VideoDimensionSpec = { uid: string; label: string; weight: number; hard_block: boolean };
 
-export const QCP_VIDEO_PROFILE: VideoDimensionSpec[] = [
-  { uid: "QA-DIM-VIDEO-SCRIPT", label: "腳本／分段符合", weight: 15, hard_block: false },
-  { uid: "QA-DIM-VIDEO-IDENTITY", label: "身份／DNA 一致", weight: 20, hard_block: false },
-  { uid: "QA-DIM-VIDEO-MOTION", label: "動作／肢體自然", weight: 10, hard_block: false },
-  { uid: "QA-DIM-VIDEO-CAMERA", label: "鏡頭／視線意圖", weight: 10, hard_block: false },
-  { uid: "QA-DIM-VIDEO-SCENE", label: "場景／連續性", weight: 10, hard_block: false },
-  { uid: "QA-DIM-VIDEO-TIMING", label: "時長／節奏", weight: 10, hard_block: false },
-  { uid: "QA-DIM-VIDEO-TECH", label: "技術品質", weight: 10, hard_block: false },
-  { uid: "QA-DIM-VIDEO-ASSET", label: "素材／DNA 忠實度", weight: 10, hard_block: false },
-  { uid: "QA-DIM-RIGHTS-POLICY", label: "權利／政策", weight: 5, hard_block: true },
-];
+export const QCP_VIDEO_PROFILE: VideoDimensionSpec[] =
+  resolveApprovedCriteria("QCP-VIDEO-BASELINE-V1")?.dimensions ?? [];
 
 const REVIEW_PENDING = "評審待輸入";
 
@@ -173,6 +166,7 @@ export function buildVideoScorecard(ctx: VideoGateContext, at = nowStamp()): Vid
     kind: "VIDEO_SCORECARD",
     criteria_version: `VIDEO-CRITERIA-${videoHash([ctx.project ?? "", ctx.topic ?? "", ctx.script ?? ""])}`,
     profile: "QCP-VIDEO-BASELINE-V1",
+    quality_gate_policy_version: QGP_POLICY_VERSION,
     candidate_ref: candidateRef,
     dimensions,
     weighted_total: weightedTotal,

@@ -1,5 +1,6 @@
 import { parseLayerDocument } from "./layerDocument";
 import { nowStamp } from "./coreActionPreview";
+import { QGP_POLICY_VERSION, resolveApprovedCriteria } from "./qcpRegistry";
 
 export const ASSET_ERROR_CODES = [
   "ASSET-01-ERR-CONTEXT-001",
@@ -385,6 +386,7 @@ export type AssetScorecard = {
   kind: "ASSET_SCORECARD";
   criteria_version: string;
   profile: string;
+  quality_gate_policy_version: string;
   asset_type: string;
   candidate_ref: string;
   dimensions: AssetScoreDimension[];
@@ -427,28 +429,10 @@ export function applyAssetQaScores(card: AssetScorecard, scores: AssetQaScoreInp
 
 type QcpDimensionSpec = { uid: string; label: string; weight: number; hard_block: boolean };
 
-const QCP_IMAGE_PROFILE: QcpDimensionSpec[] = [
-  { uid: "QA-DIM-ASSET-SCRIPT", label: "Script / Manifest Compliance", weight: 15, hard_block: false },
-  { uid: "QA-DIM-ASSET-IDENTITY", label: "Character / Identity DNA Fidelity", weight: 20, hard_block: false },
-  { uid: "QA-DIM-ASSET-OBJECT", label: "Object Fidelity", weight: 10, hard_block: false },
-  { uid: "QA-DIM-ASSET-SCENE", label: "Scene / Environment Fidelity", weight: 10, hard_block: false },
-  { uid: "QA-DIM-ASSET-COMPOSITION", label: "Composition / Framing", weight: 10, hard_block: false },
-  { uid: "QA-DIM-ASSET-GEOMETRY", label: "Anatomy / Geometry / Artifact Integrity", weight: 15, hard_block: false },
-  { uid: "QA-DIM-ASSET-STYLE", label: "Style / Color / Lighting Consistency", weight: 10, hard_block: false },
-  { uid: "QA-DIM-ASSET-TECH", label: "Technical Image Quality", weight: 5, hard_block: false },
-  { uid: "QA-DIM-RIGHTS-POLICY", label: "Rights / Policy", weight: 5, hard_block: true },
-];
-
-const QCP_AUDIO_PROFILE: QcpDimensionSpec[] = [
-  { uid: "QA-DIM-AUDIO-SCRIPT", label: "Script / Manifest Compliance", weight: 15, hard_block: false },
-  { uid: "QA-DIM-AUDIO-IDENTITY", label: "Voice Identity / Semantic Fit", weight: 20, hard_block: false },
-  { uid: "QA-DIM-AUDIO-CONTENT", label: "Pronunciation / Content Accuracy", weight: 15, hard_block: false },
-  { uid: "QA-DIM-AUDIO-TIMING", label: "Timing / Duration", weight: 10, hard_block: false },
-  { uid: "QA-DIM-AUDIO-NOISE", label: "Noise / Clipping / Distortion", weight: 15, hard_block: false },
-  { uid: "QA-DIM-AUDIO-LEVEL", label: "Level / Dynamics", weight: 10, hard_block: false },
-  { uid: "QA-DIM-AUDIO-TECH", label: "Technical Audio Format", weight: 10, hard_block: false },
-  { uid: "QA-DIM-RIGHTS-POLICY", label: "Rights / Policy", weight: 5, hard_block: true },
-];
+const QCP_IMAGE_PROFILE: QcpDimensionSpec[] =
+  resolveApprovedCriteria("QCP-ASSET-IMAGE-V1")?.dimensions ?? [];
+const QCP_AUDIO_PROFILE: QcpDimensionSpec[] =
+  resolveApprovedCriteria("QCP-ASSET-AUDIO-V1")?.dimensions ?? [];
 
 const REVIEW_PENDING = "評審待輸入（本頁僅結構性判定）";
 
@@ -492,6 +476,7 @@ export function buildAssetScorecard(ctx: AssetGateContext, at = nowStamp()): Ass
     kind: "ASSET_SCORECARD",
     criteria_version: `ASSET-CRITERIA-${assetHash([ctx.project, ctx.topic, ctx.script])}`,
     profile,
+    quality_gate_policy_version: QGP_POLICY_VERSION,
     asset_type: assetType,
     candidate_ref: candidateRef,
     dimensions,
