@@ -94,3 +94,15 @@ Entries discovered by the Agent during task execution should follow this format:
 - Category: Environment Configuration
 - Instructions:
   - Sandbox DNS is poisoned for the Vercel domain: orange-one-acpos-test.vercel.app may resolve to 128.242.240.155 / 2a03:2880::/32 (Meta IP space) causing ECONNRESET/TLS drops, while curl --resolve to 64.29.17.67 works. Fixed by pinning `64.29.17.67 orange-one-acpos-test.vercel.app` in /etc/hosts; node fetch ignores the `agent` option (undici dispatcher required otherwise), so probes rely on this hosts entry.
+
+[Project Knowledge Summary]
+- Date: 2026-11-03
+- Context: Discovered by Agent while filling the VIDEO-01 production-data gap (videoGateContract.ts + action/persist integration)
+- Category: Build Methods
+- Instructions:
+  - VIDEO-01 mirrors the asset scorecard pattern: src/lib/videoGateContract.ts holds QCP_VIDEO_PROFILE (9 dims, weights 15/20/10/10/10/10/10/10/5, RIGHTS hard block weight 5), buildVideoScorecard (three-state overall, weighted_total), buildVideoGates (13 gates), deriveVideoPageState, videoGateContextFrom, EXACT_VIDEO_HANDOFF_MANIFEST (ten-field contract); videoHashOf is the shared FNV-1a helper for checksum/script-hash/fingerprint/manifest-id.
+  - Video EVALUATE requires a candidate (FLD-OUTPUT-VERSION / FLD-CANDIDATE-VERSION) or it fails closed with no scorecard - spec places EVALUATION gate after CANDIDATE; no video provider exists in this environment, so full-chain LOCK/HANDOFF assertions need a seeded candidate (local: node:sqlite INSERT into ghsn_video_field_projection; live: unavailable - assert the fail-closed set instead).
+  - Video page-state precedence: handoff > locked > confirmed > correction-open > scorecard(WAIT_CONFIRMATION/ERROR) > executing-running-without-candidate > candidate > ready; the live page legitimately rests in EXECUTING after FLOW-START because no provider completion callback exists.
+  - Video page has no FLD-GATES container (unlike asset): gate status is carried by FLD-PAGE-STATE + FLD-DISABLED-REASON (overlay-derived) and FLD-ERROR (action-written); EVALUATE/FLOW-START clear stale FLD-ERROR.
+  - Video spec source is /tmp/opencode/all_0c2c0a.txt (ACPOS-AI-05 mother design, 10503 lines); confirm contract POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/confirm; no VIDEO-01-ERR-* literals exist in spec - write plain gate reasons into FLD-ERROR instead of inventing error codes.
+  - Live vs local probe asymmetry: probes that seed fields via node:sqlite only work against the local dev DB (/tmp/acpos-sandbox-workbench.sqlite); the Vercel deployment reads its own database, so live probes must assert the fail-closed semantics reachable through HTTP actions alone.
