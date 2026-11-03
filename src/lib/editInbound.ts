@@ -65,7 +65,10 @@ export function resolveEditInbound(
   const videoVersion =
     exactName(videoCurrent("VIDEO-01-FLD-VIDEO-VERSION")) ||
     exactName(coreCurrent("CORE-01-FLD-DOWNSTREAM-VIDEO"));
-  const handoffContract = exactName(videoCurrent("VIDEO-01-FLD-HANDOFF-CONTRACT")) || videoVersion;
+  // The video handoff manifest is a full JSON contract; keep it intact
+  // instead of truncating through exactName's 80-char name slice.
+  const rawHandoff = videoCurrent("VIDEO-01-FLD-HANDOFF-CONTRACT")?.trim() ?? "";
+  const handoffContract = rawHandoff.startsWith("{") ? rawHandoff : exactName(rawHandoff) || videoVersion;
   const mode = exactName(editCurrent("EDIT-01-CTL-SOURCE-MODE")) || "PROJECT_TASK";
   const standalone = mode === "STANDALONE_UPLOAD";
   const ready = Boolean(project && topic);

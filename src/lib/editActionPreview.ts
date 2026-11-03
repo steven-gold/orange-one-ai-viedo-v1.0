@@ -19,9 +19,12 @@ import {
   dialogueBindingAllowsRender,
   dialogueBindingAllowsSyncPass,
   dialogueBindingPatch,
+  dialogueBindingStatusLabel,
   parseDialogueTimingBinding,
+  resolveDialogueTimingBinding,
   DIALOGUE_LIPSYNC_BINDING_UID,
 } from "./dialogueTimingBinding";
+import { parseVideoHandoffManifest } from "./videoGateContract";
 
 function named(value: string | null | undefined): string {
   return exactName(value);
@@ -33,6 +36,18 @@ function keep(nextValue: string | undefined, current: string | null, fallback: s
 
 function toggle(current: string | null, on: string, off: string): string {
   return current === on ? off : on;
+}
+
+const STAGE_SCORE_PENDING = "評審待輸入";
+
+// EDIT-01-LBL-STAGE-SCORE is READ_EXACT per spec: the stage score is read
+// from the upstream video handoff manifest evidence, never fabricated.
+function upstreamStageScore(current: (uid: string) => string | null): string {
+  const manifest =
+    parseVideoHandoffManifest(current("EDIT-01-LBL-BINDING-FINGERPRINT")) ||
+    parseVideoHandoffManifest(current("EDIT-01-FLD-SOURCE-VERSION"));
+  const evidence = manifest?.evidence?.trim();
+  return evidence && evidence !== "—" ? evidence : STAGE_SCORE_PENDING;
 }
 
 function inboundReady(current: (uid: string) => string | null): boolean {
@@ -258,7 +273,7 @@ export function previewEditAction(
     return {
       "EDIT-01-BTN-STAGE-CONFIRM": "confirmed",
       "EDIT-01-LBL-CURRENT-STAGE": keep(undefined, current("EDIT-01-LBL-CURRENT-STAGE"), "STAGE 02 · AUDIO"),
-      "EDIT-01-LBL-STAGE-SCORE": keep(undefined, current("EDIT-01-LBL-STAGE-SCORE"), "95"),
+      "EDIT-01-LBL-STAGE-SCORE": upstreamStageScore(current),
     };
   }
   if (actionUid === "EDIT-01-ACT-STAGE-MODIFY") {
@@ -414,10 +429,12 @@ export function previewEditAction(
   }
   if (actionUid === "EDIT-01-ACT-EVAL-RECHECK-SELECTED" || actionUid === "EDIT-01-ACT-EVAL-RECHECK-FULL") {
     if (!dialogueBindingAllowsSyncPass(current)) return {};
+    const binding = resolveDialogueTimingBinding(current);
+    const statusLabel = dialogueBindingStatusLabel(binding.status) || binding.status;
     return {
       [controlUid]: "rechecked",
-      "EDIT-01-LBL-EVAL-SUMMARY": keep(undefined, current("EDIT-01-LBL-EVAL-SUMMARY"), "PASS"),
-      "EDIT-01-LBL-STAGE-SCORE": keep(undefined, current("EDIT-01-LBL-STAGE-SCORE"), "95"),
+      "EDIT-01-LBL-EVAL-SUMMARY": `對話綁定重檢：${statusLabel}`,
+      "EDIT-01-LBL-STAGE-SCORE": upstreamStageScore(current),
     };
   }
   if (actionUid === "EDIT-01-ACT-VERSION-SAVE") {
