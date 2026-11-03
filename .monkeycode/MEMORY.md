@@ -106,3 +106,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - Video page has no FLD-GATES container (unlike asset): gate status is carried by FLD-PAGE-STATE + FLD-DISABLED-REASON (overlay-derived) and FLD-ERROR (action-written); EVALUATE/FLOW-START clear stale FLD-ERROR.
   - Video spec source is /tmp/opencode/all_0c2c0a.txt (ACPOS-AI-05 mother design, 10503 lines); confirm contract POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/confirm; no VIDEO-01-ERR-* literals exist in spec - write plain gate reasons into FLD-ERROR instead of inventing error codes.
   - Live vs local probe asymmetry: probes that seed fields via node:sqlite only work against the local dev DB (/tmp/acpos-sandbox-workbench.sqlite); the Vercel deployment reads its own database, so live probes must assert the fail-closed semantics reachable through HTTP actions alone.
+
+[Project Knowledge Summary]
+- Date: 2026-11-03
+- Context: Discovered by Agent while implementing the QCP approval registry (QA-SYNC-01 three-element compliance)
+- Category: Build Methods
+- Instructions:
+  - src/lib/qcpRegistry.ts is the single source for all QCP profiles: six canonical rows (QCP-CORE-BASELINE-V1 8 dims, QCP-ASSET-IMAGE-V1 9, QCP-ASSET-AUDIO-V1 8, QCP-VIDEO-BASELINE-V1 9, QCP-EDIT-FINAL-V1 12, QCP-QA-FINAL-OUTPUT-V1 17; threshold 95 each) plus QGP_POLICY_VERSION = "QGP-V1". assetGateContract/videoGateContract resolve their profile constants via resolveApprovedCriteria(uid) - never re-declare dimension arrays inline.
+  - Scorecards carry the QA-SYNC-01 triple: exact profile UID + criteria_version (VIDEO-CRITERIA-*/ASSET-CRITERIA-*) + quality_gate_policy_version (QGP-V1). New pages adding scorecards must include all three fields.
+  - CORE 8-dim and QA 17-dim dimension definitions are absent from the spec (counts only); registry stores them with dimensions: null (metadata rows, authority pending). EDIT 12-dim names come from the spec list; weights are implementation authority (spec says weights are new authority and does not enumerate them).
+  - Verify QGP field writes with /tmp/opencode/verify_qgp.mjs (seeds candidate, EVALUATE, waits 9s, asserts scorecard triple, cleans up). Video projection table is ghsn_video_field_projection(control_uid, value_text) - value column name is value_text, and /api/video read model is model.fields[].controlUid/value.
