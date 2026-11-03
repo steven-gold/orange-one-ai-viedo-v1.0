@@ -328,11 +328,22 @@ export function previewAssetActionInner(
 
   if (actionUid === "ASSET-01-ACT-PROJECT-SELECT") {
     const selected = namedSelection(nextValue, project);
-    return selected ? { "ASSET-01-CTL-PROJECT": selected, ...resetAssetWorkspace() } : {};
+    return selected
+      ? {
+          "ASSET-01-CTL-PROJECT": selected,
+          "ASSET-01-CTL-TOPIC": "",
+          "ASSET-01-FLD-TASK": "",
+          "ASSET-01-FLD-BLUEPRINT": "",
+          "ASSET-01-FLD-DNA": "",
+          "ASSET-01-FLD-SCRIPT": "",
+          "ASSET-01-FLD-CANONICAL-PROJECTION": "",
+          ...resetAssetWorkspace(),
+        }
+      : {};
   }
   if (actionUid === "ASSET-01-ACT-TOPIC-SELECT") {
     const selected = namedSelection(nextValue, topic);
-    return selected ? { "ASSET-01-CTL-TOPIC": selected, ...resetAssetWorkspace() } : {};
+    return selected ? { "ASSET-01-CTL-TOPIC": selected, "ASSET-01-FLD-TASK": "", ...resetAssetWorkspace() } : {};
   }
   if (actionUid === "ASSET-01-ACT-MODE-SET") {
     if (!ready) return {};
