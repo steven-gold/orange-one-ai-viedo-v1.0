@@ -87,3 +87,10 @@ Entries discovered by the Agent during task execution should follow this format:
 - Instructions:
   - Asset scorecard overall is three-state: hard block fail -> BLOCKED, any dimension score null -> REVIEW_PENDING, all scored -> PASS only when weighted Total>=95 (spec docasset.txt:2960). Probes must accept REVIEW_PENDING for EVALUATE assertions; CONFIRMED / locked / handoff-sent full-chain assertions are unreachable until real reviewer scores exist (no provider artifacts in this environment) - assert CONFIRM fail-closed with GATE-CONFIRM reason "reviewer scores pending: ..." instead.
   - PATCH-ACCEPT already writes FLD-OUTPUT-ID=ASSET-v1, so CONFIRM interception evidence is ASSET-01-BTN-CONFIRM state + gate reason, never FLD-OUTPUT-ID.
+
+[Project Knowledge Summary]
+- Date: 2026-11-03
+- Context: Discovered by Agent while diagnosing intermittent ECONNRESET to the Vercel deployment from sandbox Node scripts
+- Category: Environment Configuration
+- Instructions:
+  - Sandbox DNS is poisoned for the Vercel domain: orange-one-acpos-test.vercel.app may resolve to 128.242.240.155 / 2a03:2880::/32 (Meta IP space) causing ECONNRESET/TLS drops, while curl --resolve to 64.29.17.67 works. Fixed by pinning `64.29.17.67 orange-one-acpos-test.vercel.app` in /etc/hosts; node fetch ignores the `agent` option (undici dispatcher required otherwise), so probes rely on this hosts entry.
