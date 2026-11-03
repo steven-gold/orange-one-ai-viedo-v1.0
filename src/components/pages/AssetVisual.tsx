@@ -173,8 +173,37 @@ export function AssetVisual() {
             return [];
           }
         };
-        setProjectOptions(parseNameList(coreField("CORE-01-BTN-PROJECT-CREATE")));
-        setTopicOptions(parseNameList(coreField("CORE-01-BTN-TOPIC-CREATE")));
+        // Display delivery mode (docasset.txt:1706): only projects whose CORE
+        // upstream is confirmed/locked with a topic are handed off to the
+        // ASSET workspace; the rest stay invisible here (fail-closed parity).
+        let snapshots: Record<string, Record<string, string>> = {};
+        try {
+          const parsedSnapshots = JSON.parse(coreField("CORE-01-FLD-PROJECT-SNAPSHOTS") ?? "{}") as unknown;
+          if (parsedSnapshots && typeof parsedSnapshots === "object") snapshots = parsedSnapshots as Record<string, Record<string, string>>;
+        } catch {
+          snapshots = {};
+        }
+        const currentProject = coreField("CORE-01-CTL-PROJECT") ?? "";
+        const upstreamState = (project: string) => {
+          const isCurrent = project === currentProject;
+          const confirmed = isCurrent
+            ? coreField("CORE-01-BTN-PROJECT-CONFIRM") === "confirmed" || coreField("CORE-01-BTN-PROJECT-LOCK") === project
+            : snapshots[project]?.["CORE-01-BTN-PROJECT-CONFIRM"] === "confirmed" || snapshots[project]?.["CORE-01-BTN-PROJECT-LOCK"] === project;
+          const topic = isCurrent ? coreField("CORE-01-CTL-TOPIC") : snapshots[project]?.["CORE-01-CTL-TOPIC"];
+          return { confirmed, topic: typeof topic === "string" ? topic : "" };
+        };
+        const allProjects = parseNameList(coreField("CORE-01-BTN-PROJECT-CREATE"));
+        const projectCandidates = currentProject && !allProjects.includes(currentProject) ? [currentProject, ...allProjects] : allProjects;
+        setProjectOptions(projectCandidates.filter((project) => {
+          const state = upstreamState(project);
+          return Boolean(state.confirmed && state.topic);
+        }));
+        const selectedProject = resolved.project || currentProject;
+        const topicRaw =
+          selectedProject && selectedProject === currentProject
+            ? coreField("CORE-01-BTN-TOPIC-CREATE")
+            : snapshots[selectedProject]?.["CORE-01-BTN-TOPIC-CREATE"] ?? null;
+        setTopicOptions(parseNameList(typeof topicRaw === "string" ? topicRaw : null));
         const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
         if (resolved.ready) {
           for (const row of model.fields) {

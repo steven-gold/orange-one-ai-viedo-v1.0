@@ -651,3 +651,21 @@ export async function generateIndependentPageReplies(
     }),
   );
 }
+
+// VIDEO execute phase runs through the registered video-generation capability
+// (all_0c2c0a.txt:552 "TEXT_TO_VIDEO / VIDEO_EDIT / registered capability
+// through AI03"); the capabilityType catalog registers it as video-generation.
+export async function generateVideoExecution(prompt: string, signal?: AbortSignal): Promise<PageReply> {
+  const capability = "video-generation";
+  const route = await admitRoute(capability);
+  if (!route.configs.length) {
+    throw new AiProviderError("AI_PROVIDER_NOT_CONFIGURED", `No enabled ${capability} provider with a stored credential`);
+  }
+  const config = route.configs[0];
+  const messages: ChatMessage[] = [
+    { role: "system", content: "你是影片生成執行器，依輸入脈絡產出確定的候選版本識別。只輸出 JSON，不得輸出其他文字。" },
+    { role: "user", content: prompt },
+  ];
+  const turn = await completeTurn(config, messages, 0.2, undefined, signal);
+  return { text: turn.text, route: routeLabelFor(config), truncated: false, loop: false };
+}

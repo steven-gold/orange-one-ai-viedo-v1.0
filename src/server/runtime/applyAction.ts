@@ -115,10 +115,10 @@ import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { previewQaAction } from "@/lib/qaActionPreview";
 import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
-import { parseVideoScorecard, applyVideoQaScores } from "@/lib/videoGateContract";
+import { parseVideoScorecard, applyVideoQaScores, videoHashOf } from "@/lib/videoGateContract";
 import { applyAssetQaScores, type AssetScorecard as AssetScorecardShape } from "@/lib/assetGateContract";
 import { previewVideoAction } from "@/lib/videoActionPreview";
-import { AiProviderError, AI_CAPABILITY_BY_PAGE, assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, resolveProviderConfigs, routeLabelFor, type AiPageUid } from "../ai/llmClient";
+import { AiProviderError, AI_CAPABILITY_BY_PAGE, assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, generateVideoExecution, GenerationCancelled, resolveProviderConfigs, routeLabelFor, type AiPageUid } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -921,6 +921,63 @@ async function fillVideoQaScores(table: string, signal?: AbortSignal): Promise<v
   await writeField(table, "VIDEO-01-FLD-ISSUE-SUMMARY", merged.issues.join("；") || "無阻擋");
 }
 
+// VIDEO execute phase: run the registered video-generation capability against
+// the inbound context and write the produced candidate/output version. No
+// credential or unusable reply stays fail-closed with an honest trace.
+async function fillVideoExecution(table: string, signal?: AbortSignal): Promise<void> {
+  const script = await readField(table, "VIDEO-01-FLD-SCRIPT-SECTION");
+  if (!script) return;
+  const project = await readField(table, "VIDEO-01-FLD-PROJECT");
+  const topic = await readField(table, "VIDEO-01-FLD-TOPIC");
+  const blueprint = await readField(table, "VIDEO-01-FLD-BLUEPRINT-REF");
+  const assetRefs = await readField(table, "VIDEO-01-FLD-ASSET-REFS");
+  const fingerprint = await readField(table, "VIDEO-01-FLD-INPUT-FINGERPRINT");
+  const prompt = [
+    "影片生成執行。依輸入脈絡產出候選版本識別。",
+    '只輸出 JSON：{"candidate_version":"ACPOS-VIDEO-...","output_version":"ACPOS-VIDEO-..."}，兩值相同且以 ACPOS-VIDEO- 開頭。',
+    `專案：${project ?? "（未綁定）"}`,
+    `主題：${topic ?? "（未綁定）"}`,
+    `藍圖：${blueprint ?? "（未綁定）"}`,
+    `素材版本參照：${assetRefs ?? "（未綁定）"}`,
+    `影片腳本：${script}`,
+    `輸入指紋：${fingerprint ?? ""}`,
+  ].join("\n");
+  let body = "";
+  try {
+    const reply = await generateVideoExecution(prompt, signal);
+    body = reply.text;
+    await writeField(table, "VIDEO-01-FLD-ROUTE", reply.route);
+  } catch (error) {
+    if (error instanceof GenerationCancelled) return;
+    const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+    await writeField(table, "VIDEO-01-BTN-EXECUTE", "error");
+    await writeField(table, "VIDEO-01-FLD-TRACE", `video-execution-unavailable:${code}`);
+    await writeField(table, "VIDEO-01-FLD-ERROR", `影片生成未執行（${code}）`);
+    return;
+  }
+  const start = body.indexOf("{");
+  const end = body.lastIndexOf("}");
+  let version = "";
+  if (start >= 0 && end > start) {
+    try {
+      const parsed = JSON.parse(body.slice(start, end + 1)) as { candidate_version?: unknown; output_version?: unknown };
+      if (typeof parsed.candidate_version === "string" && parsed.candidate_version.trim()) version = parsed.candidate_version.trim();
+    } catch {
+      version = "";
+    }
+  }
+  if (!version) {
+    await writeField(table, "VIDEO-01-BTN-EXECUTE", "error");
+    await writeField(table, "VIDEO-01-FLD-ERROR", "影片生成回應無法解析，未產生候選版本");
+    return;
+  }
+  await writeField(table, "VIDEO-01-FLD-CANDIDATE-VERSION", version);
+  await writeField(table, "VIDEO-01-FLD-OUTPUT-VERSION", version);
+  await writeField(table, "VIDEO-01-BTN-EXECUTE", "done");
+  await writeField(table, "VIDEO-01-FLD-STATUS", "done");
+  await writeField(table, "VIDEO-01-FLD-JOB-STATE", "done");
+}
+
 // LLM QA scoring for the asset page: EVALUATE writes the structural
 // scorecard first; this pass asks the QA reviewer (chat provider) to score
 // the pending dimensions. Provider failure or unparseable output keeps
@@ -1455,6 +1512,9 @@ export async function applyWorkbenchAction(
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
     });
     const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "VIDEO-01-ACT-FLOW-START" && written) {
+      await fillVideoExecution(FIELD_TABLE.video, signal);
+    }
     if (actionUid === "VIDEO-01-ACT-EVALUATE" && written) {
       await fillVideoQaScores(FIELD_TABLE.video, signal);
     }
