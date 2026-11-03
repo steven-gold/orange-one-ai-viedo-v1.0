@@ -276,6 +276,12 @@ export function assetChecksumOf(parts: { outputId: string; manifestId: string; l
   return `CKS-${assetHash([parts.outputId, parts.manifestId, parts.layerDocVersion])}`;
 }
 
+// Naming authority is ACPOS_SYSTEM (docasset.txt:36): canonical filename is
+// system-assigned and deterministic, never hand-named or renamed on the page.
+export function assetCanonicalFilenameOf(parts: { outputId: string; project: string; topic: string }): string {
+  return `ACPOS-ASSET-${assetHash([parts.project, parts.topic, parts.outputId])}`;
+}
+
 function layerDocFrom(raw: string | null | undefined) {
   return parseLayerDocument(raw ?? null);
 }

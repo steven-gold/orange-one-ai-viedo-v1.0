@@ -7,6 +7,7 @@ import {
 import {
   appendAssetError,
   assetChecksumOf,
+  assetCanonicalFilenameOf,
   assetContractHash,
   assetGateContextFrom,
   assetLayerEligible,
@@ -748,9 +749,15 @@ export function previewAssetActionInner(
   if (actionUid === "ASSET-01-ACT-CANDIDATE-CONFIRM") {
     const ctx = assetGateContextFrom(current);
     if (ctx.scorecard?.overall !== "PASS") return {};
+    const confirmedOutputId = keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已確認版本");
     return {
       "ASSET-01-BTN-CONFIRM": "confirmed",
-      "ASSET-01-FLD-OUTPUT-ID": keepName(undefined, current("ASSET-01-FLD-OUTPUT-ID"), current("ASSET-01-FLD-MANIFEST") || "已確認版本"),
+      "ASSET-01-FLD-OUTPUT-ID": confirmedOutputId,
+      "ASSET-01-FLD-CANONICAL-FILENAME": assetCanonicalFilenameOf({
+        outputId: confirmedOutputId,
+        project: ctx.project,
+        topic: ctx.topic,
+      }),
     };
   }
   if (actionUid === "ASSET-01-ACT-VERSION-HISTORY") {
