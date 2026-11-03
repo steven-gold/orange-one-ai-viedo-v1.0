@@ -398,6 +398,8 @@ export function AssetVisual() {
   const compareMode = valueOf("ASSET-01-LST-COMPARE-VERSIONS");
   const previewLabel = selectedAsset && selectedAsset !== "created" ? selectedAsset : tx("asset.preview_unbound");
   const selectedManifest = parseAssetManifest(valueOf("ASSET-01-FLD-MANIFEST-REQUIRED"));
+  const blockedGateReason = (gate: string): string | undefined =>
+    parseAssetGates(valueOf("ASSET-01-FLD-GATES")).find((row) => row.gate === gate && row.state === "BLOCK")?.reason;
   const selectedItemType =
     selectedManifest?.items.find((item) => item.item_id === selectedAsset)?.type ??
     selectedManifest?.items[0]?.type ??
@@ -616,7 +618,7 @@ export function AssetVisual() {
                 ));
               })()}
             </div>
-            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-EVALUATE" disabled={disabled || !selectedAsset} onClick={() => void act("ASSET-01-BTN-EVALUATE")}>{tx("asset.evaluate")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-EVALUATE" disabled={disabled || !selectedAsset} title={blockedGateReason("ASSET-01-GATE-EVALUATION")} onClick={() => void act("ASSET-01-BTN-EVALUATE")}>{tx("asset.evaluate")}</button>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-RESULT-DETAIL" disabled={disabled || !evaluated} onClick={() => void act("ASSET-01-BTN-RESULT-DETAIL", undefined, "ASSET-01-ACT-FINDING-CREATE")}>{tx("asset.create_finding")}</button>
           </section>
           <section data-component-uid="ASSET-01-CMP-VERSION" data-section-uid="ASSET-01-SEC-09">
@@ -629,9 +631,9 @@ export function AssetVisual() {
           <section data-component-uid="ASSET-01-CMP-DECISION">
             <h3 className={styles.sub}>{tx("asset.decision")}</h3>
             <div className={styles.decisionRow}>
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-CONFIRM" disabled={disabled || !evaluated} onClick={() => void act("ASSET-01-BTN-CONFIRM")}>{tx("asset.confirm")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-CONFIRM" disabled={disabled || !evaluated} title={blockedGateReason("ASSET-01-GATE-CONFIRM")} onClick={() => void act("ASSET-01-BTN-CONFIRM")}>{tx("asset.confirm")}</button>
               <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-MODIFY" disabled={disabled} onClick={submitCorrection}>{tx("asset.modify")}</button>
-              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LOCK" disabled={disabled || !confirmed} onClick={() => void act("ASSET-01-BTN-LOCK")}>{tx("asset.lock")}</button>
+              <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LOCK" disabled={disabled || !confirmed} title={blockedGateReason("ASSET-01-GATE-LOCK")} onClick={() => void act("ASSET-01-BTN-LOCK")}>{tx("asset.lock")}</button>
             </div>
           </section>
         </aside>
@@ -808,7 +810,7 @@ export function AssetVisual() {
           ) : (
             <>
           <div className={styles.layerActions}>
-            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DOC-CREATE" disabled={disabled} onClick={() => openNameDialog("layer-doc")}>{tx("asset.layer_doc_create")}</button>
+            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DOC-CREATE" disabled={disabled || !layerEligible} title={layerEligible ? blockedGateReason("ASSET-01-GATE-LAYER-WRITE") : `asset type ${selectedItemType ?? "?"} skips LayerRuntime (Not Applicable)`} onClick={() => openNameDialog("layer-doc")}>{tx("asset.layer_doc_create")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DOC-UPDATE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-LAYER-DOC-UPDATE")}>{tx("asset.layer_doc_update")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-ADD" disabled={disabled} onClick={() => openNameDialog("layer")}>{tx("asset.layer_add")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DELETE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-LAYER-DELETE")}>{tx("asset.layer_delete")}</button>
@@ -885,7 +887,7 @@ export function AssetVisual() {
           ) : (
             <>
           <div className={styles.patchActions}>
-            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-CREATE" disabled={disabled} onClick={() => openNameDialog("patch")}>{tx("asset.patch_create")}</button>
+            <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-CREATE" disabled={disabled || !layerEligible} title={layerEligible ? blockedGateReason("ASSET-01-GATE-PATCH-PREVIEW") : `asset type ${selectedItemType ?? "?"} skips LayerRuntime (Not Applicable)`} onClick={() => openNameDialog("patch")}>{tx("asset.patch_create")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-PREVIEW" disabled={disabled} onClick={() => void act("ASSET-01-BTN-PATCH-PREVIEW")}>{tx("asset.patch_preview")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-ACCEPT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-PATCH-ACCEPT")}>{tx("asset.patch_accept")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-REJECT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-PATCH-REJECT")}>{tx("asset.patch_reject")}</button>
@@ -936,7 +938,7 @@ export function AssetVisual() {
             {ASSET_HANDOFF_FIELDS.map(([uid, key]) => (
               <Field key={uid} uid={uid} label={tx(key)} value={valueOf(uid)} loading={loading} onAct={act} disabled={disabled} readonly />
             ))}
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-HANDOFF" disabled={disabled || !locked} onClick={() => void act("ASSET-01-BTN-HANDOFF")}>{tx("asset.handoff_video")}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="ASSET-01-BTN-HANDOFF" disabled={disabled || !locked} title={blockedGateReason("ASSET-01-GATE-HANDOFF")} onClick={() => void act("ASSET-01-BTN-HANDOFF")}>{tx("asset.handoff_video")}</button>
           </div>
         </section>
       </div>
