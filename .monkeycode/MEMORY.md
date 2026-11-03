@@ -79,3 +79,11 @@ Entries discovered by the Agent during task execution should follow this format:
   - FLD-ERRORS / read-model control visibility is stage-filtered: error codes written during READY/WAIT_CONFIRMATION may read undefined after stage moves to CONFIRMED - assert via FLD-GATES snapshot (gate state/reason) instead when late in the chain.
   - CONFIRM control action uid is ASSET-01-ACT-CANDIDATE-CONFIRM (not ASSET-01-ACT-CONFIRM); LOCK uses ASSET-01-ACT-VERSION-LOCK.
   - Live probe script truth: real LLM puts SFX semantics in beat dialogue rather than scene titles, so probes must not assume fixed scene headings; bind image-compatible items by manifest type filter (exclude VOICE/MUSIC/SFX/REFERENCE) before Layer/Patch assertions.
+
+[Project Knowledge Summary]
+- Date: 2026-11-03
+- Context: Discovered by Agent while closing the scorecard review-semantics gap (weighted total + three-state overall + strict confirm)
+- Category: Testing Methods
+- Instructions:
+  - Asset scorecard overall is three-state: hard block fail -> BLOCKED, any dimension score null -> REVIEW_PENDING, all scored -> PASS only when weighted Total>=95 (spec docasset.txt:2960). Probes must accept REVIEW_PENDING for EVALUATE assertions; CONFIRMED / locked / handoff-sent full-chain assertions are unreachable until real reviewer scores exist (no provider artifacts in this environment) - assert CONFIRM fail-closed with GATE-CONFIRM reason "reviewer scores pending: ..." instead.
+  - PATCH-ACCEPT already writes FLD-OUTPUT-ID=ASSET-v1, so CONFIRM interception evidence is ASSET-01-BTN-CONFIRM state + gate reason, never FLD-OUTPUT-ID.
