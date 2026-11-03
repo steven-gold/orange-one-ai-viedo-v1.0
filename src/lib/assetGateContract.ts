@@ -138,9 +138,36 @@ function named(value: string | null | undefined): string {
 const AUDIO_ITEM_TYPES: ReadonlySet<AssetManifestItemType> = new Set<AssetManifestItemType>(["VOICE", "MUSIC", "SFX"]);
 const TYPE_TAG_PATTERN = /\[(SFX|MUSIC|VOICE|CHARACTER|OBJECT|VFX|TEXTURE|TEXT|REFERENCE)\]\s*/i;
 
+const SEMANTIC_TYPE_HINTS: Array<[AssetManifestItemType, RegExp]> = [
+  ["SFX", /(?:SFX|音效|聲音效果|音效說明)/g],
+  ["VOICE", /(?:旁白|配音|獨白|畫外音)/g],
+  ["MUSIC", /(?:配樂|背景音樂|主題曲|音樂)/g],
+  ["VFX", /(?:VFX|特效|視覺效果)/g],
+  ["TEXT", /(?:字幕|標題卡|片頭|片尾)/g],
+];
+
 function itemTypeFromRequirement(requirement: string): AssetManifestItemType {
   const match = TYPE_TAG_PATTERN.exec(requirement);
-  return match ? (match[1].toUpperCase() as AssetManifestItemType) : "SCENE";
+  if (match) return match[1].toUpperCase() as AssetManifestItemType;
+  const counts = new Map<AssetManifestItemType, number>();
+  for (const [type, pattern] of SEMANTIC_TYPE_HINTS) {
+    const hits = requirement.match(pattern);
+    if (hits?.length) counts.set(type, hits.length);
+  }
+  if (counts.size) {
+    const order: AssetManifestItemType[] = ["SFX", "VOICE", "MUSIC", "VFX", "TEXT"];
+    let best: AssetManifestItemType = "SCENE";
+    let bestCount = 0;
+    for (const type of order) {
+      const count = counts.get(type) ?? 0;
+      if (count > bestCount) {
+        best = type;
+        bestCount = count;
+      }
+    }
+    if (bestCount > 0) return best;
+  }
+  return "SCENE";
 }
 
 export function assetIsAudioType(type: string): boolean {
@@ -161,7 +188,7 @@ function parseScriptProjection(raw: string | null | undefined): { version: strin
     const projection = JSON.parse(raw) as {
       version?: string;
       views?: { views?: Array<{ view?: string; items?: Array<{ ref?: string; requirement?: string; type?: string }> }> };
-      structure?: { scenes?: Array<{ scene_id?: string; title?: string }> };
+      structure?: { scenes?: Array<{ scene_id?: string; title?: string; beats?: Array<{ action?: string; dialogue?: string; narration?: string }> }> };
     };
     const assetView = projection.views?.views?.find((view) => view?.view === "ASSET");
     let items = (assetView?.items ?? [])
@@ -175,7 +202,10 @@ function parseScriptProjection(raw: string | null | undefined): { version: strin
     if (!items.length) {
       items = (projection.structure?.scenes ?? [])
         .map((scene) => {
-          const requirement = String(scene?.title ?? "").trim();
+          const beatsText = (scene?.beats ?? [])
+            .map((beat) => `${beat?.action ?? ""} ${beat?.dialogue ?? ""} ${beat?.narration ?? ""}`)
+            .join(" ");
+          const requirement = [String(scene?.title ?? "").trim(), beatsText.trim()].filter(Boolean).join("\n");
           return { ref: String(scene?.scene_id ?? "").trim(), requirement, type: itemTypeFromRequirement(requirement) };
         })
         .filter((item) => item.ref.length > 0);
