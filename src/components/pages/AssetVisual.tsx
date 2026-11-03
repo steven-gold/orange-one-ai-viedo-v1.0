@@ -118,6 +118,8 @@ export function AssetVisual() {
   const [searchDraft, setSearchDraft] = useState("");
   const [correctionDraft, setCorrectionDraft] = useState("");
   const [inbound, setInbound] = useState<AssetInbound>(EMPTY_INBOUND);
+  const [projectOptions, setProjectOptions] = useState<string[]>([]);
+  const [topicOptions, setTopicOptions] = useState<string[]>([]);
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState<{ x: number; y: number; ref: string; text: string } | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -162,6 +164,17 @@ export function AssetVisual() {
         setAuthorized(model.authorized);
         const resolved = resolveAssetInbound((uid) => core?.fields.find((row) => row.controlUid === uid)?.value ?? null);
         setInbound(resolved);
+        const coreField = (uid: string) => core?.fields.find((row) => row.controlUid === uid)?.value ?? null;
+        const parseNameList = (raw: string | null) => {
+          try {
+            const parsed = JSON.parse(raw ?? "[]") as unknown;
+            return Array.isArray(parsed) ? parsed.filter((row): row is string => typeof row === "string" && row.trim().length > 0) : [];
+          } catch {
+            return [];
+          }
+        };
+        setProjectOptions(parseNameList(coreField("CORE-01-BTN-PROJECT-CREATE")));
+        setTopicOptions(parseNameList(coreField("CORE-01-BTN-TOPIC-CREATE")));
         const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
         if (resolved.ready) {
           for (const row of model.fields) {
@@ -455,7 +468,39 @@ export function AssetVisual() {
 
       <section className={styles.context} data-component-uid="ASSET-01-CMP-CONTEXT" data-section-uid="ASSET-01-SEC-01">
         <Field uid="ASSET-01-CTL-PROJECT" label={tx("asset.project")} value={valueOf("ASSET-01-CTL-PROJECT")} loading={loading} onAct={act} disabled={disabled} readonly />
+        {projectOptions.length > 0 ? (
+          <div className={styles.projectSwitch} data-component-uid="ASSET-01-CMP-PROJECT-SWITCH">
+            {projectOptions.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={item === valueOf("ASSET-01-CTL-PROJECT") ? `${styles.chip} ${styles.chipActive}` : styles.chip}
+                data-control-uid="ASSET-01-CTL-PROJECT"
+                disabled={disabled || item === valueOf("ASSET-01-CTL-PROJECT")}
+                onClick={() => void act("ASSET-01-CTL-PROJECT", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <Field uid="ASSET-01-CTL-TOPIC" label={tx("asset.topic")} value={valueOf("ASSET-01-CTL-TOPIC")} loading={loading} onAct={act} disabled={disabled} readonly />
+        {topicOptions.length > 0 ? (
+          <div className={styles.projectSwitch} data-component-uid="ASSET-01-CMP-TOPIC-SWITCH">
+            {topicOptions.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={item === valueOf("ASSET-01-CTL-TOPIC") ? `${styles.chip} ${styles.chipActive}` : styles.chip}
+                data-control-uid="ASSET-01-CTL-TOPIC"
+                disabled={disabled || item === valueOf("ASSET-01-CTL-TOPIC")}
+                onClick={() => void act("ASSET-01-CTL-TOPIC", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <Field uid="ASSET-01-FLD-TASK" label={tx("asset.task")} value={valueOf("ASSET-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
         <Field uid="ASSET-01-FLD-TASK-STATUS" label={tx("asset.task_status")} value={valueOf("ASSET-01-FLD-TASK-STATUS")} loading={loading} onAct={act} disabled={disabled} readonly />
         <button type="button" className={styles.btn} data-control-uid="ASSET-01-CTL-MODE" disabled={disabled} onClick={() => void act("ASSET-01-CTL-MODE")}>

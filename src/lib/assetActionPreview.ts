@@ -108,6 +108,10 @@ function named(value: string | null | undefined): string {
   return namedValue(value ?? undefined, "") ? String(value).trim() : "";
 }
 
+function namedSelection(nextValue: string | undefined | null, currentValue: string | null): string {
+  return namedValue(nextValue ?? undefined, named(currentValue) || "");
+}
+
 function keepName(nextValue: string | undefined, currentValue: string | null, fallback: string): string {
   return namedValue(nextValue, named(currentValue) || fallback);
 }
@@ -323,10 +327,12 @@ export function previewAssetActionInner(
   if (conversation) return ready ? conversation : {};
 
   if (actionUid === "ASSET-01-ACT-PROJECT-SELECT") {
-    return project ? { "ASSET-01-CTL-PROJECT": project, ...resetAssetWorkspace() } : {};
+    const selected = namedSelection(nextValue, project);
+    return selected ? { "ASSET-01-CTL-PROJECT": selected, ...resetAssetWorkspace() } : {};
   }
   if (actionUid === "ASSET-01-ACT-TOPIC-SELECT") {
-    return topic ? { "ASSET-01-CTL-TOPIC": topic, ...resetAssetWorkspace() } : {};
+    const selected = namedSelection(nextValue, topic);
+    return selected ? { "ASSET-01-CTL-TOPIC": selected, ...resetAssetWorkspace() } : {};
   }
   if (actionUid === "ASSET-01-ACT-MODE-SET") {
     if (!ready) return {};

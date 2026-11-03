@@ -1357,6 +1357,21 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "asset") {
+    if (
+      (actionUid === "ASSET-01-ACT-PROJECT-SELECT" || actionUid === "ASSET-01-ACT-TOPIC-SELECT") &&
+      typeof nextValue === "string" &&
+      nextValue.trim()
+    ) {
+      const isProject = actionUid === "ASSET-01-ACT-PROJECT-SELECT";
+      await applyProjectedAction(
+        FIELD_TABLE.core,
+        previewCoreAction,
+        isProject ? "CORE-01-CTL-PROJECT" : "CORE-01-CTL-TOPIC",
+        isProject ? "CORE-01-ACT-PROJECT-SELECT" : "CORE-01-ACT-TOPIC-SELECT",
+        nextValue.trim(),
+        {},
+      );
+    }
     const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
       "SELECT control_uid, value_text FROM ghsn_core_field_projection",
     );
