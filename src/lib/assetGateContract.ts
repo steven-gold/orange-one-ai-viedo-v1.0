@@ -190,22 +190,28 @@ function parseScriptProjection(raw: string | null | undefined): { version: strin
       views?: { views?: Array<{ view?: string; items?: Array<{ ref?: string; requirement?: string; type?: string }> }> };
       structure?: { scenes?: Array<{ scene_id?: string; title?: string; beats?: Array<{ action?: string; dialogue?: string; narration?: string }> }> };
     };
+    const sceneTextById = new Map(
+      (projection.structure?.scenes ?? []).map((scene) => {
+        const beatsText = (scene?.beats ?? [])
+          .map((beat) => `${beat?.action ?? ""} ${beat?.dialogue ?? ""} ${beat?.narration ?? ""}`)
+          .join(" ");
+        return [String(scene?.scene_id ?? "").trim(), [String(scene?.title ?? "").trim(), beatsText.trim()].filter(Boolean).join("\n")];
+      }),
+    );
     const assetView = projection.views?.views?.find((view) => view?.view === "ASSET");
     let items = (assetView?.items ?? [])
       .map((item) => {
-        const requirement = String(item?.requirement ?? "").trim();
+        const ref = String(item?.ref ?? "").trim();
+        const requirement = [String(item?.requirement ?? "").trim(), ref ? sceneTextById.get(ref) ?? "" : ""].filter(Boolean).join("\n");
         const declared = String(item?.type ?? "").trim().toUpperCase();
         const type = (["SCENE", "CHARACTER", "OBJECT", "VFX", "TEXTURE", "TEXT", "VOICE", "MUSIC", "SFX", "REFERENCE"].includes(declared) ? declared : itemTypeFromRequirement(requirement)) as AssetManifestItemType;
-        return { ref: String(item?.ref ?? "").trim(), requirement, type };
+        return { ref, requirement, type };
       })
       .filter((item) => item.ref.length > 0);
     if (!items.length) {
       items = (projection.structure?.scenes ?? [])
         .map((scene) => {
-          const beatsText = (scene?.beats ?? [])
-            .map((beat) => `${beat?.action ?? ""} ${beat?.dialogue ?? ""} ${beat?.narration ?? ""}`)
-            .join(" ");
-          const requirement = [String(scene?.title ?? "").trim(), beatsText.trim()].filter(Boolean).join("\n");
+          const requirement = sceneTextById.get(String(scene?.scene_id ?? "").trim()) ?? String(scene?.title ?? "").trim();
           return { ref: String(scene?.scene_id ?? "").trim(), requirement, type: itemTypeFromRequirement(requirement) };
         })
         .filter((item) => item.ref.length > 0);
