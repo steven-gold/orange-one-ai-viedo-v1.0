@@ -107,6 +107,37 @@ export function parseVideoHandoffManifest(raw: string | null | undefined): Video
   }
 }
 
+export type VideoQaScoreInput = { uid: string; score: number; evidence?: string };
+
+// Merge reviewer (LLM QA) scores into a scorecard and re-aggregate honestly:
+// unscored dimensions stay null, totals/overall are recomputed from evidence.
+export function applyVideoQaScores(card: VideoScorecard, scores: VideoQaScoreInput[]): VideoScorecard {
+  const dimensions = card.dimensions.map((row) => {
+    if (row.score !== null) return row;
+    const hit = scores.find((item) => item.uid === row.uid);
+    if (!hit || !Number.isFinite(hit.score)) return row;
+    const score = Math.max(0, Math.min(100, Math.round(hit.score)));
+    return { ...row, score, evidence: hit.evidence?.trim().slice(0, 140) || "QA 評審評分" };
+  });
+  const issues = dimensions.filter((row) => row.score === 0).map((row) => `${row.uid}: ${row.hard_block ? row.evidence : `${row.label} — ${row.evidence}`}`);
+  const scored = dimensions.filter((row) => typeof row.score === "number");
+  const weightedTotal = Math.round(scored.reduce((sum, row) => sum + ((row.score as number) * row.weight) / 100, 0));
+  const hardBlockFailed = dimensions.some((row) => row.hard_block && row.score === 0);
+  const pendingDims = dimensions.filter((row) => row.score === null).map((row) => row.uid);
+  const allScored = pendingDims.length === 0;
+  const nextIssues = [...issues];
+  if (allScored && weightedTotal < 95 && !hardBlockFailed) {
+    nextIssues.push(`QA-WEIGHTED-TOTAL: ${weightedTotal} < 95`);
+  }
+  return {
+    ...card,
+    dimensions,
+    weighted_total: weightedTotal,
+    overall: hardBlockFailed ? "BLOCKED" : allScored ? (weightedTotal >= 95 ? "PASS" : "BLOCKED") : "REVIEW_PENDING",
+    issues: nextIssues,
+  };
+}
+
 export function buildVideoScorecard(ctx: VideoGateContext, at = nowStamp()): VideoScorecard | null {
   const candidateRef = ctx.outputVersion || ctx.candidateVersion;
   if (!candidateRef) return null;

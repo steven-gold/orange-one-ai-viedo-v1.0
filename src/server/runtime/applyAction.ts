@@ -115,6 +115,8 @@ import { resolveEditInbound, effectiveVideoCurrent } from "@/lib/editInbound";
 import { previewQaAction } from "@/lib/qaActionPreview";
 import { resolveQaInbound } from "@/lib/qaInbound";
 import { resolveVideoInbound } from "@/lib/videoInbound";
+import { parseVideoScorecard, applyVideoQaScores } from "@/lib/videoGateContract";
+import { applyAssetQaScores, type AssetScorecard as AssetScorecardShape } from "@/lib/assetGateContract";
 import { previewVideoAction } from "@/lib/videoActionPreview";
 import { AiProviderError, AI_CAPABILITY_BY_PAGE, assignedAiRouteSnapshot, generateIndependentPageReplies, generatePageReply, GenerationCancelled, resolveProviderConfigs, routeLabelFor, type AiPageUid } from "../ai/llmClient";
 import { clearAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
@@ -864,8 +866,126 @@ async function fillCorrectionScriptBody(
   await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
 }
 
-async function fillAssetPatchPreview(table: string, uid: string, signal?: AbortSignal): Promise<void> {
-  const patch = parseAssetPatch(await readField(table, uid));
+// LLM QA scoring for the video page: EVALUATE writes the structural
+// scorecard first; this pass asks the QA reviewer (chat provider) to score
+// the pending dimensions. Provider failure or unparseable output keeps
+// dimensions PENDING (honest) and records the reason.
+async function fillVideoQaScores(table: string, signal?: AbortSignal): Promise<void> {
+  const card = parseVideoScorecard(await readField(table, "VIDEO-01-FLD-SCORECARD"));
+  if (!card) return;
+  const pending = card.dimensions.filter((row) => row.score === null);
+  if (!pending.length) return;
+  const scoredEvidence = card.dimensions
+    .filter((row) => row.score !== null)
+    .map((row) => `${row.uid}=${row.score}（${row.evidence}）`)
+    .join("；");
+  const prompt = [
+    "你是影片 QA 評審。依據已評定證據與待評維度說明，對每個待評維度打 0-100 整數分並附一行 evidence（繁體中文）。",
+    '只輸出 JSON：{"scores":[{"uid":"...","score":N,"evidence":"..."}]}，不得輸出其他文字。',
+    `已評證據：${scoredEvidence || "（無）"}`,
+    `待評維度：${pending.map((row) => `${row.uid}（${row.label}）`).join("；")}`,
+  ].join("\n");
+  let body = "";
+  try {
+    const reply = await generatePageReply("video", prompt, undefined, [], { signal });
+    body = reply.text;
+  } catch (error) {
+    if (error instanceof GenerationCancelled && error.partial) body = error.partial;
+    else {
+      const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+      await writeField(table, "VIDEO-01-FLD-ISSUE-SUMMARY", `QA 評審未完成（${code}），待評維度保持 PENDING`);
+      return;
+    }
+  }
+  let scores: Array<{ uid?: unknown; score?: unknown; evidence?: unknown }> = [];
+  const start = body.indexOf("{");
+  const end = body.lastIndexOf("}");
+  if (start >= 0 && end > start) {
+    try {
+      const parsed = JSON.parse(body.slice(start, end + 1)) as { scores?: Array<{ uid?: unknown; score?: unknown; evidence?: unknown }> };
+      scores = Array.isArray(parsed.scores) ? parsed.scores : [];
+    } catch {
+      scores = [];
+    }
+  }
+  const usable = scores
+    .filter((row) => typeof row.uid === "string" && typeof row.score === "number")
+    .map((row) => ({ uid: row.uid as string, score: row.score as number, evidence: typeof row.evidence === "string" ? row.evidence : undefined }));
+  if (!usable.length) {
+    await writeField(table, "VIDEO-01-FLD-ISSUE-SUMMARY", "QA 評審輸出無法解析，待評維度保持 PENDING");
+    return;
+  }
+  const merged = applyVideoQaScores(card, usable);
+  await writeField(table, "VIDEO-01-FLD-SCORECARD", JSON.stringify(merged));
+  await writeField(table, "VIDEO-01-FLD-OVERALL-SCORE", `${merged.overall} · Total ${merged.weighted_total}`);
+  await writeField(table, "VIDEO-01-FLD-ISSUE-SUMMARY", merged.issues.join("；") || "無阻擋");
+}
+
+// LLM QA scoring for the asset page: EVALUATE writes the structural
+// scorecard first; this pass asks the QA reviewer (chat provider) to score
+// the pending dimensions. Provider failure or unparseable output keeps
+// dimensions PENDING (honest) and records the reason in FLD-ISSUES.
+async function fillAssetQaScores(table: string, signal?: AbortSignal): Promise<void> {
+  const raw = await readField(table, "ASSET-01-FLD-CRITERIA");
+  let card: AssetScorecardShape | null = null;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as AssetScorecardShape;
+      card = parsed?.kind === "ASSET_SCORECARD" && Array.isArray(parsed.dimensions) ? parsed : null;
+    } catch {
+      card = null;
+    }
+  }
+  if (!card) return;
+  const pending = card.dimensions.filter((row) => row.score === null);
+  if (!pending.length) return;
+  const scoredEvidence = card.dimensions
+    .filter((row) => row.score !== null)
+    .map((row) => `${row.uid}=${row.score}（${row.evidence}）`)
+    .join("；");
+  const prompt = [
+    "你是素材 QA 評審。依據已評定證據與待評維度說明，對每個待評維度打 0-100 整數分並附一行 evidence（繁體中文）。",
+    '只輸出 JSON：{"scores":[{"uid":"...","score":N,"evidence":"..."}]}，不得輸出其他文字。',
+    `已評證據：${scoredEvidence || "（無）"}`,
+    `待評維度：${pending.map((row) => `${row.uid}（${row.label}）`).join("；")}`,
+  ].join("\n");
+  let body = "";
+  try {
+    const reply = await generatePageReply("asset", prompt, undefined, [], { signal });
+    body = reply.text;
+  } catch (error) {
+    if (error instanceof GenerationCancelled && error.partial) body = error.partial;
+    else {
+      const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+      await writeField(table, "ASSET-01-FLD-ISSUES", JSON.stringify({ kind: "ASSET_FINDINGS", summary: `QA 評審未完成（${code}），待評維度保持 PENDING`, findings: [] }));
+      return;
+    }
+  }
+  let scores: Array<{ uid?: unknown; score?: unknown; evidence?: unknown }> = [];
+  const start = body.indexOf("{");
+  const end = body.lastIndexOf("}");
+  if (start >= 0 && end > start) {
+    try {
+      const parsed = JSON.parse(body.slice(start, end + 1)) as { scores?: Array<{ uid?: unknown; score?: unknown; evidence?: unknown }> };
+      scores = Array.isArray(parsed.scores) ? parsed.scores : [];
+    } catch {
+      scores = [];
+    }
+  }
+  const usable = scores
+    .filter((row) => typeof row.uid === "string" && typeof row.score === "number")
+    .map((row) => ({ uid: row.uid as string, score: row.score as number, evidence: typeof row.evidence === "string" ? row.evidence : undefined }));
+  if (!usable.length) {
+    await writeField(table, "ASSET-01-FLD-ISSUES", JSON.stringify({ kind: "ASSET_FINDINGS", summary: "QA 評審輸出無法解析，待評維度保持 PENDING", findings: [] }));
+    return;
+  }
+  const merged = applyAssetQaScores(card, usable);
+  await writeField(table, "ASSET-01-FLD-CRITERIA", JSON.stringify(merged));
+  await writeField(table, "ASSET-01-FLD-DIMENSIONS", JSON.stringify(merged.dimensions));
+  await writeField(table, "ASSET-01-FLD-OVERALL", merged.overall);
+}
+
+async function fillAssetPatchPreview(table: string, uid: string, signal?: AbortSignal): Promise<void> {  const patch = parseAssetPatch(await readField(table, uid));
   if (!patch || patch.status !== "PREVIEWED" || patch.preview) return;
   let body = "";
   try {
@@ -1255,6 +1375,9 @@ export async function applyWorkbenchAction(
       "ASSET-01-FLD-CANONICAL-PROJECTION": inbound.scriptProjection,
     });
     const written = await applyProjectedAction(FIELD_TABLE.asset, previewAssetAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "ASSET-01-ACT-EVALUATE" && written) {
+      await fillAssetQaScores(FIELD_TABLE.asset, signal);
+    }
     const conversationActionControls = new Set([
       ASSET_CONVERSATION.sendUid,
       ASSET_CONVERSATION.assistantUid,
@@ -1317,6 +1440,9 @@ export async function applyWorkbenchAction(
       "VIDEO-01-FLD-INSTRUCTION": inbound.instruction,
     });
     const written = await applyProjectedAction(FIELD_TABLE.video, previewVideoAction, controlUid, actionUid, nextValue, seed);
+    if (actionUid === "VIDEO-01-ACT-EVALUATE" && written) {
+      await fillVideoQaScores(FIELD_TABLE.video, signal);
+    }
     if ((actionUid === "VIDEO-01-ACT-SEND" || actionUid === "VIDEO-01-ACT-MSG-ANALYZE") && written) {
       await fillConversationReply(FIELD_TABLE.video, VIDEO_CONVERSATION, "video", actionUid, nextValue, accountUid, signal, stream);
     }
