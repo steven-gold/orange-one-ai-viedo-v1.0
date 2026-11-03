@@ -110,7 +110,14 @@ export function appendAssetError(raw: string | null | undefined, code: AssetErro
   return serializeAssetErrors([...parseAssetErrors(raw), entry]);
 }
 
-export type AssetManifestItem = { item_id: string; requirement: string; type: "SCENE" | "CHARACTER" | "OBJECT" | "VFX" | "TEXTURE" | "VOICE" | "MUSIC"; output_kind: "IMAGE" | "AUDIO" };
+export type AssetManifestItemType = "SCENE" | "CHARACTER" | "OBJECT" | "VFX" | "TEXTURE" | "TEXT" | "VOICE" | "MUSIC" | "SFX" | "REFERENCE";
+
+export type AssetManifestItem = {
+  item_id: string;
+  requirement: string;
+  type: AssetManifestItemType;
+  output_kind: string;
+};
 export type AssetManifest = {
   kind: "ASSET_MANIFEST";
   manifest_id: string;
@@ -127,21 +134,50 @@ function named(value: string | null | undefined): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function parseScriptProjection(raw: string | null | undefined): { version: string; assetItems: Array<{ ref: string; requirement: string }> } | null {
+
+const AUDIO_ITEM_TYPES: ReadonlySet<AssetManifestItemType> = new Set<AssetManifestItemType>(["VOICE", "MUSIC", "SFX"]);
+const TYPE_TAG_PATTERN = /\[(SFX|MUSIC|VOICE|CHARACTER|OBJECT|VFX|TEXTURE|TEXT|REFERENCE)\]\s*/i;
+
+function itemTypeFromRequirement(requirement: string): AssetManifestItemType {
+  const match = TYPE_TAG_PATTERN.exec(requirement);
+  return match ? (match[1].toUpperCase() as AssetManifestItemType) : "SCENE";
+}
+
+export function assetIsAudioType(type: string): boolean {
+  return AUDIO_ITEM_TYPES.has(type as AssetManifestItemType);
+}
+
+export function assetLayerEligible(type: string): boolean {
+  return type !== "UNRESOLVED" && !assetIsAudioType(type) && type !== "REFERENCE";
+}
+
+export function assetProfileOf(type: string): "QCP-ASSET-IMAGE-V1" | "QCP-ASSET-AUDIO-V1" {
+  return assetIsAudioType(type) ? "QCP-ASSET-AUDIO-V1" : "QCP-ASSET-IMAGE-V1";
+}
+
+function parseScriptProjection(raw: string | null | undefined): { version: string; assetItems: Array<{ ref: string; requirement: string; type: AssetManifestItemType }> } | null {
   if (!raw) return null;
   try {
     const projection = JSON.parse(raw) as {
       version?: string;
-      views?: { views?: Array<{ view?: string; items?: Array<{ ref?: string; requirement?: string }> }> };
+      views?: { views?: Array<{ view?: string; items?: Array<{ ref?: string; requirement?: string; type?: string }> }> };
       structure?: { scenes?: Array<{ scene_id?: string; title?: string }> };
     };
     const assetView = projection.views?.views?.find((view) => view?.view === "ASSET");
     let items = (assetView?.items ?? [])
-      .map((item) => ({ ref: String(item?.ref ?? "").trim(), requirement: String(item?.requirement ?? "").trim() }))
+      .map((item) => {
+        const requirement = String(item?.requirement ?? "").trim();
+        const declared = String(item?.type ?? "").trim().toUpperCase();
+        const type = (["SCENE", "CHARACTER", "OBJECT", "VFX", "TEXTURE", "TEXT", "VOICE", "MUSIC", "SFX", "REFERENCE"].includes(declared) ? declared : itemTypeFromRequirement(requirement)) as AssetManifestItemType;
+        return { ref: String(item?.ref ?? "").trim(), requirement, type };
+      })
       .filter((item) => item.ref.length > 0);
     if (!items.length) {
       items = (projection.structure?.scenes ?? [])
-        .map((scene) => ({ ref: String(scene?.scene_id ?? "").trim(), requirement: String(scene?.title ?? "").trim() }))
+        .map((scene) => {
+          const requirement = String(scene?.title ?? "").trim();
+          return { ref: String(scene?.scene_id ?? "").trim(), requirement, type: itemTypeFromRequirement(requirement) };
+        })
         .filter((item) => item.ref.length > 0);
     }
     if (!items.length) return null;
@@ -165,8 +201,8 @@ export function buildAssetManifest(
   const items: AssetManifestItem[] = projection.assetItems.map((item) => ({
     item_id: item.ref,
     requirement: item.requirement,
-    type: "SCENE",
-    output_kind: "IMAGE",
+    type: item.type,
+    output_kind: assetIsAudioType(item.type) ? "AUDIO_WAVEFORM" : item.type === "REFERENCE" ? "IMAGE_OR_METADATA" : "IMAGE",
   }));
   const reuse = items.filter((item) => done.has(item.item_id)).map((item) => item.item_id);
   const missing = items.filter((item) => !done.has(item.item_id)).map((item) => item.item_id);
@@ -236,7 +272,15 @@ export type AssetGateContext = {
   patchJson: string;
   executing: string;
   compareSelection: string;
+  assetType: string;
 };
+
+export function assetTypeFrom(current: (uid: string) => string | null): string {
+  const manifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+  const selectedRef = named(current("ASSET-01-FLD-MANIFEST")) || named(current("ASSET-01-FLD-OUTPUT-ID"));
+  const item = manifest?.items.find((row) => row.item_id === selectedRef) ?? manifest?.items[0];
+  return item?.type ?? "UNRESOLVED";
+}
 
 export function assetGateContextFrom(current: (uid: string) => string | null): AssetGateContext {
   const list = (uid: string): string[] => {
@@ -257,6 +301,8 @@ export function assetGateContextFrom(current: (uid: string) => string | null): A
       scorecard = null;
     }
   }
+  const manifest = parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED"));
+  const assetType = assetTypeFrom(current);
   return {
     project: named(current("ASSET-01-CTL-PROJECT")),
     topic: named(current("ASSET-01-CTL-TOPIC")),
@@ -265,7 +311,7 @@ export function assetGateContextFrom(current: (uid: string) => string | null): A
     script: named(current("ASSET-01-FLD-SCRIPT")),
     naming: named(current("ASSET-01-FLD-NAMING-AUTHORITY")),
     route: named(current("ASSET-01-FLD-ROUTE")),
-    manifest: parseAssetManifest(current("ASSET-01-FLD-MANIFEST-REQUIRED")),
+    manifest,
     assets: list("ASSET-01-LST-ASSET"),
     outputId: named(current("ASSET-01-FLD-OUTPUT-ID")),
     manifestSelected: named(current("ASSET-01-FLD-MANIFEST")),
@@ -286,38 +332,91 @@ export function assetGateContextFrom(current: (uid: string) => string | null): A
     patchJson: named(current("ASSET-01-BTN-PATCH-CREATE")),
     executing: named(current("ASSET-01-BTN-EXECUTE")),
     compareSelection: named(current("ASSET-01-LST-COMPARE-VERSIONS")),
+    assetType,
   };
 }
+
+export type AssetScoreDimension = {
+  uid: string;
+  label: string;
+  weight: number;
+  score: number | null;
+  hard_block: boolean;
+  evidence: string;
+};
 
 export type AssetScorecard = {
   kind: "ASSET_SCORECARD";
   criteria_version: string;
+  profile: string;
+  asset_type: string;
   candidate_ref: string;
-  dimensions: Array<{ name: string; result: "PASS" | "FAIL" | "NA"; detail: string }>;
+  dimensions: AssetScoreDimension[];
   overall: "PASS" | "BLOCKED";
   issues: string[];
   evaluated_at: string;
 };
+
+type QcpDimensionSpec = { uid: string; label: string; weight: number; hard_block: boolean };
+
+const QCP_IMAGE_PROFILE: QcpDimensionSpec[] = [
+  { uid: "QA-DIM-ASSET-SCRIPT", label: "Script / Manifest Compliance", weight: 15, hard_block: false },
+  { uid: "QA-DIM-ASSET-IDENTITY", label: "Character / Identity DNA Fidelity", weight: 20, hard_block: false },
+  { uid: "QA-DIM-ASSET-OBJECT", label: "Object Fidelity", weight: 10, hard_block: false },
+  { uid: "QA-DIM-ASSET-SCENE", label: "Scene / Environment Fidelity", weight: 10, hard_block: false },
+  { uid: "QA-DIM-ASSET-COMPOSITION", label: "Composition / Framing", weight: 10, hard_block: false },
+  { uid: "QA-DIM-ASSET-GEOMETRY", label: "Anatomy / Geometry / Artifact Integrity", weight: 15, hard_block: false },
+  { uid: "QA-DIM-ASSET-STYLE", label: "Style / Color / Lighting Consistency", weight: 10, hard_block: false },
+  { uid: "QA-DIM-ASSET-TECH", label: "Technical Image Quality", weight: 5, hard_block: false },
+  { uid: "QA-DIM-RIGHTS-POLICY", label: "Rights / Policy", weight: 5, hard_block: true },
+];
+
+const QCP_AUDIO_PROFILE: QcpDimensionSpec[] = [
+  { uid: "QA-DIM-AUDIO-SCRIPT", label: "Script / Manifest Compliance", weight: 15, hard_block: false },
+  { uid: "QA-DIM-AUDIO-IDENTITY", label: "Voice Identity / Semantic Fit", weight: 20, hard_block: false },
+  { uid: "QA-DIM-AUDIO-CONTENT", label: "Pronunciation / Content Accuracy", weight: 15, hard_block: false },
+  { uid: "QA-DIM-AUDIO-TIMING", label: "Timing / Duration", weight: 10, hard_block: false },
+  { uid: "QA-DIM-AUDIO-NOISE", label: "Noise / Clipping / Distortion", weight: 15, hard_block: false },
+  { uid: "QA-DIM-AUDIO-LEVEL", label: "Level / Dynamics", weight: 10, hard_block: false },
+  { uid: "QA-DIM-AUDIO-TECH", label: "Technical Audio Format", weight: 10, hard_block: false },
+  { uid: "QA-DIM-RIGHTS-POLICY", label: "Rights / Policy", weight: 5, hard_block: true },
+];
+
+const REVIEW_PENDING = "評審待輸入（本頁僅結構性判定）";
 
 export function buildAssetScorecard(ctx: AssetGateContext, at = nowStamp()): AssetScorecard | null {
   const candidateRef = ctx.outputId || ctx.manifestSelected;
   if (!candidateRef) return null;
   const doc = layerDocFrom(ctx.layerDocJson);
   const upstreamOk = Boolean(ctx.blueprint && ctx.dna && ctx.script);
-  const manifestItem = ctx.manifest?.items.find((item) => item.item_id === candidateRef || item.requirement === candidateRef);
-  const provenance = manifestItem || ctx.manifest ? (manifestItem ? "PASS" : "NA") : "NA";
-  const layerConsistency = doc ? (doc.hash && doc.version > 0 ? "PASS" : "FAIL") : "NA";
-  const dimensions: AssetScorecard["dimensions"] = [
-    { name: "upstream_binding", result: upstreamOk ? "PASS" : "FAIL", detail: upstreamOk ? `${ctx.blueprint} / ${ctx.dna} / ${ctx.script}` : "blueprint/DNA/script binding incomplete" },
-    { name: "provenance_exact_ref", result: provenance as "PASS" | "FAIL" | "NA", detail: manifestItem ? `manifest item ${manifestItem.item_id}` : ctx.manifest ? "candidate outside upstream manifest items" : "manifest unresolved" },
-    { name: "layer_consistency", result: layerConsistency as "PASS" | "FAIL" | "NA", detail: doc ? `${doc.layer_doc_id}#v${doc.version}` : "no layer document" },
-    { name: "rights_basis", result: ctx.rights ? "PASS" : "FAIL", detail: ctx.rights || "rights basis not resolved" },
-    { name: "checksum_identity", result: ctx.checksum ? "PASS" : "NA", detail: ctx.checksum || "checksum pending lock" },
-  ];
-  const issues = dimensions.filter((row) => row.result === "FAIL").map((row) => `${row.name}: ${row.detail}`);
+  const completedRow = (ctx.manifest?.completed ?? []).find((row) => row.output_ref === candidateRef);
+  const manifestItem =
+    ctx.manifest?.items.find((item) => item.item_id === candidateRef || item.requirement === candidateRef) ??
+    (completedRow ? ctx.manifest?.items.find((item) => item.item_id === completedRow.item_id) : undefined);
+  const assetType = manifestItem?.type ?? (ctx.assetType !== "UNRESOLVED" ? ctx.assetType : "SCENE");
+  const profile = assetProfileOf(assetType);
+  const specs = assetIsAudioType(assetType) ? QCP_AUDIO_PROFILE : QCP_IMAGE_PROFILE;
+  const scriptOk = upstreamOk && Boolean(manifestItem);
+  const scriptEvidence = `${scriptOk ? "PASS" : "FAIL"}: ${ctx.blueprint || "BP?"} / ${ctx.dna || "DNA?"} / ${ctx.script || "CS?"}${manifestItem ? ` / item ${manifestItem.item_id}` : ctx.manifest ? " / candidate outside upstream manifest items" : ""}`;
+  const layerEvidence = doc ? `${doc.layer_doc_id}#v${doc.version} hash=${doc.hash}` : "no layer document";
+  const dimensions: AssetScoreDimension[] = specs.map((spec) => {
+    if (spec.hard_block) {
+      return { uid: spec.uid, label: spec.label, weight: spec.weight, score: ctx.rights ? 100 : 0, hard_block: true, evidence: ctx.rights ? ctx.rights : "rights basis not resolved" };
+    }
+    if (spec.uid.endsWith("-SCRIPT")) {
+      return { uid: spec.uid, label: spec.label, weight: spec.weight, score: scriptOk ? 100 : 0, hard_block: false, evidence: scriptEvidence };
+    }
+    if (spec.uid.endsWith("-TECH")) {
+      return { uid: spec.uid, label: spec.label, weight: spec.weight, score: ctx.checksum ? 100 : null, hard_block: false, evidence: ctx.checksum ? `checksum ${ctx.checksum}` : `checksum pending lock; layer: ${layerEvidence}` };
+    }
+    return { uid: spec.uid, label: spec.label, weight: spec.weight, score: null, hard_block: false, evidence: REVIEW_PENDING };
+  });
+  const issues = dimensions.filter((row) => row.score === 0).map((row) => `${row.uid}: ${row.hard_block ? row.evidence : `${row.label} — ${row.evidence}`}`);
   return {
     kind: "ASSET_SCORECARD",
     criteria_version: `ASSET-CRITERIA-${assetHash([ctx.project, ctx.topic, ctx.script])}`,
+    profile,
+    asset_type: assetType,
     candidate_ref: candidateRef,
     dimensions,
     overall: issues.length ? "BLOCKED" : "PASS",
@@ -355,8 +454,8 @@ export function evaluateAssetGates(ctx: AssetGateContext): AssetGateState[] {
     state("ASSET-01-GATE-EVALUATION", Boolean(ctx.scorecard), ctx.scorecard ? `scorecard ${ctx.scorecard.overall}` : "evaluation pending"),
     state("ASSET-01-GATE-WAIT-CONFIRM", Boolean(ctx.scorecard) && ctx.confirmed !== "confirmed", evaluatedPass ? "awaiting human confirmation" : "scorecard must PASS before confirmation"),
     state("ASSET-01-GATE-CORRECTION", ctx.correctionOpen === "open", ctx.correctionOpen === "open" ? (ctx.correctionApproved === "approved" ? "correction approved" : "correction discussion open") : "correction not opened"),
-    state("ASSET-01-GATE-LAYER-ELIGIBLE", true, "image-compatible asset (audio items skip layers)"),
-    state("ASSET-01-GATE-LAYER-WRITE", Boolean(doc), doc ? `${doc.layer_doc_id}#v${doc.version}` : "no layer document"),
+    state("ASSET-01-GATE-LAYER-ELIGIBLE", assetLayerEligible(ctx.assetType), ctx.assetType === "UNRESOLVED" ? "asset type unresolved (manifest item type required)" : assetLayerEligible(ctx.assetType) ? `image-compatible asset type ${ctx.assetType}` : `asset type ${ctx.assetType} skips LayerRuntime (Not Applicable)`),
+    state("ASSET-01-GATE-LAYER-WRITE", assetLayerEligible(ctx.assetType) && Boolean(doc), doc ? `${doc.layer_doc_id}#v${doc.version}` : assetLayerEligible(ctx.assetType) ? "no layer document" : `layer write Not Applicable for ${ctx.assetType}`),
     state("ASSET-01-GATE-PATCH-PREVIEW", Boolean(patch && patch.status === "CANDIDATE"), patch ? `patch ${patch.status}` : "no patch candidate"),
     state("ASSET-01-GATE-PATCH-DECISION", Boolean(patch && (patch.status === "PREVIEWED" || patch.status === "CANDIDATE")), patch ? `patch ${patch.status}` : "no patch decision pending"),
     state("ASSET-01-GATE-CONFIRM", evaluatedPass && ctx.confirmed !== "confirmed", evaluatedPass ? "ready to confirm" : "evaluation must PASS"),

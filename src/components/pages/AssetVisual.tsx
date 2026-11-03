@@ -7,7 +7,7 @@ import { ASSET_CORRECTION_RESPONSE_UID, displayAiReply } from "@/lib/aiReply";
 import { AssetClientError, fetchAssetReadModel, fetchCoreReadModel, postAssetAction, type AssetFieldValue } from "@/lib/client";
 import { resolveAssetInbound, type AssetInbound } from "@/lib/assetInbound";
 import { previewAssetAction, usableList } from "@/lib/assetActionPreview";
-import { parseAssetGates } from "@/lib/assetGateContract";
+import { assetIsAudioType, assetLayerEligible, parseAssetGates, parseAssetManifest } from "@/lib/assetGateContract";
 import { formatCoreErrors } from "./coreFormat";
 import { parseCorrectionScript } from "@/lib/correctionScript";
 import { parseAssetPatch, parseLayerDocument, type LayerEntry } from "@/lib/layerDocument";
@@ -397,6 +397,13 @@ export function AssetVisual() {
   const selectedAsset = valueOf("ASSET-01-FLD-MANIFEST");
   const compareMode = valueOf("ASSET-01-LST-COMPARE-VERSIONS");
   const previewLabel = selectedAsset && selectedAsset !== "created" ? selectedAsset : tx("asset.preview_unbound");
+  const selectedManifest = parseAssetManifest(valueOf("ASSET-01-FLD-MANIFEST-REQUIRED"));
+  const selectedItemType =
+    selectedManifest?.items.find((item) => item.item_id === selectedAsset)?.type ??
+    selectedManifest?.items[0]?.type ??
+    null;
+  const audioSelected = selectedItemType != null && assetIsAudioType(selectedItemType);
+  const layerEligible = selectedItemType == null || assetLayerEligible(selectedItemType);
   const layerDoc = parseLayerDocument(valueOf("ASSET-01-BTN-LAYER-ADD"));
   const layers: string[] = layerDoc ? layerDoc.layers.map((layer) => layer.name) : usableList(valueOf("ASSET-01-BTN-LAYER-ADD"));
   const patch = parseAssetPatch(valueOf("ASSET-01-BTN-PATCH-CREATE"));
@@ -444,7 +451,7 @@ export function AssetVisual() {
         <div className={styles.error} role="alert">{tx("asset.inbound_blocked")}</div>
       ) : null}
 
-      <section className={styles.context} data-component-uid="ASSET-01-CMP-CONTEXT">
+      <section className={styles.context} data-component-uid="ASSET-01-CMP-CONTEXT" data-section-uid="ASSET-01-SEC-01">
         <Field uid="ASSET-01-CTL-PROJECT" label={tx("asset.project")} value={valueOf("ASSET-01-CTL-PROJECT")} loading={loading} onAct={act} disabled={disabled} readonly />
         <Field uid="ASSET-01-CTL-TOPIC" label={tx("asset.topic")} value={valueOf("ASSET-01-CTL-TOPIC")} loading={loading} onAct={act} disabled={disabled} readonly />
         <Field uid="ASSET-01-FLD-TASK" label={tx("asset.task")} value={valueOf("ASSET-01-FLD-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
@@ -458,7 +465,7 @@ export function AssetVisual() {
 
       <div className={styles.body}>
         <aside className={styles.left}>
-          <section data-component-uid="ASSET-01-CMP-ASSET-LIST">
+          <section data-component-uid="ASSET-01-CMP-ASSET-LIST" data-section-uid="ASSET-01-SEC-02">
             <h2 className={styles.title}>{tx("asset.manifest_list")}</h2>
             <label className={styles.search}>
               <span className={styles.label}>{tx("asset.search")}</span>
@@ -510,7 +517,7 @@ export function AssetVisual() {
               <p className={styles.note}>{tx("asset.search")}：{valueOf("ASSET-01-FLD-SEARCH")}</p>
             ) : null}
           </section>
-          <section data-component-uid="ASSET-01-CMP-REUSE">
+          <section data-component-uid="ASSET-01-CMP-REUSE" data-section-uid="ASSET-01-SEC-05">
             <h3 className={styles.sub}>{tx("asset.reuse_first")}</h3>
             <div className={styles.reuse}>
               {ASSET_REUSE_FIELDS.map(([uid, key]) => (
@@ -521,7 +528,7 @@ export function AssetVisual() {
         </aside>
 
         <main className={styles.center}>
-          <section data-component-uid="ASSET-01-CMP-COMPARE">
+          <section data-component-uid="ASSET-01-CMP-COMPARE" data-section-uid="ASSET-01-SEC-04">
             <h2 className={styles.title}>{tx("asset.preview_compare")}</h2>
             <div className={styles.toolbar}>
               <IconButton uid="ASSET-01-BTN-SINGLE" label={tx("asset.single")} icon="single" onAct={act} disabled={disabled} className={[styles.btn, styles.iconBtn, valueOf("ASSET-01-BTN-SINGLE") === "active" || !compareMode || compareMode === "單張" ? styles.active : ""].filter(Boolean).join(" ")} />
@@ -533,8 +540,13 @@ export function AssetVisual() {
               <button type="button" className={`${styles.btn} ${valueOf("ASSET-01-BTN-REFERENCE") === "attached" ? styles.active : ""}`} data-control-uid="ASSET-01-BTN-REFERENCE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-REFERENCE")}>{tx("asset.reference")}</button>
             </div>
           </section>
-          <section data-component-uid="ASSET-01-CMP-PREVIEW">
+          <section data-component-uid="ASSET-01-CMP-PREVIEW" data-section-uid="ASSET-01-SEC-04">
             <div className={styles.preview}>{previewLabel}</div>
+            {audioSelected ? (
+              <div className={styles.audioPreview} data-asset-output-kind="AUDIO_WAVEFORM">
+                {tx("asset.audio_waveform")} — {tx("asset.audio_pending")}
+              </div>
+            ) : null}
             <div className={styles.list} data-control-uid="ASSET-01-LST-COMPARE-VERSIONS">
               <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("ASSET-01-LST-COMPARE-VERSIONS")}>
                 <span>{tx("asset.selected_versions")}</span>
@@ -546,7 +558,7 @@ export function AssetVisual() {
         </main>
 
         <aside className={styles.right}>
-          <section data-component-uid="ASSET-01-CMP-BINDING">
+          <section data-component-uid="ASSET-01-CMP-BINDING" data-section-uid="ASSET-01-SEC-03">
             <h2 className={styles.title}>{tx("asset.binding")}</h2>
             {ASSET_BINDING_FIELDS.map(([uid, key]) => (
               <div key={uid} className={styles.kv} data-control-uid={uid}>
@@ -556,11 +568,11 @@ export function AssetVisual() {
             ))}
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-BLUEPRINT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-BLUEPRINT")}>{tx("asset.view_blueprint")}</button>
           </section>
-          <section data-component-uid="ASSET-01-CMP-SCRIPT">
+          <section data-component-uid="ASSET-01-CMP-SCRIPT" data-section-uid="ASSET-01-SEC-03">
             <h3 className={styles.sub}>{tx("asset.script_view")}</h3>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-SCRIPT" disabled={disabled} onClick={() => void act("ASSET-01-BTN-SCRIPT")}>{tx("asset.view_script")}</button>
           </section>
-          <section data-component-uid="ASSET-01-CMP-GATES">
+          <section data-component-uid="ASSET-01-CMP-GATES" data-section-uid="ASSET-01-SEC-03">
             <h3 className={styles.sub}>{tx("asset.gate_errors")}</h3>
             <div className={styles.kv} data-control-uid="ASSET-01-FLD-GATES">
               <span>{tx("asset.blocked_gates")}</span>
@@ -576,18 +588,38 @@ export function AssetVisual() {
               <span className={styles.value}>{formatCoreErrors(valueOf("ASSET-01-FLD-ASSET-ERRORS"), loading)}</span>
             </div>
           </section>
-          <section data-component-uid="ASSET-01-CMP-SCORE">
+          <section data-component-uid="ASSET-01-CMP-SCORE" data-section-uid="ASSET-01-SEC-09">
             <h3 className={styles.sub}>{tx("asset.scorecard")}</h3>
-            {ASSET_SCORE_FIELDS.map(([uid, key]) => (
+            {ASSET_SCORE_FIELDS.filter(([uid]) => uid !== "ASSET-01-FLD-DIMENSIONS").map(([uid, key]) => (
               <div key={uid} className={styles.kv} data-control-uid={uid}>
                 <span>{tx(key)}</span>
                 <span className={styles.value}>{displayAssetValue(valueOf(uid), loading)}</span>
               </div>
             ))}
+            <div className={styles.dimTable} data-control-uid="ASSET-01-FLD-DIMENSIONS">
+              <div className={styles.dimRow}>
+                <span>{tx("asset.dim_uid")}</span><span>{tx("asset.dim_label")}</span><span>{tx("asset.dim_weight")}</span><span>{tx("asset.dim_score")}</span><span>{tx("asset.dim_hard_block")}</span><span>{tx("asset.dim_evidence")}</span>
+              </div>
+              {(() => {
+                let dims: Array<{ uid: string; label: string; weight: number; score: number | null; hard_block: boolean; evidence: string }> = [];
+                try {
+                  const parsed = JSON.parse(valueOf("ASSET-01-FLD-DIMENSIONS") || "[]") as unknown;
+                  if (Array.isArray(parsed)) dims = parsed as typeof dims;
+                } catch {}
+                if (!dims.length) {
+                  return <div className={styles.dimRow}><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span><span>{tx("asset.dimensions")}</span></div>;
+                }
+                return dims.map((row) => (
+                  <div key={row.uid} className={styles.dimRow} data-dim-uid={row.uid} data-hard-block={row.hard_block ? "true" : "false"}>
+                    <span>{row.uid}</span><span>{row.label}</span><span>{row.weight}</span><span>{row.score == null ? "PENDING" : row.score}</span><span>{row.hard_block ? "HARD BLOCK" : "—"}</span><span>{row.evidence}</span>
+                  </div>
+                ));
+              })()}
+            </div>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-EVALUATE" disabled={disabled || !selectedAsset} onClick={() => void act("ASSET-01-BTN-EVALUATE")}>{tx("asset.evaluate")}</button>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="ASSET-01-BTN-RESULT-DETAIL" disabled={disabled || !evaluated} onClick={() => void act("ASSET-01-BTN-RESULT-DETAIL", undefined, "ASSET-01-ACT-FINDING-CREATE")}>{tx("asset.create_finding")}</button>
           </section>
-          <section data-component-uid="ASSET-01-CMP-VERSION">
+          <section data-component-uid="ASSET-01-CMP-VERSION" data-section-uid="ASSET-01-SEC-09">
             <h3 className={styles.sub}>{tx("asset.version")}</h3>
             <div className={styles.railActions}>
               <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-VERSION-HISTORY" disabled={disabled} onClick={() => void act("ASSET-01-BTN-VERSION-HISTORY")}>{tx("asset.version_history")}</button>
@@ -606,7 +638,7 @@ export function AssetVisual() {
       </div>
 
       <div className={styles.lower}>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-CORRECTION" hidden={!correctionOpen}>
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-CORRECTION" data-section-uid="ASSET-01-SEC-06" hidden={!correctionOpen}>
           <h3 className={styles.sub}>{tx("asset.correction")}</h3>
           <div className={styles.toolbar}>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-CORRECTION-OPEN" disabled={disabled} onClick={submitCorrection}>{tx("asset.correction_open")}</button>
@@ -769,8 +801,12 @@ export function AssetVisual() {
             )}
           </div>
         </section>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-STACK">
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-STACK" data-section-uid="ASSET-01-SEC-07">
           <h3 className={styles.sub}>{tx("asset.layer_stack")}</h3>
+          {audioSelected ? (
+            <p className={styles.note} data-layer-runtime="NOT_APPLICABLE">{tx("asset.layer_not_applicable")}</p>
+          ) : (
+            <>
           <div className={styles.layerActions}>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DOC-CREATE" disabled={disabled} onClick={() => openNameDialog("layer-doc")}>{tx("asset.layer_doc_create")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-LAYER-DOC-UPDATE" disabled={disabled} onClick={() => void act("ASSET-01-BTN-LAYER-DOC-UPDATE")}>{tx("asset.layer_doc_update")}</button>
@@ -818,9 +854,15 @@ export function AssetVisual() {
             </div>
           )}
           <p className={styles.note}>{tx("asset.layer_na")}</p>
+            </>
+          )}
         </section>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR">
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-section-uid="ASSET-01-SEC-07">
           <h3 className={styles.sub}>{tx("asset.layer_inspector")}</h3>
+          {audioSelected ? (
+            <p className={styles.note} data-layer-runtime="NOT_APPLICABLE">{tx("asset.layer_not_applicable")}</p>
+          ) : (
+            <>
           {layerDoc?.selected_layer_id ? (
             <p className={styles.note}>
               {tx("asset.layer_selected")}: {layerDoc.layers.find((layer) => layer.layer_id === layerDoc.selected_layer_id)?.name}
@@ -830,12 +872,18 @@ export function AssetVisual() {
           )}
           <Field uid="ASSET-01-CTL-LAYER-PROPERTIES" label={tx("asset.layer_properties")} value={valueOf("ASSET-01-CTL-LAYER-PROPERTIES")} loading={loading} onAct={() => openNameDialog("properties", valueOf("ASSET-01-CTL-LAYER-PROPERTIES") ?? "")} disabled={disabled} />
           <Field uid="ASSET-01-CTL-LAYER-MASK" label={tx("asset.layer_mask")} value={valueOf("ASSET-01-CTL-LAYER-MASK")} loading={loading} onAct={() => openNameDialog("mask", valueOf("ASSET-01-CTL-LAYER-MASK") ?? "")} disabled={disabled} />
+            </>
+          )}
         </section>
       </div>
 
       <div className={styles.lower}>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-PATCH">
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-PATCH" data-section-uid="ASSET-01-SEC-07">
           <h3 className={styles.sub}>{tx("asset.patch")}</h3>
+          {audioSelected ? (
+            <p className={styles.note} data-layer-runtime="NOT_APPLICABLE">{tx("asset.layer_not_applicable")}</p>
+          ) : (
+            <>
           <div className={styles.patchActions}>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-CREATE" disabled={disabled} onClick={() => openNameDialog("patch")}>{tx("asset.patch_create")}</button>
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-PATCH-PREVIEW" disabled={disabled} onClick={() => void act("ASSET-01-BTN-PATCH-PREVIEW")}>{tx("asset.patch_preview")}</button>
@@ -866,8 +914,10 @@ export function AssetVisual() {
           ) : (
             <p className={styles.note}>{tx("asset.patch_none")}</p>
           )}
+            </>
+          )}
         </section>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-RUNTIME">
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-RUNTIME" data-section-uid="ASSET-01-SEC-08">
           <h3 className={styles.sub}>{tx("asset.runtime")}</h3>
           {ASSET_RUNTIME_FIELDS.map(([uid, key]) => (
             <div key={uid} className={styles.kv} data-control-uid={uid}>
@@ -880,7 +930,7 @@ export function AssetVisual() {
             <button type="button" className={styles.btn} data-control-uid="ASSET-01-BTN-RUNTIME-DETAIL" disabled={disabled} onClick={() => void act("ASSET-01-BTN-RUNTIME-DETAIL")}>{tx("asset.runtime_detail")}</button>
           </div>
         </section>
-        <section className={styles.block} data-component-uid="ASSET-01-CMP-HANDOFF">
+        <section className={styles.block} data-component-uid="ASSET-01-CMP-HANDOFF" data-section-uid="ASSET-01-SEC-10">
           <h3 className={styles.sub}>{tx("asset.handoff")}</h3>
           <div className={styles.handoff}>
             {ASSET_HANDOFF_FIELDS.map(([uid, key]) => (

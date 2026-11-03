@@ -9,6 +9,8 @@ import {
   assetChecksumOf,
   assetContractHash,
   assetGateContextFrom,
+  assetLayerEligible,
+  assetTypeFrom,
   ASSET_ERRORS_UID,
   ASSET_GATES_UID,
   buildAssetManifest,
@@ -478,6 +480,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DOC-CREATE") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     if (!named(current("ASSET-01-FLD-SCRIPT"))) return {};
     const name = keepName(nextValue, current("ASSET-01-BTN-LAYER-DOC-CREATE"), "圖層文件");
     const doc = createLayerDocument({
@@ -493,6 +496,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DOC-UPDATE") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const doc = layerDocFrom(current);
     if (!doc) return {};
     const selection = doc.layers.find(
@@ -513,6 +517,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-ADD") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const doc = layerDocFrom(current);
     if (!doc) return {};
     const name = named(nextValue) || `圖層 ${doc.layers.length + 1}`;
@@ -524,6 +529,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DELETE") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const doc = layerDocFrom(current);
     if (!doc || doc.layers.length === 0) return {};
     const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id) ?? doc.layers[doc.layers.length - 1];
@@ -534,6 +540,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-DUPLICATE") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const doc = layerDocFrom(current);
     if (!doc || doc.layers.length === 0) return {};
     const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id) ?? doc.layers[doc.layers.length - 1];
@@ -544,6 +551,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-LAYER-REORDER") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const doc = layerDocFrom(current);
     if (!doc || doc.layers.length < 2) return {};
     return { "ASSET-01-BTN-LAYER-ADD": serializeLayerDocument(withLayerReordered(doc)) };
@@ -583,6 +591,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-CREATE") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const doc = layerDocFrom(current);
     if (!doc) return {};
     const target = doc.layers.find((layer) => layer.layer_id === doc.selected_layer_id);
@@ -600,6 +609,7 @@ export function previewAssetActionInner(
     return { "ASSET-01-BTN-PATCH-CREATE": serializeAssetPatch(patch) };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-PREVIEW") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
     if (!patch || patch.status === "ACCEPTED" || patch.status === "REJECTED") return {};
     return {
@@ -608,6 +618,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-ACCEPT") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
     const doc = layerDocFrom(current);
     if (!patch || !doc || patch.status !== "PREVIEWED" || !patch.preview) return {};
@@ -650,6 +661,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-REJECT") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
     if (!patch || patch.status === "ACCEPTED" || patch.status === "REJECTED") return {};
     return {
@@ -658,6 +670,7 @@ export function previewAssetActionInner(
     };
   }
   if (actionUid === "ASSET-01-ACT-PATCH-REVISE") {
+    if (!assetLayerEligible(assetTypeFrom(current))) return {};
     const patch = parseAssetPatch(current("ASSET-01-BTN-PATCH-CREATE"));
     if (!patch || patch.status === "ACCEPTED" || patch.status === "REJECTED") return {};
     const note = String(nextValue ?? "").trim() || "人工要求修改補丁";
@@ -855,12 +868,12 @@ const HARD_GATES: Record<string, HardGate> = {
   "ASSET-01-ACT-PATCH-ACCEPT": { gate: "ASSET-01-GATE-PATCH-DECISION", code: "ASSET-01-ERR-PATCH-001", reason: () => "patch must be PREVIEWED before acceptance" },
   "ASSET-01-ACT-CORRECTION-APPROVE": { gate: "ASSET-01-GATE-CORRECTION", code: "ASSET-01-ERR-CORRECTION-001", reason: () => "correction candidate source mismatch or status is not CANDIDATE" },
   "ASSET-01-ACT-CORRECTION-EXECUTE": { gate: "ASSET-01-GATE-CORRECTION", code: "ASSET-01-ERR-CORRECTION-001", reason: () => "correction candidate must be APPROVED before execute" },
-  "ASSET-01-ACT-LAYER-DOC-CREATE": { gate: "ASSET-01-GATE-SCRIPT", code: "ASSET-01-ERR-SCRIPT-001", reason: () => "canonical script ref required for layer document" },
-  "ASSET-01-ACT-LAYER-ADD": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "no versioned layer document; create one first" },
-  "ASSET-01-ACT-LAYER-DELETE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "no versioned layer document to mutate" },
-  "ASSET-01-ACT-LAYER-DUPLICATE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "no versioned layer document to mutate" },
-  "ASSET-01-ACT-LAYER-REORDER": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: () => "need at least two layers to reorder" },
-  "ASSET-01-ACT-PATCH-CREATE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-PATCH-001", reason: () => "select a layer before creating a patch" },
+  "ASSET-01-ACT-LAYER-DOC-CREATE": { gate: "ASSET-01-GATE-LAYER-ELIGIBLE", code: "ASSET-01-ERR-LAYER-001", reason: (ctx) => (ctx.assetType === "UNRESOLVED" ? "asset type unresolved (manifest item type required)" : `layer document Not Applicable for asset type ${ctx.assetType}`) },
+  "ASSET-01-ACT-LAYER-ADD": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: (ctx) => (assetLayerEligible(ctx.assetType) ? "no versioned layer document; create one first" : `layer write Not Applicable for asset type ${ctx.assetType}`) },
+  "ASSET-01-ACT-LAYER-DELETE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: (ctx) => (assetLayerEligible(ctx.assetType) ? "no versioned layer document to mutate" : `layer write Not Applicable for asset type ${ctx.assetType}`) },
+  "ASSET-01-ACT-LAYER-DUPLICATE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: (ctx) => (assetLayerEligible(ctx.assetType) ? "no versioned layer document to mutate" : `layer write Not Applicable for asset type ${ctx.assetType}`) },
+  "ASSET-01-ACT-LAYER-REORDER": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-LAYER-001", reason: (ctx) => (assetLayerEligible(ctx.assetType) ? "need at least two layers to reorder" : `layer write Not Applicable for asset type ${ctx.assetType}`) },
+  "ASSET-01-ACT-PATCH-CREATE": { gate: "ASSET-01-GATE-LAYER-WRITE", code: "ASSET-01-ERR-PATCH-001", reason: (ctx) => (assetLayerEligible(ctx.assetType) ? "select a layer before creating a patch" : `patch Not Applicable for asset type ${ctx.assetType}`) },
   "ASSET-01-ACT-PATCH-PREVIEW": { gate: "ASSET-01-GATE-PATCH-PREVIEW", code: "ASSET-01-ERR-PATCH-001", reason: () => "no patch candidate to preview" },
 };
 

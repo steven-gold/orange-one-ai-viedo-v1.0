@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     }
     if (isConversationGeneratingAction(actionUid)) {
       return generationSseResponse(async (sink) => {
-        await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal, sink);
+        await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue, undefined, sink);
       });
     }
     const eventUid = await persistRecordEditAction(principal.accountUid, controlUid, actionUid, nextValue, request.signal);
