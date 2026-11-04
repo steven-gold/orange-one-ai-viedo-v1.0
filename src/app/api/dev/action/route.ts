@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { jsonError, requireAuth } from "@/server/auth/requireAuth";
-import { knownDevAction, persistHasDevPermission, persistRecordDevAction } from "@/server/db/persist";
-import { DEV_PERMISSION } from "@/server/domain/dev";
+import { knownDevAction, persistHasDevPermissions, persistRecordDevAction } from "@/server/db/persist";
+import { DEV_ACTION_PERMISSIONS, DEV_PERMISSION } from "@/server/domain/dev";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +16,10 @@ export async function POST(request: Request) {
     if (!knownDevAction(controlUid, actionUid)) {
       return jsonError("DEV_ACTION_UNAVAILABLE", `Unknown control ${controlUid}`, 404);
     }
-    const allowed = await persistHasDevPermission(principal.accountUid);
+    const requiredPermission = DEV_ACTION_PERMISSIONS[actionUid] ?? DEV_PERMISSION;
+    const allowed = await persistHasDevPermissions(principal.accountUid, [requiredPermission]);
     if (!allowed) {
-      return jsonError("AUTHORIZATION_DENIED", `${DEV_PERMISSION} required`, 403);
+      return jsonError("AUTHORIZATION_DENIED", `${requiredPermission} required`, 403);
     }
     const eventUid = await persistRecordDevAction(principal.accountUid, controlUid, actionUid, nextValue);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });

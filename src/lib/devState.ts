@@ -129,6 +129,8 @@ export interface DevMergePreview {
 
 export interface DevErrorState {
   code: string;
+  errUid?: string;
+  detail?: string;
   at: string;
 }
 
@@ -137,6 +139,12 @@ export interface DevExportState {
   query: string;
   companyCount: number;
   payload: string;
+}
+
+export interface DevCandidateHistoryEntry {
+  version: number;
+  status: DevCandidateStatus;
+  at: string;
 }
 
 export interface DevCandidate {
@@ -153,6 +161,7 @@ export interface DevCandidate {
   status: DevCandidateStatus;
   version: number;
   evidence: string;
+  history: DevCandidateHistoryEntry[];
 }
 
 export interface DevRecipient {
@@ -261,6 +270,10 @@ function normalizeProfile(profile: DevProfile | null): DevProfile | null {
   };
 }
 
+function normalizeCandidate(candidate: DevCandidate): DevCandidate {
+  return { ...candidate, history: candidate.history ?? [] };
+}
+
 export function readDevWorkbench(current: (uid: string) => string | null): DevWorkbench {
   return {
     profile: normalizeProfile(parseJson<DevProfile | null>(current(DEV_PROFILE_UID), null)),
@@ -271,7 +284,7 @@ export function readDevWorkbench(current: (uid: string) => string | null): DevWo
     query: (current(DEV_QUERY_UID) ?? "").trim(),
     error: parseJson<DevErrorState | null>(current(DEV_ERROR_UID), null),
     exported: parseJson<DevExportState | null>(current(DEV_EXPORT_UID), null),
-    candidates: parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), []),
+    candidates: parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), []).map(normalizeCandidate),
     campaign: parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null),
     deliveries: parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), []),
     audienceQuery: (current(DEV_AUDIENCE_UID) ?? "").trim(),

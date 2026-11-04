@@ -292,7 +292,9 @@ export function DevVisual() {
       ) : null}
       {actionError ? (
         <div className={styles.error} role="alert">
-          {tx(actionError)}
+          {workbench.error?.code === "DEV_ACTION_UNDEFINED" && workbench.error.detail
+            ? `${tx(actionError)} [${workbench.error.detail} · ${workbench.error.errUid}]`
+            : tx(actionError)}
         </div>
       ) : null}
 
@@ -542,6 +544,14 @@ export function DevVisual() {
                   type="button"
                   className={styles.btn}
                   disabled={disabled || !selectedSignalId}
+                  onClick={() => void act("DEV-01-BTN-SIGNAL-QUALIFY", { signalId: selectedSignalId })}
+                >
+                  {tx("dev.btn-qualify")}
+                </button>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled || !selectedSignalId}
                   onClick={() => void act("DEV-01-BTN-SIGNAL-IGNORE", { signalId: selectedSignalId })}
                 >
                   {tx("dev.btn-ignore")}
@@ -604,6 +614,7 @@ export function DevVisual() {
             <div className={styles.table}>
               <div className={`${styles.thead} ${styles.dirHead}`}>
                 <span>{tx("dev.col-identity")}</span>
+                <span>{tx("dev.col-aliases")}</span>
                 <span>{tx("dev.col-contact")}</span>
                 <span>{tx("dev.col-evidence")}</span>
                 <span>{tx("dev.col-opportunity")}</span>
@@ -626,6 +637,7 @@ export function DevVisual() {
                         />
                         {company.name}／{tx(IDENTITY_LABEL[company.identityKind])}
                       </span>
+                      <span>{company.aliases.join("、") || dash}</span>
                       <span>{company.contacts.map((item) => item.value).join("、") || dash}</span>
                       <span>{company.evidence || dash}</span>
                       <span>{tx(OPP_LABEL[company.opportunity.state])}</span>
@@ -779,7 +791,10 @@ export function DevVisual() {
                     <span>{candidate.personalization}</span>
                     <span>{candidate.policy === "PASS" ? tx("dev.policy-pass") : tx("dev.policy-blocked")}</span>
                     <span>{tx(CANDIDATE_LABEL[candidate.status])}</span>
-                    <span>{String(candidate.version)}</span>
+                    <span>
+                      {`v${candidate.version}`}
+                      {candidate.history.length > 1 ? ` · ${candidate.history.map((entry) => `v${entry.version}${entry.at ? ` ${entry.at.slice(0, 10)}` : ""}`).join(" / ")}` : ""}
+                    </span>
                     <span className={styles.rowAct}>{selectedCandidate?.candidateId === candidate.candidateId ? tx("dev.row-open") : tx(CANDIDATE_LABEL[candidate.status])}</span>
                   </div>
                 ))
@@ -887,7 +902,7 @@ export function DevVisual() {
                       <span>{recipient.companyName}</span>
                       <span>{recipient.contactValue}</span>
                       <span>{recipient.suppression || dash}</span>
-                      <span>{tx("dev.policy-pass")}</span>
+                      <span>{recipient.suppression ? tx("dev.policy-blocked") : tx("dev.policy-pass")}</span>
                       <span>{`v${recipient.messageVersion}`}</span>
                       <span>{campaign.previewed ? tx("dev.preview-ready") : dash}</span>
                     </div>
@@ -895,7 +910,7 @@ export function DevVisual() {
                     <div className={`${styles.trow} ${styles.rcpRow}`} key={`${company.companyId}-${contact.contactId}`}>
                       <span>{company.name}</span>
                       <span>{contact.value}</span>
-                      <span>{company.suppression || dash}</span>
+                      <span>{dash}</span>
                       <span>{tx("dev.policy-pass")}</span>
                       <span>{approvedCandidate ? `v${approvedCandidate.version}` : dash}</span>
                       <span>{dash}</span>
@@ -1046,18 +1061,6 @@ export function DevVisual() {
               primary
             />
             <Btn
-              uid="DEV-01-BTN-CANDIDATE-EDIT"
-              label={tx("dev.btn-candidate-edit")}
-              onAct={() =>
-                void act("DEV-01-BTN-CANDIDATE-EDIT", {
-                  candidateId: selectedCandidate?.candidateId,
-                  subject: candSubject,
-                  body: candBody,
-                })
-              }
-              disabled={disabled || selectedCandidate?.status !== "REVIEW" || !candSubject || !candBody}
-            />
-            <Btn
               uid="DEV-01-BTN-CANDIDATE-DECIDE"
               label={tx("dev.btn-candidate-decide")}
               onAct={() => void act("DEV-01-BTN-CANDIDATE-DECIDE", { candidateId: selectedCandidate?.candidateId })}
@@ -1098,17 +1101,16 @@ export function DevVisual() {
         {stage === 5 ? (
           <>
             <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary={campaign?.status === "APPROVED"} />
-            <Btn
-              uid="DEV-01-BTN-SEND-ONE"
-              label={tx("dev.btn-send-one")}
-              onAct={() => void act("DEV-01-BTN-SEND-ONE", { candidateId: approvedCandidate?.candidateId })}
-              disabled={disabled || !approvedCandidate}
-            />
             <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
             <Btn
               uid="DEV-01-BTN-KILL-SWITCH"
               label={tx("dev.btn-kill")}
-              onAct={() => void act("DEV-01-BTN-KILL-SWITCH", { reason: "OPERATOR_STOP" })}
+              onAct={() => {
+                if (!window.confirm(tx("dev.kill-confirm"))) return;
+                const reason = window.prompt(tx("dev.kill-reason-prompt"), "OPERATOR_STOP");
+                if (!reason || !reason.trim()) return;
+                void act("DEV-01-BTN-KILL-SWITCH", { reason: reason.trim() });
+              }}
               disabled={disabled || (campaign?.status !== "QUEUED" && campaign?.status !== "APPROVED")}
               danger
             />
@@ -1116,13 +1118,19 @@ export function DevVisual() {
         ) : null}
       </div>
 
-      <section
-        className={styles.card}
+      <aside
+        className={styles.drawer}
         data-section-uid="DEV-01-SEC-09"
         data-component-uid="DEV-01-CMP-DETAIL-DRAWER"
         hidden={!drawerOpen}
+        aria-label={tx("dev.drawer-title")}
       >
-        <h3>{tx("dev.drawer-title")}</h3>
+        <div className={styles.drawerHead}>
+          <h3>{tx("dev.drawer-title")}</h3>
+          <button type="button" className={styles.btn} onClick={() => setDrawerOpen(false)}>
+            {tx("global.common.close")}
+          </button>
+        </div>
         <p className={styles.note}>{tx("dev.drawer-hint")}</p>
         <div className={styles.metaGrid}>
           <div className={styles.metaItem}>
@@ -1134,10 +1142,45 @@ export function DevVisual() {
             <strong>{workbench.profile ? String(workbench.profile.version) : dash}</strong>
           </div>
         </div>
-        <button type="button" className={styles.btn} onClick={() => setDrawerOpen(false)}>
-          {tx("global.common.close")}
-        </button>
-      </section>
+        {workbench.merge ? (
+          <>
+            <h4>{tx("dev.merge-detail")}</h4>
+            <div className={styles.metaGrid}>
+              <div className={styles.metaItem}>
+                <span>{tx("dev.merge-survivor")}</span>
+                <strong>{workbench.merge.survivorId}</strong>
+              </div>
+              <div className={styles.metaItem}>
+                <span>{tx("dev.merge-merged")}</span>
+                <strong>{workbench.merge.mergedIds.join(", ") || dash}</strong>
+              </div>
+              <div className={styles.metaItem}>
+                <span>{tx("dev.merge-conflicts")}</span>
+                <strong>{workbench.merge.conflicts.join(", ") || dash}</strong>
+              </div>
+            </div>
+          </>
+        ) : null}
+        <h4>{tx("dev.delivery-history")}</h4>
+        {deliveries.length ? (
+          <div className={styles.table}>
+            <div className={`${styles.thead} ${styles.histHead}`}>
+              <span>{tx("dev.col-contact")}</span>
+              <span>{tx("dev.col-result")}</span>
+              <span>{tx("dev.delivery-idempotency")}</span>
+            </div>
+            {deliveries.map((delivery) => (
+              <div className={`${styles.trow} ${styles.histRow}`} key={delivery.deliveryId}>
+                <span>{delivery.to}</span>
+                <span>{tx(DELIVERY_LABEL[delivery.status])}</span>
+                <span>{delivery.idempotencyKey}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.empty}>{tx("dev.empty-deliveries")}</p>
+        )}
+      </aside>
 
       {stage === 1 ? null : (
         <>

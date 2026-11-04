@@ -63,12 +63,56 @@ function patchFrom(workbench: DevWorkbench, extra: Record<string, string> = {}):
   };
 }
 
-function fail(workbench: DevWorkbench, code: string): Record<string, string> {
-  return patchFrom({ ...workbench, error: { code, at: nowIso() } });
+function fail(workbench: DevWorkbench, code: string, detail?: string): Record<string, string> {
+  const errUid = DEV_SPEC_ERROR_UIDS[code] ?? "DEV-01-ERR-UNDEFINED";
+  return patchFrom({ ...workbench, error: { code, errUid, detail, at: nowIso() } });
 }
+
+const DEV_SPEC_ERROR_UIDS: Record<string, string> = {
+  DEV_PROFILE_INCOMPLETE: "DEV-01-ERR-SOURCE",
+  DEV_PROFILE_REQUIRED: "DEV-01-ERR-SOURCE",
+  DEV_JOB_ALREADY_ACTIVE: "DEV-01-ERR-SOURCE",
+  DEV_JOB_NOT_RUNNING: "DEV-01-ERR-SOURCE",
+  DEV_JOB_NOT_PAUSED: "DEV-01-ERR-SOURCE",
+  DEV_JOB_NOT_STOPPABLE: "DEV-01-ERR-SOURCE",
+  DEV_SIGNAL_REQUIRED: "DEV-01-ERR-IDENTITY",
+  DEV_SIGNAL_NOT_NEW: "DEV-01-ERR-IDENTITY",
+  DEV_OPPORTUNITY_ILLEGAL: "DEV-01-ERR-IDENTITY",
+  DEV_OPPORTUNITY_REQUIRED: "DEV-01-ERR-IDENTITY",
+  DEV_CONTACT_REQUIRED: "DEV-01-ERR-IDENTITY",
+  DEV_MERGE_SELECTION_REQUIRED: "DEV-01-ERR-MERGE",
+  DEV_MERGE_PREVIEW_REQUIRED: "DEV-01-ERR-MERGE",
+  DEV_MERGE_STALE: "DEV-01-ERR-MERGE",
+  DEV_MERGE_IDENTITY_CONFLICT: "DEV-01-ERR-IDENTITY",
+  DEV_MERGE_NAME_ONLY_BLOCKED: "DEV-01-ERR-IDENTITY",
+  DEV_CANDIDATE_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_NOT_REVIEW: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_POLICY_BLOCKED: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_CONTENT_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_ALREADY_OPEN: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_COMPANY_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_CONTACT_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CAMPAIGN_REQUIRED: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_NOT_REVIEW: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_CANDIDATE_REQUIRED: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_RECIPIENT_REQUIRED: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_PREVIEW_REQUIRED: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_ALREADY_OPEN: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_VERSION_STALE: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_AUDIENCE_STALE: "DEV-01-ERR-CAMPAIGN",
+  DEV_DISPATCH_NOT_APPROVED: "DEV-01-ERR-CAMPAIGN",
+  DEV_CAMPAIGN_SUPPRESSED: "DEV-01-ERR-SUPPRESSION",
+  DEV_KILL_TARGET_REQUIRED: "DEV-01-ERR-KILL",
+  DEV_KILL_NOT_APPLICABLE: "DEV-01-ERR-KILL",
+  DEV_ACTION_UNDEFINED: "DEV-01-ERR-UNDEFINED",
+};
 
 function clearError(workbench: DevWorkbench): DevWorkbench {
   return { ...workbench, error: null };
+}
+
+function appendCandidateHistory(candidate: DevCandidate): DevCandidate {
+  return { ...candidate, history: [...candidate.history, { version: candidate.version, status: candidate.status, at: nowIso() }] };
 }
 
 function modeFrom(raw: string | undefined, fallback: DevMode): DevMode {
@@ -131,10 +175,6 @@ export function applyDiscoveryCollection(
     return patchFrom(clearError({ ...workbench, job }));
   }
   const signals = mergeDiscoverySignals(workbench.signals, result.signals);
-  let companies = workbench.companies;
-  for (const signal of signals) {
-    companies = upsertCompany(companies, qualifyCompany(signal, companies));
-  }
   const continuous = workbench.job.mode === "CONTINUOUS";
   const job: DevJob = {
     ...workbench.job,
@@ -149,7 +189,6 @@ export function applyDiscoveryCollection(
       ...workbench,
       job,
       signals,
-      companies,
     }),
   );
 }
@@ -472,6 +511,7 @@ export function previewDevAction(
       (item) => item.companyId === company.companyId && item.status === "REVIEW",
     );
     if (existing) return fail(workbench, "DEV_CANDIDATE_ALREADY_OPEN");
+    const policy = company.suppression ? "BLOCKED" : "PASS";
     const next: DevCandidate = {
       candidateId: newUid("CAN"),
       companyId: company.companyId,
@@ -482,29 +522,13 @@ export function previewDevAction(
       personalization: company.name,
       subject,
       body,
-      policy: "PASS",
+      policy,
       status: "REVIEW",
       version: 1,
       evidence: company.evidence,
+      history: [{ version: 1, status: "REVIEW", at: nowIso() }],
     };
     return patchFrom(clearError({ ...workbench, candidates: [...workbench.candidates, next] }));
-  }
-
-  if (actionUid === "DEV-01-ACT-CANDIDATE-EDIT") {
-    const candidateId = usable(payload.candidateId);
-    const candidate = workbench.candidates.find((item) => item.candidateId === candidateId);
-    if (!candidate) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
-    if (candidate.status !== "REVIEW") return fail(workbench, "DEV_CANDIDATE_NOT_REVIEW");
-    const subject = usable(payload.subject) ?? candidate.subject;
-    const body = usable(payload.body) ?? candidate.body;
-    if (!subject || !body) return fail(workbench, "DEV_CANDIDATE_CONTENT_REQUIRED");
-    const next: DevCandidate = { ...candidate, subject, body, version: candidate.version + 1 };
-    return patchFrom(
-      clearError({
-        ...workbench,
-        candidates: workbench.candidates.map((item) => (item.candidateId === next.candidateId ? next : item)),
-      }),
-    );
   }
 
   if (actionUid === "DEV-01-ACT-CANDIDATE-DECIDE") {
@@ -512,7 +536,8 @@ export function previewDevAction(
     const candidate = workbench.candidates.find((item) => item.candidateId === candidateId) ?? workbench.candidates.find((item) => item.status === "REVIEW");
     if (!candidate) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
     if (candidate.status !== "REVIEW") return fail(workbench, "DEV_CANDIDATE_NOT_REVIEW");
-    const next: DevCandidate = { ...candidate, status: "APPROVED", version: candidate.version + 1 };
+    if (candidate.policy === "BLOCKED") return fail(workbench, "DEV_CANDIDATE_POLICY_BLOCKED");
+    const next = appendCandidateHistory({ ...candidate, status: "APPROVED", version: candidate.version + 1 });
     return patchFrom(
       clearError({
         ...workbench,
@@ -526,7 +551,7 @@ export function previewDevAction(
     const candidate = workbench.candidates.find((item) => item.candidateId === candidateId) ?? workbench.candidates.find((item) => item.status === "REVIEW");
     if (!candidate) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
     if (candidate.status !== "REVIEW") return fail(workbench, "DEV_CANDIDATE_NOT_REVIEW");
-    const next: DevCandidate = { ...candidate, status: "CHANGE_REQUEST", version: candidate.version + 1 };
+    const next = appendCandidateHistory({ ...candidate, status: "CHANGE_REQUEST", version: candidate.version + 1 });
     const campaign = workbench.campaign?.candidateId === next.candidateId && workbench.campaign.status === "REVIEW" ? null : workbench.campaign;
     return patchFrom(
       clearError({
@@ -535,11 +560,6 @@ export function previewDevAction(
         campaign,
       }),
     );
-  }
-
-  if (actionUid === "DEV-01-ACT-CAMPAIGN-SEARCH") {
-    const audienceQuery = usable(payload.audienceQuery ?? payload.query);
-    return patchFrom(clearError({ ...workbench, audienceQuery }));
   }
 
   if (actionUid === "DEV-01-ACT-CAMPAIGN-CREATE") {
@@ -569,12 +589,21 @@ export function previewDevAction(
       status: "REVIEW",
       audienceQuery: workbench.audienceQuery,
       recipients,
-      previewed: true,
+      previewed: false,
       killReason: "",
       version: 1,
       updatedAt: nowIso(),
     };
     return patchFrom(clearError({ ...workbench, campaign }));
+  }
+
+  if (actionUid === "DEV-01-ACT-CAMPAIGN-SEARCH") {
+    const audienceQuery = usable(payload.audienceQuery ?? payload.query);
+    const campaign =
+      workbench.campaign?.status === "REVIEW"
+        ? { ...workbench.campaign, previewed: true, version: workbench.campaign.version + 1, updatedAt: nowIso() }
+        : workbench.campaign;
+    return patchFrom(clearError({ ...workbench, audienceQuery, campaign }));
   }
 
   if (actionUid === "DEV-01-ACT-CAMPAIGN-APPROVE") {
@@ -587,6 +616,10 @@ export function previewDevAction(
       return fail(workbench, "DEV_CAMPAIGN_VERSION_STALE");
     }
     if (campaign.recipients.some((item) => item.suppression)) return fail(workbench, "DEV_CAMPAIGN_SUPPRESSED");
+    const fresh = searchAudienceProjection(workbench.companies, campaign.audienceQuery);
+    const freshKey = fresh.map(({ company, contact }) => `${company.companyId}:${contact.contactId}`).sort().join("|");
+    const currentKey = campaign.recipients.map((item) => `${item.companyId}:${item.contactId}`).sort().join("|");
+    if (freshKey !== currentKey) return fail(workbench, "DEV_CAMPAIGN_AUDIENCE_STALE");
     const next: DevCampaign = { ...campaign, status: "APPROVED", version: campaign.version + 1, updatedAt: nowIso() };
     return patchFrom(clearError({ ...workbench, campaign: next }));
   }
@@ -626,39 +659,6 @@ export function previewDevAction(
     );
   }
 
-  if (actionUid === "DEV-01-ACT-SEND-ONE") {
-    const candidateId = usable(payload.candidateId);
-    const candidate = workbench.candidates.find((item) => item.candidateId === candidateId);
-    if (!candidate) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
-    if (candidate.status !== "APPROVED") return fail(workbench, "DEV_DISPATCH_NOT_APPROVED");
-    const company = workbench.companies.find((item) => item.companyId === candidate.companyId);
-    if (!company) return fail(workbench, "DEV_CANDIDATE_COMPANY_REQUIRED");
-    if (company.suppression) return fail(workbench, "DEV_CAMPAIGN_SUPPRESSED");
-    const contact = company.contacts.find((item) => item.contactId === candidate.contactId && item.status === "ACTIVE");
-    if (!contact) return fail(workbench, "DEV_CANDIDATE_CONTACT_REQUIRED");
-    const accepted = acceptDeliveryIntent();
-    const delivery: DevDelivery = {
-      deliveryId: newUid("DLV"),
-      campaignId: "",
-      recipientId: candidate.candidateId,
-      companyId: company.companyId,
-      to: contact.value,
-      cc: 0,
-      bcc: 0,
-      status: accepted.status,
-      result: accepted.result,
-      idempotencyKey: `one:${candidate.candidateId}:${candidate.version}`,
-      version: 1,
-    };
-    return patchFrom(
-      clearError({
-        ...workbench,
-        deliveries: [...workbench.deliveries, delivery],
-        companies: advanceContacted(workbench.companies, [company.companyId]),
-      }),
-    );
-  }
-
   if (actionUid === "DEV-01-ACT-REFRESH") {
     return patchFrom(clearError(workbench));
   }
@@ -684,5 +684,5 @@ export function previewDevAction(
   }
 
   void controlUid;
-  return {};
+  return fail(workbench, "DEV_ACTION_UNDEFINED", actionUid);
 }

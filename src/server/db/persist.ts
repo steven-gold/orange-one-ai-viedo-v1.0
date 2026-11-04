@@ -1192,6 +1192,18 @@ export async function persistHasDevPermission(accountUid: string): Promise<boole
   return Number(rows[0]?.n ?? 0) > 0;
 }
 
+export async function persistHasDevPermissions(accountUid: string, permissions: readonly string[]): Promise<boolean> {
+  await seedScope("dev");
+  if (!pagePermissionEnforced()) return true;
+  if (!permissions.length) return true;
+  const placeholders = permissions.map(() => "?").join(", ");
+  const rows = await getSqlClient().all<{ n: number }>(
+    `SELECT count(*)::int AS n FROM ghsn_account_dev_permission WHERE account_uid = ? AND permission_uid IN (${placeholders})`,
+    [accountUid, ...permissions],
+  );
+  return Number(rows[0]?.n ?? 0) >= permissions.length;
+}
+
 export async function persistListDevFields(): Promise<DevFieldValue[]> {
   const rows = await getSqlClient().all<DevFieldRow>(
     "SELECT control_uid, value_text FROM ghsn_dev_field_projection",

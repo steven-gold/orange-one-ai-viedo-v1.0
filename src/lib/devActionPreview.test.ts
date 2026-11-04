@@ -29,13 +29,16 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(DEV_VISIBLE_CONTROLS.length === 24, "DEV stays at 24 visible controls");
+  assert(DEV_VISIBLE_CONTROLS.length === 22, "DEV stays at the 22 authoritative visible controls");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-PROFILE-SAVE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "TBL10 profile save stays off the visible denominator");
+  assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-SEND-ONE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented one-to-one send control");
+  assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-CANDIDATE-EDIT" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented candidate edit control");
 }
 
 function store(seed: Record<string, string> = {}): {
   current: (uid: string) => string | null;
   apply: (controlUid: string, actionUid: string, nextValue?: string) => Record<string, string>;
+  write: (patch: Record<string, string>) => void;
 } {
   const values = new Map<string, string>(Object.entries(seed));
   const current = (uid: string) => values.get(uid) ?? null;
@@ -44,7 +47,10 @@ function store(seed: Record<string, string> = {}): {
     for (const [uid, value] of Object.entries(patch)) values.set(uid, value);
     return patch;
   };
-  return { current, apply };
+  const write = (patch: Record<string, string>) => {
+    for (const [uid, value] of Object.entries(patch)) values.set(uid, value);
+  };
+  return { current, apply, write };
 }
 
 {
@@ -359,9 +365,17 @@ function store(seed: Record<string, string> = {}): {
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
   const campaign = parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null);
   assert(campaign?.status === "REVIEW", "campaign starts in review");
-  assert(campaign?.previewed === true, "create records recipient preview");
+  assert(campaign?.previewed === false, "create does not claim a recipient preview");
   assert(campaign?.recipients.length === 1, "suppressed company stays out of recipients");
   assert(campaign?.candidateVersion === parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].version, "campaign binds exact candidate version");
+
+  const earlyApprove = apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
+  const approveError = parseJson<{ code: string; errUid?: string }>(earlyApprove["DEV-01-STATE-ERROR"], { code: "" });
+  assert(approveError.code === "DEV_CAMPAIGN_PREVIEW_REQUIRED", "approve requires the explicit recipient preview");
+  assert(approveError.errUid === "DEV-01-ERR-CAMPAIGN", "spec error uid is recorded");
+
+  apply("DEV-01-BTN-CAMPAIGN-SEARCH", "DEV-01-ACT-CAMPAIGN-SEARCH", JSON.stringify({ audienceQuery: "示範" }));
+  assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.previewed === true, "audience search records the recipient preview");
 
   const earlyDispatch = apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
   assert(parseJson<{ code: string }>(earlyDispatch["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_DISPATCH_NOT_APPROVED", "approve stays separate from dispatch");
@@ -404,6 +418,7 @@ function store(seed: Record<string, string> = {}): {
   const candidateId = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].candidateId;
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId }));
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
+  apply("DEV-01-BTN-CAMPAIGN-SEARCH", "DEV-01-ACT-CAMPAIGN-SEARCH", JSON.stringify({ audienceQuery: "示範" }));
   apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
   apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
   assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "EXTERNAL_PENDING", "missing delivery owner waits externally");
@@ -431,6 +446,7 @@ function store(seed: Record<string, string> = {}): {
   const candidateId = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].candidateId;
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId }));
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
+  apply("DEV-01-BTN-CAMPAIGN-SEARCH", "DEV-01-ACT-CAMPAIGN-SEARCH", JSON.stringify({ audienceQuery: "示範" }));
   apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
   apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
   assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), [])[0].status === "EXTERNAL_PENDING", "production default keeps delivery external pending");
@@ -477,6 +493,7 @@ function store(seed: Record<string, string> = {}): {
   const loopCandidate = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId: loopCandidate.candidateId }));
   apply("DEV-01-BTN-CAMPAIGN-CREATE", "DEV-01-ACT-CAMPAIGN-CREATE");
+  apply("DEV-01-BTN-CAMPAIGN-SEARCH", "DEV-01-ACT-CAMPAIGN-SEARCH", JSON.stringify({ audienceQuery: "示範" }));
   apply("DEV-01-BTN-CAMPAIGN-APPROVE", "DEV-01-ACT-CAMPAIGN-APPROVE");
   apply("DEV-01-BTN-EMAIL-DISPATCH", "DEV-01-ACT-EMAIL-DISPATCH");
   assert(parseJson<DevCampaign | null>(current(DEV_CAMPAIGN_UID), null)?.status === "QUEUED", "loop dispatch queues campaign");
@@ -552,22 +569,24 @@ function store(seed: Record<string, string> = {}): {
     JSON.stringify({ companyId: "CO-EDIT", subject: "初稿主旨", body: "初稿內文。" }),
   );
   const candidate = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
-  apply(
+  assert(candidate.history.length === 1 && candidate.history[0].version === 1, "candidate creation records history");
+  const editBlocked = apply(
     "DEV-01-BTN-CANDIDATE-EDIT",
     "DEV-01-ACT-CANDIDATE-EDIT",
     JSON.stringify({ candidateId: candidate.candidateId, subject: "修改後主旨", body: "修改後內文。" }),
   );
-  const edited = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
-  assert(edited.subject === "修改後主旨", "candidate edit updates the subject");
-  assert(edited.version === 2, "candidate edit bumps the version");
+  const editError = parseJson<{ code: string; errUid?: string; detail?: string }>(editBlocked["DEV-01-STATE-ERROR"], { code: "" });
+  assert(editError.code === "DEV_ACTION_UNDEFINED", "candidate edit is not a registered control");
+  assert(editError.errUid === "DEV-01-ERR-UNDEFINED", "candidate edit reports the authority gap");
+  assert(editError.detail === "DEV-01-ACT-CANDIDATE-EDIT", "authority gap records the offending action");
+  const sendBlocked = apply("DEV-01-BTN-SEND-ONE", "DEV-01-ACT-SEND-ONE", JSON.stringify({ candidateId: candidate.candidateId }));
+  assert(parseJson<{ code: string }>(sendBlocked["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_ACTION_UNDEFINED", "one-to-one send is not a registered control");
+  assert(parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), []).length === 0, "unregistered send never produces a delivery");
+  assert(parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0].subject === "初稿主旨", "blocked edit never mutates the candidate");
   apply("DEV-01-BTN-CANDIDATE-DECIDE", "DEV-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ candidateId: candidate.candidateId }));
-  apply("DEV-01-BTN-SEND-ONE", "DEV-01-ACT-SEND-ONE", JSON.stringify({ candidateId: candidate.candidateId }));
-  const deliveries = parseJson<DevDelivery[]>(current(DEV_DELIVERIES_UID), []);
-  assert(deliveries.length === 1, "one-to-one send records a delivery");
-  assert(deliveries[0].to === "edit@example.com", "one-to-one send targets the active email");
-  assert(deliveries[0].status === "EXTERNAL_PENDING", "one-to-one send stays fail-closed without delivery owner");
-  const companies = parseJson<DevCompany[]>(current(DEV_COMPANIES_UID), []);
-  assert(companies[0].opportunity.state === "CONTACTED", "one-to-one send advances the opportunity");
+  const decided = parseJson<DevCandidate[]>(current(DEV_CANDIDATES_UID), [])[0];
+  assert(decided.status === "APPROVED", "candidate decision still works after blocked attempts");
+  assert(decided.history.length === 2 && decided.history[1].status === "APPROVED", "decision appends history");
   bindSharedOwnersForTest(null);
 }
 
@@ -587,7 +606,7 @@ function store(seed: Record<string, string> = {}): {
     version: 1,
     address: "臺北市中正區重慶南路一段122號",
   };
-  const { current, apply } = store();
+  const { current, apply, write } = store();
   apply(
     "DEV-01-BTN-PROFILE-SAVE",
     "DEV-01-ACT-PROFILE-SAVE",
@@ -602,10 +621,15 @@ function store(seed: Record<string, string> = {}): {
     items: [],
     nextCursor: 100,
   });
-  const companies = JSON.parse(patch[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
-  assert(companies.length === 1, "collected signals auto-register into the company database");
-  assert(companies[0].name === "自動登錄企業", "auto-registered company keeps the discovered name");
-  assert(companies[0].contacts.some((item) => item.type === "ADDRESS"), "auto-registered company carries discovered contacts");
+  assert(JSON.parse(patch[DEV_SIGNALS_UID] ?? "[]").length === 1, "collection stores the discovered signal");
+  assert(JSON.parse(patch[DEV_COMPANIES_UID] ?? "[]").length === 0, "collection never auto-registers companies");
+  write(patch);
+  assert(JSON.parse(current(DEV_COMPANIES_UID) ?? "[]").length === 0, "signal stays NEW until the operator decides");
+  apply("DEV-01-BTN-SIGNAL-QUALIFY", "DEV-01-ACT-SIGNAL-QUALIFY", JSON.stringify({ signalId: liveSignal.signalId }));
+  const companies = JSON.parse(current(DEV_COMPANIES_UID) ?? "[]") as DevCompany[];
+  assert(companies.length === 1, "human qualify registers the company");
+  assert(companies[0].name === "自動登錄企業", "qualified company keeps the discovered name");
+  assert(companies[0].contacts.some((item) => item.type === "ADDRESS"), "qualified company carries discovered contacts");
   bindSharedOwnersForTest(null);
 }
 

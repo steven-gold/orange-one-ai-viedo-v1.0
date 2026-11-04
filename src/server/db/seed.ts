@@ -6,7 +6,7 @@ import { QA_PERMISSION, QA_VISIBLE_CONTROLS } from "../domain/qa";
 import { INFO_PERMISSION, INFO_VISIBLE_CONTROLS } from "../domain/info";
 import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
 import { IAM_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
-import { DEV_PERMISSION, DEV_VISIBLE_CONTROLS } from "../domain/dev";
+import { DEV_PERMISSION, DEV_ACCOUNT_PERMISSIONS, DEV_VISIBLE_CONTROLS } from "../domain/dev";
 import { SOC_PERMISSION, SOC_VISIBLE_CONTROLS } from "../domain/soc";
 import { ERP_PERMISSION, ERP_VISIBLE_CONTROLS } from "../domain/erp";
 import { AIAPI_PERMISSION, AIAPI_VISIBLE_CONTROLS } from "../domain/aiapi";
@@ -51,6 +51,7 @@ type PageSeed = {
   permissionTable: string;
   permission: string;
   controls: readonly string[];
+  extraPermissions?: readonly string[];
 };
 
 const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboard">, PageSeed> = {
@@ -64,7 +65,7 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
   info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS },
   sys: { fieldTable: "ghsn_sys_field_projection", permissionTable: "ghsn_account_sys_permission", permission: SYS_PERMISSION, controls: SYS_VISIBLE_CONTROLS },
   iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS },
-  dev: { fieldTable: "ghsn_dev_field_projection", permissionTable: "ghsn_account_dev_permission", permission: DEV_PERMISSION, controls: DEV_VISIBLE_CONTROLS },
+  dev: { fieldTable: "ghsn_dev_field_projection", permissionTable: "ghsn_account_dev_permission", permission: DEV_PERMISSION, controls: DEV_VISIBLE_CONTROLS, extraPermissions: DEV_ACCOUNT_PERMISSIONS },
   soc: { fieldTable: "ghsn_soc_field_projection", permissionTable: "ghsn_account_soc_permission", permission: SOC_PERMISSION, controls: SOC_VISIBLE_CONTROLS },
   erp: { fieldTable: "ghsn_erp_field_projection", permissionTable: "ghsn_account_erp_permission", permission: ERP_PERMISSION, controls: ERP_VISIBLE_CONTROLS },
   aiapi: { fieldTable: "ghsn_aiapi_field_projection", permissionTable: "ghsn_account_aiapi_permission", permission: AIAPI_PERMISSION, controls: AIAPI_VISIBLE_CONTROLS },
@@ -191,6 +192,15 @@ async function seedDashboard(client: SqlClient): Promise<void> {
 }
 
 async function seedPage(client: SqlClient, page: PageSeed): Promise<void> {
+  if (page.extraPermissions?.length) {
+    await insertRows(
+      client,
+      `INSERT INTO ${page.permissionTable} (account_uid, permission_uid)`,
+      `ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+      2,
+      page.extraPermissions.map((permission) => [DEMO_ACCOUNT, permission]),
+    );
+  }
   if (await alreadyGranted(client, page.permissionTable, page.permission)) return;
   await insertRows(
     client,
