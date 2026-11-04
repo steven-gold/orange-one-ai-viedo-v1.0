@@ -14,6 +14,7 @@ import {
 import { VIDEO_CORRECTION_RESPONSE_UID, displayAiReply } from "@/lib/aiReply";
 import { resolveVideoInbound, type VideoInbound } from "@/lib/videoInbound";
 import { previewVideoAction } from "@/lib/videoActionPreview";
+import { parseVideoShotList, type VideoShotListItem } from "@/lib/videoGateContract";
 import { parseCorrectionScript } from "@/lib/correctionScript";
 import {
   VIDEO_CONVERSATION,
@@ -79,6 +80,7 @@ const EMPTY_INBOUND: VideoInbound = {
   childLock: "",
   dna: "",
   script: "",
+  scriptProjection: "",
   assetVersion: "",
   layerComposite: "",
   filename: "",
@@ -134,6 +136,7 @@ export function VideoVisual() {
   const [authorized, setAuthorized] = useState(true);
   const [fields, setFields] = useState<VideoFieldValue[]>(emptyFields);
   const [inbound, setInbound] = useState<VideoInbound>(EMPTY_INBOUND);
+  const [shotList, setShotList] = useState<VideoShotListItem[]>([]);
   const [compareOn, setCompareOn] = useState(false);
   const [correctionDraft, setCorrectionDraft] = useState("");
   const [tick, setTick] = useState(0);
@@ -184,6 +187,7 @@ export function VideoVisual() {
           (uid) => asset?.fields.find((row) => row.controlUid === uid)?.value ?? null,
         );
         setInbound(resolved);
+        setShotList(parseVideoShotList(resolved.scriptProjection));
         const map = new Map(emptyFields().map((row) => [row.controlUid, row.value] as const));
         if (resolved.ready) {
           for (const row of model.fields) {
@@ -435,18 +439,34 @@ export function VideoVisual() {
               <button type="button" className={styles.btn} data-control-uid="VIDEO-01-CTL-FILTER" disabled={disabled} onClick={() => void act("VIDEO-01-CTL-FILTER")}>{tx("video.filter")}</button>
             </div>
             <div className={styles.list} data-control-uid="VIDEO-01-CTL-SHOT-SELECT">
-              {[0, 1, 2, 3].map((index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={index === 0 ? `${styles.item} ${styles.itemActive}` : styles.item}
-                  disabled={disabled}
-                  onClick={() => void act("VIDEO-01-CTL-SHOT-SELECT")}
-                >
-                  <span>{tx("video.unbound_shot")}</span>
-                  <span>{tx("video.shot_ref")} {dash}</span>
-                </button>
-              ))}
+              {shotList.length > 0
+                ? shotList.map((shot) => {
+                    const selected = valueOf("VIDEO-01-CTL-SHOT-SELECT") === shot.sceneId;
+                    return (
+                      <button
+                        key={shot.sceneId}
+                        type="button"
+                        className={selected ? `${styles.item} ${styles.itemActive}` : styles.item}
+                        disabled={disabled}
+                        onClick={() => void act("VIDEO-01-CTL-SHOT-SELECT", shot.sceneId)}
+                      >
+                        <span>Scene {shot.sceneId}{shot.title ? ` · ${shot.title}` : ""}</span>
+                        <span>{tx("video.shot_ref")} {shot.sceneId}{shot.beats ? ` · ${shot.beats} beats` : ""}</span>
+                      </button>
+                    );
+                  })
+                : [0, 1, 2, 3].map((index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className={index === 0 ? `${styles.item} ${styles.itemActive}` : styles.item}
+                      disabled={disabled}
+                      onClick={() => void act("VIDEO-01-CTL-SHOT-SELECT")}
+                    >
+                      <span>{tx("video.unbound_shot")}</span>
+                      <span>{tx("video.shot_ref")} {dash}</span>
+                    </button>
+                  ))}
             </div>
           </section>
           <section data-component-uid="VIDEO-01-CMP-BLUEPRINT-BIND">

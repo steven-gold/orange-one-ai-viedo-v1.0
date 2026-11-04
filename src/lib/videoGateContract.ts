@@ -41,7 +41,36 @@ function videoHash(parts: string[]): string {
 }
 
 export function videoHashOf(parts: string[]): string {
-  return videoHash(parts);
+  let hash = 2166136261;
+  const joined = parts.join("\u0001");
+  for (let index = 0; index < joined.length; index += 1) {
+    hash ^= joined.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, "0");
+}
+
+// Shot planning source: the canonical script projection's scene list is the
+// only authoritative Scene/Shot identity available; shots are derived from
+// scenes and never invented.
+export type VideoShotListItem = { sceneId: string; title: string; beats: number };
+
+export function parseVideoShotList(projectionJson: string | null | undefined): VideoShotListItem[] {
+  if (!projectionJson) return [];
+  try {
+    const projection = JSON.parse(projectionJson) as {
+      structure?: { scenes?: Array<{ scene_id?: string; title?: string; beats?: Array<unknown> }> };
+    };
+    return (projection.structure?.scenes ?? [])
+      .map((scene) => ({
+        sceneId: String(scene?.scene_id ?? "").trim(),
+        title: String(scene?.title ?? "").trim(),
+        beats: Array.isArray(scene?.beats) ? scene.beats.length : 0,
+      }))
+      .filter((scene) => scene.sceneId.length > 0);
+  } catch {
+    return [];
+  }
 }
 
 export type VideoGateContext = {

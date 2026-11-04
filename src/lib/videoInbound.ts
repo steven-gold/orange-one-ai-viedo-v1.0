@@ -10,6 +10,7 @@ export type VideoInbound = {
   childLock: string;
   dna: string;
   script: string;
+  scriptProjection: string;
   assetVersion: string;
   layerComposite: string;
   filename: string;
@@ -46,6 +47,7 @@ export function resolveVideoInbound(
     childLock: core.childLock,
     dna: core.dna,
     script: core.script,
+    scriptProjection: core.scriptProjection,
     assetVersion,
     layerComposite,
     filename,
