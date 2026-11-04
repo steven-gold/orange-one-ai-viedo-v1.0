@@ -85,6 +85,19 @@ import {
   saveProjectSnapshot,
   serializeProjectSnapshots,
 } from "./coreProjectSnapshot";
+import {
+  CORE_TOPIC_SNAPSHOT_FIELD_UID,
+  captureTopicSnapshot,
+  dropProjectTopicSnapshots,
+  dropTopicSnapshot,
+  parseTopicSnapshots,
+  renameProjectTopicSnapshots,
+  restoreTopicPatch,
+  saveTopicSnapshot,
+  serializeTopicSnapshots,
+  topicBridgeLine,
+  topicKey,
+} from "./coreTopicSnapshot";
 
 export function nowStamp(): string {
   return new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -667,9 +680,11 @@ function previewCoreActionFields(
     const nextList = [...new Set(list.map((row) => (row === from ? to : row)))];
     const active = exactName(current("CORE-01-CTL-PROJECT"));
     const snapshots = renameProjectSnapshot(parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID)), from, to);
+    const topicSnapshots = renameProjectTopicSnapshots(parseTopicSnapshots(current(CORE_TOPIC_SNAPSHOT_FIELD_UID)), from, to);
     return {
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
       "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
+      "CORE-01-FLD-TOPIC-SNAPSHOTS": serializeTopicSnapshots(topicSnapshots),
       ...(active === from ? { "CORE-01-CTL-PROJECT": to } : {}),
     };
   }
@@ -679,17 +694,20 @@ function previewCoreActionFields(
     const list = namedList(current("CORE-01-BTN-PROJECT-CREATE"), current("CORE-01-CTL-PROJECT"));
     if (!list.includes(target)) return {};
     const snapshots = dropProjectSnapshot(parseProjectSnapshots(current(CORE_SNAPSHOT_FIELD_UID)), target);
+    const topicSnapshots = dropProjectTopicSnapshots(parseTopicSnapshots(current(CORE_TOPIC_SNAPSHOT_FIELD_UID)), target);
     const nextList = list.filter((row) => row !== target);
     const active = exactName(current("CORE-01-CTL-PROJECT"));
     if (active !== target) {
       return {
         "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
         "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
+        "CORE-01-FLD-TOPIC-SNAPSHOTS": serializeTopicSnapshots(topicSnapshots),
       };
     }
     return {
       "CORE-01-BTN-PROJECT-CREATE": JSON.stringify(nextList),
       "CORE-01-FLD-PROJECT-SNAPSHOTS": serializeProjectSnapshots(snapshots),
+      "CORE-01-FLD-TOPIC-SNAPSHOTS": serializeTopicSnapshots(topicSnapshots),
       "CORE-01-CTL-PROJECT": "",
       "CORE-01-FLD-PAGE-MODE": "",
       "CORE-01-FLD-NAMING-AUTHORITY": "",
@@ -701,6 +719,7 @@ function previewCoreActionFields(
       "CORE-01-FLD-TOPIC-SCOPE": "",
       "CORE-01-BTN-CANONICAL-SCRIPT": "",
       ...restoreProjectPatch(snapshots, ""),
+      ...restoreTopicPatch(topicSnapshots, "", ""),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-CREATE") {
@@ -760,13 +779,17 @@ function previewCoreActionFields(
     if (!target) return {};
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), current("CORE-01-CTL-TOPIC"));
     if (!list.includes(target)) return {};
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    const topicSnapshots = dropTopicSnapshot(parseTopicSnapshots(current(CORE_TOPIC_SNAPSHOT_FIELD_UID)), project, target);
     return {
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(list.filter((row) => row !== target)),
+      "CORE-01-FLD-TOPIC-SNAPSHOTS": serializeTopicSnapshots(topicSnapshots),
       "CORE-01-CTL-TOPIC": "",
       "CORE-01-FLD-TOPIC-SCOPE": "",
       "CORE-01-FLD-PAGE-MODE": "PROJECT_CORE",
       "CORE-01-LST-WORK-ITEMS": "STORY",
       "CORE-01-BTN-CANONICAL-SCRIPT": "",
+      ...restoreTopicPatch(topicSnapshots, project, ""),
     };
   }
   if (actionUid === "CORE-01-ACT-PROJECT-SELECT" && controlUid === "CORE-01-FLD-PAGE-MODE") {
@@ -806,15 +829,35 @@ function previewCoreActionFields(
     const previous = current("CORE-01-CTL-TOPIC");
     const topic = exactName(nextValue) || exactName(previous);
     if (!topic) return {};
+    if (topic === previous) return {};
     const list = namedList(current("CORE-01-BTN-TOPIC-CREATE"), previous).map((item) =>
       item === previous ? topic : item,
     );
     const nextList = list.includes(topic) ? list : [...list, topic];
+    const project = exactName(current("CORE-01-CTL-PROJECT"));
+    // Topic-group mode (Canonical Production Script Contract): topic-bound
+    // fields switch with the topic; the outgoing topic state is snapshotted,
+    // the incoming topic restores its own group (fresh topic starts clean
+    // with a Continuity Bridge line pointing at its predecessor).
+    const snapshots = parseTopicSnapshots(current(CORE_TOPIC_SNAPSHOT_FIELD_UID));
+    const previousState = previous && project ? snapshots[topicKey(project, previous)] : undefined;
+    let nextSnapshots = snapshots;
+    if (previous && project) {
+      nextSnapshots = saveTopicSnapshot(snapshots, project, previous, captureTopicSnapshot(current));
+    }
+    const restored = restoreTopicPatch(nextSnapshots, project, topic);
+    const bridge =
+      previous && previousState === undefined ? topicBridgeLine(previous, undefined) : "";
+    const scope =
+      restored["CORE-01-FLD-TOPIC-SCOPE"] ||
+      (bridge ? `${topic}｜${bridge}` : topic);
     return {
       "CORE-01-CTL-TOPIC": topic,
       "CORE-01-FLD-PAGE-MODE": "TOPIC_PRODUCTION",
-      "CORE-01-FLD-TOPIC-SCOPE": topic,
       "CORE-01-BTN-TOPIC-CREATE": JSON.stringify(nextList),
+      "CORE-01-FLD-TOPIC-SNAPSHOTS": serializeTopicSnapshots(nextSnapshots),
+      ...restored,
+      "CORE-01-FLD-TOPIC-SCOPE": scope,
     };
   }
   if (actionUid === "CORE-01-ACT-TOPIC-SELECT" && controlUid === "CORE-01-FLD-TOPIC-SCOPE") {
