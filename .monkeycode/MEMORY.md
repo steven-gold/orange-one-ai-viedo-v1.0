@@ -126,3 +126,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - Asset page project/topic chips implement the display-delivery mode (docasset.txt:1706): a project is listed only when its CORE upstream state has PROJECT-CONFIRM/PROJECT-LOCK plus a topic - current project via live CORE fields, others via CORE-01-FLD-PROJECT-SNAPSHOTS; topic list follows the selected project's snapshot. Filter criteria deliberately match inbound ready (fail-closed parity): listed = selectable-ready. NOTE: local dev projects all have full lock chains, so the filter's exclusion path only shows on the live deployment (e.g. 天堂 excluded).
   - CORE project snapshots carry per-project state including CORE-01-BTN-PROJECT-LOCK and CORE-01-CTL-TOPIC; global fields like PROJECT-CONFIRM reflect only the current project, so per-project judgement MUST go through snapshots for non-current projects.
   - A CORE-01-FLD-CANONICAL-FILENAME is assigned by assetCanonicalFilenameOf() at CANDIDATE-CONFIRM (deterministic ACPOS-ASSET-{hash}); before confirm GATE-NAMING reads "canonical filename pending" which is the correct pre-reservation state.
+
+[Project Knowledge Summary]
+- Date: 2026-11-04
+- Context: Discovered by Agent while implementing the CORE topic-group snapshot mode (Canonical Production Script Contract)
+- Category: Build Methods
+- Instructions:
+  - Topic-bound state lives in src/lib/coreTopicSnapshot.ts (CORE-01-FLD-TOPIC-SNAPSHOTS, key "project/topic", cap 40) - mirror of coreProjectSnapshot.ts. CORE_TOPIC_SNAPSHOT_UIDS covers CANONICAL-SCRIPT, CANDIDATE group, TOPIC-SCOPE, EVALUATION, VERSION-STATE, LOCK-REVIEW, STRUCTURED-DECISION, HUMAN-DECISION, LIFECYCLE-STAGE, PACKAGE, CHANGE-REQUEST, RETURN-MODIFY, CORE-REVIEW.
+  - TOPIC-SELECT in coreActionPreview.ts: same-topic select is a no-op; switching snapshots the outgoing topic (captureTopicSnapshot) and restores the incoming one (restoreTopicPatch). A fresh topic (no snapshot) starts clean and gets a Continuity Bridge line in TOPIC-SCOPE: "topic｜前序專題：previous-topic"; a restored topic keeps its own snapshotted scope. TOPIC-DELETE drops that topic's snapshot; PROJECT-RENAME/DROP rename/drop all topic snapshots of the project.
+  - API probe probe_topic_switch.mjs: /api/core/action body field is nextValue (NOT value); read model shape is top-level json.fields[]; local second-topic creation falls back to node:sqlite write because API TOPIC-CREATE correctly fails closed without LIFECYCLE-STAGE=PROJECT_LOCKED (mother lock required).
+  - coreActionPreview.test.ts legacy assertions were stale (compare/structured-decision now write JSON contracts, controls count 71); keep them aligned when controls change.
