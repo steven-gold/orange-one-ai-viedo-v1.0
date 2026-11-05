@@ -531,10 +531,12 @@ export function DevVisual() {
                         key={signal.signalId}
                         onClick={() => setSelectedSignalId(signal.signalId)}
                       >
-                        <span>{signal.companyName}</span>
-                        <span>{[signal.email, signal.phone, signal.address].filter(Boolean).join("、") || dash}</span>
-                        <span>{signal.intent}</span>
-                        <span>{signal.evidence}</span>
+                        <span title={signal.companyName}>{signal.companyName}</span>
+                        <span title={[signal.email, signal.phone, signal.address].filter(Boolean).join("、")}>
+                          {[signal.email, signal.phone, signal.address].filter(Boolean).join("、") || dash}
+                        </span>
+                        <span title={signal.intent}>{signal.intent}</span>
+                        <span title={signal.evidence}>{signal.evidence}</span>
                         <span>{signal.freshness}</span>
                         <span>{signal.match}</span>
                         <span>{tx(OPP_LABEL[(Object.prototype.hasOwnProperty.call(OPP_LABEL, signal.opportunity) ? signal.opportunity : "OPEN") as DevOpportunityState])}</span>
@@ -704,13 +706,20 @@ export function DevVisual() {
                           disabled={disabled}
                           onChange={() => toggleCompany(company.companyId)}
                         />
-                        {company.name}／{tx(IDENTITY_LABEL[company.identityKind])}
+                        <span
+                          className={styles.checkText}
+                          title={`${company.name}／${t(IDENTITY_LABEL[company.identityKind])}`}
+                        >
+                          {company.name}／{tx(IDENTITY_LABEL[company.identityKind])}
+                        </span>
                       </span>
-                      <span>{company.aliases.join("、") || dash}</span>
-                      <span>{company.contacts.map((item) => item.value).join("、") || dash}</span>
-                      <span>{company.evidence || dash}</span>
+                      <span title={company.aliases.join("、")}>{company.aliases.join("、") || dash}</span>
+                      <span title={company.contacts.map((item) => item.value).join("、")}>
+                        {company.contacts.map((item) => item.value).join("、") || dash}
+                      </span>
+                      <span title={company.evidence}>{company.evidence || dash}</span>
                       <span>{tx(OPP_LABEL[company.opportunity.state])}</span>
-                      <span>{company.suppression || dash}</span>
+                      <span title={company.suppression}>{company.suppression || dash}</span>
                       <span className={styles.rowAct}>{tx("dev.row-open")}</span>
                     </div>
                   ))}

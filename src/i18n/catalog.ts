@@ -2838,7 +2838,8 @@ const catalog = {
 export type TranslationKey = keyof typeof catalog;
 
 export function translate(locale: Locale, key: TranslationKey, params?: Record<string, string | number>): string {
-  const text = catalog[key][locale];
+  const entry = catalog[key] as Record<Locale, string> | undefined;
+  const text = (entry && entry[locale]) || (entry && entry.en) || String(key);
   if (!params) return text;
   return text.replace(/\{\{(\w+)\}\}/g, (match, name: string) =>
     Object.prototype.hasOwnProperty.call(params, name) ? String(params[name]) : match,

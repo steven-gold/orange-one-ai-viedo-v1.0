@@ -272,12 +272,6 @@
   justify-content: center;
 }
 
-.check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -309,22 +303,22 @@
 
 .signalHead,
 .signalRow {
-  grid-template-columns: 1.2fr 1.1fr 0.7fr 1.1fr 0.7fr 0.8fr 0.9fr 0.7fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr) minmax(0, 0.7fr) minmax(0, 1.1fr) minmax(0, 0.7fr) minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 0.7fr);
 }
 
 .dirHead,
 .dirRow {
-  grid-template-columns: 1.3fr 0.8fr 1fr 1fr 1fr 1fr 0.9fr;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.9fr);
 }
 
 .msgHead,
 .msgRow {
-  grid-template-columns: 1.1fr 1.1fr 0.9fr 0.9fr 0.9fr 0.9fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 0.9fr);
 }
 
 .rcpHead,
 .rcpRow {
-  grid-template-columns: 1.1fr 1fr 1fr 0.9fr 1fr 0.8fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 0.8fr);
 }
 
 .thead {
@@ -375,6 +369,26 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.check .checkText {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 }
 
 .thead span:first-child,
