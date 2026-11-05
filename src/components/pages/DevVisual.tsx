@@ -286,6 +286,9 @@ export function DevVisual() {
     null;
   const approvedCandidate = workbench.candidates.find((item) => item.status === "APPROVED") ?? null;
   const campaign = workbench.campaign;
+  const campaignCandidate = campaign
+    ? workbench.candidates.find((item) => item.candidateId === campaign.candidateId) ?? null
+    : null;
   const deliveries = workbench.deliveries;
 
   const selectStage = (next: DevStage, uid: string) => {
@@ -1008,6 +1011,14 @@ export function DevVisual() {
             <div className={styles.card}>
               <h3>{tx("dev.approval-title")}</h3>
               <p className={styles.note}>{campaign ? tx(CAMPAIGN_LABEL[campaign.status]) : tx("dev.approval-hint")}</p>
+              <div className={styles.metaGrid}>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.letter-preview")}</span>
+                  <strong>{campaignCandidate?.subject || approvedCandidate?.subject || dash}</strong>
+                </div>
+              </div>
+              <p className={styles.note}>{campaignCandidate?.body || approvedCandidate?.body || tx("dev.empty-recipients")}</p>
+              <p className={styles.note}>{`${tx("dev.col-personalization")}: ${campaignCandidate?.personalization || approvedCandidate?.personalization || dash}`}</p>
             </div>
             </div>
           </section>
@@ -1051,6 +1062,21 @@ export function DevVisual() {
             {deliveries.some((item) => item.status === "EXTERNAL_PENDING") ? (
               <p className={styles.note}>{tx("dev.blocker-delivery")}</p>
             ) : null}
+            <div className={styles.card}>
+              <h3>{tx("dev.letter-preview")}</h3>
+              <div className={styles.metaGrid}>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.cand-subject")}</span>
+                  <strong>{campaignCandidate?.subject || dash}</strong>
+                </div>
+                <div className={styles.metaItem}>
+                  <span>{tx("dev.delivery-mix")}</span>
+                  <strong>{`${tx(DELIVERY_LABEL.QUEUED)} ${deliveries.filter((item) => item.status === "QUEUED").length} · ${tx(DELIVERY_LABEL.EXTERNAL_PENDING)} ${deliveries.filter((item) => item.status === "EXTERNAL_PENDING").length} · ${tx(DELIVERY_LABEL.STOPPED)} ${deliveries.filter((item) => item.status === "STOPPED").length}`}</strong>
+                </div>
+              </div>
+              <p className={styles.note}>{campaignCandidate?.body || tx("dev.empty-recipients")}</p>
+              <p className={styles.note}>{`${tx("dev.col-personalization")}: ${campaignCandidate?.personalization || dash}`}</p>
+            </div>
             </div>
             <div data-component-uid="DEV-01-CMP-KILL-SWITCH">
               <div className={styles.card}>
@@ -1190,7 +1216,11 @@ export function DevVisual() {
             <Btn
               uid="DEV-01-BTN-EMAIL-DISPATCH"
               label={tx("dev.btn-dispatch")}
-              onAct={(uid) => void act(uid)}
+              onAct={() => {
+                const count = campaign?.recipients.length ?? 0;
+                if (!window.confirm(tx("dev.dispatch-confirm", { n: count }))) return;
+                void act("DEV-01-BTN-EMAIL-DISPATCH");
+              }}
               disabled={disabled || campaign?.status !== "APPROVED"}
               primary={campaign?.status === "APPROVED"}
               title={campaign?.status !== "APPROVED" ? tx("dev.need-approved-campaign") : undefined}
