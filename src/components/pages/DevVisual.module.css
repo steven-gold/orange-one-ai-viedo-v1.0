@@ -365,9 +365,7 @@
 .trow span {
   padding: 10px 10px;
   border-bottom: 1px solid var(--dev-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   text-align: center;
   min-width: 0;
   overflow: hidden;
@@ -393,7 +391,6 @@
 
 .thead span:first-child,
 .trow span:first-child {
-  justify-content: flex-start;
   text-align: left;
 }
 
