@@ -105,6 +105,8 @@ const DEV_SPEC_ERROR_UIDS: Record<string, string> = {
   DEV_KILL_TARGET_REQUIRED: "DEV-01-ERR-KILL",
   DEV_KILL_NOT_APPLICABLE: "DEV-01-ERR-KILL",
   DEV_ACTION_UNDEFINED: "DEV-01-ERR-UNDEFINED",
+  DEV_COMPANY_REQUIRED: "DEV-01-ERR-IDENTITY",
+  DEV_COMPANY_IN_USE: "DEV-01-ERR-IDENTITY",
 };
 
 function clearError(workbench: DevWorkbench): DevWorkbench {
@@ -383,6 +385,28 @@ export function previewDevAction(
   if (actionUid === "DEV-01-ACT-DIRECTORY-SEARCH") {
     const query = usable(payload.query);
     return patchFrom(clearError({ ...workbench, query }));
+  }
+
+  if (actionUid === "DEV-01-ACT-COMPANY-DELETE") {
+    const ids = Array.isArray(payload.companyIds)
+      ? (payload.companyIds as unknown[]).map((id) => usable(typeof id === "string" ? id : null)).filter(Boolean)
+      : [];
+    if (!ids.length) return fail(workbench, "DEV_COMPANY_REQUIRED");
+    const idSet = new Set(ids);
+    const referenced = new Set<string>();
+    for (const candidate of workbench.candidates) referenced.add(candidate.companyId);
+    for (const recipient of workbench.campaign?.recipients ?? []) referenced.add(recipient.companyId);
+    if (workbench.merge) {
+      referenced.add(workbench.merge.survivorId);
+      for (const mergedId of workbench.merge.mergedIds) referenced.add(mergedId);
+    }
+    const blocked = workbench.companies.filter((company) => idSet.has(company.companyId) && referenced.has(company.companyId));
+    if (blocked.length) {
+      return fail(workbench, "DEV_COMPANY_IN_USE", blocked.map((company) => company.name).join("、"));
+    }
+    const companies = workbench.companies.filter((company) => !idSet.has(company.companyId));
+    if (companies.length === workbench.companies.length) return fail(workbench, "DEV_COMPANY_REQUIRED");
+    return patchFrom(clearError({ ...workbench, companies }));
   }
 
   if (actionUid === "DEV-01-ACT-MERGE-PREVIEW") {

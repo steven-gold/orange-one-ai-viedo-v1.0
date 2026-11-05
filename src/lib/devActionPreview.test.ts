@@ -29,7 +29,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(DEV_VISIBLE_CONTROLS.length === 22, "DEV stays at the 22 authoritative visible controls");
+  assert(DEV_VISIBLE_CONTROLS.length === 23, "DEV stays at the 23 authoritative visible controls");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-PROFILE-SAVE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "TBL10 profile save stays off the visible denominator");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-SEND-ONE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented one-to-one send control");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-CANDIDATE-EDIT" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented candidate edit control");
@@ -630,6 +630,55 @@ function store(seed: Record<string, string> = {}): {
   assert(companies.length === 1, "human qualify registers the company");
   assert(companies[0].name === "自動登錄企業", "qualified company keeps the discovered name");
   assert(companies[0].contacts.some((item) => item.type === "ADDRESS"), "qualified company carries discovered contacts");
+  bindSharedOwnersForTest(null);
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: true });
+  const free: DevCompany = {
+    companyId: "CO-FREE",
+    name: "可刪公司",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-777",
+    aliases: [],
+    contacts: [],
+    opportunity: { opportunityId: "OPP-FREE", state: "OPEN" },
+    suppression: "",
+    evidence: "公開資料",
+    mergedFrom: [],
+    version: 1,
+  };
+  const held: DevCompany = { ...free, companyId: "CO-HELD", name: "引用公司", identityValue: "TW-888" };
+  const heldCandidate: DevCandidate = {
+    candidateId: "CD-HELD",
+    companyId: "CO-HELD",
+    companyName: "引用公司",
+    opportunityId: "OPP-HELD",
+    contactId: "CT-HELD",
+    contactValue: "held@example.com",
+    personalization: "",
+    subject: "主旨",
+    body: "內文。",
+    policy: "PASS",
+    status: "REVIEW",
+    version: 1,
+    evidence: "",
+    history: [],
+  };
+  const { current, apply } = store({
+    [DEV_COMPANIES_UID]: JSON.stringify([free, held]),
+    [DEV_CANDIDATES_UID]: JSON.stringify([heldCandidate]),
+  });
+  const empty = apply("DEV-01-BTN-COMPANY-DELETE", "DEV-01-ACT-COMPANY-DELETE", JSON.stringify({ companyIds: [] }));
+  assert(parseJson<{ code: string }>(empty["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_COMPANY_REQUIRED", "empty selection is rejected");
+  const blocked = apply("DEV-01-BTN-COMPANY-DELETE", "DEV-01-ACT-COMPANY-DELETE", JSON.stringify({ companyIds: ["CO-HELD"] }));
+  const blockedError = parseJson<{ code: string; detail?: string }>(blocked["DEV-01-STATE-ERROR"], { code: "" });
+  assert(blockedError.code === "DEV_COMPANY_IN_USE", "candidate-referenced company is protected");
+  assert(blockedError.detail === "引用公司", "in-use error names the blocking company");
+  const ok = apply("DEV-01-BTN-COMPANY-DELETE", "DEV-01-ACT-COMPANY-DELETE", JSON.stringify({ companyIds: ["CO-FREE", "CO-GHOST"] }));
+  const remaining = JSON.parse(ok[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
+  assert(remaining.length === 1 && remaining[0].companyId === "CO-HELD", "unreferenced company is deleted");
+  assert(parseJson<{ code: string }>(ok["DEV-01-STATE-ERROR"], { code: "" }).code === "", "successful delete clears the error state");
   bindSharedOwnersForTest(null);
 }
 

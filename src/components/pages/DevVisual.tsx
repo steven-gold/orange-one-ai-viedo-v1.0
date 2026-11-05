@@ -78,6 +78,7 @@ const JOB_LABEL: Record<DevJobStatus, TranslationKey> = {
 
 const PAGE_SIZE = 20;
 const CONTINUOUS_PULL_INTERVAL_MS = 15000;
+const JOB_IDLE_AFTER_MS = CONTINUOUS_PULL_INTERVAL_MS * 2;
 
 const OPP_LABEL: Record<DevOpportunityState, TranslationKey> = {
   OPEN: "dev.opp-open",
@@ -213,6 +214,9 @@ export function DevVisual() {
         window.location.assign("/admin/knowledge");
         return;
       }
+      if (controlUid === "DEV-01-BTN-COMPANY-DELETE") {
+        setSelectedCompanyIds([]);
+      }
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
@@ -229,6 +233,17 @@ export function DevVisual() {
   const actionError = errorKey(workbench.error?.code);
   const jobStatus = workbench.job?.status ?? null;
   const jobPolling = jobStatus === "RUNNING" || jobStatus === "EXTERNAL_PENDING";
+  const jobCollected = workbench.job?.collected ?? 0;
+  const jobCursor = workbench.job?.cursor ?? 0;
+  const [jobIdle, setJobIdle] = useState(false);
+  useEffect(() => {
+    if (!jobPolling) {
+      setJobIdle(false);
+      return;
+    }
+    const timer = setTimeout(() => setJobIdle(true), JOB_IDLE_AFTER_MS);
+    return () => clearTimeout(timer);
+  }, [jobPolling, jobCollected, jobCursor]);
   useEffect(() => {
     if (!jobPolling) return;
     const timer = setInterval(() => {
@@ -240,7 +255,13 @@ export function DevVisual() {
     }, CONTINUOUS_PULL_INTERVAL_MS);
     return () => clearInterval(timer);
   }, [jobPolling]);
-  const jobLabel = jobStatus ? tx(JOB_LABEL[jobStatus]) : loading ? dash : tx("dev.job-idle");
+  const jobLabel = jobStatus
+    ? jobStatus === "RUNNING" && jobIdle
+      ? tx("dev.job-running-idle")
+      : tx(JOB_LABEL[jobStatus])
+    : loading
+      ? dash
+      : tx("dev.job-idle");
   const companies = searchDirectoryProjection(workbench.companies, workbench.query);
   const audiencePreview = searchAudienceProjection(workbench.companies, workbench.audienceQuery);
   const signalTotal = workbench.signals.length;
@@ -470,7 +491,7 @@ export function DevVisual() {
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.rail-connector")}</span>
-                  <strong>{jobStatus === "EXTERNAL_PENDING" ? tx("dev.connector-pending") : jobStatus === "RUNNING" ? tx("dev.job-running") : dash}</strong>
+                  <strong>{jobStatus === "EXTERNAL_PENDING" ? tx("dev.connector-pending") : jobStatus === "RUNNING" ? (jobIdle ? tx("dev.job-running-idle") : tx("dev.job-running")) : dash}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.signal-title")}</span>
@@ -610,10 +631,33 @@ export function DevVisual() {
                   if (event.key === "Enter") void act("DEV-01-BTN-DIRECTORY-SEARCH", { query });
                 }}
               />
+              <Btn
+                uid="DEV-01-BTN-COMPANY-DELETE"
+                label={tx("dev.btn-company-delete")}
+                onAct={() => void act("DEV-01-BTN-COMPANY-DELETE", { companyIds: selectedCompanyIds })}
+                disabled={disabled || !selectedCompanyIds.length}
+                danger
+              />
             </div>
             <div className={styles.table}>
               <div className={`${styles.thead} ${styles.dirHead}`}>
-                <span>{tx("dev.col-identity")}</span>
+                <span>
+                  <input
+                    type="checkbox"
+                    aria-label={tx("dev.col-select-all")}
+                    checked={dirSlice.length > 0 && dirSlice.every((company) => selectedCompanyIds.includes(company.companyId))}
+                    disabled={disabled || !dirTotal}
+                    onChange={() => {
+                      const allSelected = dirSlice.every((company) => selectedCompanyIds.includes(company.companyId));
+                      setSelectedCompanyIds(
+                        allSelected
+                          ? selectedCompanyIds.filter((id) => !dirSlice.some((company) => company.companyId === id))
+                          : [...new Set([...selectedCompanyIds, ...dirSlice.map((company) => company.companyId)])],
+                      );
+                    }}
+                  />
+                  {tx("dev.col-identity")}
+                </span>
                 <span>{tx("dev.col-aliases")}</span>
                 <span>{tx("dev.col-contact")}</span>
                 <span>{tx("dev.col-evidence")}</span>
