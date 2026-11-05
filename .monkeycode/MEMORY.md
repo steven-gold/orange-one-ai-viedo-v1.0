@@ -168,3 +168,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - Live baseline is now fc73d826 (DEV-01 spec alignment + 23 authoritative controls + UX batch + send-flow preview/confirm). probe_live_verify.mjs expects read-model size 36 (23 controls + STATE fields) and the CAMPAIGN-REVIEW section; dev control-count assertions live in probe_company_delete.mjs (23/36).
   - UX corrections landed 2026-11-05: sticky error bar + busy bar, Stage2 live-filter (local query state) + clear-search buttons, CAMPAIGN-APPROVE disabled until previewed, EMAIL-DISPATCH confirm with recipient count, letter preview cards on stage 4/5. Stage4 audience search stays Enter-confirmed (authority-consistent preview for the approve drift check).
   - COMPANY-DELETE (DEV-01-BTN-COMPANY-DELETE -> DEV-01-ACT-COMPANY-DELETE) deletes workbench companies with fail-closed reference integrity: candidates/campaign recipients/merge preview references fail with DEV_COMPANY_IN_USE (err uid DEV-01-ERR-IDENTITY).
+
+[Project Knowledge Summary]
+- Date: 2026-11-05
+- Context: Discovered by Agent while fixing the live "cells and text stuck together" layout bug
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - Visual verification stack: playwright + chromium installed globally (`npm install -g playwright && npx playwright install chromium --with-deps`); screenshot script /tmp/opencode/shot.mjs runs as `cd /tmp/opencode && [SHOT_BASE=...] [SHOT_STAGE=1-5] NODE_PATH=$(npm root -g) node shot.mjs`; default base http://localhost:3000, live base https://orange-one-acpos-test.vercel.app.
+  - Local read-model seeding for layout tests: file-backed SQLite at /tmp/acpos-sandbox-workbench.sqlite, table ghsn_dev_field_projection(control_uid, value_text); company array control_uid is DEV-01-STATE-COMPANIES, signals is DEV-01-STATE-SIGNALS; JSON must use legal DevOpportunityState values (OPEN/QUALIFIED/CONTACTED/REPLIED/PROPOSAL/WON/LOST/SUPPRESSED) - an unknown state used to crash the whole page render.
+  - Live layout bugs reproduce only with data: empty stages render clean; seed companies/signals before screenshotting. Directory identityValue holds full registration text (long), so table cells need minmax(0, Xfr) grid columns + single-line ellipsis + title tooltips (fix landed in 9964f061). translate() now falls back to entry.en then the key itself, so one bad key renders text instead of wiping the page.
+  - Render-layer validation workflow for future UI changes: seed data -> screenshot stage locally -> fix -> tsc + tsx --test src/lib/devActionPreview.test.ts -> probes (probe_company_delete/probe_dev_fix/probe_topic_switch) -> commit/push -> sleep 150 -> probe_live_verify -> screenshot live stage.
