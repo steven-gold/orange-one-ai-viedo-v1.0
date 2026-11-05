@@ -177,20 +177,34 @@ export function applyDiscoveryCollection(
     return patchFrom(clearError({ ...workbench, job }));
   }
   const signals = mergeDiscoverySignals(workbench.signals, result.signals);
+  // Operator directive (2026-11-05): every discovered signal auto-registers its
+  // company into the directory; deletion is the operator's downstream exit.
+  let companies = workbench.companies;
+  const consumed = new Set<string>();
+  for (const fresh of result.signals) {
+    companies = upsertCompany(companies, qualifyCompany(fresh, companies));
+    consumed.add(fresh.signalId);
+  }
+  const signalList = signals.map((item) =>
+    consumed.has(item.signalId)
+      ? { ...item, status: "QUALIFIED" as const, opportunity: "OPEN", version: item.version + 1 }
+      : item,
+  );
   const continuous = workbench.job.mode === "CONTINUOUS";
   const job: DevJob = {
     ...workbench.job,
     status: continuous ? "RUNNING" : "COMPLETE",
     blocker: "",
     cursor: result.nextCursor ?? workbench.job.cursor ?? 0,
-    collected: signals.length,
+    collected: signalList.length,
     updatedAt: nowIso(),
   };
   return patchFrom(
     clearError({
       ...workbench,
       job,
-      signals,
+      signals: signalList,
+      companies,
     }),
   );
 }

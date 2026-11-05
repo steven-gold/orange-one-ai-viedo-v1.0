@@ -1805,7 +1805,7 @@ const catalog = {
   "dev.need-approved-candidate": { "zh-TW": "需要已批准的候選訊息", "zh-CN": "需要已批准的候选讯息", en: "Requires an approved candidate" },
   "dev.need-approved-campaign": { "zh-TW": "需要已審批的活動", "zh-CN": "需要已审批的活动", en: "Requires an approved campaign" },
   "dev.need-profile": { "zh-TW": "請先完成搜集設定", "zh-CN": "请先完成搜集设定", en: "Complete the discovery profile first" },
-  "dev.qualify-hint": { "zh-TW": "合格企業將列入評級頁名單", "zh-CN": "合格企业将列入评级页名单", en: "Qualified companies appear on the rating page" },
+  "dev.qualify-hint": { "zh-TW": "搜尋結果自動列入評級頁名單，不需要的企業可在名單勾選刪除", "zh-CN": "搜寻结果自动列入评级页名单，不需要的企业可在名单勾选删除", en: "Discovered signals auto-register on the rating page; unneeded companies can be deleted there" },
   "dev.blocker-acquisition": { "zh-TW": "共享取得服務目前無法使用，未產生假公司。", "zh-CN": "共享取得服务目前无法使用，未产生假公司。", en: "Shared Acquisition is unavailable; no simulated companies were created." },
   "dev.blocker-delivery": { "zh-TW": "共享發送服務目前無法使用，未假裝已外寄。", "zh-CN": "共享发送服务目前无法使用，未假装已外寄。", en: "Shared Delivery is unavailable; no simulated send was recorded." },
   "dev.connector-pending": { "zh-TW": "外部待處理", "zh-CN": "外部待处理", en: "External pending" },

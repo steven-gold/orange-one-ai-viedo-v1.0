@@ -622,14 +622,18 @@ function store(seed: Record<string, string> = {}): {
     nextCursor: 100,
   });
   assert(JSON.parse(patch[DEV_SIGNALS_UID] ?? "[]").length === 1, "collection stores the discovered signal");
-  assert(JSON.parse(patch[DEV_COMPANIES_UID] ?? "[]").length === 0, "collection never auto-registers companies");
+  const autoRegistered = JSON.parse(patch[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
+  assert(autoRegistered.length === 1, "collection auto-registers the discovered company");
+  assert(autoRegistered[0]?.name === "自動登錄企業", "auto-registered company keeps the discovered name");
+  assert(autoRegistered[0]?.contacts.some((item) => item.type === "ADDRESS"), "auto-registered company carries discovered contacts");
+  const autoSignal = JSON.parse(patch[DEV_SIGNALS_UID] ?? "[]")[0];
+  assert(autoSignal?.status === "QUALIFIED", "auto-registered signal is consumed");
   write(patch);
-  assert(JSON.parse(current(DEV_COMPANIES_UID) ?? "[]").length === 0, "signal stays NEW until the operator decides");
+  assert(JSON.parse(current(DEV_COMPANIES_UID) ?? "[]").length === 1, "directory persists the auto-registered company");
   apply("DEV-01-BTN-SIGNAL-QUALIFY", "DEV-01-ACT-SIGNAL-QUALIFY", JSON.stringify({ signalId: liveSignal.signalId }));
   const companies = JSON.parse(current(DEV_COMPANIES_UID) ?? "[]") as DevCompany[];
-  assert(companies.length === 1, "human qualify registers the company");
-  assert(companies[0].name === "自動登錄企業", "qualified company keeps the discovered name");
-  assert(companies[0].contacts.some((item) => item.type === "ADDRESS"), "qualified company carries discovered contacts");
+  assert(companies.length === 1, "human qualify no longer needed after auto-registration");
+  assert(parseJson<{ code: string }>(current("DEV-01-STATE-ERROR"), { code: "" }).code === "DEV_SIGNAL_NOT_NEW", "re-qualifying a consumed signal fails closed");
   bindSharedOwnersForTest(null);
 }
 
