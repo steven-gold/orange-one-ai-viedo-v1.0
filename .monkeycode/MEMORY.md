@@ -158,3 +158,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - The outage is intermittent with short windows: apt (deb.debian.org) succeeded at one instant, all hosts blocked again a few minutes later. TCP port OPEN means nothing - probe with a real TLS request (git ls-remote origin) when polling for recovery.
   - Recovery workflow: high-frequency polling terminal (15s interval, git ls-remote as probe) that on success pushes HEAD:main + HEAD:261002-feat-deploy-home-shell, waits ~300s for the Vercel build, then runs /tmp/opencode/probe_live_verify.mjs (live /admin/dev control set, /api/dev read model, invented-action 404, core/assets/video APIs) with retries.
   - openssh-client was not preinstalled; apt-get install -y openssh-client is allowed and works in open windows. ssh:// and ssh over port 443 (ssh.github.com) provide no bypass - the interceptor cuts SSH banners too.
+
+[Project Knowledge Summary]
+- Date: 2026-11-05
+- Context: Discovered by Agent after the sandbox reset restored outbound network and the deploy completed
+- Category: Operations & Deployment
+- Instructions:
+  - The 2026-11-04 outbound outage ended via a sandbox reset (all terminals lost, clock jumped, network restored at 2026-11-05 11:25 UTC) - when an outage persists beyond hours, a platform reset resolves it; long-running terminals (poll loops, dev servers) must be re-created afterwards.
+  - Live baseline is now fc73d826 (DEV-01 spec alignment + 23 authoritative controls + UX batch + send-flow preview/confirm). probe_live_verify.mjs expects read-model size 36 (23 controls + STATE fields) and the CAMPAIGN-REVIEW section; dev control-count assertions live in probe_company_delete.mjs (23/36).
+  - UX corrections landed 2026-11-05: sticky error bar + busy bar, Stage2 live-filter (local query state) + clear-search buttons, CAMPAIGN-APPROVE disabled until previewed, EMAIL-DISPATCH confirm with recipient count, letter preview cards on stage 4/5. Stage4 audience search stays Enter-confirmed (authority-consistent preview for the approve drift check).
+  - COMPANY-DELETE (DEV-01-BTN-COMPANY-DELETE -> DEV-01-ACT-COMPANY-DELETE) deletes workbench companies with fail-closed reference integrity: candidates/campaign recipients/merge preview references fail with DEV_COMPANY_IN_USE (err uid DEV-01-ERR-IDENTITY).
