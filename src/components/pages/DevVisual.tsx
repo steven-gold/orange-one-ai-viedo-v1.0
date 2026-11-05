@@ -1048,7 +1048,7 @@ export function DevVisual() {
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.delivery-policy")}</span>
-                  <strong>{tx("dev.delivery-policy-value")}</strong>
+                  <strong title={tx("dev.delivery-policy-value")}>{tx("dev.delivery-policy-value")}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.delivery-envelope")}</span>

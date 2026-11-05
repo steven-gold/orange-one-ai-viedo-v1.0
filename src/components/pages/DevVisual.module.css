@@ -450,15 +450,24 @@
   justify-content: space-between;
   gap: 12px;
   font-size: 12px;
+  min-width: 0;
 }
 
-.metaItem span {
+.metaItem > span {
   color: var(--dev-muted);
+  flex-shrink: 0;
+  margin-bottom: 0;
 }
 
-.metaItem strong {
+.metaItem > strong {
   color: var(--dev-secondary);
   font-weight: 500;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .dock {
