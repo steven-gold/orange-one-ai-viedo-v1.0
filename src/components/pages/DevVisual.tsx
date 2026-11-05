@@ -22,6 +22,7 @@ import {
   type DevProfile,
   type DevSignal,
   type DevSignalStatus,
+  profileIsReady,
   workbenchFromFields,
 } from "@/lib/devState";
 import { displayDevValue } from "./devFormat";
@@ -52,6 +53,7 @@ function Btn({
   disabled,
   primary = false,
   danger = false,
+  title,
 }: {
   uid: string;
   label: string;
@@ -59,10 +61,11 @@ function Btn({
   disabled: boolean;
   primary?: boolean;
   danger?: boolean;
+  title?: string;
 }) {
   const className = [styles.btn, primary ? styles.btnPrimary : "", danger ? styles.btnDanger : ""].filter(Boolean).join(" ");
   return (
-    <button type="button" className={className} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
+    <button type="button" className={className} data-control-uid={uid} disabled={disabled} title={title} onClick={() => onAct(uid)}>
       {label}
     </button>
   );
@@ -262,7 +265,7 @@ export function DevVisual() {
     : loading
       ? dash
       : tx("dev.job-idle");
-  const companies = searchDirectoryProjection(workbench.companies, workbench.query);
+  const companies = searchDirectoryProjection(workbench.companies, query);
   const audiencePreview = searchAudienceProjection(workbench.companies, workbench.audienceQuery);
   const signalTotal = workbench.signals.length;
   const signalPages = Math.max(1, Math.ceil(signalTotal / PAGE_SIZE));
@@ -316,6 +319,11 @@ export function DevVisual() {
           {workbench.error?.code === "DEV_ACTION_UNDEFINED" && workbench.error.detail
             ? `${tx(actionError)} [${workbench.error.detail} · ${workbench.error.errUid}]`
             : tx(actionError)}
+        </div>
+      ) : null}
+      {busy ? (
+        <div className={styles.busyBar} role="status" aria-busy="true">
+          {tx("dev.busy")}
         </div>
       ) : null}
 
@@ -547,7 +555,7 @@ export function DevVisual() {
                       {tx("dev.page-prev")}
                     </button>
                     <span className={styles.pagerStatus}>
-                      {tx("dev.page-status", { x: safeSignalPage + 1, y: signalPages })}
+                      {tx("dev.page-status-total", { total: signalTotal, x: safeSignalPage + 1, y: signalPages })}
                     </span>
                     <button
                       type="button"
@@ -577,6 +585,7 @@ export function DevVisual() {
                 >
                   {tx("dev.btn-ignore")}
                 </button>
+                <span className={styles.note}>{tx("dev.qualify-hint")}</span>
               </div>
             </div>
             </div>
@@ -638,6 +647,19 @@ export function DevVisual() {
                 disabled={disabled || !selectedCompanyIds.length}
                 danger
               />
+              {query ? (
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled}
+                  onClick={() => {
+                    setQuery("");
+                    void act("DEV-01-BTN-DIRECTORY-SEARCH", { query: "" });
+                  }}
+                >
+                  {tx("dev.btn-clear-search")}
+                </button>
+              ) : null}
             </div>
             <div className={styles.table}>
               <div className={`${styles.thead} ${styles.dirHead}`}>
@@ -704,7 +726,10 @@ export function DevVisual() {
                     {tx("dev.page-prev")}
                   </button>
                   <span className={styles.pagerStatus}>
-                    {tx("dev.page-status", { x: safeDirPage + 1, y: dirPages })}
+                    {tx("dev.page-status-total", { total: dirTotal, x: safeDirPage + 1, y: dirPages })}
+                    {selectedCompanyIds.length ? (
+                      <span className={styles.selectedBadge}>{tx("dev.selected-count", { n: selectedCompanyIds.length })}</span>
+                    ) : null}
                   </span>
                   <button
                     type="button"
@@ -921,6 +946,19 @@ export function DevVisual() {
                   if (event.key === "Enter") void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery });
                 }}
               />
+              {audienceQuery ? (
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled}
+                  onClick={() => {
+                    setAudienceQuery("");
+                    void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery: "" });
+                  }}
+                >
+                  {tx("dev.btn-clear-search")}
+                </button>
+              ) : null}
             </div>
             <div className={styles.card}>
               <h3>{tx("dev.recipient-title")}</h3>
@@ -1046,6 +1084,7 @@ export function DevVisual() {
               onAct={(uid) => void act(uid)}
               disabled={disabled || jobStatus === "RUNNING" || jobStatus === "EXTERNAL_PENDING"}
               primary={jobStatus !== "RUNNING" && jobStatus !== "EXTERNAL_PENDING"}
+              title={workbench.profile && !profileIsReady(workbench.profile) ? tx("dev.need-profile") : undefined}
             />
             <Btn
               uid="DEV-01-BTN-DISCOVERY-PAUSE"
@@ -1125,6 +1164,8 @@ export function DevVisual() {
               label={tx("dev.btn-audience-search")}
               onAct={() => void act("DEV-01-BTN-CAMPAIGN-SEARCH", { audienceQuery })}
               disabled={disabled}
+              primary={campaign?.status === "REVIEW" && campaign?.previewed === false}
+              title={campaign?.status === "REVIEW" && campaign?.previewed === false ? tx("dev.need-audience-search") : undefined}
             />
             <Btn
               uid="DEV-01-BTN-CAMPAIGN-CREATE"
@@ -1132,19 +1173,28 @@ export function DevVisual() {
               onAct={() => void act("DEV-01-BTN-CAMPAIGN-CREATE", { candidateId: approvedCandidate?.candidateId })}
               disabled={disabled || !approvedCandidate}
               primary={!campaign || campaign.status !== "REVIEW"}
+              title={!approvedCandidate ? tx("dev.need-approved-candidate") : undefined}
             />
             <Btn
               uid="DEV-01-BTN-CAMPAIGN-APPROVE"
               label={tx("dev.btn-campaign-approve")}
               onAct={(uid) => void act(uid)}
-              disabled={disabled || campaign?.status !== "REVIEW"}
-              primary={campaign?.status === "REVIEW"}
+              disabled={disabled || campaign?.status !== "REVIEW" || campaign?.previewed === false}
+              primary={campaign?.status === "REVIEW" && campaign?.previewed !== false}
+              title={campaign?.previewed === false ? tx("dev.need-audience-search") : undefined}
             />
           </>
         ) : null}
         {stage === 5 ? (
           <>
-            <Btn uid="DEV-01-BTN-EMAIL-DISPATCH" label={tx("dev.btn-dispatch")} onAct={(uid) => void act(uid)} disabled={disabled || campaign?.status !== "APPROVED"} primary={campaign?.status === "APPROVED"} />
+            <Btn
+              uid="DEV-01-BTN-EMAIL-DISPATCH"
+              label={tx("dev.btn-dispatch")}
+              onAct={(uid) => void act(uid)}
+              disabled={disabled || campaign?.status !== "APPROVED"}
+              primary={campaign?.status === "APPROVED"}
+              title={campaign?.status !== "APPROVED" ? tx("dev.need-approved-campaign") : undefined}
+            />
             <Btn uid="DEV-01-BTN-REFRESH" label={tx("dev.btn-refresh")} onAct={(uid) => void act(uid)} disabled={disabled} />
             <Btn
               uid="DEV-01-BTN-KILL-SWITCH"
