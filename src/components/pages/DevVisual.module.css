@@ -251,6 +251,49 @@
   outline: none;
 }
 
+.fieldArea {
+  height: auto;
+  min-height: 220px;
+  padding: 10px 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.fieldHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.charCount {
+  font-style: normal;
+  color: var(--dev-muted);
+  font-size: 11px;
+}
+
+.listScroll {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.listScroll .thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.countBadge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border: 1px solid var(--dev-border-active);
+  border-radius: 999px;
+  color: var(--dev-purple);
+  font-size: 12px;
+  font-weight: 400;
+}
+
 .fieldInput:disabled,
 .fieldSelect:disabled {
   opacity: 0.72;

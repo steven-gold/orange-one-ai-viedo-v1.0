@@ -950,7 +950,10 @@ export function DevVisual() {
             {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
             <div className={styles.fields}>
               <label className={styles.field}>
-                <span>{tx("dev.cand-subject")}</span>
+                <span className={styles.fieldHead}>
+                  {tx("dev.cand-subject")}
+                  <em className={styles.charCount}>{tx("dev.char-count", { n: candSubject.length })}</em>
+                </span>
                 <input
                   className={styles.fieldInput}
                   value={candSubject}
@@ -960,12 +963,15 @@ export function DevVisual() {
                 />
               </label>
               <label className={styles.field}>
-                <span>{tx("dev.cand-body")}</span>
+                <span className={styles.fieldHead}>
+                  {tx("dev.cand-body")}
+                  <em className={styles.charCount}>{tx("dev.char-count", { n: candBody.length })}</em>
+                </span>
                 <textarea
-                  className={styles.fieldInput}
+                  className={`${styles.fieldInput} ${styles.fieldArea}`}
                   value={candBody}
                   disabled={disabled}
-                  rows={6}
+                  rows={10}
                   onChange={(event) => setCandBody(event.target.value)}
                   placeholder={tx("dev.cand-body")}
                 />
@@ -1037,7 +1043,12 @@ export function DevVisual() {
               ) : null}
             </div>
             <div className={styles.card}>
-              <h3>{tx("dev.recipient-title")}</h3>
+              <h3>
+                {tx("dev.recipient-title")}
+                <span className={styles.countBadge}>
+                  {tx("dev.recipient-count", { n: campaign?.recipients.length || audiencePreview.length })}
+                </span>
+              </h3>
               <div className={styles.table}>
                 <div className={`${styles.thead} ${styles.rcpHead}`}>
                   <span>{tx("dev.col-company")}</span>
@@ -1047,6 +1058,7 @@ export function DevVisual() {
                   <span>{tx("dev.col-message")}</span>
                   <span>{tx("dev.col-result")}</span>
                 </div>
+                <div className={styles.listScroll}>
                 {(campaign?.recipients.length ? campaign.recipients : audiencePreview.map(({ company, contact }) => ({
                   recipientId: company.companyId,
                   companyName: company.name,
@@ -1077,6 +1089,7 @@ export function DevVisual() {
                 ) : (
                   <p className={styles.empty}>{loading ? dash : tx("dev.empty-recipients")}</p>
                 )}
+                </div>
               </div>
             </div>
             </div>

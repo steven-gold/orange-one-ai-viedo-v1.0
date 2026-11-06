@@ -1743,6 +1743,8 @@ const catalog = {
   "dev.filter-message": { "zh-TW": "內容版本", "zh-CN": "内容版本", en: "Message Version" },
   "dev.filter-message-value": { "zh-TW": "精確已核准內容", "zh-CN": "精确已核准内容", en: "Exact approved candidate" },
   "dev.recipient-title": { "zh-TW": "收件預覽", "zh-CN": "收件预览", en: "Recipient Preview" },
+  "dev.recipient-count": { "zh-TW": "共 {{n}} 筆", "zh-CN": "共 {{n}} 笔", en: "{{n}} total" },
+  "dev.char-count": { "zh-TW": "{{n}} 字", "zh-CN": "{{n}} 字", en: "{{n}} chars" },
   "dev.col-message": { "zh-TW": "內容", "zh-CN": "内容", en: "Message" },
   "dev.col-result": { "zh-TW": "結果", "zh-CN": "结果", en: "Result" },
   "dev.btn-audience-search": { "zh-TW": "搜尋受眾", "zh-CN": "搜寻受众", en: "Search audience" },
