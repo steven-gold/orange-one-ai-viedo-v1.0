@@ -160,12 +160,14 @@ export function DevVisual() {
   const [selectedSignalId, setSelectedSignalId] = useState("");
   const [selectedSignalIds, setSelectedSignalIds] = useState<string[]>([]);
   const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
+  const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
   const [contactType, setContactType] = useState<"EMAIL" | "PHONE" | "ADDRESS">("EMAIL");
   const [contactValue, setContactValue] = useState("");
   const [contactSource, setContactSource] = useState("人工");
   const [selectedCandidateId, setSelectedCandidateId] = useState("");
   const [audienceQuery, setAudienceQuery] = useState("");
   const [signalPage, setSignalPage] = useState(0);
+  const [signalFilter, setSignalFilter] = useState<"ALL" | "NEW" | "HANDLED">("ALL");
   const [dirPage, setDirPage] = useState(0);
   const [candSubject, setCandSubject] = useState("");
   const [candBody, setCandBody] = useState("");
@@ -220,6 +222,9 @@ export function DevVisual() {
       }
       if (controlUid === "DEV-01-BTN-COMPANY-DELETE") {
         setSelectedCompanyIds([]);
+      }
+      if (controlUid === "DEV-01-BTN-CANDIDATE-DELETE") {
+        setSelectedCandidateIds([]);
       }
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
@@ -289,10 +294,13 @@ export function DevVisual() {
       : tx("dev.job-idle");
   const companies = searchDirectoryProjection(workbench.companies, query);
   const audiencePreview = searchAudienceProjection(workbench.companies, workbench.audienceQuery);
-  const signalTotal = workbench.signals.length;
+  const filteredSignals = workbench.signals.filter((signal) =>
+    signalFilter === "ALL" ? true : signalFilter === "NEW" ? signal.status === "NEW" : signal.status !== "NEW",
+  );
+  const signalTotal = filteredSignals.length;
   const signalPages = Math.max(1, Math.ceil(signalTotal / PAGE_SIZE));
   const safeSignalPage = Math.min(signalPage, signalPages - 1);
-  const signalSlice = workbench.signals.slice(safeSignalPage * PAGE_SIZE, (safeSignalPage + 1) * PAGE_SIZE);
+  const signalSlice = filteredSignals.slice(safeSignalPage * PAGE_SIZE, (safeSignalPage + 1) * PAGE_SIZE);
   const dirTotal = companies.length;
   const dirPages = Math.max(1, Math.ceil(dirTotal / PAGE_SIZE));
   const safeDirPage = Math.min(dirPage, dirPages - 1);
@@ -533,7 +541,25 @@ export function DevVisual() {
               </div>
             </div>
             <div className={styles.card}>
-              <h3>{tx("dev.signal-title")}</h3>
+              <h3 className={styles.cardHead}>
+                {tx("dev.signal-title")}
+                <span className={styles.filterChips}>
+                  {(["ALL", "NEW", "HANDLED"] as const).map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      className={`${styles.chip} ${signalFilter === chip ? styles.chipActive : ""}`}
+                      disabled={disabled}
+                      onClick={() => {
+                        setSignalFilter(chip);
+                        setSignalPage(0);
+                      }}
+                    >
+                      {tx(chip === "ALL" ? "dev.filter-all" : chip === "NEW" ? "dev.filter-new" : "dev.filter-handled")}
+                    </button>
+                  ))}
+                </span>
+              </h3>
               <div className={styles.table}>
                 <div className={`${styles.thead} ${styles.signalHead}`}>
                   <span className={styles.check}>
@@ -596,7 +622,11 @@ export function DevVisual() {
                         <span>{signal.match}</span>
                         <span>{tx(OPP_LABEL[(Object.prototype.hasOwnProperty.call(OPP_LABEL, signal.opportunity) ? signal.opportunity : "OPEN") as DevOpportunityState])}</span>
                         <span className={styles.rowAct}>
-                          {selectedSignalId === signal.signalId ? tx("dev.row-selected") : tx(SIGNAL_LABEL[signal.status])}
+                          {selectedSignalId === signal.signalId
+                            ? tx("dev.row-selected")
+                            : Object.prototype.hasOwnProperty.call(SIGNAL_LABEL, signal.status)
+                              ? tx(SIGNAL_LABEL[signal.status])
+                              : signal.status}
                         </span>
                       </div>
                     ))}
@@ -715,6 +745,19 @@ export function DevVisual() {
                 onAct={() => void act("DEV-01-BTN-COMPANY-DELETE", { companyIds: selectedCompanyIds })}
                 disabled={disabled || !selectedCompanyIds.length}
                 danger
+              />
+              <Btn
+                uid="DEV-01-BTN-COMPANY-SUPPRESS"
+                label={tx("dev.btn-company-suppress")}
+                onAct={() => void act("DEV-01-BTN-COMPANY-SUPPRESS", { companyIds: selectedCompanyIds, suppress: true })}
+                disabled={disabled || !selectedCompanyIds.length}
+                title={tx("dev.suppress-hint")}
+              />
+              <Btn
+                uid="DEV-01-BTN-COMPANY-SUPPRESS"
+                label={tx("dev.btn-company-unsuppress")}
+                onAct={() => void act("DEV-01-BTN-COMPANY-SUPPRESS", { companyIds: selectedCompanyIds, suppress: false })}
+                disabled={disabled || !selectedCompanyIds.length}
               />
               {query ? (
                 <button
@@ -918,7 +961,26 @@ export function DevVisual() {
             </div>
             <div className={styles.table}>
               <div className={`${styles.thead} ${styles.msgHead}`}>
-                <span>{tx("dev.col-candidate")}</span>
+                <span className={styles.check}>
+                  <input
+                    type="checkbox"
+                    aria-label={tx("dev.col-select-all")}
+                    checked={
+                      workbench.candidates.length > 0 &&
+                      workbench.candidates.every((candidate) => selectedCandidateIds.includes(candidate.candidateId))
+                    }
+                    disabled={disabled || !workbench.candidates.length}
+                    onChange={() => {
+                      const allSelected = workbench.candidates.every((candidate) =>
+                        selectedCandidateIds.includes(candidate.candidateId),
+                      );
+                      setSelectedCandidateIds(
+                        allSelected ? [] : workbench.candidates.map((candidate) => candidate.candidateId),
+                      );
+                    }}
+                  />
+                  {tx("dev.col-candidate")}
+                </span>
                 <span>{tx("dev.col-personalization")}</span>
                 <span>{tx("dev.col-policy")}</span>
                 <span>{tx("dev.col-review")}</span>
@@ -932,7 +994,24 @@ export function DevVisual() {
                     key={candidate.candidateId}
                     onClick={() => setSelectedCandidateId(candidate.candidateId)}
                   >
-                    <span>{candidate.companyName}</span>
+                    <span className={styles.check}>
+                      <input
+                        type="checkbox"
+                        checked={selectedCandidateIds.includes(candidate.candidateId)}
+                        disabled={disabled}
+                        onChange={(event) => {
+                          event.stopPropagation();
+                          setSelectedCandidateIds((current) =>
+                            current.includes(candidate.candidateId)
+                              ? current.filter((id) => id !== candidate.candidateId)
+                              : [...current, candidate.candidateId],
+                          );
+                        }}
+                      />
+                      <span className={styles.checkText} title={candidate.companyName}>
+                        {candidate.companyName}
+                      </span>
+                    </span>
                     <span>{candidate.personalization}</span>
                     <span>{candidate.policy === "PASS" ? tx("dev.policy-pass") : tx("dev.policy-blocked")}</span>
                     <span>{tx(CANDIDATE_LABEL[candidate.status])}</span>
@@ -946,6 +1025,17 @@ export function DevVisual() {
               ) : (
                 <p className={styles.empty}>{loading ? dash : tx("dev.empty-candidates")}</p>
               )}
+            </div>
+            <div className={styles.actions}>
+              <button
+                type="button"
+                className={styles.btn}
+                disabled={disabled || !selectedCandidateIds.length}
+                onClick={() => void act("DEV-01-BTN-CANDIDATE-DELETE", { candidateIds: selectedCandidateIds })}
+              >
+                {tx("dev.btn-candidate-delete", { n: selectedCandidateIds.length })}
+              </button>
+              <span className={styles.note}>{tx("dev.candidate-delete-hint")}</span>
             </div>
             {selectedCompany && !selectedHasEmail ? <p className={styles.note}>{tx("dev.contact-missing-email")}</p> : null}
             <div className={styles.fields}>

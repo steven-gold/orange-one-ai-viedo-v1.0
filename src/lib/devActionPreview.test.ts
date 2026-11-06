@@ -29,7 +29,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(DEV_VISIBLE_CONTROLS.length === 23, "DEV stays at the 23 authoritative visible controls");
+  assert(DEV_VISIBLE_CONTROLS.length === 25, "DEV stays at the 25 authoritative visible controls");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-PROFILE-SAVE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "TBL10 profile save stays off the visible denominator");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-SEND-ONE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented one-to-one send control");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-CANDIDATE-EDIT" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented candidate edit control");
@@ -538,7 +538,7 @@ function store(seed: Record<string, string> = {}): {
       keywords: "企業開發",
       exclude: "",
       mode: "SINGLE",
-      status: "DRAFT",
+      status: "REVIEW",
     }),
   });
   const legacy = readDevWorkbench(current).profile;
@@ -684,6 +684,76 @@ function store(seed: Record<string, string> = {}): {
   assert(remaining.length === 1 && remaining[0].companyId === "CO-HELD", "unreferenced company is deleted");
   assert(parseJson<{ code: string }>(ok["DEV-01-STATE-ERROR"], { code: "" }).code === "", "successful delete clears the error state");
   bindSharedOwnersForTest(null);
+}
+
+{
+  const company: DevCompany = {
+    companyId: "CO-SUP",
+    name: "抑制公司",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-11112222",
+    aliases: [],
+    contacts: [],
+    opportunity: { opportunityId: "OPP-SUP", state: "OPEN" },
+    suppression: "",
+    evidence: "",
+    mergedFrom: [],
+    version: 1,
+  };
+  const { current, apply } = store({ [DEV_COMPANIES_UID]: JSON.stringify([company]) });
+  const empty = apply("DEV-01-BTN-COMPANY-SUPPRESS", "DEV-01-ACT-COMPANY-SUPPRESS", JSON.stringify({ companyIds: [] }));
+  assert(parseJson<{ code: string }>(empty["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_COMPANY_REQUIRED", "empty suppress selection is rejected");
+  const suppressed = apply("DEV-01-BTN-COMPANY-SUPPRESS", "DEV-01-ACT-COMPANY-SUPPRESS", JSON.stringify({ companyIds: ["CO-SUP"], suppress: true }));
+  const afterSuppress = JSON.parse(suppressed[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
+  assert(afterSuppress[0].suppression === "人工", "suppress marks the company");
+  const released = apply("DEV-01-BTN-COMPANY-SUPPRESS", "DEV-01-ACT-COMPANY-SUPPRESS", JSON.stringify({ companyIds: ["CO-SUP"], suppress: false }));
+  const afterRelease = JSON.parse(released[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
+  assert(afterRelease[0].suppression === "", "unsuppress clears the company");
+}
+
+{
+  const candidate: DevCandidate = {
+    candidateId: "CAN-DEL",
+    companyId: "CO-DEL",
+    companyName: "刪除公司",
+    opportunityId: "OPP-DEL",
+    contactId: "CT-DEL",
+    contactValue: "a@b.io",
+    personalization: "",
+    subject: "待刪內容",
+    body: "內文",
+    policy: "PASS",
+    status: "REVIEW",
+    version: 1,
+    evidence: "",
+    history: [],
+  };
+  const held: DevCandidate = { ...candidate, candidateId: "CAN-HELD", subject: "批次引用內容" };
+  const campaign: DevCampaign = {
+    campaignId: "CMP-HOLD",
+    candidateId: "CAN-HELD",
+    candidateVersion: 1,
+    status: "REVIEW",
+    audienceQuery: "",
+    recipients: [],
+    previewed: false,
+    killReason: "",
+    version: 1,
+    updatedAt: "2026-11-06T00:00:00.000Z",
+  };
+  const { current, apply } = store({
+    [DEV_CANDIDATES_UID]: JSON.stringify([candidate, held]),
+    [DEV_CAMPAIGN_UID]: JSON.stringify(campaign),
+  });
+  const empty = apply("DEV-01-BTN-CANDIDATE-DELETE", "DEV-01-ACT-CANDIDATE-DELETE", JSON.stringify({ candidateIds: [] }));
+  assert(parseJson<{ code: string }>(empty["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_CANDIDATE_REQUIRED", "empty candidate delete is rejected");
+  const blocked = apply("DEV-01-BTN-CANDIDATE-DELETE", "DEV-01-ACT-CANDIDATE-DELETE", JSON.stringify({ candidateIds: ["CAN-HELD"] }));
+  const blockedError = parseJson<{ code: string; detail?: string }>(blocked["DEV-01-STATE-ERROR"], { code: "" });
+  assert(blockedError.code === "DEV_CANDIDATE_IN_USE", "campaign-referenced candidate is protected");
+  const ok = apply("DEV-01-BTN-CANDIDATE-DELETE", "DEV-01-ACT-CANDIDATE-DELETE", JSON.stringify({ candidateIds: ["CAN-DEL", "CAN-GHOST"] }));
+  const remaining = JSON.parse(ok[DEV_CANDIDATES_UID] ?? "[]") as DevCandidate[];
+  assert(remaining.length === 1 && remaining[0].candidateId === "CAN-HELD", "unreferenced candidate is deleted");
+  assert(parseJson<{ code: string }>(ok["DEV-01-STATE-ERROR"], { code: "" }).code === "", "successful candidate delete clears the error state");
 }
 
 console.log("devActionPreview.test.ts PASS");

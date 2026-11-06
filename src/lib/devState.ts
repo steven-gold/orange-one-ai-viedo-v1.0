@@ -230,6 +230,8 @@ export interface DevActionPayload {
   signalId?: string;
   query?: string;
   companyIds?: string[];
+  candidateIds?: string[];
+  suppress?: boolean;
   survivorId?: string;
   mergedIds?: string[];
   companyId?: string;

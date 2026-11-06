@@ -90,6 +90,7 @@ const DEV_SPEC_ERROR_UIDS: Record<string, string> = {
   DEV_CANDIDATE_POLICY_BLOCKED: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_CONTENT_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_ALREADY_OPEN: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CANDIDATE_IN_USE: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_COMPANY_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_CONTACT_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CAMPAIGN_REQUIRED: "DEV-01-ERR-CAMPAIGN",
@@ -421,6 +422,44 @@ export function previewDevAction(
     const companies = workbench.companies.filter((company) => !idSet.has(company.companyId));
     if (companies.length === workbench.companies.length) return fail(workbench, "DEV_COMPANY_REQUIRED");
     return patchFrom(clearError({ ...workbench, companies }));
+  }
+
+  if (actionUid === "DEV-01-ACT-COMPANY-SUPPRESS") {
+    const ids = Array.isArray(payload.companyIds)
+      ? (payload.companyIds as unknown[]).map((id) => usable(typeof id === "string" ? id : null)).filter(Boolean)
+      : [];
+    const suppress = payload.suppress !== false;
+    if (!ids.length) return fail(workbench, "DEV_COMPANY_REQUIRED");
+    const idSet = new Set(ids);
+    const matched = workbench.companies.filter((company) => idSet.has(company.companyId));
+    if (!matched.length) return fail(workbench, "DEV_COMPANY_REQUIRED");
+    const companies = workbench.companies.map((company) =>
+      idSet.has(company.companyId)
+        ? {
+            ...company,
+            suppression: suppress ? "人工" : "",
+            version: company.version + 1,
+          }
+        : company,
+    );
+    return patchFrom(clearError({ ...workbench, companies }));
+  }
+
+  if (actionUid === "DEV-01-ACT-CANDIDATE-DELETE") {
+    const ids = Array.isArray(payload.candidateIds)
+      ? (payload.candidateIds as unknown[]).map((id) => usable(typeof id === "string" ? id : null)).filter(Boolean)
+      : [];
+    if (!ids.length) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
+    const idSet = new Set(ids);
+    const referenced = new Set<string>();
+    if (workbench.campaign?.candidateId) referenced.add(workbench.campaign.candidateId);
+    const blocked = workbench.candidates.filter((candidate) => idSet.has(candidate.candidateId) && referenced.has(candidate.candidateId));
+    if (blocked.length) {
+      return fail(workbench, "DEV_CANDIDATE_IN_USE", blocked.map((candidate) => candidate.subject).join("、"));
+    }
+    const candidates = workbench.candidates.filter((candidate) => !idSet.has(candidate.candidateId));
+    if (candidates.length === workbench.candidates.length) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
+    return patchFrom(clearError({ ...workbench, candidates }));
   }
 
   if (actionUid === "DEV-01-ACT-MERGE-PREVIEW") {
