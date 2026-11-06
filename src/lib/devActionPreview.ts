@@ -15,6 +15,7 @@ import {
   companyEligibleForMessage,
   searchAudienceProjection,
   type DevCampaign,
+  type DevDeliveryStatus,
   type DevCandidate,
   type DevCompany,
   type DevContact,
@@ -106,6 +107,11 @@ const DEV_SPEC_ERROR_UIDS: Record<string, string> = {
   DEV_CAMPAIGN_SUPPRESSED: "DEV-01-ERR-SUPPRESSION",
   DEV_KILL_TARGET_REQUIRED: "DEV-01-ERR-KILL",
   DEV_KILL_NOT_APPLICABLE: "DEV-01-ERR-KILL",
+  DEV_DELIVERY_RECIPIENT_REQUIRED: "DEV-01-ERR-DELIVERY",
+  DEV_DELIVERY_ALREADY_SENT: "DEV-01-ERR-DELIVERY",
+  DEV_DELIVERY_ACK_TARGET_REQUIRED: "DEV-01-ERR-DELIVERY",
+  DEV_DELIVERY_ACK_INVALID: "DEV-01-ERR-DELIVERY",
+  DEV_DELIVERY_ACK_NOT_APPLICABLE: "DEV-01-ERR-DELIVERY",
   DEV_ACTION_UNDEFINED: "DEV-01-ERR-UNDEFINED",
   DEV_COMPANY_REQUIRED: "DEV-01-ERR-IDENTITY",
   DEV_COMPANY_IN_USE: "DEV-01-ERR-IDENTITY",
@@ -466,7 +472,9 @@ export function previewDevAction(
   if (actionUid === "DEV-01-ACT-CAMPAIGN-DELETE") {
     const campaign = workbench.campaign;
     if (!campaign) return fail(workbench, "DEV_CAMPAIGN_REQUIRED");
-    if (campaign.status === "APPROVED") return fail(workbench, "DEV_CAMPAIGN_LOCKED", campaign.campaignId);
+    if (campaign.status === "APPROVED" || campaign.status === "QUEUED") {
+      return fail(workbench, "DEV_CAMPAIGN_LOCKED", campaign.campaignId);
+    }
     return patchFrom(clearError({ ...workbench, campaign: null }));
   }
 
@@ -720,6 +728,9 @@ export function previewDevAction(
       return fail(workbench, "DEV_CAMPAIGN_VERSION_STALE");
     }
     const accepted = acceptDeliveryIntent();
+    const contactedFrom = campaign.recipients
+      .filter((recipient) => workbench.companies.find((company) => company.companyId === recipient.companyId)?.opportunity.state === "QUALIFIED")
+      .map((recipient) => recipient.companyId);
     const deliveries: DevDelivery[] = campaign.recipients.map((recipient) => ({
       deliveryId: newUid("DLV"),
       campaignId: campaign.campaignId,
@@ -732,8 +743,15 @@ export function previewDevAction(
       result: accepted.result,
       idempotencyKey: `${campaign.campaignId}:${recipient.recipientId}:${campaign.candidateVersion}`,
       version: 1,
+      sentAt: nowIso(),
     }));
-    const next: DevCampaign = { ...campaign, status: "QUEUED", version: campaign.version + 1, updatedAt: nowIso() };
+    const next: DevCampaign = {
+      ...campaign,
+      status: "QUEUED",
+      version: campaign.version + 1,
+      updatedAt: nowIso(),
+      contactedFrom,
+    };
     return patchFrom(
       clearError({
         ...workbench,
@@ -765,7 +783,78 @@ export function previewDevAction(
         ? { ...item, status: "STOPPED" as const, result: "STOPPED", version: item.version + 1 }
         : item,
     );
-    return patchFrom(clearError({ ...workbench, campaign: next, deliveries }));
+    const contactedIds = new Set(campaign.contactedFrom ?? []);
+    const companies = workbench.companies.map((company) =>
+      contactedIds.has(company.companyId) && company.opportunity.state === "CONTACTED"
+        ? { ...company, opportunity: { ...company.opportunity, state: "QUALIFIED" as const }, version: company.version + 1 }
+        : company,
+    );
+    return patchFrom(clearError({ ...workbench, campaign: next, deliveries, companies }));
+  }
+
+  if (actionUid === "DEV-01-ACT-DELIVERY-SEND") {
+    const campaign = workbench.campaign;
+    if (!campaign) return fail(workbench, "DEV_CAMPAIGN_REQUIRED");
+    if (campaign.status === "REVIEW") return fail(workbench, "DEV_DISPATCH_NOT_APPROVED");
+    const ids = Array.isArray(payload.recipientIds)
+      ? (payload.recipientIds as unknown[]).map((id) => usable(typeof id === "string" ? id : null)).filter(Boolean)
+      : [];
+    if (!ids.length) return fail(workbench, "DEV_DELIVERY_RECIPIENT_REQUIRED");
+    const idSet = new Set(ids);
+    const targets = campaign.recipients.filter((recipient) => idSet.has(recipient.recipientId));
+    if (!targets.length) return fail(workbench, "DEV_DELIVERY_RECIPIENT_REQUIRED");
+    const prior = workbench.deliveries.filter((item) => item.campaignId === campaign.campaignId);
+    const accepted = acceptDeliveryIntent();
+    let companies = workbench.companies;
+    const contactedFrom = [...(campaign.contactedFrom ?? [])];
+    const created: DevDelivery[] = [];
+    for (const recipient of targets) {
+      const history = prior.filter((item) => item.recipientId === recipient.recipientId);
+      const latest = history.reduce<DevDelivery | null>((acc, item) => (!acc || item.version > acc.version ? item : acc), null);
+      if (latest && latest.status !== "STOPPED" && latest.status !== "FAILED") continue;
+      if (companies.find((company) => company.companyId === recipient.companyId)?.opportunity.state === "QUALIFIED") {
+        companies = advanceContacted(companies, [recipient.companyId]);
+        if (!contactedFrom.includes(recipient.companyId)) contactedFrom.push(recipient.companyId);
+      }
+      created.push({
+        deliveryId: newUid("DLV"),
+        campaignId: campaign.campaignId,
+        recipientId: recipient.recipientId,
+        companyId: recipient.companyId,
+        to: recipient.contactValue,
+        cc: 0,
+        bcc: 0,
+        status: accepted.status,
+        result: accepted.result,
+        idempotencyKey: `${campaign.campaignId}:${recipient.recipientId}:${campaign.candidateVersion}:r${history.length + 1}`,
+        version: (latest?.version ?? 0) + 1,
+        sentAt: nowIso(),
+      });
+    }
+    if (!created.length) return fail(workbench, "DEV_DELIVERY_ALREADY_SENT");
+    const next: DevCampaign =
+      campaign.status === "APPROVED"
+        ? { ...campaign, status: "QUEUED", version: campaign.version + 1, updatedAt: nowIso(), contactedFrom }
+        : { ...campaign, contactedFrom };
+    return patchFrom(clearError({ ...workbench, campaign: next, deliveries: [...workbench.deliveries, ...created], companies }));
+  }
+
+  if (actionUid === "DEV-01-ACT-DELIVERY-ACK") {
+    const ids = Array.isArray(payload.deliveryIds)
+      ? (payload.deliveryIds as unknown[]).map((id) => usable(typeof id === "string" ? id : null)).filter(Boolean)
+      : [];
+    if (!ids.length) return fail(workbench, "DEV_DELIVERY_ACK_TARGET_REQUIRED");
+    const result = usable(payload.result)?.toUpperCase() ?? "";
+    if (result !== "SENT" && result !== "FAILED") return fail(workbench, "DEV_DELIVERY_ACK_INVALID");
+    const idSet = new Set(ids);
+    let acked = 0;
+    const deliveries = workbench.deliveries.map((item) => {
+      if (!idSet.has(item.deliveryId) || item.status !== "EXTERNAL_PENDING") return item;
+      acked++;
+      return { ...item, status: result as DevDeliveryStatus, result, sentAt: nowIso(), version: item.version + 1 };
+    });
+    if (!acked) return fail(workbench, "DEV_DELIVERY_ACK_NOT_APPLICABLE");
+    return patchFrom(clearError({ ...workbench, deliveries }));
   }
 
   void controlUid;

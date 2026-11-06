@@ -29,7 +29,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(DEV_VISIBLE_CONTROLS.length === 26, "DEV stays at the 26 authoritative visible controls");
+  assert(DEV_VISIBLE_CONTROLS.length === 28, "DEV stays at the 28 authoritative visible controls");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-PROFILE-SAVE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "TBL10 profile save stays off the visible denominator");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-SEND-ONE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented one-to-one send control");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-CANDIDATE-EDIT" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented candidate edit control");
@@ -762,6 +762,83 @@ function store(seed: Record<string, string> = {}): {
   write({ [DEV_CAMPAIGN_UID]: JSON.stringify({ ...campaign, status: "APPROVED" }) });
   const approvedDelete = apply("DEV-01-BTN-CAMPAIGN-DELETE", "DEV-01-ACT-CAMPAIGN-DELETE");
   assert(parseJson<{ code: string }>(approvedDelete["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_CAMPAIGN_LOCKED", "approved campaign is locked from deletion");
+  write({ [DEV_CAMPAIGN_UID]: JSON.stringify({ ...campaign, status: "QUEUED" }) });
+  const queuedDelete = apply("DEV-01-BTN-CAMPAIGN-DELETE", "DEV-01-ACT-CAMPAIGN-DELETE");
+  assert(parseJson<{ code: string }>(queuedDelete["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_CAMPAIGN_LOCKED", "queued campaign is locked from deletion");
+}
+
+{
+  bindSharedOwnersForTest({ acquisition: true, delivery: false });
+  const recipient = {
+    recipientId: "RCP-1",
+    companyId: "CO-Q",
+    companyName: "合格企業",
+    contactId: "CT-Q",
+    contactValue: "q@corp.io",
+    suppression: "",
+    candidateId: "CAN-DLV",
+    messageVersion: 1,
+  };
+  const qualifiedCompany: DevCompany = {
+    companyId: "CO-Q",
+    name: "合格企業",
+    identityKind: "REGISTRATION",
+    identityValue: "TW-33334444",
+    aliases: [],
+    contacts: [{ contactId: "CT-Q", type: "EMAIL", value: "q@corp.io", source: "MANUAL", status: "ACTIVE" }],
+    opportunity: { opportunityId: "OPP-Q", state: "QUALIFIED" },
+    suppression: "",
+    evidence: "",
+    mergedFrom: [],
+    version: 1,
+  };
+  const base: DevCampaign = {
+    campaignId: "CMP-DLV",
+    candidateId: "CAN-DLV",
+    candidateVersion: 1,
+    status: "APPROVED",
+    audienceQuery: "",
+    recipients: [recipient],
+    previewed: true,
+    killReason: "",
+    version: 1,
+    updatedAt: "2026-11-06T00:00:00.000Z",
+  };
+  const { current, apply, write } = store({
+    [DEV_COMPANIES_UID]: JSON.stringify([qualifiedCompany]),
+    [DEV_CAMPAIGN_UID]: JSON.stringify(base),
+  });
+  const noIds = apply("DEV-01-BTN-DELIVERY-SEND", "DEV-01-ACT-DELIVERY-SEND", JSON.stringify({ recipientIds: [] }));
+  assert(parseJson<{ code: string }>(noIds["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_DELIVERY_RECIPIENT_REQUIRED", "empty recipient send is rejected");
+  write({ [DEV_CAMPAIGN_UID]: JSON.stringify({ ...base, status: "REVIEW" }) });
+  const review = apply("DEV-01-BTN-DELIVERY-SEND", "DEV-01-ACT-DELIVERY-SEND", JSON.stringify({ recipientIds: ["RCP-1"] }));
+  assert(parseJson<{ code: string }>(review["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_DISPATCH_NOT_APPROVED", "REVIEW campaign cannot send per-recipient");
+  write({ [DEV_CAMPAIGN_UID]: JSON.stringify(base) });
+  const sent = apply("DEV-01-BTN-DELIVERY-SEND", "DEV-01-ACT-DELIVERY-SEND", JSON.stringify({ recipientIds: ["RCP-1"] }));
+  const deliveries = parseJson<DevDelivery[]>(sent[DEV_DELIVERIES_UID], []);
+  assert(deliveries.length === 1 && deliveries[0].status === "EXTERNAL_PENDING", "per-recipient send creates a pending delivery");
+  assert(Boolean(deliveries[0].sentAt), "delivery records sentAt");
+  assert((JSON.parse(sent[DEV_CAMPAIGN_UID] ?? "null") as DevCampaign).contactedFrom?.[0] === "CO-Q", "send records contactedFrom for rollback");
+  assert((JSON.parse(sent[DEV_COMPANIES_UID] ?? "[]") as DevCompany[])[0].opportunity.state === "CONTACTED", "recipient company advances to CONTACTED");
+  const dup = apply("DEV-01-BTN-DELIVERY-SEND", "DEV-01-ACT-DELIVERY-SEND", JSON.stringify({ recipientIds: ["RCP-1"] }));
+  assert(parseJson<{ code: string }>(dup["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_DELIVERY_ALREADY_SENT", "duplicate send while pending is rejected");
+  const ackBad = apply("DEV-01-BTN-DELIVERY-ACK", "DEV-01-ACT-DELIVERY-ACK", JSON.stringify({ deliveryIds: [deliveries[0].deliveryId], result: "MAYBE" }));
+  assert(parseJson<{ code: string }>(ackBad["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_DELIVERY_ACK_INVALID", "invalid acknowledgement result is rejected");
+  const acked = apply("DEV-01-BTN-DELIVERY-ACK", "DEV-01-ACT-DELIVERY-ACK", JSON.stringify({ deliveryIds: [deliveries[0].deliveryId], result: "SENT" }));
+  const ackedDeliveries = parseJson<DevDelivery[]>(acked[DEV_DELIVERIES_UID], []);
+  assert(ackedDeliveries[0].status === "SENT" && ackedDeliveries[0].sentAt, "acknowledgement marks the delivery SENT");
+  const stopped = apply("DEV-01-BTN-KILL-SWITCH", "DEV-01-ACT-KILL-SWITCH", JSON.stringify({ reason: "測試停止" }));
+  const stoppedDeliveries = parseJson<DevDelivery[]>(stopped[DEV_DELIVERIES_UID], []);
+  const stoppedCompanies = JSON.parse(stopped[DEV_COMPANIES_UID] ?? "[]") as DevCompany[];
+  assert(stoppedDeliveries[0].status === "STOPPED", "kill switch stops the delivery");
+  assert(stoppedCompanies[0].opportunity.state === "QUALIFIED", "kill switch rolls CONTACTED back to QUALIFIED");
+  write({ [DEV_CAMPAIGN_UID]: JSON.stringify({ ...(JSON.parse(stopped[DEV_CAMPAIGN_UID] ?? "null") as DevCampaign) }) });
+  const resend = apply("DEV-01-BTN-DELIVERY-SEND", "DEV-01-ACT-DELIVERY-SEND", JSON.stringify({ recipientIds: ["RCP-1"] }));
+  const resendDeliveries = parseJson<DevDelivery[]>(resend[DEV_DELIVERIES_UID], []);
+  assert(resendDeliveries.length === 2 && resendDeliveries[1].idempotencyKey.endsWith(":r2"), "stopped delivery is resent with a new attempt key");
+  assert(resendDeliveries[1].status === "EXTERNAL_PENDING", "resent delivery is pending again");
+  assert((JSON.parse(resend[DEV_COMPANIES_UID] ?? "[]") as DevCompany[])[0].opportunity.state === "CONTACTED", "resend re-advances the company");
+  bindSharedOwnersForTest(null);
 }
 
 console.log("devActionPreview.test.ts PASS");

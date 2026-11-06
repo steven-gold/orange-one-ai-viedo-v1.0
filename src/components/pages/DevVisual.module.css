@@ -673,7 +673,27 @@
 
 .histHead,
 .histRow {
-  grid-template-columns: 1.2fr 0.9fr 1.6fr;
+  grid-template-columns: 1.2fr 0.9fr 1.3fr 1.6fr;
+}
+
+.dlvHead,
+.dlvRow {
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+.linkBtn {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--dev-purple);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.linkBtn:disabled {
+  color: var(--dev-muted);
+  cursor: not-allowed;
 }
 
 .search {

@@ -14,6 +14,7 @@ import {
   type DevCandidate,
   type DevCandidateStatus,
   type DevCompany,
+  type DevDelivery,
   type DevDeliveryStatus,
   type DevIdentityKind,
   type DevJobStatus,
@@ -122,6 +123,8 @@ const DELIVERY_LABEL: Record<DevDeliveryStatus, TranslationKey> = {
   QUEUED: "dev.delivery-queued",
   EXTERNAL_PENDING: "dev.delivery-pending",
   STOPPED: "dev.delivery-stopped",
+  SENT: "dev.delivery-sent",
+  FAILED: "dev.delivery-failed",
 };
 
 const SIGNAL_LABEL: Record<DevSignalStatus, TranslationKey> = {
@@ -161,6 +164,7 @@ export function DevVisual() {
   const [selectedSignalIds, setSelectedSignalIds] = useState<string[]>([]);
   const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
+  const [selectedRecipientIds, setSelectedRecipientIds] = useState<string[]>([]);
   const [contactType, setContactType] = useState<"EMAIL" | "PHONE" | "ADDRESS">("EMAIL");
   const [contactValue, setContactValue] = useState("");
   const [contactSource, setContactSource] = useState("人工");
@@ -225,6 +229,9 @@ export function DevVisual() {
       }
       if (controlUid === "DEV-01-BTN-CANDIDATE-DELETE") {
         setSelectedCandidateIds([]);
+      }
+      if (controlUid === "DEV-01-BTN-DELIVERY-SEND" || controlUid === "DEV-01-BTN-DELIVERY-ACK") {
+        setSelectedRecipientIds([]);
       }
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
@@ -1227,7 +1234,7 @@ export function DevVisual() {
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.delivery-idempotency")}</span>
-                  <strong>{deliveries[0]?.idempotencyKey || tx("dev.required")}</strong>
+                  <strong>{deliveries.length ? tx("dev.delivery-idempotency-count", { n: deliveries.length }) : tx("dev.required")}</strong>
                 </div>
                 <div className={styles.metaItem}>
                   <span>{tx("dev.delivery-audit")}</span>
@@ -1252,6 +1259,118 @@ export function DevVisual() {
               </div>
               <p className={styles.note}>{campaignCandidate?.body || tx("dev.empty-recipients")}</p>
               <p className={styles.note}>{`${tx("dev.col-personalization")}: ${campaignCandidate?.personalization || dash}`}</p>
+            </div>
+            <div className={styles.card}>
+              <h3>{tx("dev.recipient-result-title")}</h3>
+              {campaign?.recipients.length ? (
+                <div className={styles.table}>
+                  <div className={`${styles.thead} ${styles.dlvHead}`}>
+                    <span className={styles.check}>
+                      <input
+                        type="checkbox"
+                        aria-label={tx("dev.col-select-all")}
+                        checked={campaign.recipients.every((recipient) => selectedRecipientIds.includes(recipient.recipientId))}
+                        disabled={disabled}
+                        onChange={() => {
+                          const allSelected = campaign.recipients.every((recipient) => selectedRecipientIds.includes(recipient.recipientId));
+                          setSelectedRecipientIds(allSelected ? [] : campaign.recipients.map((recipient) => recipient.recipientId));
+                        }}
+                      />
+                      {tx("dev.col-recipient")}
+                    </span>
+                    <span>{tx("dev.col-contact")}</span>
+                    <span>{tx("dev.col-result")}</span>
+                    <span>{tx("dev.col-sent-at")}</span>
+                    <span>{tx("dev.col-action")}</span>
+                  </div>
+                  {campaign.recipients.map((recipient) => {
+                    const history = deliveries.filter((item) => item.recipientId === recipient.recipientId);
+                    const latest = history.reduce<DevDelivery | null>((acc, item) => (!acc || item.version > acc.version ? item : acc), null);
+                    const resendable = !latest || latest.status === "STOPPED" || latest.status === "FAILED";
+                    return (
+                      <div className={`${styles.trow} ${styles.dlvRow}`} key={recipient.recipientId}>
+                        <span className={styles.check}>
+                          <input
+                            type="checkbox"
+                            checked={selectedRecipientIds.includes(recipient.recipientId)}
+                            disabled={disabled}
+                            onChange={() =>
+                              setSelectedRecipientIds((current) =>
+                                current.includes(recipient.recipientId)
+                                  ? current.filter((id) => id !== recipient.recipientId)
+                                  : [...current, recipient.recipientId],
+                              )
+                            }
+                          />
+                          <span className={styles.checkText} title={recipient.companyName}>
+                            {recipient.companyName}
+                          </span>
+                        </span>
+                        <span title={recipient.contactValue}>{recipient.contactValue}</span>
+                        <span>
+                          {latest ? tx(DELIVERY_LABEL[latest.status]) : tx("dev.delivery-not-sent")}
+                          {history.length > 1 ? ` · ×${history.length}` : ""}
+                        </span>
+                        <span>{latest?.sentAt ? latest.sentAt.slice(0, 19).replace("T", " ") : dash}</span>
+                        <span className={styles.rowAct}>
+                          {resendable ? (
+                            <button
+                              type="button"
+                              className={styles.linkBtn}
+                              disabled={disabled}
+                              onClick={() => void act("DEV-01-BTN-DELIVERY-SEND", { recipientIds: [recipient.recipientId] })}
+                            >
+                              {latest ? tx("dev.row-resend") : tx("dev.row-send")}
+                            </button>
+                          ) : (
+                            dash
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className={styles.empty}>{tx("dev.empty-recipients")}</p>
+              )}
+              {selectedRecipientIds.length ? (
+                <div className={styles.actions}>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    disabled={disabled || campaign?.status === "REVIEW"}
+                    title={campaign?.status === "REVIEW" ? tx("dev.need-approved-campaign") : undefined}
+                    onClick={() => void act("DEV-01-BTN-DELIVERY-SEND", { recipientIds: selectedRecipientIds })}
+                  >
+                    {tx("dev.btn-delivery-send", { n: selectedRecipientIds.length })}
+                  </button>
+                  {(() => {
+                    const ackIds = deliveries
+                      .filter((item) => selectedRecipientIds.includes(item.recipientId) && item.status === "EXTERNAL_PENDING")
+                      .map((item) => item.deliveryId);
+                    return (
+                      <>
+                        <button
+                          type="button"
+                          className={styles.btn}
+                          disabled={disabled || !ackIds.length}
+                          onClick={() => void act("DEV-01-BTN-DELIVERY-ACK", { deliveryIds: ackIds, result: "SENT" })}
+                        >
+                          {tx("dev.btn-delivery-ack-sent", { n: ackIds.length })}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.btn}
+                          disabled={disabled || !ackIds.length}
+                          onClick={() => void act("DEV-01-BTN-DELIVERY-ACK", { deliveryIds: ackIds, result: "FAILED" })}
+                        >
+                          {tx("dev.btn-delivery-ack-failed", { n: ackIds.length })}
+                        </button>
+                      </>
+                    );
+                  })()}
+                </div>
+              ) : null}
             </div>
             </div>
             <div data-component-uid="DEV-01-CMP-KILL-SWITCH">
@@ -1477,12 +1596,14 @@ export function DevVisual() {
             <div className={`${styles.thead} ${styles.histHead}`}>
               <span>{tx("dev.col-contact")}</span>
               <span>{tx("dev.col-result")}</span>
+              <span>{tx("dev.col-sent-at")}</span>
               <span>{tx("dev.delivery-idempotency")}</span>
             </div>
             {deliveries.map((delivery) => (
               <div className={`${styles.trow} ${styles.histRow}`} key={delivery.deliveryId}>
                 <span>{delivery.to}</span>
                 <span>{tx(DELIVERY_LABEL[delivery.status])}</span>
+                <span>{delivery.sentAt ? delivery.sentAt.slice(0, 19).replace("T", " ") : dash}</span>
                 <span>{delivery.idempotencyKey}</span>
               </div>
             ))}

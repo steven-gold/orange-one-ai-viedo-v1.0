@@ -43,7 +43,7 @@ export type DevIdentityKind = "REGISTRATION" | "JURISDICTION" | "NAME_ONLY";
 export type DevContactType = "EMAIL" | "PHONE" | "ADDRESS";
 export type DevCandidateStatus = "REVIEW" | "APPROVED" | "CHANGE_REQUEST";
 export type DevCampaignStatus = "REVIEW" | "APPROVED" | "QUEUED" | "STOPPED";
-export type DevDeliveryStatus = "QUEUED" | "EXTERNAL_PENDING" | "STOPPED";
+export type DevDeliveryStatus = "QUEUED" | "EXTERNAL_PENDING" | "STOPPED" | "SENT" | "FAILED";
 
 export type DevPriority = "HIGH" | "NORMAL" | "LOW";
 
@@ -186,6 +186,7 @@ export interface DevCampaign {
   killReason: string;
   version: number;
   updatedAt: string;
+  contactedFrom?: string[];
 }
 
 export interface DevDelivery {
@@ -200,6 +201,7 @@ export interface DevDelivery {
   result: string;
   idempotencyKey: string;
   version: number;
+  sentAt?: string;
 }
 
 export interface DevWorkbench {
@@ -231,6 +233,9 @@ export interface DevActionPayload {
   query?: string;
   companyIds?: string[];
   candidateIds?: string[];
+  recipientIds?: string[];
+  deliveryIds?: string[];
+  result?: string;
   suppress?: boolean;
   survivorId?: string;
   mergedIds?: string[];
