@@ -1385,6 +1385,16 @@ export function DevVisual() {
               primary={campaign?.status === "REVIEW" && campaign?.previewed !== false}
               title={campaign?.previewed === false ? tx("dev.need-audience-search") : undefined}
             />
+            <Btn
+              uid="DEV-01-BTN-CAMPAIGN-DELETE"
+              label={tx("dev.btn-campaign-delete")}
+              onAct={(uid) => {
+                if (!window.confirm(tx("dev.campaign-delete-confirm"))) return;
+                void act(uid);
+              }}
+              disabled={disabled || !campaign || campaign.status === "APPROVED"}
+              title={campaign?.status === "APPROVED" ? tx("dev.campaign-locked-hint") : undefined}
+            />
           </>
         ) : null}
         {stage === 5 ? (

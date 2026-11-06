@@ -29,7 +29,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 {
-  assert(DEV_VISIBLE_CONTROLS.length === 25, "DEV stays at the 25 authoritative visible controls");
+  assert(DEV_VISIBLE_CONTROLS.length === 26, "DEV stays at the 26 authoritative visible controls");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-PROFILE-SAVE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "TBL10 profile save stays off the visible denominator");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-SEND-ONE" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented one-to-one send control");
   assert(!DEV_VISIBLE_CONTROLS.includes("DEV-01-BTN-CANDIDATE-EDIT" as (typeof DEV_VISIBLE_CONTROLS)[number]), "no invented candidate edit control");
@@ -741,7 +741,7 @@ function store(seed: Record<string, string> = {}): {
     version: 1,
     updatedAt: "2026-11-06T00:00:00.000Z",
   };
-  const { current, apply } = store({
+  const { current, apply, write } = store({
     [DEV_CANDIDATES_UID]: JSON.stringify([candidate, held]),
     [DEV_CAMPAIGN_UID]: JSON.stringify(campaign),
   });
@@ -754,6 +754,14 @@ function store(seed: Record<string, string> = {}): {
   const remaining = JSON.parse(ok[DEV_CANDIDATES_UID] ?? "[]") as DevCandidate[];
   assert(remaining.length === 1 && remaining[0].candidateId === "CAN-HELD", "unreferenced candidate is deleted");
   assert(parseJson<{ code: string }>(ok["DEV-01-STATE-ERROR"], { code: "" }).code === "", "successful candidate delete clears the error state");
+  const deleted = apply("DEV-01-BTN-CAMPAIGN-DELETE", "DEV-01-ACT-CAMPAIGN-DELETE");
+  assert(parseJson<DevCampaign | null>(deleted[DEV_CAMPAIGN_UID], null) === null, "REVIEW campaign is deleted");
+  assert(parseJson<{ code: string }>(deleted["DEV-01-STATE-ERROR"], { code: "" }).code === "", "successful campaign delete clears the error state");
+  const noCampaign = apply("DEV-01-BTN-CAMPAIGN-DELETE", "DEV-01-ACT-CAMPAIGN-DELETE");
+  assert(parseJson<{ code: string }>(noCampaign["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_CAMPAIGN_REQUIRED", "campaign delete without a campaign is rejected");
+  write({ [DEV_CAMPAIGN_UID]: JSON.stringify({ ...campaign, status: "APPROVED" }) });
+  const approvedDelete = apply("DEV-01-BTN-CAMPAIGN-DELETE", "DEV-01-ACT-CAMPAIGN-DELETE");
+  assert(parseJson<{ code: string }>(approvedDelete["DEV-01-STATE-ERROR"], { code: "" }).code === "DEV_CAMPAIGN_LOCKED", "approved campaign is locked from deletion");
 }
 
 console.log("devActionPreview.test.ts PASS");

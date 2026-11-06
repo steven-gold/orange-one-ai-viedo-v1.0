@@ -86,6 +86,7 @@ const DEV_SPEC_ERROR_UIDS: Record<string, string> = {
   DEV_MERGE_IDENTITY_CONFLICT: "DEV-01-ERR-IDENTITY",
   DEV_MERGE_NAME_ONLY_BLOCKED: "DEV-01-ERR-IDENTITY",
   DEV_CANDIDATE_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
+  DEV_CAMPAIGN_LOCKED: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_NOT_REVIEW: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_POLICY_BLOCKED: "DEV-01-ERR-MESSAGE-POLICY",
   DEV_CANDIDATE_CONTENT_REQUIRED: "DEV-01-ERR-MESSAGE-POLICY",
@@ -460,6 +461,13 @@ export function previewDevAction(
     const candidates = workbench.candidates.filter((candidate) => !idSet.has(candidate.candidateId));
     if (candidates.length === workbench.candidates.length) return fail(workbench, "DEV_CANDIDATE_REQUIRED");
     return patchFrom(clearError({ ...workbench, candidates }));
+  }
+
+  if (actionUid === "DEV-01-ACT-CAMPAIGN-DELETE") {
+    const campaign = workbench.campaign;
+    if (!campaign) return fail(workbench, "DEV_CAMPAIGN_REQUIRED");
+    if (campaign.status === "APPROVED") return fail(workbench, "DEV_CAMPAIGN_LOCKED", campaign.campaignId);
+    return patchFrom(clearError({ ...workbench, campaign: null }));
   }
 
   if (actionUid === "DEV-01-ACT-MERGE-PREVIEW") {
