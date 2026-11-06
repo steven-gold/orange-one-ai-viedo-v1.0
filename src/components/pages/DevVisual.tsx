@@ -158,6 +158,7 @@ export function DevVisual() {
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState<DevProfile>(EMPTY_PROFILE);
   const [selectedSignalId, setSelectedSignalId] = useState("");
+  const [selectedSignalIds, setSelectedSignalIds] = useState<string[]>([]);
   const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
   const [contactType, setContactType] = useState<"EMAIL" | "PHONE" | "ADDRESS">("EMAIL");
   const [contactValue, setContactValue] = useState("");
@@ -226,6 +227,27 @@ export function DevVisual() {
     setBusy(false);
     setTick((n) => n + 1);
   }, []);
+
+  const ignoreSelectedSignals = useCallback(async () => {
+    if (!selectedSignalIds.length) return;
+    setBusy(true);
+    try {
+      for (const signalId of selectedSignalIds) {
+        await postDevAction(
+          DEFAULT_ACCOUNT,
+          "DEV-01-BTN-SIGNAL-IGNORE",
+          "DEV-01-ACT-SIGNAL-IGNORE",
+          DEFAULT_SESSION,
+          JSON.stringify({ signalId }),
+        );
+      }
+      setSelectedSignalIds([]);
+    } catch {
+      // Fail-closed: per-signal failures surface via the read model state error.
+    }
+    setBusy(false);
+    setTick((n) => n + 1);
+  }, [selectedSignalIds]);
 
   const disabled = (!authorized && !loading) || busy;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
@@ -514,7 +536,23 @@ export function DevVisual() {
               <h3>{tx("dev.signal-title")}</h3>
               <div className={styles.table}>
                 <div className={`${styles.thead} ${styles.signalHead}`}>
-                  <span>{tx("dev.col-company")}</span>
+                  <span className={styles.check}>
+                    <input
+                      type="checkbox"
+                      aria-label={tx("dev.col-select-all")}
+                      checked={signalSlice.length > 0 && signalSlice.every((signal) => selectedSignalIds.includes(signal.signalId))}
+                      disabled={disabled || !signalTotal}
+                      onChange={() => {
+                        const allSelected = signalSlice.every((signal) => selectedSignalIds.includes(signal.signalId));
+                        setSelectedSignalIds(
+                          allSelected
+                            ? selectedSignalIds.filter((id) => !signalSlice.some((signal) => signal.signalId === id))
+                            : [...new Set([...selectedSignalIds, ...signalSlice.map((signal) => signal.signalId)])],
+                        );
+                      }}
+                    />
+                    {tx("dev.col-company")}
+                  </span>
                   <span>{tx("dev.col-contact")}</span>
                   <span>{tx("dev.col-intent")}</span>
                   <span>{tx("dev.col-evidence")}</span>
@@ -531,7 +569,24 @@ export function DevVisual() {
                         key={signal.signalId}
                         onClick={() => setSelectedSignalId(signal.signalId)}
                       >
-                        <span title={signal.companyName}>{signal.companyName}</span>
+                        <span className={styles.check}>
+                          <input
+                            type="checkbox"
+                            checked={selectedSignalIds.includes(signal.signalId)}
+                            disabled={disabled}
+                            onChange={(event) => {
+                              event.stopPropagation();
+                              setSelectedSignalIds((current) =>
+                                current.includes(signal.signalId)
+                                  ? current.filter((id) => id !== signal.signalId)
+                                  : [...current, signal.signalId],
+                              );
+                            }}
+                          />
+                          <span className={styles.checkText} title={signal.companyName}>
+                            {signal.companyName}
+                          </span>
+                        </span>
                         <span title={[signal.email, signal.phone, signal.address].filter(Boolean).join("、")}>
                           {[signal.email, signal.phone, signal.address].filter(Boolean).join("、") || dash}
                         </span>
@@ -589,6 +644,15 @@ export function DevVisual() {
                   onClick={() => void act("DEV-01-BTN-SIGNAL-IGNORE", { signalId: selectedSignalId })}
                 >
                   {tx("dev.btn-ignore")}
+                </button>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  disabled={disabled || !selectedSignalIds.length}
+                  onClick={() => void ignoreSelectedSignals()}
+                  title={tx("dev.qualify-hint")}
+                >
+                  {tx("dev.btn-ignore-selected", { n: selectedSignalIds.length })}
                 </button>
                 <span className={styles.note}>{tx("dev.qualify-hint")}</span>
               </div>
