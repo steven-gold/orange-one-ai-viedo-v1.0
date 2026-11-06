@@ -178,3 +178,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - Local read-model seeding for layout tests: file-backed SQLite at /tmp/acpos-sandbox-workbench.sqlite, table ghsn_dev_field_projection(control_uid, value_text); company array control_uid is DEV-01-STATE-COMPANIES, signals is DEV-01-STATE-SIGNALS; JSON must use legal DevOpportunityState values (OPEN/QUALIFIED/CONTACTED/REPLIED/PROPOSAL/WON/LOST/SUPPRESSED) - an unknown state used to crash the whole page render.
   - Live layout bugs reproduce only with data: empty stages render clean; seed companies/signals before screenshotting. Directory identityValue holds full registration text (long), so table cells need minmax(0, Xfr) grid columns + single-line ellipsis + title tooltips (fix landed in 9964f061). translate() now falls back to entry.en then the key itself, so one bad key renders text instead of wiping the page.
   - Render-layer validation workflow for future UI changes: seed data -> screenshot stage locally -> fix -> tsc + tsx --test src/lib/devActionPreview.test.ts -> probes (probe_company_delete/probe_dev_fix/probe_topic_switch) -> commit/push -> sleep 150 -> probe_live_verify -> screenshot live stage.
+
+[Project Knowledge Summary]
+- Date: 2026-11-06
+- Context: Discovered by Agent when the live site suddenly returned 503 on every DB-backed API mid-session
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - Live DB is Neon Postgres via DATABASE_URL; when /api/dev /api/core /api/assets /api/video all return 503 with code DATABASE_RUNTIME_NOT_BOUND and the message embeds "HTTP status 402 ... exceeded the quota", the Neon free-tier quota is exhausted - it is an account/billing issue, not a code bug. Verify deploy contents by grepping the deployed JS chunk for new control uids (page HTML only has 1 data-control-uid because the rest renders client-side after the DB binds).
+  - Quota recovery is automatic (monthly reset) or manual (plan upgrade in Neon console); no redeploy needed. Do not attempt code-side workarounds.
+  - dev control-count chain to update on every new authoritative control: DEV_VISIBLE_CONTROLS in src/server/domain/dev.ts + DEV_ACTION_PERMISSIONS + DEV_CONTROL_ACTIONS (all three must stay in sync - a truncated DEV_CONTROL_ACTIONS makes every page action 404 while tsc and unit tests still pass because they bypass knownDevAction), then devActionPreview.test.ts count assertion, probe_company_delete.mjs VISIBLE list + count, probe_live_verify.mjs count. As of d7b60055: 28 controls / 41 fields.
+  - The /api/dev/action route takes nextValue (JSON-stringified payload string), not a payload object; a raw payload object is silently ignored and yields confusing REQUIRED errors.
