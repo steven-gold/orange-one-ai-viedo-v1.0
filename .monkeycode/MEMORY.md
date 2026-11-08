@@ -188,3 +188,14 @@ Entries discovered by the Agent during task execution should follow this format:
   - Quota recovery is automatic (monthly reset) or manual (plan upgrade in Neon console); no redeploy needed. Do not attempt code-side workarounds.
   - dev control-count chain to update on every new authoritative control: DEV_VISIBLE_CONTROLS in src/server/domain/dev.ts + DEV_ACTION_PERMISSIONS + DEV_CONTROL_ACTIONS (all three must stay in sync - a truncated DEV_CONTROL_ACTIONS makes every page action 404 while tsc and unit tests still pass because they bypass knownDevAction), then devActionPreview.test.ts count assertion, probe_company_delete.mjs VISIBLE list + count, probe_live_verify.mjs count. As of d7b60055: 28 controls / 41 fields.
   - The /api/dev/action route takes nextValue (JSON-stringified payload string), not a payload object; a raw payload object is silently ignored and yields confusing REQUIRED errors.
+
+[Project Knowledge Summary]
+- Date: 2026-11-08
+- Context: Discovered by Agent while wiring the EDIT-01 client timeline state machine (c68e43a1)
+- Category: Testing Methods
+- Instructions:
+  - EDIT-01 has a client-side timeline model at src/lib/editTimeline.ts (pure functions, 20 unit tests in editTimeline.test.ts, run via `NODE_PATH=$(npm root -g) tsx --test`); the UI owns the instance, server audit actions are unchanged (previewEditAction GATED fallback still writes the control's own uid).
+  - Interactive probe /tmp/opencode/probe_edit_timeline.mjs (playwright, 11 assertions: drop/split/undo/seek/range/marker/play/version) must seek playhead back inside a clip before testing split - split is fail-closed outside clip bounds.
+  - Icon buttons render Icon instead of label text; probe must read aria-label, not textContent.
+  - Client-side UI states (timecode/playhead/clip fields) intentionally diverge from read-model fields; Field components for precision/inspector were switched to readonly to avoid GATED fallback polluting them.
+  - editTimeline binary functions (seek/setTool/selectClip/patchSelected/stepFrame/toggleTrackFlag) need lambda wrapping when passed to run()/runOnly() helpers; a plain reference fails tsc.
