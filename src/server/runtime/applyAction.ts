@@ -847,6 +847,7 @@ async function fillCorrectionScriptBody(
 ): Promise<void> {
   const candidate = parseCorrectionScript(await readField(table, uid));
   if (!candidate || candidate.status !== "CANDIDATE") return;
+  if (page === "edit") await writeField(table, "EDIT-01-LBL-API-JOB", "running");
   let body = "";
   try {
     const reply = await generatePageReply(page, prompt, "", [], { signal });
@@ -861,9 +862,64 @@ async function fillCorrectionScriptBody(
         await writeField(table, "ASSET-01-FLD-JOB", "failed");
         await writeField(table, "ASSET-01-FLD-RETRY-ELIGIBILITY", "eligible");
       }
+      if (page === "edit") await writeField(table, "EDIT-01-LBL-API-JOB", "failed");
     }
   }
+  if (page === "edit" && body !== "") await writeField(table, "EDIT-01-LBL-API-JOB", "done");
   await writeField(table, uid, serializeCorrectionScript(withCorrectionBody(candidate, body)));
+}
+
+// LLM evaluation issues for the edit page: asks the reviewer to audit the
+// assembled timeline against the upstream script evidence. Provider failure
+// or unparseable output keeps the list honest (a summary instead of fake
+// findings) — the same contract as the asset/video scorecards.
+async function fillEditEvalIssues(table: string, signal?: AbortSignal): Promise<void> {
+  const script = (await readField(table, "EDIT-01-LBL-CURRENT-SCRIPT-SECTION")) || "";
+  const sourceVersion = (await readField(table, "EDIT-01-FLD-SOURCE-VERSION")) || "";
+  const stageScore = (await readField(table, "EDIT-01-LBL-STAGE-SCORE")) || "";
+  const timeline = (await readField(table, "EDIT-01-LST-IMPORT-QUEUE")) || "";
+  const prompt = [
+    "你是剪輯評審。依據腳本證據與時間軸素材參照，列出目前組裝的問題（繁體中文）。",
+    '只輸出 JSON：{"issues":[{"uid":"...","severity":"high|medium|low","summary":"..."}]}，沒有問題則輸出 {"issues":[]}，不得輸出其他文字。',
+    `腳本證據：${script || "（無）"}`,
+    `版本參照：${sourceVersion || "（無）"}`,
+    `階段評分：${stageScore || "（無）"}`,
+    `時間軸素材：${timeline || "（無）"}`,
+  ].join("\n");
+  let body = "";
+  try {
+    const reply = await generatePageReply("edit", prompt, undefined, [], { signal });
+    body = reply.text;
+  } catch (error) {
+    if (error instanceof GenerationCancelled && error.partial) body = error.partial;
+    else {
+      const code = error instanceof AiProviderError ? error.code : "AI_PROVIDER_UNREACHABLE";
+      await writeField(table, "EDIT-01-LST-EVAL-ISSUES", JSON.stringify({ summary: `剪輯評審未完成（${code}）`, issues: [] }));
+      return;
+    }
+  }
+  const start = body.indexOf("{");
+  const end = body.lastIndexOf("}");
+  if (start < 0 || end <= start) {
+    await writeField(table, "EDIT-01-LST-EVAL-ISSUES", JSON.stringify({ summary: "剪輯評審輸出無法解析", issues: [] }));
+    return;
+  }
+  let issues: Array<{ uid?: unknown; severity?: unknown; summary?: unknown }> = [];
+  try {
+    const parsed = JSON.parse(body.slice(start, end + 1)) as { issues?: Array<{ uid?: unknown; severity?: unknown; summary?: unknown }> };
+    issues = Array.isArray(parsed.issues) ? parsed.issues : [];
+  } catch {
+    await writeField(table, "EDIT-01-LST-EVAL-ISSUES", JSON.stringify({ summary: "剪輯評審輸出無法解析", issues: [] }));
+    return;
+  }
+  const usable = issues
+    .filter((row) => typeof row.summary === "string" && (row.summary as string).trim())
+    .map((row, index) => ({
+      uid: typeof row.uid === "string" && row.uid.trim() ? row.uid.trim() : `EVAL-ISSUE-${index + 1}`,
+      severity: row.severity === "high" || row.severity === "medium" || row.severity === "low" ? row.severity : "medium",
+      summary: (row.summary as string).trim(),
+    }));
+  await writeField(table, "EDIT-01-LST-EVAL-ISSUES", JSON.stringify({ summary: usable.length ? `剪輯評審列出 ${usable.length} 項問題` : "剪輯評審未列出問題", issues: usable }));
 }
 
 // LLM QA scoring for the video page: EVALUATE writes the structural
@@ -1571,6 +1627,21 @@ export async function applyWorkbenchAction(
     if (actionUid === "EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE" && written) {
       const prompt = promptFromValue(nextValue) || (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-API-INSTRUCTION")) || "";
       await fillCorrectionScriptBody(FIELD_TABLE.edit, EDIT_CORRECTION_CANDIDATE_UID, "edit", prompt, signal);
+    }
+    if ((actionUid === "EDIT-01-ACT-EVAL-RECHECK-FULL" || actionUid === "EDIT-01-ACT-EVAL-RECHECK-SELECTED") && written) {
+      await fillEditEvalIssues(FIELD_TABLE.edit, signal);
+    }
+    if (actionUid === "EDIT-01-ACT-VOICE-GENERATE" && written) {
+      // No TTS adapter exists in this deployment. Probe the configured
+      // providers honestly and fail closed instead of fabricating a take.
+      let ttsProviders = 0;
+      try {
+        ttsProviders = (await resolveProviderConfigs("text-to-speech")).length;
+      } catch {
+        ttsProviders = 0;
+      }
+      await writeField(FIELD_TABLE.edit, "EDIT-01-BTN-VOICE-GENERATE", "failed");
+      await writeField(FIELD_TABLE.edit, "EDIT-01-LBL-ERROR-STATE", ttsProviders ? "TTS_ADAPTER_NOT_IMPLEMENTED" : "TTS_PROVIDER_NOT_CONFIGURED");
     }
     if (actionUid === "EDIT-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");

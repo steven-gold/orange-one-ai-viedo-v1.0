@@ -262,6 +262,7 @@ export function EditVisual() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const sendAbortRef = useRef<AbortController | null>(null);
   const expectStreamRefreshRef = useRef(false);
+  const readRetryRef = useRef(0);
   fieldsRef.current = fields;
   tlRef.current = tl;
   rateRef.current = rateIndex;
@@ -371,6 +372,7 @@ export function EditVisual() {
           })),
         );
         setError(null);
+        readRetryRef.current = 0;
       })
       .catch((cause: unknown) => {
         if (cancelled) return;
@@ -379,6 +381,14 @@ export function EditVisual() {
         setAuthorized(false);
         setInbound(EMPTY_INBOUND);
         setFields(emptyFields());
+        // A transient read failure (dev recompile, network blip) used to
+        // disable the whole page forever; retry a bounded number of times.
+        if (readRetryRef.current < 2) {
+          readRetryRef.current += 1;
+          window.setTimeout(() => {
+            if (!cancelled) setTick((value) => value + 1);
+          }, 900);
+        }
       })
       .finally(() => {
         if (cancelled) {
@@ -647,6 +657,30 @@ export function EditVisual() {
   const disabled = !(standalone || inboundReady);
   const correctionOpen = v("EDIT-01-BTN-STAGE-MODIFY") === "returned";
   const correctionCandidate = parseCorrectionScript(v("EDIT-01-PNL-API-CANDIDATE"));
+  const evalIssueRaw = (() => {
+    const raw = v("EDIT-01-LST-EVAL-ISSUES");
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw) as { summary?: unknown; issues?: Array<{ uid?: unknown; severity?: unknown; summary?: unknown }> };
+      if (typeof parsed !== "object" || parsed === null) return null;
+      return {
+        summary: typeof parsed.summary === "string" ? parsed.summary : "",
+        issues: Array.isArray(parsed.issues)
+          ? parsed.issues
+              .filter((row) => typeof row?.summary === "string" && (row.summary as string).trim())
+              .map((row, index) => ({
+                uid: typeof row.uid === "string" && row.uid.trim() ? row.uid : `EVAL-ISSUE-${index + 1}`,
+                severity: row.severity === "high" || row.severity === "medium" || row.severity === "low" ? row.severity : "medium",
+                summary: (row.summary as string).trim(),
+              }))
+          : [],
+      };
+    } catch {
+      return null;
+    }
+  })();
+  const evalIssueRows = evalIssueRaw?.issues ?? [];
+  const evalIssueSummary = evalIssueRaw?.summary ?? "";
   const generateDisabled = disabled || !correctionOpen || !correctionDraft.trim();
   const approveDisabled = disabled || !correctionOpen || correctionCandidate?.status !== "CANDIDATE";
   const executeDisabled = disabled || !correctionOpen || correctionCandidate?.status !== "APPROVED";
@@ -1351,10 +1385,24 @@ export function EditVisual() {
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-QA">
           <h3 className={styles.sub}>{tx("edit.qa")}</h3>
           <div className={styles.list} data-control-uid="EDIT-01-LST-EVAL-ISSUES">
-            <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-EVAL-ISSUES")}>
-              <span>{tx("edit.unbound_issue")}</span>
-              <span>{dash}</span>
-            </button>
+            {evalIssueRows.length ? (
+              evalIssueRows.map((issue) => (
+                <div className={styles.item} key={issue.uid}>
+                  <span>{issue.severity}: {issue.summary}</span>
+                  <span>{dash}</span>
+                </div>
+              ))
+            ) : evalIssueSummary ? (
+              <div className={styles.item}>
+                <span>{evalIssueSummary}</span>
+                <span>{dash}</span>
+              </div>
+            ) : (
+              <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-EVAL-ISSUES")}>
+                <span>{tx("edit.unbound_issue")}</span>
+                <span>{dash}</span>
+              </button>
+            )}
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-EVAL-JUMP" label={tx("edit.btn-eval-jump")} onAct={() => runOnly(jumpToNearestMarker, "EDIT-01-BTN-EVAL-JUMP")} disabled={disabled} />

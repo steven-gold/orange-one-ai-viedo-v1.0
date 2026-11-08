@@ -734,8 +734,10 @@ function overlayUpstreamOntoEdit(
     if (row.controlUid === "EDIT-01-FLD-SOURCE-VERSION") return { ...row, value: inbound.ready ? inbound.sourceVersion || null : null };
     if (row.controlUid === "EDIT-01-LBL-BINDING-FINGERPRINT") return { ...row, value: inbound.ready ? inbound.handoffContract || null : null };
     if (row.controlUid === "EDIT-01-LBL-CURRENT-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script || null : null };
-    if (row.controlUid === "EDIT-01-FLD-VOICE-PROVIDER") return { ...row, value: pageReady && aiProvider ? aiProvider : null };
+    if (row.controlUid === "EDIT-01-FLD-VOICE-PROVIDER") return { ...row, value: pageReady && aiProvider && !/^\d+$/.test(aiProvider) ? aiProvider : null };
     if (row.controlUid === "EDIT-01-FLD-VOICE-MODEL") return { ...row, value: pageReady && aiModel ? aiModel : null };
+    if (row.controlUid === "EDIT-01-FLD-API-PROVIDER") return { ...row, value: pageReady && aiProvider && !/^\d+$/.test(aiProvider) ? aiProvider : null };
+    if (row.controlUid === "EDIT-01-FLD-API-MODEL") return { ...row, value: pageReady && aiModel ? aiModel : null };
     if (STAGE_FIELDS.has(row.controlUid)) return { ...row, value: pageReady ? row.value : null };
     return row;
   });

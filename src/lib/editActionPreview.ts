@@ -350,7 +350,7 @@ export function previewEditAction(
       ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
     };
   }
-  if (actionUid === "EDIT-01-ACT-VOICE-APPLY" || actionUid === "EDIT-01-ACT-VOICE-GENERATE" || actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND") {
+  if (actionUid === "EDIT-01-ACT-VOICE-APPLY" || actionUid === "EDIT-01-ACT-VOICE-SCRIPT-BIND") {
     const take = named(nextValue) || named(current("EDIT-01-LST-VOICE-TAKES")) || named(current("EDIT-01-FLD-VOICE-ASSET"));
     const inboundScript = named(current("EDIT-01-LBL-CURRENT-SCRIPT-SECTION"));
     const script =
@@ -374,6 +374,12 @@ export function previewEditAction(
       ...(script ? { "EDIT-01-FLD-VOICE-SCRIPT": script } : {}),
       ...dialogueBindingPatch(buildDialogueTimingBinding(patched, status)),
     };
+  }
+  if (actionUid === "EDIT-01-ACT-VOICE-GENERATE") {
+    // Generation is only an attempt from the client's perspective; whether a
+    // take lands is decided server-side (TTS availability). Binding fields
+    // stay untouched so a failed generation can never block the render gate.
+    return { [controlUid]: nextValue ?? statusFromAction(actionUid) };
   }
   if (actionUid === "EDIT-01-ACT-LIPSYNC-TARGET-SET") {
     const target = named(nextValue);
