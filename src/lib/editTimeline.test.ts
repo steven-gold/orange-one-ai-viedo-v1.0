@@ -4,6 +4,7 @@ import {
   addMarker,
   clearRange,
   deleteSelected,
+  dragClipTo,
   duplicateSelected,
   emptyTimeline,
   findClip,
@@ -193,6 +194,8 @@ test("frame step uses 1/30s and timecode round-trips", () => {
   assert.ok(Math.abs(state.playhead - (4 + 1 / 30)) < 1e-9);
   assert.equal(formatTimecode(4 + 1 / 30), "00:00:04:01");
   assert.equal(timecodeToSeconds("00:00:04:01"), 4 + 1 / 30);
+  assert.equal(timecodeToSeconds("99:99:99:99"), null);
+  assert.equal(timecodeToSeconds("00:00:04:30"), null);
   assert.equal(timecodeToSeconds("bogus"), null);
 });
 
@@ -252,6 +255,19 @@ test("seek clamps to timeline end", () => {
   assert.equal(state.playhead, 30);
   state = seek(state, -5);
   assert.equal(state.playhead, 0);
+});
+
+test("drag moves clip to snapped position and respects locks", () => {
+  let state = seeded();
+  state = dragClipTo(state, "CL-1", 5.13);
+  assert.equal(selectedClip(state)?.start, 5.13);
+  state = dragClipTo(state, "CL-1", 4.15);
+  assert.equal(selectedClip(state)?.start, 4);
+  state = dragClipTo(state, "CL-1", -3);
+  assert.equal(selectedClip(state)?.start, 0);
+  state = toggleTrackFlag(state, "V1", "locked");
+  state = dragClipTo(state, "CL-1", 9);
+  assert.equal(selectedClip(state)?.start, 0);
 });
 
 test("tool switch", () => {

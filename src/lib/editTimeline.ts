@@ -212,7 +212,6 @@ export function stepFrame(state: TimelineState, direction: 1 | -1): TimelineStat
 }
 
 export function snapValue(state: TimelineState, value: number): number {
-  if (state.rangeIn == null && state.rangeOut == null) return Math.round(value * 100) / 100;
   const candidates: number[] = [state.playhead, 0];
   if (state.rangeIn != null) candidates.push(state.rangeIn);
   if (state.rangeOut != null) candidates.push(state.rangeOut);
@@ -311,6 +310,14 @@ export function moveSelected(state: TimelineState, deltaSeconds: number): Timeli
   const start = Math.max(0, snapValue(state, clip.start + deltaSeconds));
   if (start === clip.start) return state;
   return withHistory(state, growDuration(state, trimPatch(state, clip.id, (row) => ({ ...row, start }))));
+}
+
+export function dragClipTo(state: TimelineState, clipId: string, start: number): TimelineState {
+  const clip = findClip(state, clipId);
+  if (!clip || !trackEditable(state, clip.track)) return state;
+  const nextStart = Math.max(0, snapValue(state, start));
+  if (nextStart === clip.start) return state;
+  return withHistory(state, growDuration(state, trimPatch(state, clipId, (row) => ({ ...row, start: nextStart }))));
 }
 
 export function reorderSelected(state: TimelineState, direction: 1 | -1): TimelineState {
@@ -507,5 +514,6 @@ export function timecodeToSeconds(value: string): number | null {
   const match = /^(\d{1,2}):(\d{2}):(\d{2}):(\d{2})$/.exec(value.trim());
   if (!match) return null;
   const [, hh, mm, ss, ff] = match;
+  if (Number(hh) > 23 || Number(mm) > 59 || Number(ss) > 59 || Number(ff) > 29) return null;
   return Number(hh) * 3600 + Number(mm) * 60 + Number(ss) + Number(ff) / 30;
 }

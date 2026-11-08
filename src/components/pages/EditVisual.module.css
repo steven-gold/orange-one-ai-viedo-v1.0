@@ -399,13 +399,41 @@
   padding: 0 8px;
   overflow: hidden;
   white-space: nowrap;
-  cursor: pointer;
+  cursor: grab;
 }
 
 .tlClipActive {
   outline: 2px solid #ffd166;
   outline-offset: 1px;
   background: linear-gradient(90deg, #7c5cff, #9b7dff);
+}
+
+.tlClipDragging {
+  opacity: 0.75;
+  cursor: grabbing;
+}
+
+.previewShell:fullscreen {
+  background: #060a1e;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.previewProgress {
+  display: block;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.previewProgress > span {
+  display: block;
+  height: 100%;
+  background: #ff4d6d;
 }
 
 .trackLocked {

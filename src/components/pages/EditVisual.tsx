@@ -37,6 +37,7 @@ import {
   addMarker,
   clearRange,
   deleteSelected,
+  dragClipTo,
   duplicateSelected,
   emptyTimeline,
   formatTimecode,
@@ -58,6 +59,7 @@ import {
   setTool,
   splitSelected,
   stepFrame,
+  timecodeToSeconds,
   timelineEnd,
   toggleTrackFlag,
   trimSelectedEnd,
@@ -106,6 +108,24 @@ const CLIENT_FIELDS: string[] = [...EDIT_VISIBLE_CONTROLS, ...EDIT_CONVERSATION_
 
 function emptyFields(): EditFieldValue[] {
   return CLIENT_FIELDS.map((controlUid) => ({ controlUid, value: null }));
+}
+
+function parseMediaRefs(raw: string | null): string[] {
+  const value = (raw ?? "").trim();
+  if (!value) return [];
+  if (value.startsWith("[")) {
+    try {
+      const parsed: unknown = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        const items = parsed.filter((row): row is string => typeof row === "string" && row.trim().length > 0).map((row) => row.trim());
+        if (items.length) return items;
+      }
+    } catch {
+      // fall through to separator parsing
+    }
+  }
+  const parts = value.split(/[,;\n]+/).map((row) => row.trim()).filter(Boolean);
+  return parts.length ? parts : [value];
 }
 
 const TRACKS = [
@@ -219,6 +239,17 @@ export function EditVisual() {
   const [speedIndex, setSpeedIndex] = useState(0);
   const [volumeIndex, setVolumeIndex] = useState(0);
   const [mediaQuery, setMediaQuery] = useState("");
+  const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+  const [subTextDraft, setSubTextDraft] = useState("");
+  const [timecodeDraft, setTimecodeDraft] = useState<string | null>(null);
+  const [timecodeInvalid, setTimecodeInvalid] = useState(false);
+  const [dragging, setDragging] = useState<{ clipId: string; track: string; offsetSec: number; currentSec: number; moved: boolean } | null>(null);
+
+  const laneClickSeconds = useCallback((event: React.MouseEvent<HTMLElement> | { clientX: number; currentTarget: HTMLElement }) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0;
+    return Math.max(0, ratio * timelineEnd(tlRef.current));
+  }, []);
   const [versionCompareNote, setVersionCompareNote] = useState<string | null>(null);
   const tlRef = useRef(tl);
   const rateRef = useRef(rateIndex);
@@ -254,6 +285,33 @@ export function EditVisual() {
   const run = useCallback((fn: (state: TimelineState) => TimelineState) => {
     setTl((prev) => fn(prev));
   }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (event: MouseEvent) => {
+      const lane = document.querySelector(`[data-drag-lane="${dragging.track}"]`) as HTMLElement | null;
+      if (!lane) return;
+      const rect = lane.getBoundingClientRect();
+      const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0;
+      const at = Math.max(0, ratio * timelineEnd(tlRef.current));
+      setDragging((prev) => (prev ? { ...prev, currentSec: at, moved: true } : prev));
+    };
+    const onUp = () => {
+      setDragging((prev) => {
+        if (prev?.moved) {
+          const start = Math.max(0, prev.currentSec - prev.offsetSec);
+          setTl((state) => dragClipTo(state, prev.clipId, start));
+        }
+        return null;
+      });
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [dragging]);
 
   useEffect(() => {
     const node = timelineRef.current;
@@ -460,7 +518,25 @@ export function EditVisual() {
   }, [act, generating, insertQuote]);
 
   const v = (uid: string) => valueOf(uid);
-  const mediaLabel = v("EDIT-01-LST-MEDIA") || "session-media";
+  const mediaItems = (() => {
+    const refs = parseMediaRefs(inbound.mediaRefs);
+    if (refs.length) return refs;
+    const queue = v("EDIT-01-LST-IMPORT-QUEUE");
+    return queue ? [queue] : ["session-media"];
+  })();
+  const filteredMedia = mediaItems.filter((ref) => !mediaQuery || ref.toLowerCase().includes(mediaQuery.toLowerCase()));
+  const activeMedia = selectedMedia && mediaItems.includes(selectedMedia) ? selectedMedia : mediaItems[0];
+  const mediaLabel = activeMedia;
+  const previewClip = tl.clips.find(
+    (clip) => tl.playhead >= clip.start && tl.playhead <= clip.start + (clip.outPoint - clip.inPoint),
+  ) ?? null;
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const toggleFullscreen = useCallback(() => {
+    const node = previewRef.current;
+    if (!node) return;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void node.requestFullscreen?.();
+  }, []);
   const sel = selectedClip(tl);
   const tlEnd = timelineEnd(tl);
   const pxPerSec = 24 * tl.zoom;
@@ -534,6 +610,38 @@ export function EditVisual() {
   const modeLabel = modeValue === "AUTO" ? tx("edit.auto") : tx("edit.ctl-execution-mode");
   const sourceLabel = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD" ? tx("edit.source_standalone") : tx("edit.source_value");
 
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+      if (disabled || sendAbortRef.current || generating) return;
+      const type = (key: string, ctrl: boolean) => {
+        switch (key) {
+          case " ": return () => setPlaying((prev) => !prev);
+          case "Delete":
+          case "Backspace": return () => run(deleteSelected);
+          case "ArrowLeft": return () => run((state) => stepFrame(state, -1));
+          case "ArrowRight": return () => run((state) => stepFrame(state, 1));
+          case "i": case "I": return () => run(setRangeIn);
+          case "o": case "O": return () => run(setRangeOut);
+          case "m": case "M": return () => run((state) => addMarker(state, mediaLabel));
+          case "z": case "Z": return ctrl ? () => (event.shiftKey ? run(redo) : run(undo)) : null;
+          case "y": case "Y": return ctrl ? () => run(redo) : null;
+          case "+": case "=": return () => run(zoomIn);
+          case "-": case "_": return () => run(zoomOut);
+          default: return null;
+        }
+      };
+      const handler = type(event.key, event.ctrlKey || event.metaKey);
+      if (handler) {
+        event.preventDefault();
+        handler();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [disabled, generating, mediaLabel, run]);
+
   return (
     <div
       className={styles.page}
@@ -580,10 +688,24 @@ export function EditVisual() {
             </label>
             <Btn uid="EDIT-01-CTL-MEDIA-TYPE-FILTER" label={`${tx("edit.ctl-media-type-filter")}${mediaFilter ? ":on" : ""}`} onAct={() => { setMediaFilter((prev) => !prev); void act("EDIT-01-CTL-MEDIA-TYPE-FILTER"); }} disabled={disabled} />
             <div className={styles.list} data-control-uid="EDIT-01-LST-MEDIA">
-              <button type="button" className={`${styles.item} ${styles.itemActive}`} disabled={disabled} onClick={() => void act("EDIT-01-LST-MEDIA", mediaLabel)}>
-                <span>{v("EDIT-01-LST-MEDIA") || tx("edit.unbound_media")}</span>
-                <span>{v("EDIT-01-LST-MEDIA") ? tx("edit.session_media") : dash}</span>
-              </button>
+              {(mediaFilter ? filteredMedia : filteredMedia.slice(0, 8)).map((ref) => (
+                <button
+                  key={ref}
+                  type="button"
+                  className={ref === activeMedia ? `${styles.item} ${styles.itemActive}` : styles.item}
+                  disabled={disabled}
+                  onClick={() => { setSelectedMedia(ref); void act("EDIT-01-LST-MEDIA", ref); }}
+                >
+                  <span>{ref}</span>
+                  <span>{tx("edit.session_media")}</span>
+                </button>
+              ))}
+              {!filteredMedia.length ? (
+                <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-MEDIA")}>
+                  <span>{tx("edit.unbound_media")}</span>
+                  <span>{dash}</span>
+                </button>
+              ) : null}
             </div>
             <div className={styles.toolbar}>
               <Btn uid="EDIT-01-BTN-ADD-MEDIA" label={tx("edit.btn-add-media")} onAct={act} disabled={disabled} icon="upload" />
@@ -604,9 +726,23 @@ export function EditVisual() {
         <main className={styles.right}>
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-PREVIEW">
             <h2 className={styles.title}>{tx("edit.preview")}</h2>
+            <div ref={previewRef} className={styles.previewShell}>
             <div className={styles.preview} data-control-uid="EDIT-01-PNL-FINAL-PREVIEW">
-              <p className={styles.previewTitle}>{tx("edit.preview_unbound")}</p>
-              <span>{tx("edit.exact_source_ref")} {dash}</span>
+              {previewClip ? (
+                <>
+                  <p className={styles.previewTitle}>{previewClip.label}</p>
+                  <span>{tx("edit.preview_playing")}: {formatTimecode(tl.playhead)} · {previewClip.start.toFixed(1)}s → {(previewClip.outPoint - previewClip.inPoint).toFixed(1)}s</span>
+                  <div className={styles.previewProgress}>
+                    <span style={{ width: `${Math.min(100, Math.max(0, ((tl.playhead - previewClip.start) / Math.max(0.1, previewClip.outPoint - previewClip.inPoint)) * 100))}%` }} />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className={styles.previewTitle}>{tx("edit.preview_unbound")}</p>
+                  <span>{tx("edit.exact_source_ref")} {dash}</span>
+                </>
+              )}
+            </div>
             </div>
             <div className={styles.transport} data-component-uid="EDIT-01-CMP-TRANSPORT">
               <Btn uid="EDIT-01-BTN-PLAY" label={tx("edit.btn-play")} onAct={() => { setPlaying(true); void act("EDIT-01-BTN-PLAY"); }} disabled={disabled} icon="play" />
@@ -615,12 +751,30 @@ export function EditVisual() {
               <Btn uid="EDIT-01-BTN-NEXT-FRAME" label={tx("edit.btn-next-frame")} onAct={() => { setPlaying(false); runOnly((state) => stepFrame(state, 1), "EDIT-01-BTN-NEXT-FRAME"); }} disabled={disabled} icon="next" />
               <div className={styles.timecode}>
                 <span className={styles.label}>{tx("edit.fld-timecode")}</span>
-                <span className={styles.value}>{formatTimecode(tl.playhead)}</span>
+                <input
+                  data-control-uid="EDIT-01-FLD-TIMECODE"
+                  disabled={disabled}
+                  value={timecodeDraft ?? formatTimecode(tl.playhead)}
+                  onChange={(event) => { setTimecodeDraft(event.target.value); setTimecodeInvalid(false); }}
+                  onBlur={() => {
+                    if (timecodeDraft == null) return;
+                    const seconds = timecodeToSeconds(timecodeDraft);
+                    if (seconds == null) {
+                      setTimecodeInvalid(true);
+                    } else {
+                      run((state) => seekTimeline(state, seconds));
+                      void act("EDIT-01-FLD-TIMECODE", timecodeDraft);
+                    }
+                    setTimecodeDraft(null);
+                  }}
+                  onKeyDown={(event) => { if (event.key === "Enter") (event.target as HTMLInputElement).blur(); }}
+                />
+                {timecodeInvalid ? <span className={styles.value}>{tx("edit.timecode_invalid")}</span> : null}
               </div>
               <Btn uid="EDIT-01-CTL-PLAYBACK-RATE" label={`${tx("edit.ctl-playback-rate")} x${[1, 1.5, 2, 0.5][rateIndex]}`} onAct={() => { setRateIndex((prev) => (prev + 1) % 4); void act("EDIT-01-CTL-PLAYBACK-RATE"); }} disabled={disabled} icon="rate" />
               <Btn uid="EDIT-01-CTL-LOOP" label={tx("edit.loop")} onAct={() => { setLoopOn((prev) => !prev); void act("EDIT-01-CTL-LOOP"); }} disabled={disabled} icon="loop" />
               <Btn uid="EDIT-01-BTN-MUTE" label={tx("edit.mute")} onAct={() => { setPreviewMuted((prev) => !prev); void act("EDIT-01-BTN-MUTE"); }} disabled={disabled} icon="mute" />
-              <Btn uid="EDIT-01-BTN-FULLSCREEN" label={tx("edit.btn-fullscreen")} onAct={act} disabled={disabled} icon="fullscreen" />
+              <Btn uid="EDIT-01-BTN-FULLSCREEN" label={tx("edit.btn-fullscreen")} onAct={() => { toggleFullscreen(); void act("EDIT-01-BTN-FULLSCREEN"); }} disabled={disabled} icon="fullscreen" />
               <Btn uid="EDIT-01-CTL-VOLUME" label={`${tx("edit.ctl-volume")} ${[100, 75, 50, 25][masterVolumeIndex]}%`} onAct={() => { setMasterVolumeIndex((prev) => (prev + 1) % 4); void act("EDIT-01-CTL-VOLUME"); }} disabled={disabled} icon="volume" />
               <Btn uid="EDIT-01-CTL-AUDIO-MONITOR" label={tx("edit.ctl-audio-monitor")} onAct={() => { setMonitorOn((prev) => !prev); void act("EDIT-01-CTL-AUDIO-MONITOR"); }} disabled={disabled} icon="audition" />
               <Btn uid="EDIT-01-CTL-SUBTITLE-TOGGLE" label={tx("edit.ctl-subtitle-toggle")} onAct={() => { setSubtitleOn((prev) => !prev); void act("EDIT-01-CTL-SUBTITLE-TOGGLE"); }} disabled={disabled} icon="subtitle" />
@@ -697,20 +851,30 @@ export function EditVisual() {
                     </div>
                     <div
                       className={`${styles.trackLane} ${flags.locked ? styles.trackLocked : ""} ${flags.muted ? styles.trackMuted : ""}`}
+                      data-drag-lane={track.id}
                       onClick={(event) => { if (!disabled && !flags.locked) trackClick(event, track.id); }}
                     >
-                      {trackClips.length ? trackClips.map((clip) => (
-                        <button
-                          key={clip.id}
-                          type="button"
-                          className={`${styles.tlClip} ${clip.id === tl.selectedClipId ? styles.tlClipActive : ""}`}
-                          style={{ left: `${(clip.start / Math.max(1, tlEnd)) * 100}%`, width: `${Math.max(1.5, ((clip.outPoint - clip.inPoint) / Math.max(1, tlEnd)) * 100)}%` }}
-                          onClick={(event) => { event.stopPropagation(); if (!disabled && !flags.locked) run((state) => selectClip(state, clip.id)); }}
-                        >
-                          <span>{clip.label}</span>
-                          <span>{clip.start.toFixed(1)}s → {(clip.outPoint - clip.inPoint).toFixed(1)}s</span>
-                        </button>
-                      )) : (
+                      {trackClips.length ? trackClips.map((clip) => {
+                        const dragOffset = dragging?.clipId === clip.id ? dragging.currentSec - dragging.offsetSec : null;
+                        const dragStart = dragOffset != null && dragOffset >= 0 ? dragOffset : clip.start;
+                        return (
+                          <button
+                            key={clip.id}
+                            type="button"
+                            className={`${styles.tlClip} ${clip.id === tl.selectedClipId ? styles.tlClipActive : ""} ${dragging?.clipId === clip.id ? styles.tlClipDragging : ""}`}
+                            style={{ left: `${(dragStart / Math.max(1, tlEnd)) * 100}%`, width: `${Math.max(1.5, ((clip.outPoint - clip.inPoint) / Math.max(1, tlEnd)) * 100)}%` }}
+                            onClick={(event) => { event.stopPropagation(); if (!disabled && !flags.locked) run((state) => selectClip(state, clip.id)); }}
+                            onMouseDown={(event) => {
+                              if (disabled || flags.locked) return;
+                              const at = laneClickSeconds(event);
+                              setDragging({ clipId: clip.id, track: track.id, offsetSec: at - clip.start, currentSec: at, moved: false });
+                            }}
+                          >
+                            <span>{clip.label}</span>
+                            <span>{dragStart.toFixed(1)}s → {(clip.outPoint - clip.inPoint).toFixed(1)}s</span>
+                          </button>
+                        );
+                      }) : (
                         <span className={`${styles.clip} ${styles[track.clip]}`}>{tx("edit.exact_ref")}</span>
                       )}
                     </div>
@@ -1012,10 +1176,22 @@ export function EditVisual() {
           <Field uid="EDIT-01-FLD-VOICE-PROVIDER" label={tx("edit.fld-voice-provider")} value={v("EDIT-01-FLD-VOICE-PROVIDER")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-VOICE-SCRIPT" label={tx("edit.fld-voice-script")} value={v("EDIT-01-FLD-VOICE-SCRIPT")} loading={loading} onAct={act} disabled={disabled} />
           <div className={styles.list} data-control-uid="EDIT-01-LST-VOICE-TAKES">
-            <div className={styles.item}>
-              <span>{tx("edit.unbound_take")}</span>
-              <span>{dash}</span>
-            </div>
+            {v("EDIT-01-LST-VOICE-TAKES") ? (
+              <button
+                type="button"
+                className={`${styles.item} ${styles.itemActive}`}
+                disabled={disabled}
+                onClick={() => void act("EDIT-01-LST-VOICE-TAKES")}
+              >
+                <span>{v("EDIT-01-LST-VOICE-TAKES")}</span>
+                <span>{tx("edit.take_current")}</span>
+              </button>
+            ) : (
+              <div className={styles.item}>
+                <span>{tx("edit.unbound_take")}</span>
+                <span>{dash}</span>
+              </div>
+            )}
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-VOICE-GENERATE" label={tx("edit.btn-voice-generate")} onAct={act} disabled={disabled} primary />
@@ -1056,12 +1232,20 @@ export function EditVisual() {
           <h3 className={styles.sub}>{tx("edit.subtitle")}</h3>
           <label className={styles.composer}>
             <span className={styles.label}>{tx("edit.fld-sub-text")}</span>
-            <textarea data-control-uid="EDIT-01-FLD-SUB-TEXT" disabled={disabled} defaultValue="" onBlur={() => void act("EDIT-01-FLD-SUB-TEXT")} />
+            <textarea
+              data-control-uid="EDIT-01-FLD-SUB-TEXT"
+              disabled={disabled}
+              value={subTextDraft || v("EDIT-01-FLD-SUB-TEXT") || ""}
+              placeholder={tx("edit.fld-sub-text")}
+              rows={2}
+              onChange={(event) => setSubTextDraft(event.target.value)}
+              onBlur={() => { if (subTextDraft.trim()) void act("EDIT-01-FLD-SUB-TEXT", subTextDraft.trim()); }}
+            />
           </label>
           <Field uid="EDIT-01-FLD-SUB-LANG" label={tx("edit.fld-sub-lang")} value={v("EDIT-01-FLD-SUB-LANG")} loading={loading} onAct={act} disabled={disabled} />
           <Field uid="EDIT-01-FLD-SUB-FORMAT" label={tx("edit.fld-sub-format")} value={v("EDIT-01-FLD-SUB-FORMAT")} loading={loading} onAct={act} disabled={disabled} />
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-SUB-CREATE" label={tx("edit.btn-sub-create")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-SUB-CREATE" label={tx("edit.btn-sub-create")} onAct={() => runAct((state) => importClip(state, "S1", subTextDraft.trim() || "session-sub", 3), "EDIT-01-BTN-SUB-CREATE", subTextDraft.trim() || "session-sub")} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-SUB-IMPORT" label={tx("edit.btn-sub-import")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-SUB-API-SYNC" label={tx("edit.btn-sub-api-sync")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-SUB-MANUAL-SYNC" label={tx("edit.btn-sub-manual-sync")} onAct={act} disabled={disabled} />
