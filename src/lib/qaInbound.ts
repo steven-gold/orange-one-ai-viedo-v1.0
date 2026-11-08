@@ -14,6 +14,10 @@ export type QaInbound = {
   checksum: string;
   rights: string;
   provenance: string;
+  policy: string;
+  requiredChecks: string;
+  gateStatus: string;
+  hardBlock: string;
 };
 
 function named(value: string | null | undefined): string {
@@ -47,6 +51,13 @@ export function resolveQaInbound(
   const rights = named(videoCurrent("VIDEO-01-FLD-RIGHTS")) || video.rights;
   const provenance = checksum;
   const ready = Boolean(inbound.ready && locked && handed && targetOutput && scriptView && criteriaVersion);
+  // Release gate contract: fixed rule version + mandatory checks; the gate is
+  // BLOCKED only on missing exact evidence (checksum / rights), otherwise OPEN.
+  const policy = ready ? "QA-GATE-V1" : "";
+  const requiredChecks = ready ? "SCORE_BASELINE,CHECKSUM,RIGHTS" : "";
+  const blockers = [!checksum && "CHECKSUM_MISSING", !rights && "RIGHTS_MISSING"].filter(Boolean).join(",");
+  const hardBlock = ready ? blockers || "none" : "";
+  const gateStatus = ready ? (blockers ? "BLOCKED" : "OPEN") : "";
   return {
     ready,
     project: inbound.project,
@@ -59,5 +70,9 @@ export function resolveQaInbound(
     checksum,
     rights,
     provenance,
+    policy,
+    requiredChecks,
+    gateStatus,
+    hardBlock,
   };
 }

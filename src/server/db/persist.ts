@@ -697,6 +697,7 @@ function overlayUpstreamOntoEdit(
   coreFields: CoreFieldValue[],
   assetFields: AssetFieldValue[],
   videoFields: VideoFieldValue[],
+  aiRoute = "",
 ): EditFieldValue[] {
   const core = new Map(coreFields.map((row) => [row.controlUid, row.value]));
   const asset = new Map(assetFields.map((row) => [row.controlUid, row.value]));
@@ -709,6 +710,8 @@ function overlayUpstreamOntoEdit(
     (uid) => edit.get(uid) ?? null,
   );
   const pageReady = inbound.ready || inbound.standalone;
+  const [firstAiRoute] = aiRoute.split("、");
+  const [aiProvider, aiModel] = firstAiRoute ? firstAiRoute.split("/").map((part) => part.trim()) : ["", ""];
   const STAGE_FIELDS = new Set([
     "EDIT-01-LBL-PAGE-STATE",
     "EDIT-01-LBL-PENDING-TASK",
@@ -731,6 +734,8 @@ function overlayUpstreamOntoEdit(
     if (row.controlUid === "EDIT-01-FLD-SOURCE-VERSION") return { ...row, value: inbound.ready ? inbound.sourceVersion || null : null };
     if (row.controlUid === "EDIT-01-LBL-BINDING-FINGERPRINT") return { ...row, value: inbound.ready ? inbound.handoffContract || null : null };
     if (row.controlUid === "EDIT-01-LBL-CURRENT-SCRIPT-SECTION") return { ...row, value: inbound.ready ? inbound.script || null : null };
+    if (row.controlUid === "EDIT-01-FLD-VOICE-PROVIDER") return { ...row, value: pageReady && aiProvider ? aiProvider : null };
+    if (row.controlUid === "EDIT-01-FLD-VOICE-MODEL") return { ...row, value: pageReady && aiModel ? aiModel : null };
     if (STAGE_FIELDS.has(row.controlUid)) return { ...row, value: pageReady ? row.value : null };
     return row;
   });
@@ -738,12 +743,14 @@ function overlayUpstreamOntoEdit(
 
 export async function persistGetEditReadModel(accountUid: string): Promise<EditReadModel> {
   const authorized = await persistHasEditPermission(accountUid);
+  const aiRoute = authorized ? await assignedAiRouteSnapshot("chat").catch(() => "") : "";
   const fields = authorized
     ? overlayUpstreamOntoEdit(
         await persistListEditFields(),
         await persistListCoreFields().catch(() => [] as CoreFieldValue[]),
         await persistListAssetFields().catch(() => [] as AssetFieldValue[]),
         await persistListVideoFields().catch(() => [] as VideoFieldValue[]),
+        aiRoute,
       )
     : [];
   return {
@@ -837,6 +844,11 @@ function overlayUpstreamOntoQa(
     if (row.controlUid === "QA-01-FLD-RIGHTS") return { ...row, value: inbound.rights || null };
     if (row.controlUid === "QA-01-FLD-PROVENANCE") return { ...row, value: inbound.provenance || null };
     if (row.controlUid === "QA-01-FLD-REL-OUTPUTS") return { ...row, value: inbound.targetOutput || row.value };
+    if (row.controlUid === "QA-01-FLD-POLICY") return { ...row, value: inbound.policy || null };
+    if (row.controlUid === "QA-01-FLD-GATE-POLICY") return { ...row, value: inbound.policy || null };
+    if (row.controlUid === "QA-01-FLD-REQUIRED-CHECKS") return { ...row, value: inbound.requiredChecks || null };
+    if (row.controlUid === "QA-01-FLD-GATE-STATUS") return { ...row, value: inbound.gateStatus || null };
+    if (row.controlUid === "QA-01-FLD-HARD-BLOCK") return { ...row, value: inbound.hardBlock || null };
     return row;
   });
 }

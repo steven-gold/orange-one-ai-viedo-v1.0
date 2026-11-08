@@ -488,11 +488,20 @@ export function previewEditAction(
     return { "EDIT-01-LBL-PAGE-STATE": "returned" };
   }
 
+  if (actionUid === "EDIT-01-ACT-MUSIC-ADD" || actionUid === "EDIT-01-ACT-SFX-ADD") {
+    const media =
+      named(nextValue) ||
+      named(current("EDIT-01-LST-MEDIA")) ||
+      named(current("EDIT-01-LST-IMPORT-QUEUE"));
+    const patch: Record<string, string> = { [controlUid]: statusFromAction(actionUid) };
+    if (media) {
+      patch[actionUid === "EDIT-01-ACT-MUSIC-ADD" ? "EDIT-01-FLD-MUSIC-ASSET" : "EDIT-01-FLD-SFX-ASSET"] = media;
+    }
+    return patch;
+  }
   if (
     !standalone &&
-    (actionUid === "EDIT-01-ACT-MUSIC-ADD" ||
-      actionUid === "EDIT-01-ACT-SFX-ADD" ||
-      actionUid === "EDIT-01-ACT-SUB-IMPORT" ||
+    (actionUid === "EDIT-01-ACT-SUB-IMPORT" ||
       actionUid === "EDIT-01-ACT-SUB-CREATE")
   ) {
     return { [controlUid]: statusFromAction(actionUid) };
