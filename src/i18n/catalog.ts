@@ -832,6 +832,7 @@ const catalog = {
   "edit.ctl-audio-monitor": { "zh-TW": "音訊監聽", "zh-CN": "音讯监听", en: "Audio Monitor" },
   "edit.ctl-clip-volume": { "zh-TW": "片段音量", "zh-CN": "片段音量", en: "Clip Volume" },
   "edit.ctl-drop-timeline": { "zh-TW": "拖放至時間軸", "zh-CN": "拖放至时间轴", en: "Drop to Timeline" },
+  "edit.mix_previewing": { "zh-TW": "混音試聽中（A1+A2+A3）", "zh-CN": "混音试听中（A1+A2+A3）", en: "Mix previewing (A1+A2+A3)" },
   "edit.ctl-execution-mode": { "zh-TW": "手動", "zh-CN": "手动", en: "MANUAL" },
   "edit.ctl-fade": { "zh-TW": "淡入 / 淡出", "zh-CN": "淡入 / 淡出", en: "Fade In/Out" },
   "edit.ctl-in-out": { "zh-TW": "入出點範圍", "zh-CN": "入出点范围", en: "In/Out Range" },

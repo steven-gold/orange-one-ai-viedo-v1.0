@@ -33,6 +33,41 @@ import { ConversationMarkdown } from "./ConversationMarkdown";
 import { ConversationMessageBody } from "./ConversationMessageBody";
 import { displayEditValue } from "./editFormat";
 import { EDIT_CONTROL_ACTIONS, EDIT_VISIBLE_CONTROLS } from "./editControls";
+import {
+  addMarker,
+  clearRange,
+  deleteSelected,
+  duplicateSelected,
+  emptyTimeline,
+  formatTimecode,
+  importClip,
+  jumpToNearestMarker,
+  moveSelected,
+  patchSelected,
+  redo,
+  reorderSelected,
+  replaceSelected,
+  razorSplitAt,
+  restoreVersion,
+  saveVersion,
+  seek as seekTimeline,
+  selectedClip,
+  selectClip,
+  setRangeIn,
+  setRangeOut,
+  setTool,
+  splitSelected,
+  stepFrame,
+  timelineEnd,
+  toggleTrackFlag,
+  trimSelectedEnd,
+  trimSelectedStart,
+  type TimelineState,
+  undo,
+  zoomFit,
+  zoomIn,
+  zoomOut,
+} from "@/lib/editTimeline";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
 import styles from "./EditVisual.module.css";
@@ -166,11 +201,59 @@ export function EditVisual() {
   const [generating, setGenerating] = useState(false);
   const [streamDrafts, setStreamDrafts] = useState<Record<string, string>>({});
   const [streamStatus, setStreamStatus] = useState<ConversationTaskStatus | null>(null);
+  const [tl, setTl] = useState<TimelineState>(emptyTimeline);
+  const [playing, setPlaying] = useState(false);
+  const [rateIndex, setRateIndex] = useState(0);
+  const [previewMuted, setPreviewMuted] = useState(false);
+  const [masterVolumeIndex, setMasterVolumeIndex] = useState(0);
+  const [subtitleOn, setSubtitleOn] = useState(true);
+  const [monitorOn, setMonitorOn] = useState(false);
+  const [loopOn, setLoopOn] = useState(false);
+  const [snapOn, setSnapOn] = useState(false);
+  const [mediaFilter, setMediaFilter] = useState(false);
+  const [mixPreviewOn, setMixPreviewOn] = useState(false);
+  const [mixResult, setMixResult] = useState<string | null>(null);
+  const [masterLevelDb, setMasterLevelDb] = useState(0);
+  const [trackLevelDb, setTrackLevelDb] = useState(0);
+  const [transitionIndex, setTransitionIndex] = useState(0);
+  const [speedIndex, setSpeedIndex] = useState(0);
+  const [volumeIndex, setVolumeIndex] = useState(0);
+  const [mediaQuery, setMediaQuery] = useState("");
+  const [versionCompareNote, setVersionCompareNote] = useState<string | null>(null);
+  const tlRef = useRef(tl);
+  const rateRef = useRef(rateIndex);
+  const loopRef = useRef(loopOn);
+  const playingRef = useRef(playing);
   const fieldsRef = useRef(fields);
   const timelineRef = useRef<HTMLDivElement>(null);
   const sendAbortRef = useRef<AbortController | null>(null);
   const expectStreamRefreshRef = useRef(false);
   fieldsRef.current = fields;
+  tlRef.current = tl;
+  rateRef.current = rateIndex;
+  loopRef.current = loopOn;
+  playingRef.current = playing;
+
+  useEffect(() => {
+    if (!playing) return;
+    const id = window.setInterval(() => {
+      setTl((prev) => {
+        const end = timelineEnd(prev);
+        const next = prev.playhead + 0.1 * [1, 1.5, 2, 0.5][rateRef.current];
+        if (next >= end) {
+          if (loopRef.current) return { ...prev, playhead: 0 };
+          window.setTimeout(() => setPlaying(false), 0);
+          return { ...prev, playhead: end };
+        }
+        return { ...prev, playhead: next };
+      });
+    }, 100);
+    return () => window.clearInterval(id);
+  }, [playing]);
+
+  const run = useCallback((fn: (state: TimelineState) => TimelineState) => {
+    setTl((prev) => fn(prev));
+  }, []);
 
   useEffect(() => {
     const node = timelineRef.current;
@@ -377,6 +460,44 @@ export function EditVisual() {
   }, [act, generating, insertQuote]);
 
   const v = (uid: string) => valueOf(uid);
+  const mediaLabel = v("EDIT-01-LST-MEDIA") || "session-media";
+  const sel = selectedClip(tl);
+  const tlEnd = timelineEnd(tl);
+  const pxPerSec = 24 * tl.zoom;
+  const runAct = useCallback(
+    (fn: (state: TimelineState) => TimelineState, controlUid: string, nextValue?: string) => {
+      run(fn);
+      void act(controlUid, nextValue);
+    },
+    [act, run],
+  );
+  const runOnly = useCallback(
+    (fn: (state: TimelineState) => TimelineState, controlUid: string) => {
+      run(fn);
+      void act(controlUid);
+    },
+    [act, run],
+  );
+  const seekFromEvent = useCallback(
+    (event: React.MouseEvent<HTMLElement>, actUid?: string) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0;
+      const at = ratio * timelineEnd(tlRef.current);
+      run((state) => seekTimeline(state, at));
+      if (actUid) void act(actUid, String(Math.round(at * 100) / 100));
+    },
+    [act, run],
+  );
+  const trackClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>, track: string) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0;
+      const at = ratio * timelineEnd(tlRef.current);
+      if (tlRef.current.tool === "razor") run((state) => razorSplitAt(state, track as never, at));
+      else run((state) => seekTimeline(state, at));
+    },
+    [run],
+  );
   const standalone = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD";
   const inboundReady = inbound.ready;
   const disabled = !(standalone || inboundReady);
@@ -455,11 +576,11 @@ export function EditVisual() {
             <Field uid="EDIT-01-LBL-SUB-SYNC-BINDING" label={tx("edit.subtitle_binding")} value={v("EDIT-01-LBL-SUB-SYNC-BINDING")} loading={loading} onAct={act} disabled={disabled} readonly />
             <label className={styles.search}>
               <span className={styles.label}>{tx("edit.fld-media-search")}</span>
-              <input data-control-uid="EDIT-01-FLD-MEDIA-SEARCH" disabled={disabled} placeholder={tx("edit.fld-media-search")} defaultValue="" onBlur={() => void act("EDIT-01-FLD-MEDIA-SEARCH")} />
+              <input data-control-uid="EDIT-01-FLD-MEDIA-SEARCH" disabled={disabled} placeholder={tx("edit.fld-media-search")} value={mediaQuery} onChange={(event) => setMediaQuery(event.target.value)} onBlur={() => void act("EDIT-01-FLD-MEDIA-SEARCH", mediaQuery || undefined)} />
             </label>
-            <Btn uid="EDIT-01-CTL-MEDIA-TYPE-FILTER" label={tx("edit.ctl-media-type-filter")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-CTL-MEDIA-TYPE-FILTER" label={`${tx("edit.ctl-media-type-filter")}${mediaFilter ? ":on" : ""}`} onAct={() => { setMediaFilter((prev) => !prev); void act("EDIT-01-CTL-MEDIA-TYPE-FILTER"); }} disabled={disabled} />
             <div className={styles.list} data-control-uid="EDIT-01-LST-MEDIA">
-              <button type="button" className={`${styles.item} ${styles.itemActive}`} disabled={disabled} onClick={() => void act("EDIT-01-LST-MEDIA")}>
+              <button type="button" className={`${styles.item} ${styles.itemActive}`} disabled={disabled} onClick={() => void act("EDIT-01-LST-MEDIA", mediaLabel)}>
                 <span>{v("EDIT-01-LST-MEDIA") || tx("edit.unbound_media")}</span>
                 <span>{v("EDIT-01-LST-MEDIA") ? tx("edit.session_media") : dash}</span>
               </button>
@@ -488,58 +609,63 @@ export function EditVisual() {
               <span>{tx("edit.exact_source_ref")} {dash}</span>
             </div>
             <div className={styles.transport} data-component-uid="EDIT-01-CMP-TRANSPORT">
-              <Btn uid="EDIT-01-BTN-PLAY" label={tx("edit.btn-play")} onAct={act} disabled={disabled} icon="play" />
-              <Btn uid="EDIT-01-BTN-PAUSE" label={tx("edit.btn-pause")} onAct={act} disabled={disabled} icon="pause" />
-              <Btn uid="EDIT-01-BTN-PREV-FRAME" label={tx("edit.btn-prev-frame")} onAct={act} disabled={disabled} icon="prev" />
-              <Btn uid="EDIT-01-BTN-NEXT-FRAME" label={tx("edit.btn-next-frame")} onAct={act} disabled={disabled} icon="next" />
+              <Btn uid="EDIT-01-BTN-PLAY" label={tx("edit.btn-play")} onAct={() => { setPlaying(true); void act("EDIT-01-BTN-PLAY"); }} disabled={disabled} icon="play" />
+              <Btn uid="EDIT-01-BTN-PAUSE" label={tx("edit.btn-pause")} onAct={() => { setPlaying(false); void act("EDIT-01-BTN-PAUSE"); }} disabled={disabled} icon="pause" />
+              <Btn uid="EDIT-01-BTN-PREV-FRAME" label={tx("edit.btn-prev-frame")} onAct={() => { setPlaying(false); runOnly((state) => stepFrame(state, -1), "EDIT-01-BTN-PREV-FRAME"); }} disabled={disabled} icon="prev" />
+              <Btn uid="EDIT-01-BTN-NEXT-FRAME" label={tx("edit.btn-next-frame")} onAct={() => { setPlaying(false); runOnly((state) => stepFrame(state, 1), "EDIT-01-BTN-NEXT-FRAME"); }} disabled={disabled} icon="next" />
               <div className={styles.timecode}>
-                <Field uid="EDIT-01-FLD-TIMECODE" label={tx("edit.fld-timecode")} value={v("EDIT-01-FLD-TIMECODE")} loading={loading} onAct={act} disabled={disabled} />
+                <span className={styles.label}>{tx("edit.fld-timecode")}</span>
+                <span className={styles.value}>{formatTimecode(tl.playhead)}</span>
               </div>
-              <Btn uid="EDIT-01-CTL-PLAYBACK-RATE" label={tx("edit.ctl-playback-rate")} onAct={act} disabled={disabled} icon="rate" />
-              <Btn uid="EDIT-01-CTL-LOOP" label={tx("edit.loop")} onAct={act} disabled={disabled} icon="loop" />
-              <Btn uid="EDIT-01-BTN-MUTE" label={tx("edit.mute")} onAct={act} disabled={disabled} icon="mute" />
+              <Btn uid="EDIT-01-CTL-PLAYBACK-RATE" label={`${tx("edit.ctl-playback-rate")} x${[1, 1.5, 2, 0.5][rateIndex]}`} onAct={() => { setRateIndex((prev) => (prev + 1) % 4); void act("EDIT-01-CTL-PLAYBACK-RATE"); }} disabled={disabled} icon="rate" />
+              <Btn uid="EDIT-01-CTL-LOOP" label={tx("edit.loop")} onAct={() => { setLoopOn((prev) => !prev); void act("EDIT-01-CTL-LOOP"); }} disabled={disabled} icon="loop" />
+              <Btn uid="EDIT-01-BTN-MUTE" label={tx("edit.mute")} onAct={() => { setPreviewMuted((prev) => !prev); void act("EDIT-01-BTN-MUTE"); }} disabled={disabled} icon="mute" />
               <Btn uid="EDIT-01-BTN-FULLSCREEN" label={tx("edit.btn-fullscreen")} onAct={act} disabled={disabled} icon="fullscreen" />
-              <Btn uid="EDIT-01-CTL-VOLUME" label={tx("edit.ctl-volume")} onAct={act} disabled={disabled} icon="volume" />
-              <Btn uid="EDIT-01-CTL-AUDIO-MONITOR" label={tx("edit.ctl-audio-monitor")} onAct={act} disabled={disabled} icon="audition" />
-              <Btn uid="EDIT-01-CTL-SUBTITLE-TOGGLE" label={tx("edit.ctl-subtitle-toggle")} onAct={act} disabled={disabled} icon="subtitle" />
-              <Btn uid="EDIT-01-BTN-SET-IN" label={tx("edit.set_in")} onAct={act} disabled={disabled} icon="set-in" />
-              <Btn uid="EDIT-01-BTN-SET-OUT" label={tx("edit.set_out")} onAct={act} disabled={disabled} icon="set-out" />
-              <Btn uid="EDIT-01-BTN-CLEAR-RANGE" label={tx("edit.btn-clear-range")} onAct={act} disabled={disabled} icon="clear" />
+              <Btn uid="EDIT-01-CTL-VOLUME" label={`${tx("edit.ctl-volume")} ${[100, 75, 50, 25][masterVolumeIndex]}%`} onAct={() => { setMasterVolumeIndex((prev) => (prev + 1) % 4); void act("EDIT-01-CTL-VOLUME"); }} disabled={disabled} icon="volume" />
+              <Btn uid="EDIT-01-CTL-AUDIO-MONITOR" label={tx("edit.ctl-audio-monitor")} onAct={() => { setMonitorOn((prev) => !prev); void act("EDIT-01-CTL-AUDIO-MONITOR"); }} disabled={disabled} icon="audition" />
+              <Btn uid="EDIT-01-CTL-SUBTITLE-TOGGLE" label={tx("edit.ctl-subtitle-toggle")} onAct={() => { setSubtitleOn((prev) => !prev); void act("EDIT-01-CTL-SUBTITLE-TOGGLE"); }} disabled={disabled} icon="subtitle" />
+              <Btn uid="EDIT-01-BTN-SET-IN" label={tx("edit.set_in")} onAct={() => runOnly(setRangeIn, "EDIT-01-BTN-SET-IN")} disabled={disabled} icon="set-in" />
+              <Btn uid="EDIT-01-BTN-SET-OUT" label={tx("edit.set_out")} onAct={() => runOnly(setRangeOut, "EDIT-01-BTN-SET-OUT")} disabled={disabled} icon="set-out" />
+              <Btn uid="EDIT-01-BTN-CLEAR-RANGE" label={tx("edit.btn-clear-range")} onAct={() => runOnly(clearRange, "EDIT-01-BTN-CLEAR-RANGE")} disabled={disabled} icon="clear" />
               <Btn uid="EDIT-01-CTL-IN-OUT" label={tx("edit.ctl-in-out")} onAct={act} disabled={disabled} icon="range" />
             </div>
           </section>
 
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-MANUAL-TOOLS">
             <div className={styles.toolbar}>
-              <Btn uid="EDIT-01-BTN-UNDO" label={tx("edit.btn-undo")} onAct={act} disabled={disabled} icon="undo" />
-              <Btn uid="EDIT-01-BTN-REDO" label={tx("edit.btn-redo")} onAct={act} disabled={disabled} icon="redo" />
-              <Btn uid="EDIT-01-TOOL-SELECT" label={tx("edit.tool-select")} onAct={act} disabled={disabled} icon="select" />
-              <Btn uid="EDIT-01-TOOL-RAZOR" label={tx("edit.tool-razor")} onAct={act} disabled={disabled} icon="razor" />
-              <Btn uid="EDIT-01-BTN-SPLIT" label={tx("edit.btn-split")} onAct={act} disabled={disabled} icon="split" />
-              <Btn uid="EDIT-01-BTN-TRIM-START" label={tx("edit.btn-trim-start")} onAct={act} disabled={disabled} icon="trim-start" />
-              <Btn uid="EDIT-01-BTN-TRIM-END" label={tx("edit.btn-trim-end")} onAct={act} disabled={disabled} icon="trim-end" />
-              <Btn uid="EDIT-01-BTN-MOVE" label={tx("edit.btn-move")} onAct={act} disabled={disabled} icon="move" />
-              <Btn uid="EDIT-01-BTN-REORDER" label={tx("edit.btn-reorder")} onAct={act} disabled={disabled} icon="reorder" />
-              <Btn uid="EDIT-01-BTN-DELETE" label={tx("edit.btn-delete")} onAct={act} disabled={disabled} icon="delete" />
-              <Btn uid="EDIT-01-BTN-DUPLICATE" label={tx("edit.btn-duplicate")} onAct={act} disabled={disabled} icon="duplicate" />
-              <Btn uid="EDIT-01-CTL-TRANSITION" label={tx("edit.ctl-transition")} onAct={act} disabled={disabled} icon="transition" />
-              <Btn uid="EDIT-01-CTL-SPEED" label={tx("edit.ctl-speed")} onAct={act} disabled={disabled} icon="speed" />
-              <Btn uid="EDIT-01-BTN-REPLACE" label={tx("edit.btn-replace")} onAct={act} disabled={disabled} icon="replace" />
-              <Btn uid="EDIT-01-CTL-CLIP-VOLUME" label={tx("edit.ctl-clip-volume")} onAct={act} disabled={disabled} icon="clip-volume" />
-              <Btn uid="EDIT-01-CTL-FADE" label={tx("edit.ctl-fade")} onAct={act} disabled={disabled} icon="fade" />
+              <Btn uid="EDIT-01-BTN-UNDO" label={tx("edit.btn-undo")} onAct={() => runOnly(undo, "EDIT-01-BTN-UNDO")} disabled={disabled} icon="undo" />
+              <Btn uid="EDIT-01-BTN-REDO" label={tx("edit.btn-redo")} onAct={() => runOnly(redo, "EDIT-01-BTN-REDO")} disabled={disabled} icon="redo" />
+              <Btn uid="EDIT-01-TOOL-SELECT" label={tx("edit.tool-select")} onAct={() => { run((state) => setTool(state, "select")); void act("EDIT-01-TOOL-SELECT"); }} disabled={disabled} icon="select" />
+              <Btn uid="EDIT-01-TOOL-RAZOR" label={tx("edit.tool-razor")} onAct={() => { run((state) => setTool(state, "razor")); void act("EDIT-01-TOOL-RAZOR"); }} disabled={disabled} icon="razor" />
+              <Btn uid="EDIT-01-BTN-SPLIT" label={tx("edit.btn-split")} onAct={() => runOnly(splitSelected, "EDIT-01-BTN-SPLIT")} disabled={disabled || !sel} icon="split" />
+              <Btn uid="EDIT-01-BTN-TRIM-START" label={tx("edit.btn-trim-start")} onAct={() => runOnly(trimSelectedStart, "EDIT-01-BTN-TRIM-START")} disabled={disabled || !sel} icon="trim-start" />
+              <Btn uid="EDIT-01-BTN-TRIM-END" label={tx("edit.btn-trim-end")} onAct={() => runOnly(trimSelectedEnd, "EDIT-01-BTN-TRIM-END")} disabled={disabled || !sel} icon="trim-end" />
+              <Btn uid="EDIT-01-BTN-MOVE" label={tx("edit.btn-move")} onAct={() => runOnly((state) => moveSelected(state, 1), "EDIT-01-BTN-MOVE")} disabled={disabled || !sel} icon="move" />
+              <Btn uid="EDIT-01-BTN-REORDER" label={tx("edit.btn-reorder")} onAct={() => runOnly((state) => reorderSelected(state, 1), "EDIT-01-BTN-REORDER")} disabled={disabled || !sel} icon="reorder" />
+              <Btn uid="EDIT-01-BTN-DELETE" label={tx("edit.btn-delete")} onAct={() => runOnly(deleteSelected, "EDIT-01-BTN-DELETE")} disabled={disabled || !sel} icon="delete" />
+              <Btn uid="EDIT-01-BTN-DUPLICATE" label={tx("edit.btn-duplicate")} onAct={() => runOnly(duplicateSelected, "EDIT-01-BTN-DUPLICATE")} disabled={disabled || !sel} icon="duplicate" />
+              <Btn uid="EDIT-01-CTL-TRANSITION" label={sel?.transition ? `${tx("edit.ctl-transition")}: ${sel.transition}` : tx("edit.ctl-transition")} onAct={() => { const next = ["cut", "cross", "fade", ""][transitionIndex]; setTransitionIndex((prev) => (prev + 1) % 4); run((state) => patchSelected(state, sel ? { transition: next || null } : {})); void act("EDIT-01-CTL-TRANSITION"); }} disabled={disabled || !sel} icon="transition" />
+              <Btn uid="EDIT-01-CTL-SPEED" label={sel ? `${tx("edit.ctl-speed")} x${sel.speed}` : tx("edit.ctl-speed")} onAct={() => { const next = [1.25, 1.5, 2, 0.5, 1][speedIndex]; setSpeedIndex((prev) => (prev + 1) % 5); run((state) => patchSelected(state, { speed: next })); void act("EDIT-01-CTL-SPEED"); }} disabled={disabled || !sel} icon="speed" />
+              <Btn uid="EDIT-01-BTN-REPLACE" label={tx("edit.btn-replace")} onAct={() => runAct((state) => replaceSelected(state, mediaLabel), "EDIT-01-BTN-REPLACE", mediaLabel)} disabled={disabled || !sel} icon="replace" />
+              <Btn uid="EDIT-01-CTL-CLIP-VOLUME" label={sel ? `${tx("edit.ctl-clip-volume")} ${Math.round(sel.volume * 100)}%` : tx("edit.ctl-clip-volume")} onAct={() => { const next = [0.75, 0.5, 0, 1.25, 1][volumeIndex]; setVolumeIndex((prev) => (prev + 1) % 5); run((state) => patchSelected(state, { volume: next })); void act("EDIT-01-CTL-CLIP-VOLUME"); }} disabled={disabled || !sel} icon="clip-volume" />
+              <Btn uid="EDIT-01-CTL-FADE" label={sel?.fadeIn || sel?.fadeOut ? `${tx("edit.ctl-fade")} ${sel.fadeIn}/${sel.fadeOut}s` : tx("edit.ctl-fade")} onAct={() => { const on = Boolean(sel?.fadeIn || sel?.fadeOut); run((state) => patchSelected(state, { fadeIn: on ? 0 : 1, fadeOut: on ? 0 : 1 })); void act("EDIT-01-CTL-FADE"); }} disabled={disabled || !sel} icon="fade" />
             </div>
           </section>
 
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-MINI-TIMELINE">
             <div className={styles.toolbar}>
-              <Btn uid="EDIT-01-BTN-MARKER" label={tx("edit.btn-marker")} onAct={act} disabled={disabled} icon="marker" />
-              <Btn uid="EDIT-01-CTL-SNAP" label={tx("edit.ctl-snap")} onAct={act} disabled={disabled} primary icon="snap" />
-              <Btn uid="EDIT-01-BTN-ZOOM-OUT" label={tx("edit.btn-zoom-out")} onAct={act} disabled={disabled} icon="zoom-out" />
-              <Btn uid="EDIT-01-BTN-ZOOM-IN" label={tx("edit.btn-zoom-in")} onAct={act} disabled={disabled} icon="zoom-in" />
-              <Btn uid="EDIT-01-BTN-ZOOM-FIT" label={tx("edit.btn-zoom-fit")} onAct={act} disabled={disabled} icon="fit" />
+              <Btn uid="EDIT-01-BTN-MARKER" label={tx("edit.btn-marker")} onAct={() => runOnly((state) => addMarker(state, mediaLabel), "EDIT-01-BTN-MARKER")} disabled={disabled} icon="marker" />
+              <Btn uid="EDIT-01-CTL-SNAP" label={tx("edit.ctl-snap")} onAct={() => { setSnapOn((prev) => !prev); void act("EDIT-01-CTL-SNAP"); }} disabled={disabled} primary icon="snap" />
+              <Btn uid="EDIT-01-BTN-ZOOM-OUT" label={tx("edit.btn-zoom-out")} onAct={() => runOnly(zoomOut, "EDIT-01-BTN-ZOOM-OUT")} disabled={disabled} icon="zoom-out" />
+              <Btn uid="EDIT-01-BTN-ZOOM-IN" label={tx("edit.btn-zoom-in")} onAct={() => runOnly(zoomIn, "EDIT-01-BTN-ZOOM-IN")} disabled={disabled} icon="zoom-in" />
+              <Btn uid="EDIT-01-BTN-ZOOM-FIT" label={tx("edit.btn-zoom-fit")} onAct={() => runOnly(zoomFit, "EDIT-01-BTN-ZOOM-FIT")} disabled={disabled} icon="fit" />
               <span className={styles.note}>{tx("edit.playhead_note")}</span>
             </div>
-            <button type="button" className={styles.rail} data-control-uid="EDIT-01-CTL-MINI-TIMELINE" disabled={disabled} onClick={() => void act("EDIT-01-CTL-MINI-TIMELINE")}>{dash}</button>
+            <button type="button" className={styles.rail} data-control-uid="EDIT-01-CTL-MINI-TIMELINE" disabled={disabled} onClick={(event) => seekFromEvent(event, "EDIT-01-CTL-MINI-TIMELINE")}>
+              {tl.markers.length ? tl.markers.map((marker) => (
+                <span key={marker.id} className={styles.miniMark} style={{ left: `${(marker.at / Math.max(1, tlEnd)) * 100}%` }} />
+              )) : dash}
+            </button>
           </section>
 
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-TIMELINE">
@@ -547,32 +673,67 @@ export function EditVisual() {
             <div className={styles.timeline}>
               <div className={styles.rulerRow} data-component-uid="EDIT-01-CMP-RULER">
                 <span />
-                <button type="button" className={styles.rulerMarks} data-control-uid="EDIT-01-CTL-RULER" disabled={disabled} onClick={() => void act("EDIT-01-CTL-RULER")}>
-                  <span>0s</span><span>5s</span><span>10s</span><span>15s</span><span>20s</span><span>25s</span><span>30s</span>
+                <button type="button" className={styles.rulerMarks} data-control-uid="EDIT-01-CTL-RULER" disabled={disabled} onClick={(event) => seekFromEvent(event, "EDIT-01-CTL-RULER")}>
+                  {Array.from({ length: Math.ceil(tlEnd / 5) + 1 }, (_, index) => (
+                    <span key={index}>{index * 5}s</span>
+                  ))}
                 </button>
               </div>
               <div data-component-uid="EDIT-01-CMP-MARKER-RAIL">
-                <button type="button" className={styles.rail} data-control-uid="EDIT-01-CTL-MARKER-RAIL" disabled={disabled} onClick={() => void act("EDIT-01-CTL-MARKER-RAIL")}>{dash}</button>
+                <button type="button" className={styles.rail} data-control-uid="EDIT-01-CTL-MARKER-RAIL" disabled={disabled} onClick={() => runOnly(jumpToNearestMarker, "EDIT-01-CTL-MARKER-RAIL")}>
+                  {tl.markers.length ? tl.markers.map((marker) => (
+                    <span key={marker.id} className={styles.markerDot} style={{ left: `${(marker.at / Math.max(1, tlEnd)) * 100}%` }} title={`${marker.id} ${marker.note}`} />
+                  )) : dash}
+                </button>
               </div>
-              {TRACKS.map((track) => (
-                <div key={track.id} className={styles.track}>
-                  <div className={styles.trackMeta}>
-                    <span>{track.id}</span>
-                    <span>{tx(track.labelKey)}</span>
+              {TRACKS.map((track) => {
+                const flags = tl.trackFlags[track.id];
+                const trackClips = tl.clips.filter((clip) => clip.track === track.id);
+                return (
+                  <div key={track.id} className={styles.track}>
+                    <div className={styles.trackMeta}>
+                      <span>{track.id}</span>
+                      <span>{tx(track.labelKey)}</span>
+                    </div>
+                    <div
+                      className={`${styles.trackLane} ${flags.locked ? styles.trackLocked : ""} ${flags.muted ? styles.trackMuted : ""}`}
+                      onClick={(event) => { if (!disabled && !flags.locked) trackClick(event, track.id); }}
+                    >
+                      {trackClips.length ? trackClips.map((clip) => (
+                        <button
+                          key={clip.id}
+                          type="button"
+                          className={`${styles.tlClip} ${clip.id === tl.selectedClipId ? styles.tlClipActive : ""}`}
+                          style={{ left: `${(clip.start / Math.max(1, tlEnd)) * 100}%`, width: `${Math.max(1.5, ((clip.outPoint - clip.inPoint) / Math.max(1, tlEnd)) * 100)}%` }}
+                          onClick={(event) => { event.stopPropagation(); if (!disabled && !flags.locked) run((state) => selectClip(state, clip.id)); }}
+                        >
+                          <span>{clip.label}</span>
+                          <span>{clip.start.toFixed(1)}s → {(clip.outPoint - clip.inPoint).toFixed(1)}s</span>
+                        </button>
+                      )) : (
+                        <span className={`${styles.clip} ${styles[track.clip]}`}>{tx("edit.exact_ref")}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className={styles.trackLane}>
-                    <span className={`${styles.clip} ${styles[track.clip]}`}>{tx("edit.exact_ref")}</span>
-                  </div>
-                </div>
-              ))}
-              <div className={styles.playheadLine} />
-              <button type="button" className={styles.drop} data-control-uid="EDIT-01-CTL-DROP-TIMELINE" disabled={disabled} onClick={() => void act("EDIT-01-CTL-DROP-TIMELINE")}>{tx("edit.ctl-drop-timeline")} {dash}</button>
-              <button type="button" className={styles.playheadCtrl} data-control-uid="EDIT-01-CTL-PLAYHEAD" disabled={disabled} onClick={() => void act("EDIT-01-CTL-PLAYHEAD")} aria-label={tx("edit.ctl-playhead")} />
+                );
+              })}
+              {tl.rangeIn != null || tl.rangeOut != null ? (
+                <div
+                  className={styles.rangeShade}
+                  style={{
+                    left: `calc(88px + ${((tl.rangeIn ?? 0) / Math.max(1, tlEnd)).toFixed(4)} * (100% - 88px))`,
+                    width: `calc(${(((tl.rangeOut ?? tlEnd) - (tl.rangeIn ?? 0)) / Math.max(1, tlEnd)).toFixed(4)} * (100% - 88px))`,
+                  }}
+                />
+              ) : null}
+              <div className={styles.playheadLine} style={{ left: `calc(88px + ${(tl.playhead / Math.max(1, tlEnd)).toFixed(4)} * (100% - 88px))` }} />
+              <button type="button" className={styles.playheadCtrl} data-control-uid="EDIT-01-CTL-PLAYHEAD" disabled={disabled} onClick={(event) => seekFromEvent(event, "EDIT-01-CTL-PLAYHEAD")} aria-label={tx("edit.ctl-playhead")} />
+              <button type="button" className={styles.drop} data-control-uid="EDIT-01-CTL-DROP-TIMELINE" disabled={disabled} onClick={() => runAct((state) => importClip(state, "V1", mediaLabel, 8), "EDIT-01-CTL-DROP-TIMELINE", mediaLabel)}>{tx("edit.ctl-drop-timeline")} {mediaLabel}</button>
               <div className={styles.toolbar}>
-                <Btn uid="EDIT-01-CTL-TRACK-LOCK" label={tx("edit.ctl-track-lock")} onAct={act} disabled={disabled} icon="lock" />
-                <Btn uid="EDIT-01-CTL-TRACK-MUTE" label={tx("edit.ctl-track-mute")} onAct={act} disabled={disabled} icon="mute" />
-                <Btn uid="EDIT-01-CTL-TRACK-SOLO" label={tx("edit.ctl-track-solo")} onAct={act} disabled={disabled} icon="solo" />
-                <Btn uid="EDIT-01-CTL-TRACK-VISIBLE" label={tx("edit.ctl-track-visible")} onAct={act} disabled={disabled} icon="visible" />
+                <Btn uid="EDIT-01-CTL-TRACK-LOCK" label={sel ? `${tx("edit.ctl-track-lock")}:${sel.track}` : tx("edit.ctl-track-lock")} onAct={() => { if (sel) run((state) => toggleTrackFlag(state, sel.track, "locked")); void act("EDIT-01-CTL-TRACK-LOCK"); }} disabled={disabled || !sel} icon="lock" />
+                <Btn uid="EDIT-01-CTL-TRACK-MUTE" label={sel ? `${tx("edit.ctl-track-mute")}:${sel.track}` : tx("edit.ctl-track-mute")} onAct={() => { if (sel) run((state) => toggleTrackFlag(state, sel.track, "muted")); void act("EDIT-01-CTL-TRACK-MUTE"); }} disabled={disabled || !sel} icon="mute" />
+                <Btn uid="EDIT-01-CTL-TRACK-SOLO" label={sel ? `${tx("edit.ctl-track-solo")}:${sel.track}` : tx("edit.ctl-track-solo")} onAct={() => { if (sel) run((state) => toggleTrackFlag(state, sel.track, "solo")); void act("EDIT-01-CTL-TRACK-SOLO"); }} disabled={disabled || !sel} icon="solo" />
+                <Btn uid="EDIT-01-CTL-TRACK-VISIBLE" label={sel ? `${tx("edit.ctl-track-visible")}:${sel.track}` : tx("edit.ctl-track-visible")} onAct={() => { if (sel) run((state) => toggleTrackFlag(state, sel.track, "visible")); void act("EDIT-01-CTL-TRACK-VISIBLE"); }} disabled={disabled || !sel} icon="visible" />
               </div>
             </div>
           </section>
@@ -580,9 +741,9 @@ export function EditVisual() {
           <section className={styles.panel} data-component-uid="EDIT-01-CMP-PRECISION">
             <h3 className={styles.sub}>{tx("edit.precision")}</h3>
             <div className={styles.toolbar}>
-              <Field uid="EDIT-01-FLD-CLIP-IN" label={tx("edit.fld-clip-in")} value={v("EDIT-01-FLD-CLIP-IN")} loading={loading} onAct={act} disabled={disabled} />
-              <Field uid="EDIT-01-FLD-CLIP-OUT" label={tx("edit.fld-clip-out")} value={v("EDIT-01-FLD-CLIP-OUT")} loading={loading} onAct={act} disabled={disabled} />
-              <Field uid="EDIT-01-FLD-CLIP-POSITION" label={tx("edit.fld-clip-position")} value={v("EDIT-01-FLD-CLIP-POSITION")} loading={loading} onAct={act} disabled={disabled} />
+              <Field uid="EDIT-01-FLD-CLIP-IN" label={tx("edit.fld-clip-in")} value={sel ? formatTimecode(sel.inPoint) : null} loading={false} onAct={act} disabled={disabled} readonly />
+              <Field uid="EDIT-01-FLD-CLIP-OUT" label={tx("edit.fld-clip-out")} value={sel ? formatTimecode(sel.outPoint) : null} loading={false} onAct={act} disabled={disabled} readonly />
+              <Field uid="EDIT-01-FLD-CLIP-POSITION" label={tx("edit.fld-clip-position")} value={sel ? `${sel.start.toFixed(2)}s` : null} loading={false} onAct={act} disabled={disabled} readonly />
             </div>
           </section>
         </main>
@@ -760,11 +921,12 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-MICRO-ADJUSTMENT">
           <h3 className={styles.sub}>{tx("edit.micro_adjustment")}</h3>
-          <Field uid="EDIT-01-FLD-CLIP-ID" label={tx("edit.range_clip_track")} value={v("EDIT-01-FLD-CLIP-ID")} loading={loading} onAct={act} disabled={disabled} readonly />
-          <Field uid="EDIT-01-FLD-CLIP-DURATION" label={tx("edit.drag_move")} value={v("EDIT-01-FLD-CLIP-DURATION")} loading={loading} onAct={act} disabled={disabled} readonly />
-          <Field uid="EDIT-01-FLD-TRACK-ID" label={tx("edit.frame_nudge")} value={v("EDIT-01-FLD-TRACK-ID")} loading={loading} onAct={act} disabled={disabled} readonly />
-          <Field uid="EDIT-01-FLD-INSPECTOR-VOLUME" label={tx("edit.volume_fade")} value={v("EDIT-01-FLD-INSPECTOR-VOLUME")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-FLD-SUB-TIMECODE" label={tx("edit.subtitle_offset")} value={v("EDIT-01-FLD-SUB-TIMECODE")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-FLD-CLIP-ID" label={tx("edit.range_clip_track")} value={sel?.id ?? null} loading={false} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-CLIP-DURATION" label={tx("edit.drag_move")} value={sel ? `${(sel.outPoint - sel.inPoint).toFixed(2)}s` : null} loading={false} onAct={act} disabled={disabled} readonly />
+
+          <Field uid="EDIT-01-FLD-TRACK-ID" label={tx("edit.frame_nudge")} value={sel?.track ?? null} loading={false} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-INSPECTOR-VOLUME" label={tx("edit.volume_fade")} value={sel ? `${Math.round(sel.volume * 100)}%` : null} loading={false} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-SUB-TIMECODE" label={tx("edit.subtitle_offset")} value={tl.rangeIn != null || tl.rangeOut != null ? `${tl.rangeIn ?? 0} → ${tl.rangeOut ?? tlEnd}` : v("EDIT-01-FLD-SUB-TIMECODE")} loading={loading} onAct={act} disabled={disabled} readonly />
         </section>
       </div>
 
@@ -782,27 +944,41 @@ export function EditVisual() {
             <Btn uid="EDIT-01-TAB-VERSION" label={tx("edit.tab-version")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-TAB-OUTPUT" label={tx("edit.tab-output")} onAct={act} disabled={disabled} />
           </div>
-          <Field uid="EDIT-01-FLD-INSPECTOR-FADE-IN" label={tx("edit.selected_context")} value={v("EDIT-01-FLD-INSPECTOR-FADE-IN")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-FLD-INSPECTOR-FADE-OUT" label={tx("edit.exact_source_version")} value={v("EDIT-01-FLD-INSPECTOR-FADE-OUT")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-FLD-INSPECTOR-SPEED" label={tx("edit.in_out_position")} value={v("EDIT-01-FLD-INSPECTOR-SPEED")} loading={loading} onAct={act} disabled={disabled} />
-          <Field uid="EDIT-01-FLD-INSPECTOR-TRANSITION" label={tx("edit.volume_fade_speed")} value={v("EDIT-01-FLD-INSPECTOR-TRANSITION")} loading={loading} onAct={act} disabled={disabled} />
+          <Field uid="EDIT-01-FLD-INSPECTOR-FADE-IN" label={tx("edit.selected_context")} value={sel ? `${sel.fadeIn.toFixed(2)}s` : null} loading={false} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-INSPECTOR-FADE-OUT" label={tx("edit.exact_source_version")} value={sel ? `${sel.fadeOut.toFixed(2)}s` : null} loading={false} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-INSPECTOR-SPEED" label={tx("edit.in_out_position")} value={sel ? `x${sel.speed}` : null} loading={false} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-FLD-INSPECTOR-TRANSITION" label={tx("edit.volume_fade_speed")} value={sel?.transition ?? null} loading={false} onAct={act} disabled={disabled} readonly />
         </section>
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-VERSION">
           <h3 className={styles.sub}>{tx("edit.version")}</h3>
           <Field uid="EDIT-01-LBL-EVAL-SUMMARY" label={tx("edit.baseline")} value={v("EDIT-01-LBL-EVAL-SUMMARY")} loading={loading} onAct={act} disabled={disabled} readout />
           <div className={styles.list} data-control-uid="EDIT-01-LST-VERSION-HISTORY">
-            <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-VERSION-HISTORY")}>
-              <span>{tx("edit.candidate")}</span>
-              <span>{dash}</span>
-            </button>
+            {tl.versions.length ? tl.versions.map((version, index) => (
+              <button
+                key={`${version.label}-${index}`}
+                type="button"
+                className={styles.item}
+                disabled={disabled}
+                onClick={() => { runAct((state) => restoreVersion(state, index), "EDIT-01-LST-VERSION-HISTORY", version.label); setVersionCompareNote(null); }}
+              >
+                <span>{version.label}</span>
+                <span>{version.clips.length} · {version.at}</span>
+              </button>
+            )) : (
+              <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("EDIT-01-LST-VERSION-HISTORY")}>
+                <span>{tx("edit.candidate")}</span>
+                <span>{dash}</span>
+              </button>
+            )}
           </div>
+          {versionCompareNote ? <p className={styles.note}>{versionCompareNote}</p> : null}
           <Field uid="EDIT-01-LBL-STAGE-SCORE" label={tx("edit.score")} value={v("EDIT-01-LBL-STAGE-SCORE")} loading={loading} onAct={act} disabled={disabled} readonly />
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-VERSION-SAVE" label={tx("edit.btn-version-save")} onAct={act} disabled={disabled} primary />
-            <Btn uid="EDIT-01-BTN-VERSION-RESTORE" label={tx("edit.btn-version-restore")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-VERSION-SAVE" label={tx("edit.btn-version-save")} onAct={() => runAct((state) => saveVersion(state, `draft-${state.versions.length + 1}`), "EDIT-01-BTN-VERSION-SAVE", `draft-${tl.versions.length + 1}`)} disabled={disabled} primary />
+            <Btn uid="EDIT-01-BTN-VERSION-RESTORE" label={tx("edit.btn-version-restore")} onAct={() => runAct((state) => restoreVersion(state, state.versions.length - 1), "EDIT-01-BTN-VERSION-RESTORE")} disabled={disabled || !tl.versions.length} />
             <Btn uid="EDIT-01-BTN-VERSION-LOCK" label={tx("edit.btn-version-lock")} onAct={act} disabled={disabled || dialogueBlocked} />
-            <Btn uid="EDIT-01-BTN-VERSION-COMPARE" label={tx("edit.diff")} onAct={act} disabled={disabled} icon="compare" />
+            <Btn uid="EDIT-01-BTN-VERSION-COMPARE" label={tx("edit.diff")} onAct={() => { const last = tl.versions[tl.versions.length - 1]; setVersionCompareNote(last ? `${last.label}: ${last.clips.length} → ${tl.clips.length}` : null); void act("EDIT-01-BTN-VERSION-COMPARE"); }} disabled={disabled || !tl.versions.length} icon="compare" />
           </div>
         </section>
 
@@ -851,14 +1027,16 @@ export function EditVisual() {
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-AUDIO">
           <h3 className={styles.sub}>{tx("edit.audio")}</h3>
-          <Btn uid="EDIT-01-CTL-MASTER-LEVEL" label={tx("edit.ctl-master-level")} onAct={act} disabled={disabled} />
-          <Btn uid="EDIT-01-CTL-TRACK-LEVEL" label={tx("edit.ctl-track-level")} onAct={act} disabled={disabled} />
+          <Btn uid="EDIT-01-CTL-MASTER-LEVEL" label={`${tx("edit.ctl-master-level")} ${masterLevelDb <= 0 ? `${masterLevelDb}dB` : `+${masterLevelDb}dB`}`} onAct={() => { setMasterLevelDb((prev) => (prev <= 0 ? prev + 3 : 0)); void act("EDIT-01-CTL-MASTER-LEVEL"); }} disabled={disabled} />
+          <Btn uid="EDIT-01-CTL-TRACK-LEVEL" label={`${tx("edit.ctl-track-level")} ${trackLevelDb <= 0 ? `${trackLevelDb}dB` : `+${trackLevelDb}dB`}`} onAct={() => { setTrackLevelDb((prev) => (prev <= 0 ? prev + 3 : 0)); void act("EDIT-01-CTL-TRACK-LEVEL"); }} disabled={disabled} />
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-MUSIC-ADD" label={tx("edit.btn-music-add")} onAct={act} disabled={disabled} icon="upload" />
-            <Btn uid="EDIT-01-BTN-SFX-ADD" label={tx("edit.btn-sfx-add")} onAct={act} disabled={disabled} icon="upload" />
-            <Btn uid="EDIT-01-BTN-MIX-PREVIEW" label={tx("edit.btn-mix-preview")} onAct={act} disabled={disabled} icon="audition" />
-            <Btn uid="EDIT-01-BTN-MIX-EXECUTE" label={tx("edit.btn-mix-execute")} onAct={act} disabled={disabled} primary />
+            <Btn uid="EDIT-01-BTN-MUSIC-ADD" label={tx("edit.btn-music-add")} onAct={() => runAct((state) => importClip(state, "A2", v("EDIT-01-FLD-MUSIC-ASSET") || mediaLabel, 12), "EDIT-01-BTN-MUSIC-ADD")} disabled={disabled} icon="upload" />
+            <Btn uid="EDIT-01-BTN-SFX-ADD" label={tx("edit.btn-sfx-add")} onAct={() => runAct((state) => importClip(state, "A3", v("EDIT-01-FLD-SFX-ASSET") || mediaLabel, 3), "EDIT-01-BTN-SFX-ADD")} disabled={disabled} icon="upload" />
+            <Btn uid="EDIT-01-BTN-MIX-PREVIEW" label={tx("edit.btn-mix-preview")} onAct={() => { setMixPreviewOn((prev) => !prev); setMixResult(null); void act("EDIT-01-BTN-MIX-PREVIEW"); }} disabled={disabled} icon="audition" />
+            <Btn uid="EDIT-01-BTN-MIX-EXECUTE" label={tx("edit.btn-mix-execute")} onAct={() => { setMixPreviewOn(false); setMixResult(`A1+A2+A3 ${new Date().toISOString().slice(11, 19)}`); void act("EDIT-01-BTN-MIX-EXECUTE"); }} disabled={disabled} primary />
           </div>
+          {mixPreviewOn ? <p className={styles.note}>{tx("edit.mix_previewing")}</p> : null}
+          {mixResult ? <p className={styles.note}>{mixResult}</p> : null}
         </section>
 
         <section className={`${styles.panel} ${styles.block}`} data-component-uid="EDIT-01-CMP-LIPSYNC">
@@ -887,8 +1065,16 @@ export function EditVisual() {
             <Btn uid="EDIT-01-BTN-SUB-IMPORT" label={tx("edit.btn-sub-import")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-SUB-API-SYNC" label={tx("edit.btn-sub-api-sync")} onAct={act} disabled={disabled} primary />
             <Btn uid="EDIT-01-BTN-SUB-MANUAL-SYNC" label={tx("edit.btn-sub-manual-sync")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-SUB-MERGE" label={tx("edit.btn-sub-merge")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-SUB-SPLIT" label={tx("edit.btn-sub-split")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-SUB-MERGE" label={tx("edit.btn-sub-merge")} onAct={() => runAct((state) => {
+              const clip = selectedClip(state);
+              if (!clip || clip.track !== "S1") return state;
+              const siblings = state.clips.filter((row) => row.track === "S1").sort((a, b) => a.start - b.start);
+              const index = siblings.findIndex((row) => row.id === clip.id);
+              const neighbor = siblings[index + 1];
+              if (!neighbor) return state;
+              return { ...state, clips: state.clips.filter((row) => row.id !== neighbor.id).map((row) => (row.id === clip.id ? { ...row, outPoint: row.inPoint + (neighbor.start + (neighbor.outPoint - neighbor.inPoint) - row.start) } : row)) };
+            }, "EDIT-01-BTN-SUB-MERGE")} disabled={disabled || !sel || sel.track !== "S1"} />
+            <Btn uid="EDIT-01-BTN-SUB-SPLIT" label={tx("edit.btn-sub-split")} onAct={() => runOnly(splitSelected, "EDIT-01-BTN-SUB-SPLIT")} disabled={disabled || !sel || sel.track !== "S1"} />
           </div>
         </section>
 
@@ -901,8 +1087,8 @@ export function EditVisual() {
             </button>
           </div>
           <div className={styles.toolbar}>
-            <Btn uid="EDIT-01-BTN-EVAL-JUMP" label={tx("edit.btn-eval-jump")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-EVAL-LOAD-RANGE" label={tx("edit.btn-eval-load-range")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-EVAL-JUMP" label={tx("edit.btn-eval-jump")} onAct={() => runOnly(jumpToNearestMarker, "EDIT-01-BTN-EVAL-JUMP")} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-EVAL-LOAD-RANGE" label={tx("edit.btn-eval-load-range")} onAct={() => { if (tl.rangeIn != null) { run((state) => seekTimeline(state, tl.rangeIn ?? 0)); } void act("EDIT-01-BTN-EVAL-LOAD-RANGE"); }} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-EVAL-EVIDENCE" label={tx("edit.btn-eval-evidence")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-EVAL-RECHECK-SELECTED" label={tx("edit.btn-eval-recheck-selected")} onAct={act} disabled={disabled || dialogueBlocked} primary />
             <Btn uid="EDIT-01-BTN-EVAL-RECHECK-FULL" label={tx("edit.btn-eval-recheck-full")} onAct={act} disabled={disabled || dialogueBlocked} />

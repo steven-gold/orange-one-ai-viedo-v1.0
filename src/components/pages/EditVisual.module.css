@@ -383,6 +383,72 @@
 .clipS1 { left: 26%; width: 36%; background: linear-gradient(90deg, #8a4dff, #b07aff); }
 .clipL1 { left: 30%; width: 34%; background: linear-gradient(90deg, #d45aa8, #e57cbb); }
 
+.tlClip {
+  position: absolute;
+  top: 3px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  background: linear-gradient(90deg, #5b3fd4, #7c5cff);
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tlClipActive {
+  outline: 2px solid #ffd166;
+  outline-offset: 1px;
+  background: linear-gradient(90deg, #7c5cff, #9b7dff);
+}
+
+.trackLocked {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.trackMuted {
+  opacity: 0.4;
+  filter: grayscale(0.8);
+}
+
+.markerDot {
+  position: absolute;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffd166;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  transform: translateX(-5px);
+}
+
+.miniMark {
+  position: absolute;
+  top: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffd166;
+  transform: translateX(-3px);
+}
+
+.rangeShade {
+  position: absolute;
+  top: 18px;
+  bottom: 0;
+  background: rgba(255, 209, 102, 0.14);
+  border-left: 1px solid rgba(255, 209, 102, 0.6);
+  border-right: 1px solid rgba(255, 209, 102, 0.6);
+  pointer-events: none;
+}
+
 .playheadLine {
   position: absolute;
   top: 18px;
