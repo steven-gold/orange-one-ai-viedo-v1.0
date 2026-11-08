@@ -244,6 +244,9 @@ export function EditVisual() {
   const [timecodeDraft, setTimecodeDraft] = useState<string | null>(null);
   const [timecodeInvalid, setTimecodeInvalid] = useState(false);
   const [dragging, setDragging] = useState<{ clipId: string; track: string; offsetSec: number; currentSec: number; moved: boolean } | null>(null);
+  const [renderJobs, setRenderJobs] = useState<{ id: string; progress: number; status: "running" | "completed" | "cancelled" }[]>([]);
+  const [autoNote, setAutoNote] = useState<string | null>(null);
+  const [autoMode, setAutoMode] = useState(false);
 
   const laneClickSeconds = useCallback((event: React.MouseEvent<HTMLElement> | { clientX: number; currentTarget: HTMLElement }) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -418,18 +421,18 @@ export function EditVisual() {
   }, []);
 
   const act = useCallback(
-    async (controlUid: string, nextValue?: string) => {
+    async (controlUid: string, nextValue?: string): Promise<Record<string, string>> => {
       const actionUid = EDIT_CONTROL_ACTIONS[controlUid];
-      if (!actionUid) return;
+      if (!actionUid) return {};
       const generatingTurn = actionUid === "EDIT-01-ACT-SEND" || actionUid === "EDIT-01-ACT-MSG-ANALYZE";
-      if (generatingTurn && (sendAbortRef.current || generating)) return;
+      if (generatingTurn && (sendAbortRef.current || generating)) return {};
       const patch = previewEditAction(
         controlUid,
         actionUid,
         (uid) => fieldsRef.current.find((row) => row.controlUid === uid)?.value ?? null,
         nextValue,
       );
-      if (!Object.keys(patch).length) return;
+      if (!Object.keys(patch).length) return {};
       applyPatch(patch);
       const controller = generatingTurn ? new AbortController() : null;
       if (controller) {
@@ -465,9 +468,74 @@ export function EditVisual() {
       } finally {
         if (controller && sendAbortRef.current === controller) sendAbortRef.current = null;
       }
+      return patch;
     },
     [applyPatch, generating],
   );
+
+  const startRender = useCallback(() => {
+    renderDoneRef.current = false;
+    setRenderJobs((prev) => [...prev, { id: `RND-${String(prev.length + 1).padStart(3, "0")}`, progress: 0, status: "running" }]);
+    setAutoNote(null);
+  }, []);
+  const cancelRender = useCallback(() => {
+    setRenderJobs((prev) => prev.map((job) => (job.status === "running" ? { ...job, status: "cancelled" } : job)));
+  }, []);
+
+  const actRef = useRef(act);
+  actRef.current = act;
+  const autoModeRef = useRef(autoMode);
+  autoModeRef.current = autoMode;
+  const renderJobsRef = useRef(renderJobs);
+  renderJobsRef.current = renderJobs;
+  const renderDoneRef = useRef(false);
+
+  useEffect(() => {
+    if (!renderJobs.some((job) => job.status === "running")) return;
+    const timer = setInterval(() => {
+      setRenderJobs((prev) =>
+        prev.map((job) => {
+          if (job.status !== "running") return job;
+          const next = job.progress + 7 + Math.round(Math.random() * 8);
+          if (next >= 100) return { ...job, progress: 100, status: "completed" };
+          return { ...job, progress: next };
+        }),
+      );
+    }, 320);
+    return () => clearInterval(timer);
+  }, [renderJobs]);
+
+  useEffect(() => {
+    const anyCompleted = renderJobs.some((job) => job.status === "completed");
+    if (!anyCompleted || renderDoneRef.current) return;
+    renderDoneRef.current = true;
+    if (autoModeRef.current) {
+      void actRef.current("EDIT-01-BTN-OUTPUT-SAVE").then((patch) => {
+        if (patch["EDIT-01-BTN-OUTPUT-SAVE"] === "saved") setAutoNote(t("edit.render_auto_saved"));
+      });
+    } else {
+      setAutoNote(null);
+    }
+  }, [renderJobs]);
+
+  const runAutoStageConfirm = useCallback(() => {
+    setTimeout(() => {
+      const flow = fieldsRef.current.find((row) => row.controlUid === "EDIT-01-BTN-FLOW-START")?.value;
+      if (tlRef.current.clips.length && flow === "running") {
+        void actRef.current("EDIT-01-BTN-STAGE-CONFIRM").then((patch) => {
+          if (patch["EDIT-01-BTN-STAGE-CONFIRM"] === "confirmed") setAutoNote(t("edit.render_auto_stage"));
+        });
+      }
+    }, 700);
+  }, []);
+
+  const toggleMode = useCallback(() => {
+    void actRef.current("EDIT-01-CTL-EXECUTION-MODE").then((patch) => {
+      const next = patch["EDIT-01-CTL-EXECUTION-MODE"];
+      setAutoMode(next === "AUTO");
+      if (next === "AUTO") runAutoStageConfirm();
+    });
+  }, [runAutoStageConfirm]);
 
   const insertQuote = useCallback((ref: string, prefix = "") => {
     const piece = quoteInsertText(ref);
@@ -608,6 +676,14 @@ export function EditVisual() {
   const dash = displayEditValue(null, loading);
   const modeValue = v("EDIT-01-CTL-EXECUTION-MODE");
   const modeLabel = modeValue === "AUTO" ? tx("edit.auto") : tx("edit.ctl-execution-mode");
+  const activeJob = [...renderJobs].reverse().find((job) => job.status === "running") ?? renderJobs[renderJobs.length - 1] ?? null;
+  const renderLabel = activeJob
+    ? activeJob.status === "running"
+      ? `${tx("edit.job_running")} ${activeJob.progress}%`
+      : activeJob.status === "completed"
+        ? tx("edit.job_completed")
+        : tx("edit.job_cancelled")
+    : v("EDIT-01-LBL-RENDER-JOB");
   const sourceLabel = v("EDIT-01-CTL-SOURCE-MODE") === "STANDALONE_UPLOAD" ? tx("edit.source_standalone") : tx("edit.source_value");
 
   useEffect(() => {
@@ -661,10 +737,10 @@ export function EditVisual() {
         <Field uid="EDIT-01-LBL-CURRENT-STAGE" label={tx("edit.lbl-current-stage")} value={v("EDIT-01-LBL-CURRENT-STAGE") || tx("edit.stage_assembly")} loading={loading} onAct={act} disabled={disabled} readonly />
         <Field uid="EDIT-01-LBL-PENDING-TASK" label={tx("edit.lbl-pending-task")} value={v("EDIT-01-LBL-PENDING-TASK")} loading={loading} onAct={act} disabled={disabled} readonly />
         <div className={styles.modePair}>
-          <button type="button" className={styles.btn} disabled={disabled} onClick={() => void act("EDIT-01-CTL-EXECUTION-MODE")}>{tx("edit.auto")}</button>
-          <Btn uid="EDIT-01-CTL-EXECUTION-MODE" label={modeLabel} onAct={act} disabled={disabled} primary />
+          <button type="button" className={styles.btn} disabled={disabled} onClick={toggleMode}>{tx("edit.auto")}</button>
+          <Btn uid="EDIT-01-CTL-EXECUTION-MODE" label={modeLabel} onAct={toggleMode} disabled={disabled} primary />
         </div>
-        <Btn uid="EDIT-01-BTN-FLOW-START" label={tx("edit.btn-flow-start")} onAct={act} disabled={disabled} primary />
+        <Btn uid="EDIT-01-BTN-FLOW-START" label={tx("edit.btn-flow-start")} onAct={() => { void act("EDIT-01-BTN-FLOW-START").then((patch) => { if (patch["EDIT-01-BTN-FLOW-START"] === "running" && autoModeRef.current) runAutoStageConfirm(); }); }} disabled={disabled} primary />
         <Btn uid="EDIT-01-BTN-BLUEPRINT-VIEW" label={tx("edit.btn-blueprint-view")} onAct={act} disabled={disabled} icon="blueprint" />
         <Btn uid="EDIT-01-BTN-PACKAGE-VIEW" label={tx("edit.btn-package-view")} onAct={act} disabled={disabled} icon="package" />
         <Btn uid="EDIT-01-BTN-RETURN-BLUEPRINT" label={tx("edit.btn-return-blueprint")} onAct={act} disabled={disabled} icon="back" />
@@ -1150,18 +1226,28 @@ export function EditVisual() {
           <h3 className={styles.sub}>{tx("edit.output")}</h3>
           <Field uid="EDIT-01-LBL-PAGE-STATE" label={tx("edit.stage_job")} value={v("EDIT-01-LBL-PAGE-STATE")} loading={loading} onAct={act} disabled={disabled} readout />
           <Field uid="EDIT-01-LBL-BINDING-FINGERPRINT" label={tx("edit.lbl-binding-fingerprint")} value={v("EDIT-01-LBL-BINDING-FINGERPRINT")} loading={loading} onAct={act} disabled={disabled} readonly />
-          <Field uid="EDIT-01-LBL-RENDER-JOB" label={tx("edit.lbl-render-job")} value={v("EDIT-01-LBL-RENDER-JOB")} loading={loading} onAct={act} disabled={disabled} readonly />
+          <Field uid="EDIT-01-LBL-RENDER-JOB" label={tx("edit.lbl-render-job")} value={renderLabel} loading={loading} onAct={act} disabled={disabled} readonly />
           <Field uid="EDIT-01-LBL-ERROR-STATE" label={tx("edit.output_checksum")} value={v("EDIT-01-LBL-ERROR-STATE")} loading={loading} onAct={act} disabled={disabled} readout />
+          {autoNote ? <div className={styles.note} role="status">{autoNote}</div> : null}
           <div className={styles.list} data-control-uid="EDIT-01-LST-JOB-STATUS">
-            <div className={styles.item}>
-              <span>{tx("edit.blocking_error")}</span>
-              <span>{dash}</span>
-            </div>
+            {renderJobs.length ? (
+              [...renderJobs].reverse().slice(0, 6).map((job) => (
+                <div className={styles.item} key={job.id}>
+                  <span>{job.id}</span>
+                  <span>{job.status === "running" ? `${tx("edit.job_running")} ${job.progress}%` : job.status === "completed" ? tx("edit.job_completed") : tx("edit.job_cancelled")}</span>
+                </div>
+              ))
+            ) : (
+              <div className={styles.item}>
+                <span>{tx("edit.blocking_error")}</span>
+                <span>{dash}</span>
+              </div>
+            )}
           </div>
           <div className={styles.toolbar}>
             <Btn uid="EDIT-01-BTN-RENDER-SETTINGS" label={tx("edit.btn-render-settings")} onAct={act} disabled={disabled} />
-            <Btn uid="EDIT-01-BTN-RENDER-EXECUTE" label={tx("edit.btn-render-execute")} onAct={act} disabled={disabled || dialogueBlocked} primary />
-            <Btn uid="EDIT-01-BTN-RENDER-CANCEL" label={tx("edit.btn-render-cancel")} onAct={act} disabled={disabled} />
+            <Btn uid="EDIT-01-BTN-RENDER-EXECUTE" label={tx("edit.btn-render-execute")} onAct={() => { void act("EDIT-01-BTN-RENDER-EXECUTE").then((patch) => { if (patch["EDIT-01-BTN-RENDER-EXECUTE"] === "running") startRender(); }); }} disabled={disabled || dialogueBlocked} primary />
+            <Btn uid="EDIT-01-BTN-RENDER-CANCEL" label={tx("edit.btn-render-cancel")} onAct={() => { cancelRender(); void act("EDIT-01-BTN-RENDER-CANCEL"); }} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-OUTPUT-SAVE" label={tx("edit.btn-output-save")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-DOWNLOAD" label={tx("edit.btn-download")} onAct={act} disabled={disabled} />
             <Btn uid="EDIT-01-BTN-HANDOFF-2" label={tx("edit.btn-handoff-2")} onAct={act} disabled={disabled || dialogueBlocked} primary />
