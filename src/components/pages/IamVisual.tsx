@@ -4,16 +4,64 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { IamClientError, fetchIamReadModel, postIamAction, type IamFieldValue } from "@/lib/client";
+import {
+  IAM_BACK_L1_CATALOG,
+  IAM_DEPT_PRESETS,
+  IAM_FRONT_L1_CATALOG,
+  IAM_STATE_ACCOUNTS_UID,
+  IAM_STATE_DRAFT_UID,
+  IAM_STATE_ERROR_UID,
+  IAM_STATE_MATERIALIZED_UID,
+  IAM_STATE_PREVIEW_UID,
+  type IamAccountRow,
+  type IamAssignmentDelta,
+} from "@/lib/iamState";
 import { displayIamValue } from "./iamFormat";
 import { IAM_BACK_L1, IAM_CHAIN_STEPS, IAM_CONTROL_ACTIONS, IAM_FRONT_L1, IAM_VISIBLE_CONTROLS } from "./iamControls";
 import styles from "./IamVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
-const DIRECTORY_ROWS = 5;
-const PREVIEW_ROWS = 6;
 
 type FlowStep = 1 | 2 | 3;
+
+interface IamDraft {
+  mode?: string;
+  accountId?: string;
+  basicData?: { displayName?: string; email?: string; department?: string };
+  frontL1?: string[];
+  backL1?: string[];
+  correlationId?: string;
+  savedAt?: string;
+  version?: number;
+}
+
+interface IamPreview {
+  added?: number;
+  removed?: number;
+  unchanged?: number;
+  blocked?: number;
+  deltas?: IamAssignmentDelta[];
+  stamp?: string;
+}
+
+interface IamMaterialized {
+  assigned?: number;
+  revoked?: number;
+  refused?: number;
+  operator?: string;
+  at?: string;
+}
+
+function parseJson<T>(raw: string | null | undefined, fallback: T): T {
+  const text = (raw ?? "").trim();
+  if (!text) return fallback;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return fallback;
+  }
+}
 
 function Btn({
   uid,
@@ -42,9 +90,11 @@ export function IamVisual() {
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
-  const [, setFields] = useState<IamFieldValue[]>([]);
+  const [fields, setFields] = useState<IamFieldValue[]>([]);
   const [step, setStep] = useState<FlowStep>(1);
   const [query, setQuery] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [draftEmail, setDraftEmail] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -73,11 +123,31 @@ export function IamVisual() {
     };
   }, [tick]);
 
-  const act = useCallback(async (controlUid: string) => {
+  const valueOf = useCallback(
+    (uid: string) => fields.find((row) => row.controlUid === uid)?.value ?? null,
+    [fields],
+  );
+
+  const accounts = useMemo(() => parseJson<IamAccountRow[]>(valueOf(IAM_STATE_ACCOUNTS_UID), []), [valueOf]);
+  const draft = useMemo(() => parseJson<IamDraft>(valueOf(IAM_STATE_DRAFT_UID), {}), [valueOf]);
+  const preview = useMemo(() => parseJson<IamPreview>(valueOf(IAM_STATE_PREVIEW_UID), {}), [valueOf]);
+  const runtimeError = useMemo(
+    () => parseJson<{ code?: string; at?: string }>(valueOf(IAM_STATE_ERROR_UID), {}),
+    [valueOf],
+  );
+  const materialized = useMemo(
+    () => parseJson<IamMaterialized>(valueOf(IAM_STATE_MATERIALIZED_UID), {}),
+    [valueOf],
+  );
+
+  const act = useCallback(async (controlUid: string, nextValue?: string) => {
     const actionUid = IAM_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postIamAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      const result = await postIamAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
+      if (result.materialized) {
+        setFields((prev) => prev.map((row) => (row.controlUid === IAM_STATE_MATERIALIZED_UID ? { ...row, value: result.materialized } : row)));
+      }
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
@@ -90,19 +160,33 @@ export function IamVisual() {
   const dash = displayIamValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(IAM_VISIBLE_CONTROLS), []);
 
+  const frontSelected = new Set(draft.frontL1 ?? []);
+  const backSelected = new Set(draft.backL1 ?? []);
+  const frontAllChecked = frontSelected.size === IAM_FRONT_L1.length;
+  const backAllChecked = backSelected.size === IAM_BACK_L1.length;
+  const auditDrawerOpen = Boolean(runtimeError.code || materialized.at);
+
   const openCreate = () => {
-    setStep(1);
+    setStep(2);
     void act("IAM-01-BTN-ADD");
   };
 
-  const openEdit = () => {
-    setStep(1);
-    void act("IAM-01-BTN-EDIT");
+  const openEdit = (accountId: string) => {
+    setStep(2);
+    void act("IAM-01-BTN-EDIT", JSON.stringify({ accountId }));
   };
 
   const openPreview = () => {
     setStep(3);
     void act("IAM-01-BTN-PREVIEW");
+  };
+
+  const toggleL1 = (side: "FRONT" | "BACK", key: string, checked: boolean) => {
+    void act("IAM-01-GRP-FRONT-L1", JSON.stringify({ side, key, selected: !checked }));
+  };
+
+  const saveBasicData = () => {
+    void act("IAM-01-CTL-BASIC-DATA", JSON.stringify({ displayName, email: draftEmail }));
   };
 
   return (
@@ -120,6 +204,11 @@ export function IamVisual() {
           {tx("iam.error")}
         </div>
       ) : null}
+      {runtimeError.code ? (
+        <div className={styles.error} role="alert" data-runtime-error={runtimeError.code}>
+          {runtimeError.code}
+        </div>
+      ) : null}
 
       <header className={styles.heading} data-component-uid="IAM-01-CMP-CONTEXT" data-section-uid="IAM-01-SEC-01">
         <h1 className={styles.headingTitle}>{tx(step === 3 ? "iam.preview-title" : "iam.title")}</h1>
@@ -130,7 +219,7 @@ export function IamVisual() {
         <section className={styles.context} data-section-uid="IAM-01-SEC-01">
           <div className={styles.ctx}>
             <span>{tx("iam.ctx-count")}</span>
-            <strong>{dash}</strong>
+            <strong>{loading ? dash : accounts.length}</strong>
           </div>
           <div className={styles.ctx}>
             <span>{tx("iam.ctx-model")}</span>
@@ -150,27 +239,23 @@ export function IamVisual() {
             <h2>{tx("iam.preview-context")}</h2>
             <div className={styles.field}>
               <span>{tx("iam.preview-account")}</span>
-              <strong>{dash}</strong>
+              <strong>{draft.accountId ?? dash}</strong>
             </div>
             <div className={styles.field}>
               <span>{tx("iam.preview-mode")}</span>
-              <strong>{tx("iam.preview-mode-value")}</strong>
+              <strong>{draft.mode ?? dash}</strong>
             </div>
             <div className={styles.field}>
               <span>{tx("iam.preview-version")}</span>
-              <strong>{dash}</strong>
+              <strong>{draft.version ?? dash}</strong>
             </div>
             <div className={styles.field}>
               <span>{tx("iam.preview-draft")}</span>
-              <strong>{tx("iam.preview-draft-value")}</strong>
-            </div>
-            <div className={styles.field}>
-              <span>{tx("iam.preview-preset")}</span>
-              <strong>{dash}</strong>
+              <strong>{(draft.frontL1?.length ?? 0) + (draft.backL1?.length ?? 0)} L1</strong>
             </div>
             <div className={styles.field}>
               <span>{tx("iam.preview-correlation")}</span>
-              <strong>{dash}</strong>
+              <strong>{draft.correlationId ?? dash}</strong>
             </div>
             <div className={styles.warnBox}>{tx("iam.preview-scope-note")}</div>
           </aside>
@@ -180,19 +265,19 @@ export function IamVisual() {
             <div className={styles.deltaRow}>
               <div className={styles.delta}>
                 <span className={styles.deltaAdded}>{tx("iam.delta-added")}</span>
-                <strong className={styles.deltaAdded}>{dash}</strong>
+                <strong className={styles.deltaAdded}>{preview.added ?? dash}</strong>
               </div>
               <div className={styles.delta}>
                 <span className={styles.deltaRemoved}>{tx("iam.delta-removed")}</span>
-                <strong className={styles.deltaRemoved}>{dash}</strong>
+                <strong className={styles.deltaRemoved}>{preview.removed ?? dash}</strong>
               </div>
               <div className={styles.delta}>
                 <span>{tx("iam.delta-unchanged")}</span>
-                <strong>{dash}</strong>
+                <strong>{preview.unchanged ?? dash}</strong>
               </div>
               <div className={styles.delta}>
                 <span className={styles.deltaBlocked}>{tx("iam.delta-blocked")}</span>
-                <strong className={styles.deltaBlocked}>{dash}</strong>
+                <strong className={styles.deltaBlocked}>{preview.blocked ?? dash}</strong>
               </div>
             </div>
             <div className={styles.previewTable}>
@@ -202,14 +287,25 @@ export function IamVisual() {
                 <span>{tx("iam.col-delta")}</span>
                 <span>{tx("iam.col-preview-scope")}</span>
               </div>
-              {Array.from({ length: PREVIEW_ROWS }, (_, index) => (
-                <div className={styles.prow} key={`preview-${index}`}>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                </div>
-              ))}
+              {(preview.deltas ?? []).length ? (
+                (preview.deltas ?? []).map((row) => (
+                  <div className={styles.prow} key={`${row.kind}-${row.permission}`}>
+                    <span>{row.pageUid ?? dash}</span>
+                    <span>{row.permission ?? dash}</span>
+                    <span className={row.kind === "ADDED" ? styles.deltaAdded : row.kind === "REMOVED" ? styles.deltaRemoved : ""}>{row.kind}</span>
+                    <span>{row.permissionTable ?? dash}</span>
+                  </div>
+                ))
+              ) : (
+                Array.from({ length: 4 }, (_, index) => (
+                  <div className={styles.prow} key={`preview-${index}`}>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                  </div>
+                ))
+              )}
             </div>
             <div className={styles.warnBox}>{tx("iam.preview-block-note")}</div>
           </section>
@@ -218,7 +314,7 @@ export function IamVisual() {
             <h2>{tx("iam.preview-apply")}</h2>
             <div className={styles.card}>
               <h3>{tx("iam.apply-freshness")}</h3>
-              <p>{tx("iam.apply-freshness-hint")}</p>
+              <p>{preview.stamp ?? tx("iam.apply-freshness-hint")}</p>
             </div>
             <div className={styles.card}>
               <h3>{tx("iam.apply-confirm")}</h3>
@@ -234,7 +330,7 @@ export function IamVisual() {
             </div>
             <div className={styles.card}>
               <h3>{tx("iam.apply-audit")}</h3>
-              <p>{tx("iam.apply-audit-hint")}</p>
+              <p>{materialized.at ? `assigned=${materialized.assigned ?? 0} revoked=${materialized.revoked ?? 0}` : tx("iam.apply-audit-hint")}</p>
             </div>
             <div className={styles.card}>
               <h3>{tx("iam.apply-nav")}</h3>
@@ -244,7 +340,16 @@ export function IamVisual() {
               <button type="button" className={styles.btn} disabled={disabled} onClick={() => setStep(2)}>
                 {tx("iam.btn-back")}
               </button>
-              <Btn uid="IAM-01-BTN-COMPLETE" label={tx("iam.btn-confirm")} onAct={act} disabled={disabled} primary />
+              <Btn
+                uid="IAM-01-BTN-COMPLETE"
+                label={tx("iam.btn-confirm")}
+                onAct={(uid) => {
+                  void act(uid, JSON.stringify({ confirm: true }));
+                  setStep(1);
+                }}
+                disabled={disabled}
+                primary
+              />
             </div>
           </aside>
         </div>
@@ -260,10 +365,14 @@ export function IamVisual() {
                 value={query}
                 placeholder={tx("iam.search")}
                 onFocus={() => {
+                  setStep(1);
                   void act("IAM-01-CTL-SEARCH");
                 }}
                 onChange={(event) => {
                   setQuery(event.target.value);
+                }}
+                onBlur={() => {
+                  void act("IAM-01-BTN-AUDIT", JSON.stringify({ query }));
                 }}
               />
               <span className={styles.filter}>{tx("iam.filter-status")}</span>
@@ -280,31 +389,55 @@ export function IamVisual() {
                 <span>{tx("iam.col-scope")}</span>
                 <span>{tx("iam.col-ops")}</span>
               </div>
-              {Array.from({ length: DIRECTORY_ROWS }, (_, index) => (
-                <div className={styles.trow} key={`row-${index}`}>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>{dash}</span>
-                  <span>
-                    <button
-                      type="button"
-                      className={styles.link}
-                      data-control-uid="IAM-01-BTN-EDIT"
-                      disabled={disabled}
-                      onClick={openEdit}
-                    >
-                      {tx("iam.btn-edit")}
-                    </button>
-                  </span>
-                </div>
-              ))}
+              {accounts.length ? (
+                accounts.map((row) => (
+                  <div className={styles.trow} key={row.accountUid}>
+                    <span>{row.email}</span>
+                    <span>{row.status}</span>
+                    <span>EXPLICIT</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{(row.frontendL1?.length ?? 0) + (row.backendL1?.length ?? 0)} L1</span>
+                    <span>
+                      <button
+                        type="button"
+                        className={styles.link}
+                        data-control-uid="IAM-01-BTN-EDIT"
+                        disabled={disabled}
+                        onClick={() => openEdit(row.accountUid)}
+                      >
+                        {tx("iam.btn-edit")}
+                      </button>
+                    </span>
+                  </div>
+                ))
+              ) : (
+                Array.from({ length: 2 }, (_, index) => (
+                  <div className={styles.trow} key={`row-${index}`}>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>{dash}</span>
+                    <span>
+                      <button
+                        type="button"
+                        className={styles.link}
+                        data-control-uid="IAM-01-BTN-EDIT"
+                        disabled={disabled}
+                        onClick={() => openEdit("")}
+                      >
+                        {tx("iam.btn-edit")}
+                      </button>
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
             <div className={styles.detail} data-section-uid="IAM-01-SEC-03" data-component-uid="IAM-01-CMP-ACCOUNT-DETAIL">
               <h3>{tx("iam.detail")}</h3>
-              <p>{tx("iam.detail-hint")}</p>
+              <p>{draft.accountId ? `${draft.accountId} · ${(draft.frontL1?.length ?? 0) + (draft.backL1?.length ?? 0)} L1 · v${draft.version ?? 0}` : tx("iam.detail-hint")}</p>
             </div>
           </section>
 
@@ -335,15 +468,45 @@ export function IamVisual() {
             <div className={styles.card} data-component-uid="IAM-01-CMP-BASIC-DATA">
               <h3>{tx("iam.schema")}</h3>
               <p>{tx("iam.schema-hint")}</p>
-              <div className={styles.schema} data-control-uid="IAM-01-CTL-BASIC-DATA" onClick={() => void act("IAM-01-CTL-BASIC-DATA")}>
-                {tx("iam.schema-placeholder")}
+              <div className={styles.schema} data-control-uid="IAM-01-CTL-BASIC-DATA">
+                <input
+                  aria-label="displayName"
+                  placeholder="displayName"
+                  value={displayName}
+                  disabled={disabled}
+                  onChange={(event) => setDisplayName(event.target.value)}
+                  onBlur={saveBasicData}
+                />
+                <input
+                  aria-label="email"
+                  placeholder="email"
+                  value={draftEmail}
+                  disabled={disabled}
+                  onChange={(event) => setDraftEmail(event.target.value)}
+                  onBlur={saveBasicData}
+                />
               </div>
             </div>
 
             <div className={styles.card} data-component-uid="IAM-01-CMP-PERMISSION-PRESET" data-control-uid="IAM-01-SEL-DEPT-PRESET">
               <div className={styles.preset}>
                 <span>{tx("iam.preset")}</span>
-                <strong>{tx("iam.preset-empty")}</strong>
+                <select
+                  aria-label={tx("iam.preset")}
+                  disabled={disabled}
+                  value=""
+                  onChange={(event) => {
+                    const presetId = event.target.value;
+                    if (presetId) void act("IAM-01-SEL-DEPT-PRESET", JSON.stringify({ presetId }));
+                  }}
+                >
+                  <option value="">{tx("iam.preset-empty")}</option>
+                  {IAM_DEPT_PRESETS.map((preset) => (
+                    <option key={preset.presetId} value={preset.presetId}>
+                      {preset.presetId}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -351,12 +514,22 @@ export function IamVisual() {
               <div className={styles.card} data-component-uid="IAM-01-CMP-FRONT-L1" data-control-uid="IAM-01-GRP-FRONT-L1">
                 <h3>{tx("iam.front-l1")}</h3>
                 <label className={styles.check} data-control-uid="IAM-01-CHK-FRONT-ALL">
-                  <span className={styles.box} />
+                  <input
+                    type="checkbox"
+                    disabled={disabled}
+                    checked={frontAllChecked}
+                    onChange={() => void act("IAM-01-CHK-FRONT-ALL")}
+                  />
                   {tx("iam.front-all")}
                 </label>
                 {IAM_FRONT_L1.map((key) => (
                   <label className={styles.check} key={key}>
-                    <span className={styles.box} />
+                    <input
+                      type="checkbox"
+                      disabled={disabled}
+                      checked={frontSelected.has(key)}
+                      onChange={() => toggleL1("FRONT", key, frontSelected.has(key))}
+                    />
                     {tx(key)}
                   </label>
                 ))}
@@ -364,12 +537,22 @@ export function IamVisual() {
               <div className={styles.card} data-component-uid="IAM-01-CMP-BACK-L1" data-control-uid="IAM-01-GRP-BACK-L1">
                 <h3>{tx("iam.back-l1")}</h3>
                 <label className={styles.check} data-control-uid="IAM-01-CHK-BACK-ALL">
-                  <span className={styles.box} />
+                  <input
+                    type="checkbox"
+                    disabled={disabled}
+                    checked={backAllChecked}
+                    onChange={() => void act("IAM-01-CHK-BACK-ALL")}
+                  />
                   {tx("iam.back-all")}
                 </label>
                 {IAM_BACK_L1.map((key) => (
                   <label className={styles.check} key={key}>
-                    <span className={styles.box} />
+                    <input
+                      type="checkbox"
+                      disabled={disabled}
+                      checked={backSelected.has(key)}
+                      onChange={() => toggleL1("BACK", key, backSelected.has(key))}
+                    />
                     {tx(key)}
                   </label>
                 ))}
@@ -377,41 +560,50 @@ export function IamVisual() {
             </div>
 
             <div className={styles.dock}>
-              <Btn uid="IAM-01-BTN-SAVE-DRAFT" label={tx("iam.btn-draft")} onAct={act} disabled={disabled} />
-              <Btn uid="IAM-01-BTN-VALIDATE" label={tx("iam.btn-validate")} onAct={act} disabled={disabled} />
+              <Btn uid="IAM-01-BTN-SAVE-DRAFT" label={tx("iam.btn-draft")} onAct={(uid) => void act(uid)} disabled={disabled} />
+              <Btn uid="IAM-01-BTN-VALIDATE" label={tx("iam.btn-validate")} onAct={(uid) => void act(uid)} disabled={disabled} />
               <Btn uid="IAM-01-BTN-PREVIEW" label={tx("iam.btn-preview")} onAct={openPreview} disabled={disabled} />
-              <Btn uid="IAM-01-BTN-COMPLETE" label={tx("iam.btn-complete")} onAct={act} disabled={disabled} primary />
+              <Btn
+                uid="IAM-01-BTN-COMPLETE"
+                label={tx("iam.btn-complete")}
+                onAct={(uid) => void act(uid, JSON.stringify({ confirm: true }))}
+                disabled={disabled}
+                primary
+              />
             </div>
           </aside>
         </div>
       )}
 
-      {step === 3 ? (
-        <section className={styles.chain}>
-          <div className={styles.warnBox}>{tx("iam.materialize")}</div>
-        </section>
-      ) : (
-        <section className={styles.chain} data-section-uid="IAM-01-SEC-06" data-component-uid="IAM-01-CMP-AUDIT">
-          <h2>{tx("iam.chain")}</h2>
-          <div className={styles.chainRow}>
-            {IAM_CHAIN_STEPS.flatMap((key, index) => {
-              const node = (
-                <div key={key} className={styles.chainStep}>
-                  {tx(key)}
-                </div>
-              );
-              if (index === 0) return [node];
-              return [
-                <span key={`${key}-arrow`} className={styles.arrow}>
-                  →
-                </span>,
-                node,
-              ];
-            })}
+      <section className={styles.chain} data-section-uid="IAM-01-SEC-06" data-component-uid="IAM-01-CMP-AUDIT">
+        <h2>{tx("iam.chain")}</h2>
+        <div className={styles.chainRow}>
+          {IAM_CHAIN_STEPS.flatMap((key, index) => {
+            const node = (
+              <div key={key} className={styles.chainStep}>
+                {tx(key)}
+              </div>
+            );
+            if (index === 0) return [node];
+            return [
+              <span key={`${key}-arrow`} className={styles.arrow}>
+                →
+              </span>,
+              node,
+            ];
+          })}
+        </div>
+        <p className={styles.note}>{tx("iam.chain-note")}</p>
+        {auditDrawerOpen ? (
+          <div className={styles.detail} data-audit-drawer="open">
+            <p>
+              {materialized.at
+                ? `materialized: assigned=${materialized.assigned ?? 0} revoked=${materialized.revoked ?? 0} refused=${materialized.refused ?? 0} @ ${materialized.at}`
+                : ""}
+            </p>
           </div>
-          <p className={styles.note}>{tx("iam.chain-note")}</p>
-        </section>
-      )}
+        ) : null}
+      </section>
     </div>
   );
 }

@@ -807,16 +807,21 @@ export async function postIamAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
-): Promise<void> {
-  await fetch("/api/accounts/action", {
+  nextValue?: string,
+): Promise<{ eventUid: string; materialized: string | null }> {
+  const response = await fetch("/api/accounts/action", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, nextValue }),
   });
+  if (!response.ok) {
+    throw new IamClientError("IAM_ACTION_UNAVAILABLE", `accounts action failed: ${response.status}`);
+  }
+  return (await response.json()) as { eventUid: string; materialized: string | null };
 }
 
 export interface DevFieldValue {

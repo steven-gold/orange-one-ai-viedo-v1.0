@@ -8,6 +8,8 @@ import {
 import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { applyDiscoveryCollection, previewDevAction } from "@/lib/devActionPreview";
 import { previewSocAction } from "@/lib/socActionPreview";
+import { previewIamAction } from "@/lib/iamActionPreview";
+import { IAM_BACK_L1_CATALOG, IAM_FRONT_L1_CATALOG } from "@/lib/iamState";
 import { kbAcquisitionPatchFromCollect, previewKbAction } from "@/lib/kbActionPreview";
 import { collectDiscoverySignals } from "../acquisition/collect";
 import { parseJson, type DevProfile } from "@/lib/devState";
@@ -1170,6 +1172,112 @@ async function applyProjectedAction(
   return keys.length > 0;
 }
 
+interface IamPlanRow {
+  mode?: string;
+  accountUid?: string;
+  permission?: string;
+  permissionTable?: string;
+}
+
+// Directory read-back (word §15): the account list is derived from explicit
+// assignments in the governed permission tables plus navigation assignments;
+// nothing is invented.
+async function seedIamAccounts(): Promise<void> {
+  const tables = [...new Set([...IAM_FRONT_L1_CATALOG, ...IAM_BACK_L1_CATALOG].map((row) => row.permissionTable))];
+  const unionSql = tables.map((table) => `SELECT account_uid, permission_uid, '${table}' AS table_name FROM ${table}`).join(" UNION ALL ");
+  const rows = await getSqlClient().all<{ account_uid: string; permission_uid: string; table_name: string }>(
+    `SELECT DISTINCT account_uid, permission_uid, table_name FROM (${unionSql}) AS u`,
+  );
+  if (!rows.length) return;
+  const navRows = await getSqlClient().all<{ account_uid: string }>(
+    "SELECT DISTINCT account_uid FROM ghsn_account_permission_assignment",
+  );
+  const sessionRows = await getSqlClient().all<{ account_uid: string; n: number }>(
+    "SELECT account_uid, count(*)::int AS n FROM ghsn_account_session GROUP BY account_uid",
+  );
+  const catalogByPair = new Map(
+    [...IAM_FRONT_L1_CATALOG, ...IAM_BACK_L1_CATALOG].map((row) => [`${row.permission}\u0000${row.permissionTable}`, row]),
+  );
+  const byAccount = new Map<string, { front: Set<string>; back: Set<string> }>();
+  const touch = (accountUid: string) => {
+    if (!byAccount.has(accountUid)) byAccount.set(accountUid, { front: new Set(), back: new Set() });
+    return byAccount.get(accountUid)!;
+  };
+  for (const row of rows) {
+    const choice = catalogByPair.get(`${row.permission_uid}\u0000${row.table_name}`);
+    if (!choice) continue;
+    const entry = touch(row.account_uid);
+    (choice.key.startsWith("iam.front-") ? entry.front : entry.back).add(choice.key);
+  }
+  for (const row of navRows) touch(row.account_uid);
+  const sessionByAccount = new Map(sessionRows.map((row) => [row.account_uid, row.n]));
+  const accounts = [...byAccount.entries()].map(([accountUid, entry]) => ({
+    accountUid,
+    email: accountUid,
+    status: "ACTIVE" as const,
+    sessions: sessionByAccount.get(accountUid) ?? 0,
+    lastSeenAt: "",
+    frontendL1: [...entry.front],
+    backendL1: [...entry.back],
+  }));
+  if (accounts.length) await writeField(FIELD_TABLE.iam, "IAM-01-STATE-ACCOUNTS", JSON.stringify(accounts));
+}
+
+// Word IAM-01 §17: COMPLETE orchestrates existing exact operations on the
+// server. The client-produced plan is re-validated against the L1 catalog
+// (permission + permissionTable pairing) before any governed table is
+// touched; unknown pairings are refused, never guessed.
+async function materializeIamPlan(operatorUid: string): Promise<void> {
+  const planRaw = await readField(FIELD_TABLE.iam, "IAM-01-STATE-PLAN");
+  if (!planRaw || !planRaw.trim().startsWith("[")) return;
+  let rows: IamPlanRow[];
+  try {
+    rows = parseJson<IamPlanRow[]>(planRaw, []);
+  } catch {
+    rows = [];
+  }
+  const catalog = new Map<string, string>(
+    [...IAM_FRONT_L1_CATALOG, ...IAM_BACK_L1_CATALOG].map((row) => [`${row.permission}\u0000${row.permissionTable}`, row.permissionTable]),
+  );
+  let assigned = 0;
+  let revoked = 0;
+  let refused = 0;
+  for (const row of rows) {
+    const mode = String(row.mode ?? "");
+    const accountUid = String(row.accountUid ?? "").trim();
+    const permission = String(row.permission ?? "").trim();
+    const permissionTable = String(row.permissionTable ?? "").trim();
+    const pairingKey = `${permission}\u0000${permissionTable}`;
+    if ((mode !== "ASSIGN" && mode !== "REVOKE") || !accountUid || !permission || !catalog.has(pairingKey)) {
+      refused += 1;
+      continue;
+    }
+    if (mode === "ASSIGN") {
+      await getSqlClient().run(
+        `INSERT INTO ${permissionTable} (account_uid, permission_uid)
+         VALUES (?, ?)
+         ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+        [accountUid, permission],
+      );
+      assigned += 1;
+    } else {
+      await getSqlClient().run(
+        `DELETE FROM ${permissionTable} WHERE account_uid = ? AND permission_uid = ?`,
+        [accountUid, permission],
+      );
+      revoked += 1;
+    }
+  }
+  const summary = JSON.stringify({
+    assigned,
+    revoked,
+    refused,
+    operator: operatorUid,
+    at: new Date().toISOString(),
+  });
+  await writeField(FIELD_TABLE.iam, "IAM-01-STATE-MATERIALIZED", summary);
+}
+
 export async function applyWorkbenchAction(
   page: WorkbenchPage,
   controlUid: string,
@@ -1719,6 +1827,14 @@ export async function applyWorkbenchAction(
       "QA-01-FLD-PROVENANCE": inbound.provenance || null,
     };
     await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
+    return;
+  }
+  if (page === "iam") {
+    const written = await applyProjectedAction(FIELD_TABLE.iam, previewIamAction, controlUid, actionUid, nextValue);
+    if (written && actionUid === "IAM-01-ACT-COMPLETE" && accountUid) {
+      await materializeIamPlan(accountUid);
+    }
+    await seedIamAccounts();
     return;
   }
   if (page === "soc") {

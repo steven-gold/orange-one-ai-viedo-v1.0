@@ -252,7 +252,7 @@ function seedReady(apply: (controlUid: string, actionUid: string, nextValue?: st
   s.apply("SOC-01-BTN-CANDIDATE-DECIDE", "SOC-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ packageId: rejectedDraft?.packageId, decision: "REJECT" }));
   const rejected = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
   assert(rejected?.candidate === "REJECTED", "reject marks the candidate rejected");
-  assert(rejected?.version === rejectedDraft?.version + 1, "reject bumps the version");
+  assert(rejected?.version === (rejectedDraft?.version ?? 0) + 1, "reject bumps the version");
   assert(rejected?.hash !== rejectedDraft?.hash, "reject re-seals the hash");
   assert(parseJson<SocRequest[]>(s.current(SOC_REQUESTS_UID), []).length === 0, "reject never creates a publish request");
 

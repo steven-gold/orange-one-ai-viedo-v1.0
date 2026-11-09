@@ -1147,12 +1147,26 @@ export async function persistHasIamPermission(accountUid: string): Promise<boole
   return Number(rows[0]?.n ?? 0) > 0;
 }
 
+const IAM_STATE_CONTROLS = [
+  "IAM-01-STATE-ACCOUNTS",
+  "IAM-01-STATE-DRAFT",
+  "IAM-01-STATE-PREVIEW",
+  "IAM-01-STATE-APPLY",
+  "IAM-01-STATE-ERROR",
+  "IAM-01-STATE-QUERY",
+  "IAM-01-STATE-MODE",
+  "IAM-01-STATE-AUDIT",
+  "IAM-01-STATE-PLAN",
+  "IAM-01-STATE-MATERIALIZED",
+] as const;
+
 export async function persistListIamFields(): Promise<IamFieldValue[]> {
   const rows = await getSqlClient().all<IamFieldRow>(
     "SELECT control_uid, value_text FROM ghsn_iam_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return IAM_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...IAM_VISIBLE_CONTROLS, ...IAM_STATE_CONTROLS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1180,8 +1194,9 @@ export async function persistRecordIamAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("iam", controlUid, actionUid);
+  await applyWorkbenchAction("iam", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_iam_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
