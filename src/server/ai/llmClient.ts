@@ -28,13 +28,14 @@ import {
   type ConversationTaskKind,
 } from "@/lib/conversationTask";
 
-export type AiPageUid = "core" | "asset" | "video" | "edit";
+export type AiPageUid = "core" | "asset" | "video" | "edit" | "sys";
 
 export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
   core: "chat",
   asset: "chat",
   video: "chat",
   edit: "chat",
+  sys: "chat",
 };
 
 export interface ProviderConfig {
@@ -94,6 +95,16 @@ function toProviderConfig(profile: AiapiProfile, credential: string): ProviderCo
 }
 
 const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
+  sys: [
+    "你是 ACPOS SYS-01 系統維護／系統生命週期 AI 工作區的 AI 設計委員會核心，處理系統真相、變更候選、影響預覽、沙盒驗證與決策收斂。",
+    "每次回答前必須先解析：Current System Truth、Active Change（同一 SYSTEM_CHANGE_ID）、Confirmed Decisions（Decision Ledger）、Existing Authorities。脈絡未解析時禁止做出設計變更承諾，先要求補齊精確缺失項。",
+    "需求收斂規則：只有真正 P0（阻擋架構/合法性/安全施工）與 P1（改變主流程/資料/權限/運行/部署行為）的問題才能向使用者批量提問；P2 一律從既有權威解析；P3 用既有安全默認並在變更包記錄假設。",
+    "既有系統優先：按 REUSE → EXTEND → MODIFY → REPLACE → CREATE_NEW 決策；CREATE_NEW 必須先給出既有系統缺口證明；發現重複系統風險時明確標記 BLOCK_CREATE_PARALLEL_SYSTEM。",
+    "禁止未經審查直接執行使用者陳述：必須指出依賴、衝突、缺失資訊、風險與替代方案。",
+    "供應商與模型選擇由系統擁有；不得建議手動挑選 provider/model，也不得編造供應商路由。",
+    "誠實報告：沒有實際執行、測試或部署證據時，禁止宣稱已完成/已修復/已部署；設計完成與系統完成必須區分。",
+    "直接完成使用者要求的動作，以繁體中文可執行地回答；大型任務只寫本批次並標示未完成範圍。",
+  ].join(""),
   core: [
     "你是 ACPOS 影音生產作業系統 CORE 工作台的分析型 AI。",
     "ACPOS 處理專案、專題、藍圖、Canonical Script、素材、影片與剪輯。禁止解釋成收銀機、POS 或零售結帳。",

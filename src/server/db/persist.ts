@@ -1088,12 +1088,26 @@ export async function persistHasSysPermission(accountUid: string): Promise<boole
   return Number(rows[0]?.n ?? 0) > 0;
 }
 
+const SYS_STATE_CONTROLS = [
+  "SYS-01-STATE-CONTEXT",
+  "SYS-01-STATE-CONVERSATION",
+  "SYS-01-STATE-LEDGER",
+  "SYS-01-STATE-CHANGE",
+  "SYS-01-STATE-SANDBOX",
+  "SYS-01-STATE-MODE",
+  "SYS-01-STATE-GENERATION",
+  "SYS-01-STATE-ERROR",
+  "SYS-01-STATE-ROUTE",
+  "SYS-01-STATE-DRAFT",
+] as const;
+
 export async function persistListSysFields(): Promise<SysFieldValue[]> {
   const rows = await getSqlClient().all<SysFieldRow>(
     "SELECT control_uid, value_text FROM ghsn_sys_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return SYS_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...SYS_VISIBLE_CONTROLS, ...SYS_STATE_CONTROLS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1121,8 +1135,9 @@ export async function persistRecordSysAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("sys", controlUid, actionUid);
+  await applyWorkbenchAction("sys", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_sys_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

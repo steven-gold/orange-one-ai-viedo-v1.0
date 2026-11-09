@@ -5,6 +5,21 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { SysClientError, fetchSysReadModel, postSysAction, type SysFieldValue } from "@/lib/client";
 import { displaySysValue } from "./sysFormat";
+import {
+  SYS_STATE_CHANGE_UID,
+  SYS_STATE_CONTEXT_UID,
+  SYS_STATE_CONVERSATION_UID,
+  SYS_STATE_ERROR_UID,
+  SYS_STATE_GENERATION_UID,
+  SYS_STATE_LEDGER_UID,
+  SYS_STATE_MODE_UID,
+  SYS_STATE_SANDBOX_UID,
+  type SysChange,
+  type SysContext,
+  type SysDecision,
+  type SysSandboxResult,
+  type SysTurn,
+} from "@/lib/sysState";
 import { SYS_CONTROL_ACTIONS, SYS_VISIBLE_CONTROLS } from "./sysControls";
 import styles from "./SysVisual.module.css";
 
@@ -26,6 +41,16 @@ const LIFECYCLE_STEPS: TranslationKey[] = [
   "sys.life-health",
   "sys.life-close",
 ];
+
+function parseJson<T>(raw: string | null | undefined, fallback: T): T {
+  const text = (raw ?? "").trim();
+  if (!text) return fallback;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return fallback;
+  }
+}
 
 function Seg({
   uid,
@@ -59,16 +84,18 @@ function Btn({
   onAct,
   disabled,
   primary = false,
+  title,
 }: {
   uid: string;
   label: string;
   onAct: (uid: string) => void;
   disabled: boolean;
   primary?: boolean;
+  title?: string;
 }) {
   const className = [styles.btn, primary ? styles.btnPrimary : ""].filter(Boolean).join(" ");
   return (
-    <button type="button" className={className} data-control-uid={uid} disabled={disabled} onClick={() => onAct(uid)}>
+    <button type="button" className={className} data-control-uid={uid} disabled={disabled} title={title} onClick={() => onAct(uid)}>
       {label}
     </button>
   );
@@ -84,6 +111,7 @@ export function SysVisual() {
   const [aiMode, setAiMode] = useState<AiMode>("SINGLE");
   const [councilMode, setCouncilMode] = useState<CouncilMode>("DISCUSSION");
   const [draft, setDraft] = useState("");
+  const [goal, setGoal] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -112,11 +140,22 @@ export function SysVisual() {
     };
   }, [tick]);
 
-  const act = useCallback(async (controlUid: string) => {
+  const valueOf = useCallback((uid: string) => fields.find((row) => row.controlUid === uid)?.value ?? null, [fields]);
+  const context = useMemo(() => parseJson<SysContext | null>(valueOf(SYS_STATE_CONTEXT_UID), null), [valueOf]);
+  const turns = useMemo(() => parseJson<SysTurn[]>(valueOf(SYS_STATE_CONVERSATION_UID), []), [valueOf]);
+  const ledger = useMemo(() => parseJson<SysDecision[]>(valueOf(SYS_STATE_LEDGER_UID), []), [valueOf]);
+  const change = useMemo(() => parseJson<SysChange | null>(valueOf(SYS_STATE_CHANGE_UID), null), [valueOf]);
+  const sandbox = useMemo(() => parseJson<SysSandboxResult | null>(valueOf(SYS_STATE_SANDBOX_UID), null), [valueOf]);
+  const generation = useMemo(() => parseJson<{ active: boolean } | null>(valueOf(SYS_STATE_GENERATION_UID), null), [valueOf]);
+  const runtimeError = useMemo(() => parseJson<{ code?: string } | null>(valueOf(SYS_STATE_ERROR_UID), null), [valueOf]);
+  const modeState = useMemo(() => parseJson<{ aiMode?: string; councilMode?: string }>(valueOf(SYS_STATE_MODE_UID), {}), [valueOf]);
+  const routeState = useMemo(() => parseJson<{ ready?: number; routes?: string[]; reason?: string }>(valueOf("SYS-01-STATE-ROUTE"), {}), [valueOf]);
+
+  const act = useCallback(async (controlUid: string, nextValue?: string) => {
     const actionUid = SYS_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postSysAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      await postSysAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue);
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
@@ -124,10 +163,12 @@ export function SysVisual() {
   }, []);
 
   const disabled = !authorized && !loading;
+  const generating = Boolean(generation?.active);
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displaySysValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(SYS_VISIBLE_CONTROLS), []);
+  const multiOn = (modeState.aiMode ?? "SINGLE_AI") === "MULTI_AI";
 
   const selectAiMode = (next: AiMode) => {
     setAiMode(next);
@@ -136,23 +177,47 @@ export function SysVisual() {
   };
 
   const selectCouncil = (next: CouncilMode) => {
-    if (aiMode !== "MULTI") return;
+    if (!multiOn) return;
     setCouncilMode(next);
     void act(next === "DISCUSSION" ? "SYS-01-BTN-COUNCIL-DISCUSSION" : "SYS-01-BTN-COUNCIL-PARALLEL");
   };
+
+  const send = () => {
+    if (!draft.trim()) return;
+    const payload = JSON.stringify({
+      message: draft,
+      aiMode: multiOn ? "MULTI_AI" : "SINGLE_AI",
+      councilMode: multiOn ? councilMode : "DISCUSSION",
+    });
+    setDraft("");
+    void act("SYS-01-BTN-SEND", payload);
+  };
+
+  const createCandidate = () => {
+    if (!goal.trim()) return;
+    void act("SYS-01-BTN-CANDIDATE-CREATE", JSON.stringify({ goal }));
+    setGoal("");
+  };
+
+  const openPCount = ledger.filter((row) => row.status === "OPEN_P0" || row.status === "OPEN_P1").length;
 
   return (
     <div
       className={styles.page}
       data-page-uid="admin:SYS-01"
       data-page-state={pageState}
-      data-ai-mode={aiMode}
-      data-council-mode={aiMode === "MULTI" ? councilMode : ""}
+      data-ai-mode={multiOn ? "MULTI" : "SINGLE"}
+      data-council-mode={multiOn ? (modeState.councilMode ?? councilMode) : ""}
       data-component-count="8"
       data-control-count={visibleUids.size}
       aria-label={tx("sys.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("sys.error")}</div> : null}
+      {runtimeError?.code ? (
+        <div className={styles.error} role="alert" data-runtime-error={runtimeError.code}>
+          {runtimeError.code}
+        </div>
+      ) : null}
 
       <header className={styles.heading}>
         <h1 className={styles.headingTitle}>{tx("sys.title")}</h1>
@@ -162,19 +227,19 @@ export function SysVisual() {
       <section className={styles.context} data-section-uid="SEC-ADMIN-SYS-01-SYSTEM-CONTEXT">
         <div className={styles.ctx}>
           <span>{tx("sys.ctx-version")}</span>
-          <strong>{dash}</strong>
+          <strong>{context?.systemTruth.version ?? dash}</strong>
         </div>
         <div className={styles.ctx}>
           <span>{tx("sys.ctx-change")}</span>
-          <strong>{dash}</strong>
+          <strong>{change ? `${change.changeId} · ${change.status}` : dash}</strong>
         </div>
         <div className={styles.ctx}>
           <span>{tx("sys.ctx-route")}</span>
-          <strong>{dash}</strong>
+          <strong>{routeState.ready ? `ready=${routeState.ready}` : dash}</strong>
         </div>
         <div className={styles.ctx}>
           <span>{tx("sys.ctx-life")}</span>
-          <strong>{dash}</strong>
+          <strong>{context?.fingerprint ?? dash}</strong>
         </div>
       </section>
 
@@ -183,23 +248,30 @@ export function SysVisual() {
           <h2>{tx("sys.system-context")}</h2>
           <div className={styles.card}>
             <h3>{tx("sys.inbox")}</h3>
-            <p>{tx("sys.inbox-hint")}</p>
+            <p>{turns.length} turns · {context?.conversation.conversationId ?? dash}</p>
           </div>
           <div className={styles.card}>
             <h3>{tx("sys.change-context")}</h3>
-            <p>{tx("sys.change-context-hint")}</p>
+            <p>{change ? `${change.goal}（${change.status}）` : tx("sys.change-context-hint")}</p>
           </div>
           <div className={styles.card} data-section-uid="SEC-ADMIN-SYS-01-AUDIT">
             <h3>{tx("sys.decision-ledger")}</h3>
-            <p>{tx("sys.decision-ledger-hint")}</p>
+            <p>
+              {ledger.length
+                ? ledger.map((row) => `${row.priority}:${row.status}`).join(" · ")
+                : tx("sys.decision-ledger-hint")}
+            </p>
+            <p className={openPCount ? styles.warn : styles.ok}>
+              {openPCount ? `OPEN P0/P1 = ${openPCount}（Design Freeze blocked）` : "OPEN P0/P1 = 0"}
+            </p>
           </div>
           <div className={styles.card}>
             <h3>{tx("sys.reference")}</h3>
-            <p>{tx("sys.reference-hint")}</p>
+            <p>{(routeState.routes ?? []).join(" · ") || tx("sys.reference-hint")}</p>
           </div>
           <div className={styles.card}>
             <h3>{tx("sys.provider-watch")}</h3>
-            <p>{tx("sys.provider-watch-hint")}</p>
+            <p>{context?.systemTruth.providers.length ? context.systemTruth.providers.join(" · ") : tx("sys.provider-watch-hint")}</p>
           </div>
         </aside>
 
@@ -210,49 +282,89 @@ export function SysVisual() {
               <span className={styles.modeLabel}>{tx("sys.ai-mode")}</span>
               <Seg uid="SYS-01-BTN-SINGLE-AI" label={tx("sys.btn-single-ai")} active={aiMode === "SINGLE"} onAct={() => selectAiMode("SINGLE")} disabled={disabled} />
               <Seg uid="SYS-01-BTN-MULTI-AI" label={tx("sys.btn-multi-ai")} active={aiMode === "MULTI"} onAct={() => selectAiMode("MULTI")} disabled={disabled} />
-              {aiMode === "MULTI" ? (
+              {multiOn ? (
                 <>
                   <span className={styles.spacer} />
-                  <Seg uid="SYS-01-BTN-COUNCIL-DISCUSSION" label={tx("sys.btn-discussion")} active={councilMode === "DISCUSSION"} onAct={() => selectCouncil("DISCUSSION")} disabled={disabled} />
-                  <Seg uid="SYS-01-BTN-COUNCIL-PARALLEL" label={tx("sys.btn-parallel")} active={councilMode === "PARALLEL"} onAct={() => selectCouncil("PARALLEL")} disabled={disabled} />
+                  <Seg uid="SYS-01-BTN-COUNCIL-DISCUSSION" label={tx("sys.btn-discussion")} active={(modeState.councilMode ?? "DISCUSSION") === "DISCUSSION"} onAct={() => selectCouncil("DISCUSSION")} disabled={disabled} />
+                  <Seg uid="SYS-01-BTN-COUNCIL-PARALLEL" label={tx("sys.btn-parallel")} active={(modeState.councilMode ?? "DISCUSSION") === "PARALLEL"} onAct={() => selectCouncil("PARALLEL")} disabled={disabled} />
                 </>
               ) : null}
             </div>
           </div>
 
           <div className={styles.thread} data-section-uid="SEC-ADMIN-SYS-01-CANDIDATE-CHANGE">
-            <div className={styles.bubble}>{dash}</div>
-            <div className={`${styles.bubble} ${styles.bubbleUser}`}>{dash}</div>
-            <div className={styles.ledger}>{tx("sys.thread-ledger")} {dash}</div>
+            {turns.length ? (
+              turns.map((row) => (
+                <div
+                  key={row.id}
+                  className={`${styles.bubble} ${row.role === "user" ? styles.bubbleUser : ""}`}
+                  data-turn-role={row.role}
+                  data-turn-status={row.status}
+                >
+                  {row.alias ? <strong>@{row.alias} </strong> : null}
+                  {row.text}
+                </div>
+              ))
+            ) : (
+              <>
+                <div className={styles.bubble}>{dash}</div>
+                <div className={`${styles.bubble} ${styles.bubbleUser}`}>{dash}</div>
+              </>
+            )}
+            <div className={styles.ledger}>{tx("sys.thread-ledger")} {context?.fingerprint ?? dash}</div>
           </div>
 
           <div className={styles.composer} data-component-uid="SYS-01-CMP-CONVERSATION-COMPOSER" data-visual-uid="SYS-01-VIS-CONVERSATION-COMPOSER">
             <textarea
               className={styles.textarea}
               data-control-uid="SYS-01-INP-MESSAGE"
-              disabled={disabled}
+              disabled={disabled || generating}
               value={draft}
               placeholder={tx("sys.inp-message")}
               onFocus={() => {
-                void act("SYS-01-INP-MESSAGE");
+                void act("SYS-01-INP-MESSAGE", draft);
               }}
               onChange={(event) => {
                 setDraft(event.target.value);
               }}
             />
             <div className={styles.composerActions}>
-              <Btn uid="SYS-01-BTN-ATTACH" label={tx("sys.btn-attach")} onAct={act} disabled={disabled} />
+              <Btn
+                uid="SYS-01-BTN-ATTACH"
+                label={tx("sys.btn-attach")}
+                onAct={(uid) => void act(uid)}
+                disabled
+                title="SYS_ATTACH_VISUAL_PHASE_BLOCKED"
+              />
               <span className={styles.grow} />
-              <Btn uid="SYS-01-BTN-STOP" label={tx("sys.btn-stop")} onAct={act} disabled={disabled} />
-              <Btn uid="SYS-01-BTN-SEND" label={tx("sys.btn-send")} onAct={act} disabled={disabled} primary />
+              <Btn
+                uid="SYS-01-BTN-STOP"
+                label={tx("sys.btn-stop")}
+                onAct={(uid) => void act(uid)}
+                disabled={disabled || !generating}
+              />
+              <Btn uid="SYS-01-BTN-SEND" label={tx("sys.btn-send")} onAct={send} disabled={disabled || generating || !draft.trim()} primary />
             </div>
           </div>
 
           <div className={styles.dock} data-section-uid="SEC-ADMIN-SYS-01-ACTION-DOCK" data-component-uid="SYS-01-CMP-ACTION-DOCK" data-visual-uid="SYS-01-VIS-ACTION-DOCK">
-            <Btn uid="SYS-01-BTN-CANDIDATE-CREATE" label={tx("sys.btn-candidate-create")} onAct={act} disabled={disabled} primary />
-            <Btn uid="SYS-01-BTN-CR-CREATE" label={tx("sys.btn-cr-create")} onAct={act} disabled={disabled} />
-            <Btn uid="SYS-01-BTN-NAV-OPEN" label={tx("sys.btn-nav-open")} onAct={act} disabled={disabled} />
-            <Btn uid="SYS-01-BTN-SANDBOX-TEST" label={tx("sys.btn-sandbox-test")} onAct={act} disabled={disabled} />
+            <input
+              aria-label="goal"
+              placeholder="change goal"
+              value={goal}
+              disabled={disabled}
+              onChange={(event) => setGoal(event.target.value)}
+            />
+            <Btn uid="SYS-01-BTN-CANDIDATE-CREATE" label={tx("sys.btn-candidate-create")} onAct={createCandidate} disabled={disabled || !goal.trim()} primary />
+            <Btn uid="SYS-01-BTN-CR-CREATE" label={tx("sys.btn-cr-create")} onAct={(uid) => void act(uid)} disabled={disabled || change?.status !== "CANDIDATE"} />
+            <Btn
+              uid="SYS-01-BTN-NAV-OPEN"
+              label={tx("sys.btn-nav-open")}
+              onAct={(uid) => void act(uid)}
+              disabled
+              title="SYS_NAV_OPEN_VISUAL_PHASE_BLOCKED"
+            />
+            <Btn uid="SYS-01-BTN-SANDBOX-TEST" label={tx("sys.btn-sandbox-test")} onAct={(uid) => void act(uid)} disabled={disabled || (change?.status !== "REQUESTED" && change?.status !== "SANDBOX_FAIL")} />
           </div>
         </section>
 
@@ -260,7 +372,7 @@ export function SysVisual() {
           <h2>{tx("sys.decision-validation")}</h2>
           <div className={styles.card}>
             <h3>{tx("sys.p0p1")}</h3>
-            <p>{tx("sys.p0p1-hint")}</p>
+            <p>{openPCount ? `blocked: ${openPCount} open decisions` : tx("sys.p0p1-hint")}</p>
           </div>
           <div className={styles.card}>
             <h3>{tx("sys.duplicate")}</h3>
@@ -268,11 +380,17 @@ export function SysVisual() {
           </div>
           <div className={styles.card}>
             <h3>{tx("sys.impact")}</h3>
-            <p>{tx("sys.impact-hint")}</p>
+            <p>{change ? `${change.changeId} · ${change.status}` : tx("sys.impact-hint")}</p>
           </div>
           <div className={styles.card} data-section-uid="SEC-ADMIN-SYS-01-EXECUTION-PANEL" data-component-uid="SYS-01-CMP-EXECUTION-PANEL" data-visual-uid="SYS-01-VIS-EXECUTION-PANEL">
             <h3>{tx("sys.sandbox")}</h3>
-            <p>{tx("sys.sandbox-hint")}</p>
+            {sandbox ? (
+              <p data-sandbox-verdict={sandbox.verdict}>
+                {sandbox.verdict} · {sandbox.dimensions.map((row) => `${row.dimension.slice(0, 4)}:${row.outcome === "PASS" ? "P" : "F"}`).join(" ")}
+              </p>
+            ) : (
+              <p>{tx("sys.sandbox-hint")}</p>
+            )}
           </div>
           <div className={styles.card}>
             <h3>{tx("sys.release")}</h3>

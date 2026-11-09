@@ -748,6 +748,7 @@ export async function postSysAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  nextValue?: string,
 ): Promise<void> {
   await fetch("/api/system/action", {
     method: "POST",
@@ -756,7 +757,7 @@ export async function postSysAction(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, nextValue }),
   });
 }
 
