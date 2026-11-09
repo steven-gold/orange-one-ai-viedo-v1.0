@@ -255,3 +255,16 @@ Entries discovered by the Agent during task execution should follow this format:
   - SOC seeding is on-demand: the first GET /api/social triggers seedScope("soc") (26 projection rows + permission); tables are empty until the page is visited once.
   - SocVisual starts on stage 2 (useState<SocStage>(2)); stage sections render exclusively so duplicate label text ("目標類型" on discovery + manual target create, both stage 2) needs fieldByLabel nth(1). Entry link text is 社群發布 (not 發佈).
   - Known enhancement gaps (not defects): SOC has no AI wiring (content draft is manual entry, unlike EDIT/ASSET); publish stays PENDING_EXTERNAL until a real platform adapter credential exists (formalization scope, same as DEV discovery).
+
+[IAM-01 Probe & Materialization Recipe]
+- Date: 2026-11-09
+- Context: Discovered by Agent while completing IAM-01 word-contract implementation (commit 76766600)
+- Category: Testing Methods | Troubleshooting & Debugging
+- Instructions:
+  - Probe: `cd /tmp/opencode && NODE_PATH=$(npm root -g) node probe_iam_stages.mjs` — 19/19 ALL PASS
+  - Sandbox DB is MemoryClient writing SQLite via node:sqlite to /tmp/acpos-sandbox-workbench.sqlite (@libsql/client is NOT a project dependency; probe reads with DatabaseSync + PRAGMA busy_timeout=8000 + WAL to survive lock contention with the dev server)
+  - IAM route is `/admin/accounts` (direct nav, no surface switch needed); SOC needs GHS-CTL-SURFACE-ADMIN + 社群發布, DEV uses `/dev` direct
+  - Word contract core: 14 controls; front 9 + back 9 L1 (exact order); L1→Explicit Assignment materialization (permission+permissionTable pairing re-validated server-side); presets only prefill the draft; FRONT/BACK-ALL are draft select-all (never wildcard); COMPLETE requires fresh preview + confirm, then server executes plan rows (ASSIGN=INSERT ON CONFLICT DO NOTHING, REVOKE=DELETE) and invalidates the preview so re-complete fails with IAM_PREVIEW_REQUIRED (no double apply)
+  - Directory read-back: STATE-ACCOUNTS derived from DISTINCT account_uid across the 18 catalog permission tables + ghsn_account_permission_assignment; sessions from ghsn_account_session; never invent accounts/MFA/risk (word ban)
+  - COMPLETE success clears preview; stale-complete defensive path testable by seeding drifted IAM-01-STATE-PREVIEW (draftVersion mismatch)
+  - Probe re-run idempotency: DELETE ACC-LIMITED rows from ghsn_account_iam_permission + ghsn_account_sys_permission at probe start so the s7 ADDED delta stays deterministic
