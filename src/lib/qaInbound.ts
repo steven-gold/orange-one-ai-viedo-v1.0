@@ -24,6 +24,23 @@ function named(value: string | null | undefined): string {
   return exactName(value);
 }
 
+// The binding fingerprint carries the full handoff manifest JSON as evidence;
+// gate matching needs the exact checksum hash, so extract it from the JSON and
+// keep plain values (legacy checksum strings) untouched.
+function fingerprintChecksum(value: string | null | undefined): string {
+  const raw = (value ?? "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("{")) {
+    try {
+      const checksum = (JSON.parse(raw) as { checksum?: unknown }).checksum;
+      return typeof checksum === "string" ? checksum : "";
+    } catch {
+      return "";
+    }
+  }
+  return raw;
+}
+
 export function resolveQaInbound(
   coreCurrent: (uid: string) => string | null,
   assetCurrent: (uid: string) => string | null,
@@ -45,7 +62,8 @@ export function resolveQaInbound(
   const scriptView =
     named(editCurrent("EDIT-01-LBL-CURRENT-SCRIPT-SECTION")) || inbound.script;
   const checksum =
-    named(editCurrent("EDIT-01-LBL-BINDING-FINGERPRINT")) || inbound.handoffContract;
+    fingerprintChecksum(editCurrent("EDIT-01-LBL-BINDING-FINGERPRINT")) ||
+    fingerprintChecksum(inbound.handoffContract);
   const criteriaVersion =
     named(editCurrent("EDIT-01-LBL-EVAL-SUMMARY")) || (locked && handed ? targetOutput || checksum : "");
   const rights = named(videoCurrent("VIDEO-01-FLD-RIGHTS")) || video.rights;
