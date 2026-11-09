@@ -17,6 +17,7 @@ export const SYS_VISIBLE_CONTROLS = [
   "SYS-01-BTN-CR-CREATE",
   "SYS-01-BTN-NAV-OPEN",
   "SYS-01-BTN-SANDBOX-TEST",
+  "SYS-01-BTN-AUDIT",
 ] as const;
 
 export const SYS_CONTROL_ACTIONS: Record<string, string> = {
@@ -32,6 +33,7 @@ export const SYS_CONTROL_ACTIONS: Record<string, string> = {
   "SYS-01-BTN-CR-CREATE": "ACT-CR-CREATE",
   "SYS-01-BTN-NAV-OPEN": "ACT-NAV-OPEN",
   "SYS-01-BTN-SANDBOX-TEST": "SYS-01-ACT-SANDBOX-TEST",
+  "SYS-01-BTN-AUDIT": "SYS-01-ACT-LEDGER-DECIDE",
 };
 
 export interface SysFieldValue {
