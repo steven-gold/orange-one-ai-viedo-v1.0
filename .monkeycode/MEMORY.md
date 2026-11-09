@@ -214,3 +214,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - EDIT has no NOOP-VIEW action (that is video-only); use EDIT-01-ACT-BLUEPRINT-VIEW as a harmless act to re-derive inbound.
   - probe_edit_handoff h4 asserts QA-01-FLD-TARGET-OUTPUT == current EDIT-01-FLD-SOURCE-VERSION (cross-page consistency), not a magic seed value, so it survives seed drift between probes.
   - Sandbox verification suite as of 8addfb29: probe_chain_full 15, probe_edit_timeline 22, probe_edit_handoff 8, probe_edit_gaps 4, probe_video_gaps 13, unit tests 24 pass, tsc clean.
+
+[Project Knowledge Summary]
+- Date: 2026-11-09
+- Context: Discovered by Agent while implementing the real TTS adapter (90b3717e)
+- Category: Testing Methods
+- Instructions:
+  - VOICE-GENERATE now routes through src/server/ai/ttsClient.ts (openai-compatible POST {profile.url} with {model,input,voice,response_format}); the text-to-speech profile needs endpointPath=/v1/audio/speech and capabilityType=text-to-speech (isCapabilityToken allows it, eligibleProfiles matches via supportsCapability). Sandbox TTS profile AIAPI-01-PROFILE-TTS points at the mock speech endpoint.
+  - A successful take MUST re-base the dialogue timing binding to CURRENT (server rebuilds binding JSON via buildDialogueTimingBinding with live refs) — otherwise dialogueTracksInUse sees the new take with a stale stored binding and VERSION-LOCK/RENDER-EXECUTE disable forever, the success-path twin of the earlier voice-bind lesson. A failed generation still writes failed + provider error code and touches no binding.
+  - probe_edit_timeline now resets voice-take/binding fields at start (stale take + stage-advanced script ref = REVERIFY_REQUIRED lock block — correct fail-closed semantics, not a bug) and asserts t22 (VTK take lands) + t22b (binding CURRENT). clickWhenReady retries the click 3 times around React render batches that flip disabled state between readiness check and click.
+  - Probe verification suite as of 90b3717e: edit_timeline 26 (incl. t22b), edit_handoff 8, edit_gaps 4, video_gaps 13, chain_full 15, unit tests 24, tsc clean.
