@@ -268,3 +268,18 @@ Entries discovered by the Agent during task execution should follow this format:
   - Directory read-back: STATE-ACCOUNTS derived from DISTINCT account_uid across the 18 catalog permission tables + ghsn_account_permission_assignment; sessions from ghsn_account_session; never invent accounts/MFA/risk (word ban)
   - COMPLETE success clears preview; stale-complete defensive path testable by seeding drifted IAM-01-STATE-PREVIEW (draftVersion mismatch)
   - Probe re-run idempotency: DELETE ACC-LIMITED rows from ghsn_account_iam_permission + ghsn_account_sys_permission at probe start so the s7 ADDED delta stays deterministic
+
+[SYS-01 AI Workbench Probe & Conversation Recipe]
+- Date: 2026-11-09
+- Context: Discovered by Agent while completing SYS-01 system lifecycle AI workbench (commits 994b2835/80d6f33f/dc65162b)
+- Category: Testing Methods | Troubleshooting & Debugging | Workflow & Collaboration
+- Instructions:
+  - Probe: `cd /tmp/opencode && NODE_PATH=$(npm root -g) node probe_sys_stages.mjs` — 26/26 ALL PASS; unit test `NODE_PATH=$(npm root -g) npx tsx --test src/lib/sysActionPreview.test.ts`
+  - SYS route is `/admin/system` (order 1, direct nav); state projections live in ghsn_sys_field_projection (SYS-01-STATE-CONTEXT/CONVERSATION/LEDGER/CHANGE/SANDBOX/MODE/GENERATION/ERROR/ROUTE)
+  - Conversation chain: SINGLE = 1 provider reply; MULTI+DISCUSSION = A propose -> B review (@A response is session data, never source fact) -> synthesis; MULTI+PARALLEL requires route ready>=2, alias count = min(3, ready), fail-closed with FAILED turn when insufficient
+  - CRITICAL: markFailed must preserve existing turns + append FAILED turn — markFailed([]) silently wipes the conversation (was a real bug caught by probe s6)
+  - SYS-01-BTN-AUDIT must be registered in BOTH SYS_VISIBLE_CONTROLS and SYS_CONTROL_ACTIONS ("SYS-01-ACT-LEDGER-DECIDE") or the API rejects the control before previewSysAction runs
+  - seedSysContext skips re-seed when existing value starts with "{" — probe simulates unresolved context by writing '{corrupted' (parse fails in readSysWorkbench, seed skips, pre-response gate fires SYS-01-ERR-AI-MODE-CONTEXT); deleting the row does NOT work because seed re-runs before preview on every action
+  - SysVisual only refetches on tick (in-page act()); API-driven probes must trigger one UI click to refresh state before asserting DOM (bubbles/[data-sandbox-verdict])
+  - Deployment verification markers: COUNCIL-DISCUSSION + data-turn-role = new SysVisual (80d6f33f); IAM features live under `/admin/accounts` (NOT /admin/iam — that path does not exist); SYS-01-CMP-ACTION-DOCK exists in both old and new versions, use council markers to distinguish
+  - Vercel deploy: git push origin HEAD:main auto-triggers; no Vercel/gh credentials in this environment (gh 401, no VERCEL_TOKEN) — if the线上 marker stays stale >15min while local `npx next build` passes, report to user to check the Vercel dashboard instead of guessing
