@@ -224,3 +224,12 @@ Entries discovered by the Agent during task execution should follow this format:
   - A successful take MUST re-base the dialogue timing binding to CURRENT (server rebuilds binding JSON via buildDialogueTimingBinding with live refs) — otherwise dialogueTracksInUse sees the new take with a stale stored binding and VERSION-LOCK/RENDER-EXECUTE disable forever, the success-path twin of the earlier voice-bind lesson. A failed generation still writes failed + provider error code and touches no binding.
   - probe_edit_timeline now resets voice-take/binding fields at start (stale take + stage-advanced script ref = REVERIFY_REQUIRED lock block — correct fail-closed semantics, not a bug) and asserts t22 (VTK take lands) + t22b (binding CURRENT). clickWhenReady retries the click 3 times around React render batches that flip disabled state between readiness check and click.
   - Probe verification suite as of 90b3717e: edit_timeline 26 (incl. t22b), edit_handoff 8, edit_gaps 4, video_gaps 13, chain_full 15, unit tests 24, tsc clean.
+
+[Project Knowledge Summary]
+- Date: 2026-11-09
+- Context: Discovered by Agent while auditing the AIAPI admin page for gaps (8d3b4093)
+- Category: Testing Methods
+- Instructions:
+  - AIAPI action API reads body.value (NOT body.nextValue like the workbench pages) and the value must be a JSON payload with profileId for profile-scoped actions; a bare profileId string yields AIAPI_PROFILE_NOT_FOUND from the preview validation layer.
+  - AIAPI page gap fixes: the profile-form capability select now offers AIAPI_CAPABILITY_TOKENS (text-to-speech/image-generation/video-generation/audio-embedding) from src/lib/aiapiProfiles.ts, and runConnectionTest routes text-to-speech profiles through callSpeechProvider (real synthesis, evidence = bytes+sha256) instead of a chat ping.
+  - Sandbox TTS profile AIAPI-01-PROFILE-TTS tests PASS (speech 5152B sha256:f8f612a4850e2aeb) — same audio the mock speech endpoint serves to VOICE-GENERATE takes.
