@@ -7,6 +7,7 @@ import { AiapiClientError, fetchAiapiReadModel, postAiapiAction, type AiapiField
 import { Icon, type IconName } from "@/components/ui/Icon";
 import {
   AIAPI_CAPABILITIES,
+  AIAPI_CAPABILITY_TOKENS,
   AIAPI_PROFILE_FIELD_GROUPS,
   AIAPI_PROMPT_TEMPLATE_TOKEN,
   AIAPI_REGISTRY_UID,
@@ -333,7 +334,7 @@ function ModalForm({
         return (
           <select className={styles.formInput} value={value} onChange={(event) => update(field.key, event.target.value)}>
             <option value="">—</option>
-            {Array.from(new Set([...AIAPI_CAPABILITIES, value].filter(Boolean))).map((capability) => (
+            {Array.from(new Set([...AIAPI_CAPABILITIES, ...AIAPI_CAPABILITY_TOKENS, value].filter(Boolean))).map((capability) => (
               <option key={capability} value={capability}>
                 {displayAiapiCapability(capability, t)}
               </option>

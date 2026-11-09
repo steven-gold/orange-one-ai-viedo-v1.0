@@ -8,6 +8,11 @@ export const AIAPI_CAPABILITIES = ["chat", "correction"] as const;
 
 export type AiapiCapability = (typeof AIAPI_CAPABILITIES)[number];
 
+// Capability tokens a profile can declare beyond the two governed ones.
+// They register like any token and become routable when a consumer asks
+// for that capability (e.g. voice generation queries text-to-speech).
+export const AIAPI_CAPABILITY_TOKENS = ["text-to-speech", "image-generation", "video-generation", "audio-embedding"] as const;
+
 /**
  * Routing only accepts the two governed capabilities. Provider modules can
  * declare any further token (video, image, audio...); those are registered and

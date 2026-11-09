@@ -9,6 +9,7 @@ import {
   profileFingerprint,
   readProfiles,
   serializeProfiles,
+  supportsCapability,
   type AiapiProfile,
 } from "@/lib/aiapiProfiles";
 import {
@@ -24,6 +25,7 @@ import {
   registryEntry,
 } from "@/lib/aiapiProviderCatalog";
 import { mirrorProfile } from "@/lib/aiapiActionPreview";
+import { createHash } from "node:crypto";
 import { getAiapiCredential, setAiapiCredential } from "../db/aiapiCredential";
 import { getSqlClient } from "../db/client";
 import {
@@ -188,6 +190,40 @@ async function callProvider(profile: AiapiProfile, credential: string, instructi
       };
     }
     return { ok: true, evidence: text.slice(0, 120) };
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") return { ok: false, code: "AIAPI_PROVIDER_TIMEOUT" };
+    return { ok: false, code: "AIAPI_PROVIDER_UNREACHABLE" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Speech profiles are verified by synthesizing a short utterance; the test
+// passes when the provider returns real audio bytes, and the evidence carries
+// the byte count and audio checksum for honest display.
+async function callSpeechProvider(profile: AiapiProfile, credential: string): Promise<AiapiOutcome & { evidence?: string }> {
+  const fields = await loadFields();
+  if (fields.get("AIAPI-01-FLD-KILL-SWITCH") === "ON") return { ok: false, code: "AIAPI_KILL_SWITCH_ON" };
+  const url = providerUrl(profile);
+  if (!url) return { ok: false, code: "AIAPI_PROFILE_ENDPOINT_REQUIRED" };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutOf(profile));
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: JSON.stringify({ model: profile.modelId, input: "connection test", voice: "alloy", response_format: "mp3" }),
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      const body = (await response.text().catch(() => "")).replace(/\s+/g, " ").trim().slice(0, 160);
+      return { ok: false, code: "AIAPI_PROVIDER_HTTP_ERROR", detail: `HTTP ${response.status}${body ? ` · ${body}` : ""}` };
+    }
+    const audio = new Uint8Array(await response.arrayBuffer());
+    if (!audio.byteLength) return { ok: false, code: "AIAPI_PROVIDER_EMPTY_RESPONSE", detail: "HTTP 200 · empty audio body" };
+    const sha256 = createHash("sha256").update(audio).digest("hex").slice(0, 16);
+    return { ok: true, evidence: `speech ${audio.byteLength}B sha256:${sha256}` };
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") return { ok: false, code: "AIAPI_PROVIDER_TIMEOUT" };
     return { ok: false, code: "AIAPI_PROVIDER_UNREACHABLE" };
@@ -810,7 +846,12 @@ export async function runConnectionTest(profileIdRaw: string | undefined): Promi
   if (!credential) return { ok: false, code: "AIAPI_CREDENTIAL_REQUIRED" };
   if (!target.adapterType) return { ok: false, code: "AIAPI_PROFILE_ADAPTER_REQUIRED" };
 
-  const result = await callProvider(target, credential, compiledInstruction(target, "ping"));
+  // Text-to-speech profiles are tested by synthesizing a tiny utterance;
+  // a chat ping against a speech endpoint would fail misleadingly.
+  const supportsSpeech = supportsCapability(target, "text-to-speech");
+  const result = supportsSpeech
+    ? await callSpeechProvider(target, credential)
+    : await callProvider(target, credential, compiledInstruction(target, "ping"));
   const updated: AiapiProfile = {
     ...target,
     lastTest: result.ok ? "PASS" : "FAIL",
