@@ -245,3 +245,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - Candidate creation requires: companies[0] default-selected (eligible = ACTIVE EMAIL contact + not suppressed), subject/body form filled (placeholder-located), and the detail drawer (SEC-09) opens after create and intercepts stage navigation — close it via page.evaluate native .click() on the drawerHead button (playwright force clicks land on spans).
   - KILL-SWITCH fires TWO dialogs (confirm then prompt); register page.on("dialog", accept) around the click, otherwise headless dismisses prompt -> reason empty -> act never fires. Kill success asserts via STATE-CAMPAIGN (status=STOPPED + killReason), there is no FLD-KILL-SWITCH field.
   - Probe start resets ghsn_dev_field_projection rows for JOB/ERROR/CANDIDATES/CAMPAIGN/DELIVERIES/AUDIENCE/EXPORT/MERGE — leftover APPROVED campaigns fork the campaign state machine on reruns.
+
+[Project Knowledge Summary]
+- Date: 2026-11-09
+- Context: Discovered by Agent while auditing SOC-01 social publishing for gaps and building probe_soc_stages.mjs (17 assertions ALL PASS)
+- Category: Testing Methods
+- Instructions:
+  - SOC-01 is functionally complete but had zero UI probe coverage; probe_soc_stages.mjs (/tmp/opencode, 17 assertions) now drives the full lifecycle: platform config -> discovery intent/stop -> manual target -> account bind (BOUND_LOCKED) -> credential reveal (reason required) -> join -> content save (REVIEW+hash) -> candidate approve -> policy -> publish (PENDING_EXTERNAL + idempotency) -> duplicate rejected -> manual report (POSTED) -> kill-switch gate honesty.
+  - SOC seeding is on-demand: the first GET /api/social triggers seedScope("soc") (26 projection rows + permission); tables are empty until the page is visited once.
+  - SocVisual starts on stage 2 (useState<SocStage>(2)); stage sections render exclusively so duplicate label text ("目標類型" on discovery + manual target create, both stage 2) needs fieldByLabel nth(1). Entry link text is 社群發布 (not 發佈).
+  - Known enhancement gaps (not defects): SOC has no AI wiring (content draft is manual entry, unlike EDIT/ASSET); publish stays PENDING_EXTERNAL until a real platform adapter credential exists (formalization scope, same as DEV discovery).
