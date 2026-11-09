@@ -9,6 +9,7 @@ import { previewAiapiAction } from "@/lib/aiapiActionPreview";
 import { applyDiscoveryCollection, previewDevAction } from "@/lib/devActionPreview";
 import { previewSocAction } from "@/lib/socActionPreview";
 import { previewIamAction } from "@/lib/iamActionPreview";
+import { previewSysAction } from "@/lib/sysActionPreview";
 import { IAM_BACK_L1_CATALOG, IAM_FRONT_L1_CATALOG } from "@/lib/iamState";
 import { kbAcquisitionPatchFromCollect, previewKbAction } from "@/lib/kbActionPreview";
 import { collectDiscoverySignals } from "../acquisition/collect";
@@ -1827,6 +1828,19 @@ export async function applyWorkbenchAction(
       "QA-01-FLD-PROVENANCE": inbound.provenance || null,
     };
     await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
+    return;
+  }
+  if (page === "sys") {
+    const { writeSysRouteSnapshot, seedSysContext, runSysConversationReply, runSysSandbox } = await import("./sysConversation");
+    await writeSysRouteSnapshot();
+    await seedSysContext();
+    const written = await applyProjectedAction(FIELD_TABLE.sys, previewSysAction, controlUid, actionUid, nextValue);
+    if (written && actionUid === "SYS-01-ACT-CONVERSATION-SEND" && accountUid) {
+      await runSysConversationReply(accountUid);
+    }
+    if (written && actionUid === "SYS-01-ACT-SANDBOX-TEST" && accountUid) {
+      await runSysSandbox(accountUid);
+    }
     return;
   }
   if (page === "iam") {
