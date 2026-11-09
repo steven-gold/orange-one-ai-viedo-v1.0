@@ -233,3 +233,15 @@ Entries discovered by the Agent during task execution should follow this format:
   - AIAPI action API reads body.value (NOT body.nextValue like the workbench pages) and the value must be a JSON payload with profileId for profile-scoped actions; a bare profileId string yields AIAPI_PROFILE_NOT_FOUND from the preview validation layer.
   - AIAPI page gap fixes: the profile-form capability select now offers AIAPI_CAPABILITY_TOKENS (text-to-speech/image-generation/video-generation/audio-embedding) from src/lib/aiapiProfiles.ts, and runConnectionTest routes text-to-speech profiles through callSpeechProvider (real synthesis, evidence = bytes+sha256) instead of a chat ping.
   - Sandbox TTS profile AIAPI-01-PROFILE-TTS tests PASS (speech 5152B sha256:f8f612a4850e2aeb) — same audio the mock speech endpoint serves to VOICE-GENERATE takes.
+
+[Project Knowledge Summary]
+- Date: 2026-11-09
+- Context: Discovered by Agent while building probe_dev_stages.mjs (DEV-01 five-stage interactive probe, 15 assertions ALL PASS)
+- Category: Testing Methods
+- Instructions:
+  - probe_dev_stages.mjs (/tmp/opencode) drives the full DEV-01 lifecycle: profile save -> discovery start/stop -> directory search -> candidate create/decide -> campaign create/search/approve -> kill switch. Run: `cd /tmp/opencode && NODE_PATH=$(npm root -g) node probe_dev_stages.mjs`.
+  - Route difference: /dev renders the full DEV-01 workbench (22+ controls) after the GHS surface shell (click GHS-CTL-SURFACE-ADMIN then the "企業自動開發系統" entry -> lands on /admin/system, then the entry link); /admin/dev is a STRIPPED embedded variant with only 9 controls. Probes must use the /dev path. Suspected root cause of the user-reported "in-window 搜集設定黏連" issue.
+  - Discovery job state machine: START -> EXTERNAL_PENDING (PAUSE/RESUME controls are disabled client-side, mirroring the server gate) -> STOP works from EXTERNAL_PENDING -> STOPPED. Probe must branch on status instead of assuming RUNNING.
+  - Candidate creation requires: companies[0] default-selected (eligible = ACTIVE EMAIL contact + not suppressed), subject/body form filled (placeholder-located), and the detail drawer (SEC-09) opens after create and intercepts stage navigation — close it via page.evaluate native .click() on the drawerHead button (playwright force clicks land on spans).
+  - KILL-SWITCH fires TWO dialogs (confirm then prompt); register page.on("dialog", accept) around the click, otherwise headless dismisses prompt -> reason empty -> act never fires. Kill success asserts via STATE-CAMPAIGN (status=STOPPED + killReason), there is no FLD-KILL-SWITCH field.
+  - Probe start resets ghsn_dev_field_projection rows for JOB/ERROR/CANDIDATES/CAMPAIGN/DELIVERIES/AUDIENCE/EXPORT/MERGE — leftover APPROVED campaigns fork the campaign state machine on reruns.
