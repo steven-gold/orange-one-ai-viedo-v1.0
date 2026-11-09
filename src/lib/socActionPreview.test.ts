@@ -237,6 +237,50 @@ function seedReady(apply: (controlUid: string, actionUid: string, nextValue?: st
 }
 
 {
+  // Reject / return branches: candidate leaves REVIEW, the hash is re-sealed
+  // (the package content changed semantically), and no publish request appears.
+  bindSocialAdapterForTest(null);
+  const s = store();
+  s.apply("SOC-01-BTN-PLATFORM-CONFIG", "SOC-01-ACT-PLATFORM-CONFIG", JSON.stringify({ platformKey: "linkedin", displayName: "LinkedIn" }));
+  s.apply(
+    "SOC-01-BTN-CONTENT-SAVE",
+    "SOC-01-ACT-CONTENT-SAVE",
+    JSON.stringify({ releaseSource: "REL-REJ", platformKey: "linkedin", variant: "原始文案" }),
+  );
+  const rejectedDraft = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
+
+  s.apply("SOC-01-BTN-CANDIDATE-DECIDE", "SOC-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ packageId: rejectedDraft?.packageId, decision: "REJECT" }));
+  const rejected = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
+  assert(rejected?.candidate === "REJECTED", "reject marks the candidate rejected");
+  assert(rejected?.version === rejectedDraft?.version + 1, "reject bumps the version");
+  assert(rejected?.hash !== rejectedDraft?.hash, "reject re-seals the hash");
+  assert(parseJson<SocRequest[]>(s.current(SOC_REQUESTS_UID), []).length === 0, "reject never creates a publish request");
+
+  // RETURN keeps the same shape but also re-seals.
+  s.apply(
+    "SOC-01-BTN-CONTENT-SAVE",
+    "SOC-01-ACT-CONTENT-SAVE",
+    JSON.stringify({ releaseSource: "REL-RET", platformKey: "linkedin", variant: "回修文案" }),
+  );
+  const returnDraft = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
+  s.apply("SOC-01-BTN-CANDIDATE-DECIDE", "SOC-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ packageId: returnDraft?.packageId, decision: "RETURN" }));
+  const returned = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
+  assert(returned?.candidate === "RETURN", "return marks the candidate for rework");
+  assert(returned?.hash !== returnDraft?.hash, "return re-seals the hash");
+
+  // Unknown decision tokens fall back to APPROVE (decisionFrom returns null).
+  s.apply(
+    "SOC-01-BTN-CONTENT-SAVE",
+    "SOC-01-ACT-CONTENT-SAVE",
+    JSON.stringify({ releaseSource: "REL-FB", platformKey: "linkedin", variant: "兜底文案" }),
+  );
+  const fallbackDraft = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
+  s.apply("SOC-01-BTN-CANDIDATE-DECIDE", "SOC-01-ACT-CANDIDATE-DECIDE", JSON.stringify({ packageId: fallbackDraft?.packageId, decision: "NOT_A_DECISION" }));
+  const fallback = parseJson<SocPackage | null>(s.current(SOC_PACKAGE_UID), null);
+  assert(fallback?.candidate === "APPROVED", "unknown decision token falls back to approve");
+}
+
+{
   bindSocialAdapterForTest(null);
   const target: SocTarget = {
     targetId: "TGT-READY",
