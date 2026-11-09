@@ -1632,16 +1632,41 @@ export async function applyWorkbenchAction(
       await fillEditEvalIssues(FIELD_TABLE.edit, signal);
     }
     if (actionUid === "EDIT-01-ACT-VOICE-GENERATE" && written) {
-      // No TTS adapter exists in this deployment. Probe the configured
-      // providers honestly and fail closed instead of fabricating a take.
-      let ttsProviders = 0;
+      // Route through the configured text-to-speech profile. Reads the script
+      // text without ever binding it, so the render gate stays unaffected;
+      // failures stay honest and closed with a provider error code.
+      const script = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-VOICE-SCRIPT")) || (await readField(FIELD_TABLE.edit, "EDIT-01-LBL-CURRENT-SCRIPT-SECTION")) || "";
       try {
-        ttsProviders = (await resolveProviderConfigs("text-to-speech")).length;
-      } catch {
-        ttsProviders = 0;
+        const { generateSpeechTake } = await import("@/server/ai/ttsClient");
+        const take = await generateSpeechTake(script, signal);
+        await writeField(FIELD_TABLE.edit, "EDIT-01-LST-VOICE-TAKES", take.takeId);
+        await writeField(FIELD_TABLE.edit, "EDIT-01-BTN-VOICE-GENERATE", "generated");
+        await writeField(FIELD_TABLE.edit, "EDIT-01-LBL-ERROR-STATE", "none");
+        // A new take re-bases the dialogue timing: rebuild the binding as
+        // CURRENT against live refs (including the fresh take) so the lock
+        // and render gates stay open for this legitimately generated voice.
+        const { buildDialogueTimingBinding, serializeDialogueTimingBinding, DIALOGUE_LIPSYNC_BINDING_UID, DIALOGUE_SUBTITLE_BINDING_UID } = await import("@/lib/dialogueTimingBinding");
+        const bindingUids = [
+          "EDIT-01-FLD-VOICE-SCRIPT",
+          "EDIT-01-LBL-CURRENT-SCRIPT-SECTION",
+          "EDIT-01-FLD-VOICE-ASSET",
+          "EDIT-01-LST-VOICE-TAKES",
+          "EDIT-01-FLD-SUB-TEXT",
+          "EDIT-01-FLD-SUB-TIMECODE",
+          "EDIT-01-FLD-LIPSYNC-TARGET",
+          "EDIT-01-FLD-SOURCE-VERSION",
+        ];
+        const bindingCache = new Map<string, string | null>();
+        for (const uid of bindingUids) bindingCache.set(uid, await readField(FIELD_TABLE.edit, uid));
+        const binding = buildDialogueTimingBinding((uid) => bindingCache.get(uid) ?? null, "CURRENT");
+        const bindingRaw = serializeDialogueTimingBinding(binding);
+        await writeField(FIELD_TABLE.edit, DIALOGUE_LIPSYNC_BINDING_UID, bindingRaw);
+        await writeField(FIELD_TABLE.edit, DIALOGUE_SUBTITLE_BINDING_UID, bindingRaw);
+      } catch (error) {
+        const code = error instanceof Error && "code" in error ? String((error as { code?: unknown }).code) : "TTS_PROVIDER_UNREACHABLE";
+        await writeField(FIELD_TABLE.edit, "EDIT-01-BTN-VOICE-GENERATE", "failed");
+        await writeField(FIELD_TABLE.edit, "EDIT-01-LBL-ERROR-STATE", code);
       }
-      await writeField(FIELD_TABLE.edit, "EDIT-01-BTN-VOICE-GENERATE", "failed");
-      await writeField(FIELD_TABLE.edit, "EDIT-01-LBL-ERROR-STATE", ttsProviders ? "TTS_ADAPTER_NOT_IMPLEMENTED" : "TTS_PROVIDER_NOT_CONFIGURED");
     }
     if (actionUid === "EDIT-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");
