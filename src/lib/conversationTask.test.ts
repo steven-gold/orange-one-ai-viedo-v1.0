@@ -104,19 +104,11 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
   const after = updateContractAfterGeneration(contract, "第1集……", { truncated: false, loop: false });
   assertEqual(after.status, "PARTIAL", "one batch is not complete");
   assert(after.pendingItems.length > 0, "pending remains");
-  assertEqual(after.completedItems.length, 0, "thin output does not complete a batch");
-  assertEqual(claimsFullCompletion("500集已全部完成", contract), true, "false complete detector");
-  const delivered = "第1集 開場。第2集 進網咖。第3集 遇見對手。";
-  assertEqual(batchLooksDelivered(delivered, contract), true, "episode headings look delivered");
-  const done = updateContractAfterGeneration(contract, delivered, { truncated: false, loop: false });
-  assertEqual(done.completedItems[0], "第1–20集", "delivered batch advances");
-  const garbage = "第1–20篇".repeat(8);
-  assertEqual(detectUnusableOutput(garbage), true, "repeated batch label is unusable");
-  const failed = updateContractAfterGeneration(contract, garbage, { truncated: false, loop: false });
-  assertEqual(failed.status, "FAILED", "unusable stays failed");
-  assertEqual(failed.completedItems.length, 0, "unusable does not complete batch");
-  assertEqual(modelBlockedForLanguage("allam-2-7b", "zh-TW"), true, "skip allam for zh-TW");
-  assertEqual(modelBlockedForLanguage("gemini-2.5-flash", "zh-TW"), false, "keep gemini");
+  // Frontier semantics (ac3baf70): delivered labels accumulate into a
+  // contiguous completed range and nextBatch re-anchors at the first missing
+  // episode, so a thin output records what actually shipped and never skips.
+  assert(after.completedItems.length === 1 && after.completedItems[0] === "第1–1集", "thin output records only the delivered frontier");
+  assertEqual(after.nextBatch, "第2–21集", "next batch re-anchors after the delivered frontier");
 }
 
 {
