@@ -19,6 +19,7 @@ function json<T>(text: string | null, fallback: T): T {
 function store(seed: Record<string, string> = {}): {
   current: (uid: string) => string | null;
   apply: (controlUid: string, actionUid: string, nextValue?: string) => Record<string, string>;
+  seed: (uid: string, value: string) => void;
 } {
   const values = new Map<string, string>(Object.entries(seed));
   const current = (uid: string) => values.get(uid) ?? null;
@@ -27,7 +28,8 @@ function store(seed: Record<string, string> = {}): {
     for (const [uid, value] of Object.entries(patch)) values.set(uid, value);
     return patch;
   };
-  return { current, apply };
+  const seedState = (uid: string, value: string) => values.set(uid, value);
+  return { current, apply, seed: seedState };
 }
 
 const ACCOUNT: IamAccountRow = {
@@ -136,6 +138,27 @@ const ACCOUNT: IamAccountRow = {
   assert(revoke.permission === "workspace.dashboard.view", "revoke plan row is exact");
   // Silent future grant: unchanged rows never enter the plan.
   assert(!plan.some((row) => (row as { mode?: string }).mode === "UNCHANGED"), "no silent grant of unchanged rows");
+  // COMPLETE carries the preview baseline: the server re-reads the governed
+  // tables before materializing and refuses on drift (word expected_version).
+  const baseline = json<{ frontendL1: string[]; backendL1: string[] }>(complete["IAM-01-STATE-PLAN-BASELINE"], { frontendL1: ["sentinel"], backendL1: ["sentinel"] });
+  assert(Array.isArray(baseline.frontendL1) && baseline.frontendL1.includes("iam.front-01"), "plan baseline snapshots the preview aggregate");
+}
+
+{
+  // Identity schema fail-closed: a basicData field outside the registered
+  // schema is refused by VALIDATE and PREVIEW, never silently dropped.
+  const s = store({
+    "IAM-01-STATE-ACCOUNTS": JSON.stringify([ACCOUNT]),
+    "IAM-01-STATE-MODE": "EDIT",
+  });
+  s.apply("IAM-01-BTN-EDIT", "IAM-01-ACT-OPEN-EDIT", JSON.stringify({ accountId: "ACC-T1" }));
+  const draftRow = JSON.parse(s.current("IAM-01-STATE-DRAFT") ?? "{}") as { basicData: Record<string, string> };
+  draftRow.basicData = { ...draftRow.basicData, displayName: "user", sneakyField: "injected" };
+  s.seed("IAM-01-STATE-DRAFT", JSON.stringify(draftRow));
+  const schemaRefused = s.apply("IAM-01-BTN-VALIDATE", "IAM-01-ACT-VALIDATE-DRAFT");
+  assert(json<{code: string}>(schemaRefused["IAM-01-STATE-ERROR"], { code: "" }).code === "IAM-01-ERR-IDENTITY-SCHEMA:sneakyField", "unknown basic-data field names itself in the error");
+  const previewRefused = s.apply("IAM-01-BTN-PREVIEW", "IAM-01-ACT-PREVIEW");
+  assert(json<{code: string}>(previewRefused["IAM-01-STATE-ERROR"], { code: "" }).code === "IAM-01-ERR-IDENTITY-SCHEMA:sneakyField", "preview refuses schema drift too");
 }
 
 {

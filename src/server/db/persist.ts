@@ -113,6 +113,8 @@ import {
   IAM_CONTROL_ACTIONS,
   IAM_PAGE_UID,
   IAM_PERMISSION,
+  IAM_CONFIGURE_PERMISSION,
+  IAM_GATE_ENFORCED,
   IAM_PROJECTION,
   IAM_ROUTE,
   IAM_VISIBLE_CONTROLS,
@@ -1154,12 +1156,49 @@ interface IamFieldRow {
 
 export async function persistHasIamPermission(accountUid: string): Promise<boolean> {
   await seedScope("iam");
-  if (!pagePermissionEnforced()) return true;
+  if (!iamGateEnforced()) return true;
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_iam_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, IAM_PERMISSION],
   );
   return Number(rows[0]?.n ?? 0) > 0;
+}
+
+// Word §gates: GATE-PAGE (page view) -> GATE-MANAGE (account management) ->
+// GATE-DRAFT/PREVIEW (permission configuration) -> GATE-COMPLETE (both).
+// Role/department inference is forbidden: the check reads only explicit
+// Account Permission Assignments and reports the exact missing permission.
+// IAM-01 enforces its gate independently of the site-wide page-access policy.
+const iamGateEnforced = () => IAM_GATE_ENFORCED || pagePermissionEnforced();
+
+const IAM_CONFIG_ACTIONS: ReadonlySet<string> = new Set([
+  "IAM-01-ACT-PRESET-APPLY-TO-DRAFT",
+  "IAM-01-ACT-FRONT-ALL-DRAFT",
+  "IAM-01-ACT-BACK-ALL-DRAFT",
+  "IAM-01-ACT-L1-DRAFT-SET",
+  "IAM-01-ACT-PREVIEW",
+]);
+
+export async function evaluateIamGate(accountUid: string, actionUid: string): Promise<string | null> {
+  await seedScope("iam");
+  if (!iamGateEnforced()) return null;
+  const has = async (permission: string): Promise<boolean> => {
+    const rows = await getSqlClient().all<{ n: number }>(
+      "SELECT count(*)::int AS n FROM ghsn_account_iam_permission WHERE account_uid = ? AND permission_uid = ?",
+      [accountUid, permission],
+    );
+    return Number(rows[0]?.n ?? 0) > 0;
+  };
+  const userOk = await has(IAM_PERMISSION);
+  const configOk = await has(IAM_CONFIGURE_PERMISSION);
+  if (actionUid === "IAM-01-ACT-COMPLETE") {
+    if (userOk && configOk) return null;
+    return `missing ${[!userOk && IAM_PERMISSION, !configOk && IAM_CONFIGURE_PERMISSION].filter(Boolean).join(", ")}`;
+  }
+  if (IAM_CONFIG_ACTIONS.has(actionUid)) {
+    return configOk ? null : `missing ${IAM_CONFIGURE_PERMISSION}`;
+  }
+  return userOk ? null : `missing ${IAM_PERMISSION}`;
 }
 
 const IAM_STATE_CONTROLS = [
@@ -1172,6 +1211,7 @@ const IAM_STATE_CONTROLS = [
   "IAM-01-STATE-MODE",
   "IAM-01-STATE-AUDIT",
   "IAM-01-STATE-PLAN",
+  "IAM-01-STATE-PLAN-BASELINE",
   "IAM-01-STATE-MATERIALIZED",
 ] as const;
 

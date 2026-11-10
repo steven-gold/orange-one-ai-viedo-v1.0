@@ -9,6 +9,7 @@ import {
   IAM_DEPT_PRESETS,
   IAM_FRONT_L1_CATALOG,
   IAM_STATE_ACCOUNTS_UID,
+  IAM_STATE_APPLY_UID,
   IAM_STATE_DRAFT_UID,
   IAM_STATE_ERROR_UID,
   IAM_STATE_MATERIALIZED_UID,
@@ -137,6 +138,10 @@ export function IamVisual() {
   );
   const materialized = useMemo(
     () => parseJson<IamMaterialized>(valueOf(IAM_STATE_MATERIALIZED_UID), {}),
+    [valueOf],
+  );
+  const applyResult = useMemo(
+    () => parseJson<{ accountId?: string; status?: string; applied?: string[]; failed?: string[] }>(valueOf(IAM_STATE_APPLY_UID), {}),
     [valueOf],
   );
 
@@ -330,7 +335,13 @@ export function IamVisual() {
             </div>
             <div className={styles.card}>
               <h3>{tx("iam.apply-audit")}</h3>
-              <p>{materialized.at ? `assigned=${materialized.assigned ?? 0} revoked=${materialized.revoked ?? 0}` : tx("iam.apply-audit-hint")}</p>
+              <p>
+                {materialized.at
+                  ? `assigned=${materialized.assigned ?? 0} revoked=${materialized.revoked ?? 0} refused=${materialized.refused ?? 0}`
+                  : tx("iam.apply-audit-hint")}
+                {applyResult?.status ? ` · ${applyResult.status}` : ""}
+                {applyResult?.failed?.length ? ` · ${applyResult.failed[0]}` : ""}
+              </p>
             </div>
             <div className={styles.card}>
               <h3>{tx("iam.apply-nav")}</h3>

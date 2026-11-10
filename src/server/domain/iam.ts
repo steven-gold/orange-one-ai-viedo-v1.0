@@ -1,4 +1,11 @@
 export const IAM_PERMISSION = "iam.user.configure";
+export const IAM_CONFIGURE_PERMISSION = "iam.permission.configure";
+// Word IAM-01 §gates: the server-side authorization chain (GATE-MANAGE ->
+// GATE-DRAFT/PREVIEW -> GATE-COMPLETE) is a hard requirement of this page's
+// contract, so IAM enforces its account permission gate independently of the
+// site-wide page-access policy (account-scoped authorization is exactly the
+// layer this page implements).
+export const IAM_GATE_ENFORCED = true;
 export const IAM_PAGE_UID = "admin:IAM-01";
 export const IAM_ROUTE = "/admin/accounts";
 export const IAM_PROJECTION = "IamWorkbenchProjection";

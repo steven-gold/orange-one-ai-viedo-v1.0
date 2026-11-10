@@ -104,6 +104,7 @@ export function buildPreview(draft: IamDraft, accounts: IamAccountRow[]): IamPre
   const added = deltas.filter((item) => item.kind === "ADDED").length;
   const removed = deltas.filter((item) => item.kind === "REMOVED").length;
   const unchanged = deltas.filter((item) => item.kind === "UNCHANGED").length;
+  const account = accounts.find((row) => row.accountUid === draft.accountId);
   return {
     accountId: draft.accountId,
     mode: draft.mode,
@@ -116,6 +117,10 @@ export function buildPreview(draft: IamDraft, accounts: IamAccountRow[]): IamPre
     stamp: newUid("PVW"),
     draftVersion: draft.version,
     expectedVersion: draft.version,
+    baseline: {
+      frontendL1: account ? [...account.frontendL1] : [],
+      backendL1: account ? [...account.backendL1] : [],
+    },
   };
 }
 
@@ -269,6 +274,8 @@ export function previewIamAction(
     const draft = workbench.draft!;
     // Word Table 12: basic data follows the registered schema; an L1 draft
     // needs an intentional selection before preview.
+    const schemaGap = basicDataSchemaGap(draft.basicData);
+    if (schemaGap) return writeWorkbench(fail(workbench, schemaGap));
     if (!draft.basicData.displayName) return writeWorkbench(fail(workbench, "IAM_BASIC_DATA_REQUIRED"));
     if (!draftL1IsValid(draft)) return writeWorkbench(fail(workbench, "IAM_L1_SELECTION_REQUIRED"));
     const unresolved = [...draft.frontL1, ...draft.backL1].filter((key) => !l1ByKey(key));
@@ -280,6 +287,8 @@ export function previewIamAction(
   if (actionUid === "IAM-01-ACT-PREVIEW") {
     if (!draftGateOk(workbench)) return writeWorkbench(fail(workbench, "IAM_DRAFT_REQUIRED"));
     const draft = workbench.draft!;
+    const schemaGap = basicDataSchemaGap(draft.basicData);
+    if (schemaGap) return writeWorkbench(fail(workbench, schemaGap));
     if (!draftL1IsValid(draft)) return writeWorkbench(fail(workbench, "IAM_L1_SELECTION_REQUIRED"));
     const preview = buildPreview(draft, workbench.accounts);
     next = clearError({ ...workbench, preview });
@@ -322,6 +331,7 @@ export function previewIamAction(
     const output = writeWorkbench(next);
     output["IAM-01-STATE-PLAN"] = JSON.stringify(plan);
     output["IAM-01-STATE-PLAN-STAMP"] = preview.stamp;
+    output["IAM-01-STATE-PLAN-BASELINE"] = JSON.stringify(preview.baseline);
     return output;
   }
 
@@ -341,6 +351,15 @@ function parsePayload(nextValue?: string): Record<string, unknown> {
   } catch {
     return {};
   }
+}
+
+// Word §schema_rule: render the exact registered Identity Candidate schema
+// only; an unknown field = BLOCK + REPORT_AUTHORITY_GAP.
+const IAM_BASIC_DATA_SCHEMA = new Set(["displayName", "email", "department"]);
+
+function basicDataSchemaGap(basicData: { displayName: string; email: string; department: string }): string | null {
+  const unknown = Object.keys(basicData ?? {}).filter((key) => !IAM_BASIC_DATA_SCHEMA.has(key));
+  return unknown.length ? `IAM-01-ERR-IDENTITY-SCHEMA:${unknown[0]}` : null;
 }
 
 export function readWorkbench(read: (uid: string) => string | null): IamWorkbench {

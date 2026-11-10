@@ -24,7 +24,7 @@ import { appendCoreError, buildCoreError, type CoreErrorRecord } from "@/lib/cor
 import { appendCoreEvent, CORE_EVENT_NAMES } from "@/lib/coreEventLog";
 import { requiredPermissionFor } from "@/lib/coreActionPermission";
 import { pagePermissionEnforced } from "@/server/auth/pageAccess";
-import { persistHasCorePermission } from "../db/persist";
+import { evaluateIamGate, persistHasCorePermission } from "../db/persist";
 import {
   buildChapterArchitecture,
   buildStoryCore,
@@ -1224,11 +1224,56 @@ async function seedIamAccounts(): Promise<void> {
   if (accounts.length) await writeField(FIELD_TABLE.iam, "IAM-01-STATE-ACCOUNTS", JSON.stringify(accounts));
 }
 
-// Word IAM-01 §17: COMPLETE orchestrates existing exact operations on the
-// server. The client-produced plan is re-validated against the L1 catalog
-// (permission + permissionTable pairing) before any governed table is
-// touched; unknown pairings are refused, never guessed.
+// Word §expected_version: before touching governed tables, re-read the
+// account's live L1 aggregate and compare it with the baseline captured at
+// preview time. Any drift means the preview no longer describes reality,
+// so the plan is refused instead of being guessed onto a changed surface.
+interface IamAggregateSnapshot {
+  frontendL1: string[];
+  backendL1: string[];
+}
+
+async function readIamAccountAggregate(accountUid: string): Promise<IamAggregateSnapshot> {
+  const tables = [...new Set([...IAM_FRONT_L1_CATALOG, ...IAM_BACK_L1_CATALOG].map((row) => row.permissionTable))];
+  const unionSql = tables.map((table) => `SELECT account_uid, permission_uid, '${table}' AS table_name FROM ${table}`).join(" UNION ALL ");
+  const rows = await getSqlClient().all<{ account_uid: string; permission_uid: string; table_name: string }>(
+    `SELECT DISTINCT account_uid, permission_uid, table_name FROM (${unionSql}) AS u WHERE account_uid = ?`,
+    [accountUid],
+  );
+  const catalogByPair = new Map(
+    [...IAM_FRONT_L1_CATALOG, ...IAM_BACK_L1_CATALOG].map((row) => [`${row.permission}\u0000${row.permissionTable}`, row]),
+  );
+  const snapshot: IamAggregateSnapshot = { frontendL1: [], backendL1: [] };
+  for (const row of rows) {
+    const choice = catalogByPair.get(`${row.permission_uid}\u0000${row.table_name}`);
+    if (!choice) continue;
+    (choice.key.startsWith("iam.front-") ? snapshot.frontendL1 : snapshot.backendL1).push(choice.key);
+  }
+  snapshot.frontendL1.sort();
+  snapshot.backendL1.sort();
+  return snapshot;
+}
+
+function sameAggregate(a: IamAggregateSnapshot, b: IamAggregateSnapshot): boolean {
+  return a.frontendL1.join("|") === b.frontendL1.join("|") && a.backendL1.join("|") === b.backendL1.join("|");
+}
+
+// Word §partial_apply: apply exact per-row operations. Rows the server can
+// execute exactly are applied; unknown pairings are refused with a reason
+// and reported per-row. Only a fully executed plan reaches COMPLETE.
 async function materializeIamPlan(operatorUid: string): Promise<void> {
+  // Idempotency gate: the plan stamp is the materialization key. A fresh
+  // preview produces a new stamp and may materialize once; re-completing
+  // against the same stamp (or with the preview cleared) must never re-run.
+  const planStamp = await readField(FIELD_TABLE.iam, "IAM-01-STATE-PLAN-STAMP");
+  if (!planStamp) return;
+  const materializedRaw = await readField(FIELD_TABLE.iam, "IAM-01-STATE-MATERIALIZED");
+  try {
+    const previous = parseJson<{ stamp?: string }>(materializedRaw, {});
+    if (previous?.stamp === planStamp) return;
+  } catch {
+    // Unreadable summary: fall through and materialize this stamp once.
+  }
   const planRaw = await readField(FIELD_TABLE.iam, "IAM-01-STATE-PLAN");
   if (!planRaw || !planRaw.trim().startsWith("[")) return;
   let rows: IamPlanRow[];
@@ -1237,20 +1282,65 @@ async function materializeIamPlan(operatorUid: string): Promise<void> {
   } catch {
     rows = [];
   }
+  const baselineRaw = await readField(FIELD_TABLE.iam, "IAM-01-STATE-PLAN-BASELINE");
+  if (baselineRaw && baselineRaw.trim().startsWith("{")) {
+    try {
+      const baseline = parseJson<IamAggregateSnapshot>(baselineRaw, { frontendL1: [], backendL1: [] });
+      const accountUid = String(rows[0]?.accountUid ?? "").trim();
+      if (accountUid) {
+        const live = await readIamAccountAggregate(accountUid);
+        const expected: IamAggregateSnapshot = {
+          frontendL1: [...(baseline.frontendL1 ?? [])].sort(),
+          backendL1: [...(baseline.backendL1 ?? [])].sort(),
+        };
+        if (!sameAggregate(live, expected)) {
+          const apply = {
+            accountId: accountUid,
+            status: "ERROR" as const,
+            applied: [] as string[],
+            failed: [] as string[],
+            correlationId: "",
+            stamp: "",
+            auditEventUid: "",
+          };
+          await writeField(FIELD_TABLE.iam, "IAM-01-STATE-APPLY", JSON.stringify(apply));
+          await writeField(
+            FIELD_TABLE.iam,
+            "IAM-01-STATE-ERROR",
+            JSON.stringify({ code: "IAM-01-ERR-VERSION", at: new Date().toISOString() }),
+          );
+          return;
+        }
+      }
+    } catch {
+      // Unreadable baseline does not block: the per-row catalog gate below
+      // remains the hard refusal path.
+    }
+  }
   const catalog = new Map<string, string>(
     [...IAM_FRONT_L1_CATALOG, ...IAM_BACK_L1_CATALOG].map((row) => [`${row.permission}\u0000${row.permissionTable}`, row.permissionTable]),
   );
+  const priorApplyRaw = await readField(FIELD_TABLE.iam, "IAM-01-STATE-APPLY");
+  let prior: { accountId?: string; correlationId?: string; stamp?: string } = {};
+  try {
+    prior = parseJson<{ accountId?: string; correlationId?: string; stamp?: string }>(priorApplyRaw, {});
+  } catch {
+    prior = {};
+  }
+  const accountUidFromPlan = String(rows[0]?.accountUid ?? prior?.accountId ?? "").trim();
   let assigned = 0;
   let revoked = 0;
-  let refused = 0;
+  const applied: string[] = [];
+  const failed: string[] = [];
   for (const row of rows) {
     const mode = String(row.mode ?? "");
     const accountUid = String(row.accountUid ?? "").trim();
     const permission = String(row.permission ?? "").trim();
     const permissionTable = String(row.permissionTable ?? "").trim();
     const pairingKey = `${permission}\u0000${permissionTable}`;
+    const rowLabel = `${mode}:${accountUid}:${permission}@${permissionTable}`;
     if ((mode !== "ASSIGN" && mode !== "REVOKE") || !accountUid || !permission || !catalog.has(pairingKey)) {
-      refused += 1;
+      failed.push(`${rowLabel} reason=IAM-01-ERR-L1-EXPANSION:${permission || permissionTable || "unknown"}`);
       continue;
     }
     if (mode === "ASSIGN") {
@@ -1261,22 +1351,38 @@ async function materializeIamPlan(operatorUid: string): Promise<void> {
         [accountUid, permission],
       );
       assigned += 1;
+      applied.push(rowLabel);
     } else {
       await getSqlClient().run(
         `DELETE FROM ${permissionTable} WHERE account_uid = ? AND permission_uid = ?`,
         [accountUid, permission],
       );
       revoked += 1;
+      applied.push(rowLabel);
     }
   }
+  const refused = failed.length;
   const summary = JSON.stringify({
     assigned,
     revoked,
     refused,
+    stamp: planStamp,
     operator: operatorUid,
     at: new Date().toISOString(),
   });
   await writeField(FIELD_TABLE.iam, "IAM-01-STATE-MATERIALIZED", summary);
+  if (accountUidFromPlan) {
+    const apply = {
+      accountId: accountUidFromPlan,
+      status: refused > 0 ? ("PARTIAL" as const) : ("COMPLETE" as const),
+      applied,
+      failed,
+      correlationId: String(prior?.correlationId ?? ""),
+      stamp: String(prior?.stamp ?? ""),
+      auditEventUid: "",
+    };
+    await writeField(FIELD_TABLE.iam, "IAM-01-STATE-APPLY", JSON.stringify(apply));
+  }
 }
 
 export async function applyWorkbenchAction(
@@ -1844,6 +1950,24 @@ export async function applyWorkbenchAction(
     return;
   }
   if (page === "iam") {
+    // Word §gates: server-side authorization chain. Every IAM-01 action is
+    // gated on explicit Account Permission Assignments; a refusal writes the
+    // page error state and the preview is not applied.
+    if (accountUid) {
+      const denial = await evaluateIamGate(accountUid, actionUid);
+      if (denial) {
+        await writeField(
+          FIELD_TABLE.iam,
+          "IAM-01-STATE-ERROR",
+          JSON.stringify({ code: "IAM-01-ERR-AUTH-DENIED", detail: denial, at: new Date().toISOString() }),
+        );
+        await seedIamAccounts();
+        return;
+      }
+    }
+    // Refresh the directory projection before the action: previews and drafts
+    // must reflect the governed tables as of request time.
+    await seedIamAccounts();
     const written = await applyProjectedAction(FIELD_TABLE.iam, previewIamAction, controlUid, actionUid, nextValue);
     if (written && actionUid === "IAM-01-ACT-COMPLETE" && accountUid) {
       await materializeIamPlan(accountUid);

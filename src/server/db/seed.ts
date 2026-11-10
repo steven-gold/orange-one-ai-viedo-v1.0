@@ -5,7 +5,7 @@ import { DB_PERMISSION, DB_VISIBLE_CONTROLS } from "../domain/db";
 import { QA_PERMISSION, QA_VISIBLE_CONTROLS } from "../domain/qa";
 import { INFO_PERMISSION, INFO_VISIBLE_CONTROLS } from "../domain/info";
 import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
-import { IAM_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
+import { IAM_PERMISSION, IAM_CONFIGURE_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
 import { DEV_PERMISSION, DEV_ACCOUNT_PERMISSIONS, DEV_VISIBLE_CONTROLS } from "../domain/dev";
 import { SOC_PERMISSION, SOC_VISIBLE_CONTROLS } from "../domain/soc";
 import { ERP_PERMISSION, ERP_VISIBLE_CONTROLS } from "../domain/erp";
@@ -64,7 +64,7 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
   str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS },
   info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS },
   sys: { fieldTable: "ghsn_sys_field_projection", permissionTable: "ghsn_account_sys_permission", permission: SYS_PERMISSION, controls: SYS_VISIBLE_CONTROLS },
-  iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS },
+  iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS, extraPermissions: [IAM_CONFIGURE_PERMISSION] },
   dev: { fieldTable: "ghsn_dev_field_projection", permissionTable: "ghsn_account_dev_permission", permission: DEV_PERMISSION, controls: DEV_VISIBLE_CONTROLS, extraPermissions: DEV_ACCOUNT_PERMISSIONS },
   soc: { fieldTable: "ghsn_soc_field_projection", permissionTable: "ghsn_account_soc_permission", permission: SOC_PERMISSION, controls: SOC_VISIBLE_CONTROLS },
   erp: { fieldTable: "ghsn_erp_field_projection", permissionTable: "ghsn_account_erp_permission", permission: ERP_PERMISSION, controls: ERP_VISIBLE_CONTROLS },

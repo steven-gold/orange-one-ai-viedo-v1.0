@@ -100,6 +100,11 @@ export interface IamPreview {
   stamp: string;
   draftVersion: number;
   expectedVersion: number;
+  // Snapshot of the account's L1 aggregate at preview time; the server
+  // re-reads the governed tables before materializing and refuses with
+  // IAM-01-ERR-VERSION when the live aggregate has drifted (word:
+  // expected_version + preview current).
+  baseline: { frontendL1: string[]; backendL1: string[] };
 }
 
 export interface IamApplyResult {
