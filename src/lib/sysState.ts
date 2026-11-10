@@ -58,6 +58,7 @@ export interface SysContext {
     version: string;
     services: string[];
     authorities: string[];
+    owners?: string[];
     providers: string[];
   };
   conversation: {
@@ -66,6 +67,12 @@ export interface SysContext {
     branchId: string;
   };
   fingerprint: string;
+}
+
+export interface SysGeneration {
+  active: boolean;
+  startedAt: string;
+  cancelRequested?: boolean;
 }
 
 export function sysContextFingerprint(context: SysContext): string {
@@ -91,7 +98,7 @@ export interface SysWorkbench {
   change: SysChange | null;
   sandbox: SysSandboxResult | null;
   mode: SysMode;
-  generation: { active: boolean; startedAt: string } | null;
+  generation: SysGeneration | null;
   error: { code: string; at: string } | null;
   routeRaw?: string | null;
 }
@@ -113,7 +120,7 @@ export function readSysWorkbench(read: (uid: string) => string | null): SysWorkb
     change: parse<SysChange | null>(SYS_STATE_CHANGE_UID, null),
     sandbox: parse<SysSandboxResult | null>(SYS_STATE_SANDBOX_UID, null),
     mode: parse<SysMode>(SYS_STATE_MODE_UID, { aiMode: "SINGLE_AI", councilMode: "DISCUSSION" }),
-    generation: parse<{ active: boolean; startedAt: string } | null>(SYS_STATE_GENERATION_UID, null),
+    generation: parse<SysGeneration | null>(SYS_STATE_GENERATION_UID, null),
     error: parse<{ code: string; at: string } | null>(SYS_STATE_ERROR_UID, null),
   };
 }

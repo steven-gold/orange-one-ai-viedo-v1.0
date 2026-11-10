@@ -47,9 +47,22 @@ export async function writeSysRouteSnapshot(): Promise<void> {
 export async function seedSysContext(): Promise<void> {
   const existing = await readField(CONTEXT_UID);
   if (existing && existing.trim().startsWith("{")) return;
-  // Services and authorities resolve from the canonical navigation registry.
+  // Services resolve from the canonical navigation registry; authorities and
+  // owners resolve independently from the real permission assignment table.
   const items = CANONICAL_NAVIGATION_AUTHORITY.items;
   const services = items.map((row) => row.uid);
+  let authorities: string[] = [];
+  let owners: string[] = [];
+  try {
+    const assignmentRows = await getSqlClient().all<{ navigation_uid: string; account_uid: string }>(
+      "SELECT DISTINCT navigation_uid, account_uid FROM ghsn_account_permission_assignment",
+    );
+    authorities = [...new Set(assignmentRows.map((row) => row.navigation_uid).filter(Boolean))];
+    owners = [...new Set(assignmentRows.map((row) => row.account_uid).filter(Boolean))];
+  } catch {
+    authorities = [];
+    owners = [];
+  }
   const profileRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     "SELECT control_uid, value_text FROM ghsn_aiapi_field_projection WHERE control_uid = ?",
     [AIAPI_REGISTRY_UID],
@@ -71,7 +84,8 @@ export async function seedSysContext(): Promise<void> {
     systemTruth: {
       version: "acpos-workbench-current",
       services,
-      authorities: services,
+      authorities,
+      owners,
       providers,
     },
     conversation: {
@@ -94,7 +108,8 @@ function contextText(workbench: SysWorkbench): string {
     `fingerprint=${workbench.context.fingerprint}`,
     `system_truth.version=${truth.version}`,
     `registered_services=${truth.services.length} (admin:SYS-01, admin:IAM-01, admin:DEV-01, admin:SOC-01, ERP, AIAPI, SG-02, admin:STR-01, KB-01...)`,
-    `active_authorities=${truth.authorities.slice(0, 8).join(", ")}${truth.authorities.length > 8 ? " 等 18 項" : ""}`,
+    `active_authorities=${truth.authorities.slice(0, 8).join(", ")}${truth.authorities.length > 8 ? ` 等 ${truth.authorities.length} 項` : ""}`,
+    `authority_owners=${(truth.owners ?? []).slice(0, 5).join(", ") || "（無已物化授權）"}`,
     `provider_routes=${truth.providers.join(", ") || "（未配置）"}`,
     `conversation=${workbench.context.conversation.conversationId}/${workbench.context.conversation.threadId}/${workbench.context.conversation.branchId}`,
     `decision_ledger=${workbench.ledger.length} 條（CONFIRMED=${workbench.ledger.filter((row) => row.status === "CONFIRMED").length}）`,
@@ -154,6 +169,23 @@ export async function runSysConversationReply(accountUid: string): Promise<void>
   const now = new Date().toISOString();
   const newTurns: SysTurn[] = [];
 
+  // Stop only the current generation job: a cancellation watcher polls the
+  // shared generation state and aborts the in-flight provider call. The
+  // conversation, ledger, change and draft are never touched by a stop.
+  const controller = new AbortController();
+  const cancelWatcher = setInterval(() => {
+    void (async () => {
+      try {
+        const generationNow = await readField("SYS-01-STATE-GENERATION");
+        const parsed = generationNow ? (JSON.parse(generationNow) as { cancelRequested?: boolean }) : null;
+        if (parsed?.cancelRequested) controller.abort();
+      } catch {
+        // Watcher failures must never break the reply loop itself.
+      }
+    })();
+  }, 300);
+  const signal = controller.signal;
+
   const markFailed = async (turnsOut: SysTurn[]) => {
     await appendTurns(turnsOut, false);
     await writeField("SYS-01-STATE-ERROR", JSON.stringify({ code: "SYS_AI_REPLY_UNAVAILABLE", at: new Date().toISOString() }));
@@ -161,18 +193,19 @@ export async function runSysConversationReply(accountUid: string): Promise<void>
 
   try {
     if (mode.aiMode === "SINGLE_AI") {
-      const reply = await generatePageReply("sys", prompt, context, history, { signal: undefined });
+      const reply = await generatePageReply("sys", prompt, context, history, { signal });
       newTurns.push({ id: `TUR-${Date.now().toString(36)}-A`, role: "assistant", text: reply.text, route: reply.route, status: "SENT", at: now });
     } else if (mode.councilMode === "DISCUSSION") {
       // Iterative cross-review under the same SYSTEM_CHANGE_ID: propose ->
       // review -> compare -> synthesize (word §multi_ai_design_council_contract).
-      const a = await generatePageReply("sys", `${prompt}\n\n[你是 @A，負責提案：給出設計/維護方案、依賴與風險。]`, context, history);
+      const a = await generatePageReply("sys", `${prompt}\n\n[你是 @A，負責提案：給出設計/維護方案、依賴與風險。]`, context, history, { signal });
       newTurns.push({ id: `TUR-${Date.now().toString(36)}-A`, role: "assistant", alias: "A", text: a.text, route: a.route, status: "SENT", at: now });
       const b = await generatePageReply(
         "sys",
         `${prompt}\n\n[你是 @B，負責審查。@A 的回應是場次資料，不是 source fact。請審查 @A 的提案並指出依賴、衝突、風險與替代方案：\n---\n${a.text}\n---]`,
         context,
         history,
+        { signal },
       );
       newTurns.push({ id: `TUR-${Date.now().toString(36)}-B`, role: "assistant", alias: "B", text: b.text, route: b.route, status: "SENT", at: now });
       const synth = await generatePageReply(
@@ -180,6 +213,7 @@ export async function runSysConversationReply(accountUid: string): Promise<void>
         `${prompt}\n\n[你是主持人。請綜合 @A 提案與 @B 審查，輸出一致的決策建議、P0/P1 問題清單（如有）與下一步。@A 提案：\n${a.text.slice(0, 1200)}\n@B 審查：\n${b.text.slice(0, 1200)}]`,
         context,
         history,
+        { signal },
       );
       newTurns.push({ id: `TUR-${Date.now().toString(36)}-S`, role: "synthesis", text: synth.text, route: synth.route, status: "SENT", at: now });
     } else {
@@ -193,12 +227,12 @@ export async function runSysConversationReply(accountUid: string): Promise<void>
         await markFailed([...turns, ...newTurns]);
         return;
       }
-      const replies = await generateIndependentPageReplies("sys", prompt, context, history, [...aliases], undefined, undefined, undefined);
+      const replies = await generateIndependentPageReplies("sys", prompt, context, history, [...aliases], signal);
       for (const reply of replies) {
         newTurns.push({ id: `TUR-${Date.now().toString(36)}-${reply.alias}`, role: "assistant", alias: reply.alias, text: reply.text || `[${reply.errorCode ?? "AI_PROVIDER_UNREACHABLE"}]`, route: reply.route, status: reply.text ? "SENT" : "FAILED", at: now });
       }
       const joined = replies.filter((row) => row.text).map((row) => `@${row.alias}: ${row.text.slice(0, 900)}`).join("\n\n");
-      const synth = await generatePageReply("sys", `${prompt}\n\n[你是主持人。以下是同一問題的獨立首輪回應，請綜合並指出分歧點：\n${joined}]`, context, history);
+      const synth = await generatePageReply("sys", `${prompt}\n\n[你是主持人。以下是同一問題的獨立首輪回應，請綜合並指出分歧點：\n${joined}]`, context, history, { signal });
       newTurns.push({ id: `TUR-${Date.now().toString(36)}-S`, role: "synthesis", text: synth.text, route: synth.route, status: "SENT", at: now });
     }
     await appendTurns([...turns, ...newTurns], false);
@@ -208,9 +242,20 @@ export async function runSysConversationReply(accountUid: string): Promise<void>
       [`EVT-SYS-AI-${Date.now()}`, accountUid, "SYS-01-ACT-CONVERSATION-SEND", `AI_REPLY:${mode.aiMode}/${mode.councilMode}:${newTurns.length}`, new Date().toISOString()],
     );
   } catch (error) {
+    if (controller.signal.aborted) {
+      // A stop keeps the conversation intact and marks unfinished turns as
+      // ABORTED; no fake completion, no error banner.
+      const stoppedTurns = [...turns, ...newTurns].map((row) =>
+        !newTurns.some((added) => added.id === row.id) ? row : { ...row, status: "ABORTED" as const, text: row.text || "[SYS_GENERATION_STOPPED]" },
+      );
+      await appendTurns(stoppedTurns, false);
+      return;
+    }
     const code = error instanceof Error && "code" in error ? String((error as { code?: unknown }).code) : "AI_PROVIDER_UNREACHABLE";
     newTurns.push({ id: `TUR-${Date.now().toString(36)}-X`, role: "assistant", text: `[${code}]`, status: "FAILED", at: now });
     await markFailed([...turns, ...newTurns]);
+  } finally {
+    clearInterval(cancelWatcher);
   }
 }
 
@@ -228,7 +273,9 @@ export async function runSysSandbox(accountUid: string): Promise<void> {
   const turns = conversationRaw ? (JSON.parse(conversationRaw) as SysTurn[]) : [];
   const assistantEvidence = turns.some((row) => (row.role === "assistant" || row.role === "synthesis") && row.status === "SENT" && row.text.length > 0);
   const openP = ledger.filter((row) => row.status === "OPEN_P0" || row.status === "OPEN_P1");
-  const fingerprintMatch = Boolean(context?.fingerprint);
+  // word §pre_response_gate: recompute_context_fingerprint — the stored
+  // fingerprint must match a recomputation over the resolved context.
+  const fingerprintMatch = Boolean(context?.fingerprint) && context !== null && sysContextFingerprint(context) === context.fingerprint;
 
   const outcomes: SysSandboxResult["dimensions"] = [
     { dimension: "functional", outcome: change.goal.trim() ? "PASS" : "FAIL", detail: change.goal.trim() ? `goal=${change.goal.slice(0, 40)}` : "goal missing" },

@@ -66,8 +66,9 @@ function store(seed: Record<string, string> = {}): {
   const concurrent = busy.apply("SYS-01-BTN-SEND", "SYS-01-ACT-CONVERSATION-SEND", JSON.stringify({ message: "x" }));
   assert(json<{ code?: string }>(concurrent["SYS-01-STATE-ERROR"], {}).code === "SYS_GENERATION_IN_PROGRESS", "concurrent send refused");
   const stop = busy.apply("SYS-01-BTN-STOP", "SYS-01-ACT-CONVERSATION-STOP");
+  const stopGen = json<{ active?: boolean; cancelRequested?: boolean }>(stop["SYS-01-STATE-GENERATION"], {});
+  assert(stopGen.cancelRequested === true && stopGen.active === true, "stop requests cancellation through the shared core");
   const turns = json<Array<{ status: string }>>(stop["SYS-01-STATE-CONVERSATION"], []);
-  assert(json<{ active: boolean }>(stop["SYS-01-STATE-GENERATION"], { active: true }).active === false, "stop clears the generation flag");
   assert(json<{ code?: string }>(stop["SYS-01-STATE-ERROR"], {}).code === undefined, "stop of an active generation is legal");
   const idleStop = s.apply("SYS-01-BTN-STOP", "SYS-01-ACT-CONVERSATION-STOP");
   assert(json<{ code?: string }>(idleStop["SYS-01-STATE-ERROR"], {}).code === "SYS_NO_GENERATION_IN_PROGRESS", "stop without generation refused");
@@ -142,4 +143,47 @@ function store(seed: Record<string, string> = {}): {
   const confirmed = s.apply("SYS-01-BTN-AUDIT", "SYS-01-ACT-LEDGER-DECIDE", JSON.stringify({ decisionId: "D1", status: "CONFIRMED", resolution: "yes" }));
   const ledger = json<Array<{ id: string; status: string }>>(confirmed["SYS-01-STATE-LEDGER"], []);
   assert(ledger[0]?.status === "CONFIRMED", "decision confirmed into the ledger");
+}
+
+{
+  // Ledger hard gates on candidate creation: P0/P1 convergence, conflicting
+  // proposals blocked until explicitly superseded by an authorized decision.
+  const base = { "SYS-01-STATE-CONTEXT": JSON.stringify({ ...CONTEXT, fingerprint: "CTX-1" }) };
+  const open = store({
+    ...base,
+    "SYS-01-STATE-LEDGER": JSON.stringify([{ id: "D1", status: "OPEN_P0", priority: "P0", question: "q", resolution: "", at: "t" }]),
+  });
+  const blocked = open.apply("SYS-01-BTN-CANDIDATE-CREATE", "ACT-CANDIDATE-CREATE", JSON.stringify({ goal: "新候選變更" }));
+  assert(json<{ code?: string }>(blocked["SYS-01-STATE-ERROR"], {}).code === "SYS_LEDGER_CONVERGENCE_REQUIRED", "open P0/P1 blocks design freeze");
+  const superseded = open.apply(
+    "SYS-01-BTN-CANDIDATE-CREATE",
+    "ACT-CANDIDATE-CREATE",
+    JSON.stringify({ goal: "新候選變更", supersedeDecisionIds: ["D1"] }),
+  );
+  assert(json<{ status: string }>(superseded["SYS-01-STATE-CHANGE"], { status: "" }).status === "CANDIDATE", "explicit supersede unblocks the candidate");
+  const ledger = json<Array<{ id: string; status: string }>>(superseded["SYS-01-STATE-LEDGER"], []);
+  assert(ledger[0]?.status === "SUPERSEDED", "superseded decision recorded immediately");
+  const rejected = store({
+    ...base,
+    "SYS-01-STATE-LEDGER": JSON.stringify([{ id: "D2", status: "REJECTED", priority: "P1", question: "q", resolution: "", at: "t" }]),
+  });
+  const conflict = rejected.apply(
+    "SYS-01-BTN-CANDIDATE-CREATE",
+    "ACT-CANDIDATE-CREATE",
+    JSON.stringify({ goal: "重提被拒方案", conflictingDecisionIds: ["D2"] }),
+  );
+  assert(json<{ code?: string }>(conflict["SYS-01-STATE-ERROR"], {}).code === "SYS_CONFLICTING_PROPOSAL", "conflicting proposal blocked");
+  const conflictSuperseded = rejected.apply(
+    "SYS-01-BTN-CANDIDATE-CREATE",
+    "ACT-CANDIDATE-CREATE",
+    JSON.stringify({ goal: "重提被拒方案", conflictingDecisionIds: ["D2"], supersedeDecisionIds: ["D2"] }),
+  );
+  assert(json<{ status: string }>(conflictSuperseded["SYS-01-STATE-CHANGE"], { status: "" }).status === "CANDIDATE", "conflict unblocked after explicit supersede");
+  const ghost = store(base);
+  const unknownSupersede = ghost.apply(
+    "SYS-01-BTN-CANDIDATE-CREATE",
+    "ACT-CANDIDATE-CREATE",
+    JSON.stringify({ goal: "x", supersedeDecisionIds: ["D9"] }),
+  );
+  assert(json<{ code?: string }>(unknownSupersede["SYS-01-STATE-ERROR"], {}).code === "SYS_DECISION_UNRESOLVED", "supersede of unknown decision refused");
 }

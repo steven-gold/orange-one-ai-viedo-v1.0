@@ -127,8 +127,15 @@ export function previewSysAction(
     if (!workbench.generation?.active) {
       return writeSysWorkbench(failSys(workbench, "SYS_NO_GENERATION_IN_PROGRESS"));
     }
+    // Stop only the current generation: request cancellation via the shared
+    // conversation core generation job; never delete/reset conversation,
+    // ledger, draft or source refs (word: stop rule).
     const turns = workbench.turns.map((row) => (row.status === "PENDING" ? { ...row, status: "ABORTED" as const } : row));
-    const next = clearSysError({ ...workbench, turns, generation: { active: false, startedAt: workbench.generation.startedAt } });
+    const next = clearSysError({
+      ...workbench,
+      turns,
+      generation: { active: true, startedAt: workbench.generation.startedAt, cancelRequested: true },
+    });
     return writeSysWorkbench(next);
   }
 
@@ -143,12 +150,37 @@ export function previewSysAction(
   }
 
   if (actionUid === "ACT-CANDIDATE-CREATE") {
-    const payload = parsePayload<{ goal?: string; scope?: string }>(nextValue, {});
+    const payload = parsePayload<{
+      goal?: string;
+      scope?: string;
+      supersedeDecisionIds?: string[];
+      conflictingDecisionIds?: string[];
+    }>(nextValue, {});
     const goal = String(payload.goal ?? "").trim();
     if (!goal) return writeSysWorkbench(failSys(workbench, "SYS_GOAL_REQUIRED"));
     if (workbench.change && (workbench.change.status === "CANDIDATE" || workbench.change.status === "REQUESTED")) {
       return writeSysWorkbench(failSys(workbench, "SYS_CHANGE_ALREADY_ACTIVE"));
     }
+    // decision_ledger_contract: conflicting proposals stay blocked until the
+    // conflicting decision is explicitly reopened/superseded by an authorized
+    // human decision. requirement_convergence_contract: P0/P1 must converge
+    // before Design Freeze.
+    const supersedeIds = (payload.supersedeDecisionIds ?? []).map(String);
+    const conflictingIds = (payload.conflictingDecisionIds ?? []).map(String);
+    const unknownSupersede = supersedeIds.find((id) => !workbench.ledger.some((row) => row.id === id));
+    if (unknownSupersede) return writeSysWorkbench(failSys(workbench, "SYS_DECISION_UNRESOLVED"));
+    const rejectedConflict = conflictingIds.find(
+      (id) => workbench.ledger.some((row) => row.id === id && row.status === "REJECTED") && !supersedeIds.includes(id),
+    );
+    if (rejectedConflict) return writeSysWorkbench(failSys(workbench, "SYS_CONFLICTING_PROPOSAL"));
+    const openLedger = workbench.ledger.filter((row) => row.status === "OPEN_P0" || row.status === "OPEN_P1");
+    const unresolvedOpen = openLedger.find((row) => !supersedeIds.includes(row.id));
+    if (unresolvedOpen) return writeSysWorkbench(failSys(workbench, "SYS_LEDGER_CONVERGENCE_REQUIRED"));
+    const ledger = workbench.ledger.map((row) =>
+      supersedeIds.includes(row.id)
+        ? { ...row, status: "SUPERSEDED" as const, resolution: `${row.resolution} [superseded by ${goal.slice(0, 40)}]`.trim() }
+        : row,
+    );
     const change: SysChange = {
       changeId: `CHG-${Date.now().toString(36).toUpperCase()}`,
       goal,
@@ -156,7 +188,7 @@ export function previewSysAction(
       status: "CANDIDATE",
       candidateAt: now,
     };
-    return writeSysWorkbench(clearSysError({ ...workbench, change }));
+    return writeSysWorkbench(clearSysError({ ...workbench, ledger, change }));
   }
 
   if (actionUid === "ACT-CR-CREATE") {
