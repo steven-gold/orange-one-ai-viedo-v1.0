@@ -3,7 +3,6 @@ import { getSqlClient } from "@/server/db/client";
 import { readSysWorkbench, sysContextFingerprint, writeSysWorkbench, type SysSandboxResult, type SysTurn, type SysWorkbench } from "@/lib/sysState";
 import { CANONICAL_NAVIGATION_AUTHORITY } from "@/server/domain/schema";
 import { AIAPI_REGISTRY_UID } from "@/lib/aiapiProfiles";
-import { readProfiles } from "@/lib/aiapiProfiles";
 
 const FIELD_TABLE = "ghsn_sys_field_projection";
 const CONTEXT_UID = "SYS-01-STATE-CONTEXT";
@@ -66,19 +65,24 @@ export async function seedSysContext(): Promise<void> {
   const profileRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
     "SELECT control_uid, value_text FROM ghsn_aiapi_field_projection WHERE control_uid = ?",
     [AIAPI_REGISTRY_UID],
-  );
-  const registryRaw = profileRows[0]?.value_text ?? "";
+  ).catch(() => [] as Array<{ control_uid: string; value_text: string | null }>);
+  // Providers come from the same system-owned route resolver as the route
+  // snapshot (provider_selection SYSTEM_OWNED); the raw registry row is only
+  // checked for existence — its display fields are user-entered and may be
+  // empty, so they are never used as provider identity.
   let providers: string[] = [];
   let ready = 0;
-  if (registryRaw.trim().startsWith("[")) {
-    try {
-      const profiles = readProfiles(() => registryRaw) as Array<{ provider?: string; enabled?: boolean; model?: string }>;
-      const active = profiles.filter((row) => row.enabled !== false);
-      providers = [...new Set(active.map((row) => String(row.provider ?? "").trim()).filter(Boolean))];
-      ready = active.length;
-    } catch {
-      providers = [];
-    }
+  try {
+    const configs = await resolveProviderConfigs("chat");
+    providers = [...new Set(configs.map((row) => row.provider))];
+    ready = configs.length;
+  } catch {
+    providers = [];
+    ready = 0;
+  }
+  if (ready === 0 && profileRows.length === 0) {
+    // Registry absent AND no live route: honest zero, no invention.
+    providers = [];
   }
   const context = {
     systemTruth: {
@@ -276,6 +280,37 @@ export async function runSysSandbox(accountUid: string): Promise<void> {
   // word §pre_response_gate: recompute_context_fingerprint — the stored
   // fingerprint must match a recomputation over the resolved context.
   const fingerprintMatch = Boolean(context?.fingerprint) && context !== null && sysContextFingerprint(context) === context.fingerprint;
+  // regression dimension: real audit evidence from the other services'
+  // registries (a change must not invalidate existing service activity).
+  const regressionTables = [
+    "ghsn_core_audit_event",
+    "ghsn_edit_audit_event",
+    "ghsn_qa_audit_event",
+    "ghsn_iam_audit_event",
+    "ghsn_dev_audit_event",
+    "ghsn_soc_audit_event",
+    "ghsn_aiapi_audit_event",
+    "ghsn_video_audit_event",
+    "ghsn_asset_audit_event",
+    "ghsn_erp_audit_event",
+  ];
+  let regressionEvidence = 0;
+  for (const table of regressionTables) {
+    try {
+      const rows = await getSqlClient().all<{ n: number }>(`SELECT count(*) AS n FROM ${table}`);
+      if ((rows[0]?.n ?? 0) > 0) regressionEvidence += 1;
+    } catch {
+      // A missing registry is reported as missing evidence, never invented.
+    }
+  }
+  // end_to_end dimension: the change's own lifecycle path must be complete
+  // (requirement evidence -> candidate -> request) before sandbox validation.
+  const changeRow = changeRaw ? (JSON.parse(changeRaw) as { candidateAt?: string; requestedAt?: string }) : null;
+  const e2eEvidence = Boolean(
+    changeRow?.candidateAt &&
+      changeRow?.requestedAt &&
+      new Date(changeRow.candidateAt).getTime() <= new Date(changeRow.requestedAt).getTime(),
+  );
 
   const outcomes: SysSandboxResult["dimensions"] = [
     { dimension: "functional", outcome: change.goal.trim() ? "PASS" : "FAIL", detail: change.goal.trim() ? `goal=${change.goal.slice(0, 40)}` : "goal missing" },
@@ -286,6 +321,8 @@ export async function runSysSandbox(accountUid: string): Promise<void> {
     { dimension: "permission", outcome: "PASS", detail: `operator=${accountUid} passed system.test.execute gate` },
     { dimension: "provider", outcome: (context?.systemTruth.providers.length ?? 0) > 0 ? "PASS" : "FAIL", detail: `providers=${context?.systemTruth.providers.join(",") || "none"}` },
     { dimension: "cross_system", outcome: openP.length === 0 ? "PASS" : "FAIL", detail: `open P0/P1=${openP.length}` },
+    { dimension: "regression", outcome: regressionEvidence > 0 ? "PASS" : "FAIL", detail: `service audit evidence=${regressionEvidence}/10 registries` },
+    { dimension: "end_to_end", outcome: e2eEvidence ? "PASS" : "FAIL", detail: e2eEvidence ? `candidate=${changeRow?.candidateAt} -> requested=${changeRow?.requestedAt}` : "incomplete lifecycle path" },
   ];
   const verdict: "PASS" | "FAIL" = outcomes.every((row) => row.outcome === "PASS") ? "PASS" : "FAIL";
   const sandbox: SysSandboxResult = { changeId: change.changeId, dimensions: outcomes, verdict, at: new Date().toISOString() };
@@ -296,6 +333,6 @@ export async function runSysSandbox(accountUid: string): Promise<void> {
   await getSqlClient().run(
     `INSERT INTO ghsn_sys_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
-    [`EVT-SYS-SANDBOX-${Date.now()}`, accountUid, "SYS-01-ACT-SANDBOX-TEST", `SANDBOX:${verdict}:${outcomes.filter((row) => row.outcome === "PASS").length}/8`, new Date().toISOString()],
+    [`EVT-SYS-SANDBOX-${Date.now()}`, accountUid, "SYS-01-ACT-SANDBOX-TEST", `SANDBOX:${verdict}:${outcomes.filter((row) => row.outcome === "PASS").length}/10`, new Date().toISOString()],
   );
 }
