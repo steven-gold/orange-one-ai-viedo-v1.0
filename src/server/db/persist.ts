@@ -70,6 +70,9 @@ import {
   QA_PERMISSION,
   QA_PROJECTION,
   QA_ROUTE,
+  QA_ACTION_ALIASES,
+  QA_CONTROL_PERMISSIONS,
+  QA_GATE_ENFORCED,
   QA_VISIBLE_CONTROLS,
 } from "../domain/qa";
 import {
@@ -797,7 +800,7 @@ interface QaFieldRow {
 
 export async function persistHasQaPermission(accountUid: string): Promise<boolean> {
   await seedScope("qa");
-  if (!pagePermissionEnforced()) return true;
+  if (!qaGateEnforced()) return true;
   const rows = await getSqlClient().all<{ n: number }>(
     "SELECT count(*)::int AS n FROM ghsn_account_qa_permission WHERE account_uid = ? AND permission_uid = ?",
     [accountUid, QA_PERMISSION],
@@ -805,12 +808,50 @@ export async function persistHasQaPermission(accountUid: string): Promise<boolea
   return Number(rows[0]?.n ?? 0) > 0;
 }
 
+const QA_STATE_CONTROLS = [
+  "QA-01-STATE-QUEUE",
+  "QA-01-STATE-SURFACE",
+  "QA-01-STATE-SCORECARD",
+  "QA-01-STATE-GATE",
+  "QA-01-STATE-RELEASE",
+  "QA-01-STATE-FINDINGS",
+  "QA-01-STATE-CORRECTION",
+  "QA-01-STATE-RECHECK",
+  "QA-01-STATE-MANUAL",
+  "QA-01-STATE-EVIDENCE",
+  "QA-01-STATE-AUTO",
+  "QA-01-STATE-AUDIT",
+  "QA-01-STATE-ERROR",
+  "QA-01-STATE-QUERY",
+] as const;
+
+// Word QA-01 :1195-1219: seven action permissions. QA_USE (qa.task.read)
+// covers read/view/start; each mutation class requires its own permission.
+// QA_GATE_ENFORCED (qaGateEnforced) mirrors iamGateEnforced so the gate can
+// run independently of the global page-permission switch.
+export async function evaluateQaGate(accountUid: string, actionUid: string): Promise<string | null> {
+  await seedScope("qa");
+  if (!qaGateEnforced()) return null;
+  const has = async (permission: string): Promise<boolean> => {
+    const rows = await getSqlClient().all<{ n: number }>(
+      "SELECT count(*)::int AS n FROM ghsn_account_qa_permission WHERE account_uid = ? AND permission_uid = ?",
+      [accountUid, permission],
+    );
+    return Number(rows[0]?.n ?? 0) > 0;
+  };
+  const actionPermission = QA_CONTROL_PERMISSIONS[actionUid];
+  if (!actionPermission) return null;
+  const ok = await has(actionPermission);
+  return ok ? null : `missing ${actionPermission}`;
+}
+
 export async function persistListQaFields(): Promise<QaFieldValue[]> {
   const rows = await getSqlClient().all<QaFieldRow>(
     "SELECT control_uid, value_text FROM ghsn_qa_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return QA_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...QA_VISIBLE_CONTROLS, ...QA_STATE_CONTROLS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -880,15 +921,17 @@ export async function persistGetQaReadModel(accountUid: string): Promise<QaReadM
 }
 
 export function knownQaAction(controlUid: string, actionUid: string): boolean {
-  return QA_CONTROL_ACTIONS[controlUid] === actionUid;
+  if (QA_CONTROL_ACTIONS[controlUid] === actionUid) return true;
+  return QA_ACTION_ALIASES[actionUid]?.includes(controlUid) ?? false;
 }
 
 export async function persistRecordQaAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("qa", controlUid, actionUid);
+  await applyWorkbenchAction("qa", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_qa_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
@@ -1170,6 +1213,7 @@ export async function persistHasIamPermission(accountUid: string): Promise<boole
 // Account Permission Assignments and reports the exact missing permission.
 // IAM-01 enforces its gate independently of the site-wide page-access policy.
 const iamGateEnforced = () => IAM_GATE_ENFORCED || pagePermissionEnforced();
+const qaGateEnforced = () => QA_GATE_ENFORCED || pagePermissionEnforced();
 
 const IAM_CONFIG_ACTIONS: ReadonlySet<string> = new Set([
   "IAM-01-ACT-PRESET-APPLY-TO-DRAFT",

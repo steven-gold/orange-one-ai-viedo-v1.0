@@ -2,7 +2,7 @@ import { ASSET_PERMISSION, ASSET_VISIBLE_CONTROLS } from "../domain/asset";
 import { CORE_PERMISSION, CORE_VISIBLE_CONTROLS } from "../domain/core";
 import { EDIT_PERMISSION, EDIT_VISIBLE_CONTROLS } from "../domain/edit";
 import { DB_PERMISSION, DB_VISIBLE_CONTROLS } from "../domain/db";
-import { QA_PERMISSION, QA_VISIBLE_CONTROLS } from "../domain/qa";
+import { QA_PERMISSION, QA_PERMISSIONS, QA_VISIBLE_CONTROLS } from "../domain/qa";
 import { INFO_PERMISSION, INFO_VISIBLE_CONTROLS } from "../domain/info";
 import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
 import { IAM_PERMISSION, IAM_CONFIGURE_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
@@ -59,7 +59,22 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
   asset: { fieldTable: "ghsn_asset_field_projection", permissionTable: "ghsn_account_asset_permission", permission: ASSET_PERMISSION, controls: ASSET_VISIBLE_CONTROLS },
   video: { fieldTable: "ghsn_video_field_projection", permissionTable: "ghsn_account_video_permission", permission: VIDEO_PERMISSION, controls: VIDEO_VISIBLE_CONTROLS },
   edit: { fieldTable: "ghsn_edit_field_projection", permissionTable: "ghsn_account_edit_permission", permission: EDIT_PERMISSION, controls: EDIT_VISIBLE_CONTROLS },
-  qa: { fieldTable: "ghsn_qa_field_projection", permissionTable: "ghsn_account_qa_permission", permission: QA_PERMISSION, controls: QA_VISIBLE_CONTROLS },
+  // Word §1195-1219: ACC-DEMO holds all seven QA permissions; ACC-LIMITED
+  // gets qa.task.read only, so every mutation class exercises the gate.
+  qa: {
+    fieldTable: "ghsn_qa_field_projection",
+    permissionTable: "ghsn_account_qa_permission",
+    permission: QA_PERMISSION,
+    controls: QA_VISIBLE_CONTROLS,
+    extraPermissions: [
+      QA_PERMISSIONS.score,
+      QA_PERMISSIONS.gate,
+      QA_PERMISSIONS.finding,
+      QA_PERMISSIONS.correction,
+      QA_PERMISSIONS.release,
+      QA_PERMISSIONS.auto,
+    ],
+  },
   db: { fieldTable: "ghsn_db_field_projection", permissionTable: "ghsn_account_db_permission", permission: DB_PERMISSION, controls: DB_VISIBLE_CONTROLS },
   str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS },
   info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS },
@@ -187,6 +202,7 @@ async function seedDashboard(client: SqlClient): Promise<void> {
     [
       [DEMO_ACCOUNT, DASHBOARD_PERMISSION],
       ["ACC-LIMITED", DASHBOARD_PERMISSION],
+  ["ACC-LIMITED", QA_PERMISSION],
     ],
   );
 }

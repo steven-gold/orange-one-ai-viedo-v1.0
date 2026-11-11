@@ -474,7 +474,7 @@ export interface QaReadModel {
   projectionUid: "QaWorkbenchProjection";
   pageUid: "QA-01";
   route: "/qa";
-  permission: "qa.01.view";
+  permission: "qa.task.read";
   chainUid: "QA-01-FWC-PAGE-01";
   authorized: boolean;
   fields: QaFieldValue[];
@@ -512,6 +512,7 @@ export async function postQaAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  payload?: unknown,
 ): Promise<void> {
   await fetch("/api/qa/action", {
     method: "POST",
@@ -520,7 +521,7 @@ export async function postQaAction(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, payload }),
   });
 }
 

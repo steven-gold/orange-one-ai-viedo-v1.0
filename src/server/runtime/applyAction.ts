@@ -25,6 +25,19 @@ import { appendCoreEvent, CORE_EVENT_NAMES } from "@/lib/coreEventLog";
 import { requiredPermissionFor } from "@/lib/coreActionPermission";
 import { pagePermissionEnforced } from "@/server/auth/pageAccess";
 import { evaluateIamGate, persistHasCorePermission } from "../db/persist";
+import { evaluateQaGate } from "../db/persist";
+import {
+  QA_STATE_CORRECTION_UID,
+  QA_STATE_AUTO_UID,
+  QA_STATE_ERROR_UID,
+  QA_STATE_QUEUE_UID,
+  QA_STATE_SCORECARD_UID,
+  type QaCorrectionState,
+  type QaQueueReview,
+  type QaQueueState,
+  type QaScorecard,
+} from "@/lib/qaState";
+import { deriveQaScorecard } from "@/lib/qaCriteria";
 import {
   buildChapterArchitecture,
   buildStoryCore,
@@ -1886,10 +1899,112 @@ export async function applyWorkbenchAction(
     if (actionUid === "EDIT-01-ACT-HANDOFF") {
       const locked = await readField(FIELD_TABLE.edit, "EDIT-01-BTN-VERSION-LOCK");
       const version = await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION");
-      if (locked === "locked" && version) await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-EDIT", version);
+      if (locked === "locked" && version) {
+        await writeField(FIELD_TABLE.core, "CORE-01-FLD-DOWNSTREAM-EDIT", version);
+        // Word §9 GATE-RECHECK: a verified upstream delivery recorded on the
+        // correction request enables QA recheck; the failed version stays.
+        const correctionRaw = await readField(FIELD_TABLE.qa, QA_STATE_CORRECTION_UID);
+        if (correctionRaw && correctionRaw.startsWith("{")) {
+          try {
+            const correction = JSON.parse(correctionRaw) as QaCorrectionState;
+            if (correction.requestUid && correction.failedVersion && correction.newVersion !== version) {
+              await writeField(
+                FIELD_TABLE.qa,
+                QA_STATE_CORRECTION_UID,
+                JSON.stringify({ ...correction, newVersion: version, status: "UPSTREAM_DONE", at: new Date().toISOString() }),
+              );
+            }
+          } catch {
+            // malformed correction state: leave untouched
+          }
+        }
+      }
     }
     return;
   }
+// Word §11 QA Task Queue: the server-owned queue state is rebuilt from the
+// governed audit history plus the current inbound task. Filters/search are
+// session-local client concerns and never land in the projection.
+async function seedQaQueue(): Promise<void> {
+  const events = await getSqlClient().all<{ action_uid: string; occurred_at: string }>(
+    "SELECT action_uid, occurred_at FROM ghsn_qa_audit_event WHERE action_uid IN ('QA-01-ACT-START-REVIEW','QA-01-ACT-GATE-PASS','QA-01-ACT-GATE-FAIL') ORDER BY occurred_at ASC",
+  );
+  const project = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-PROJECT")) || "";
+  const topic = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-TOPIC")) || "";
+  const version = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION")) || "";
+  const reviews: QaQueueReview[] = [];
+  for (const event of events) {
+    const taskUid = `qa-task-${event.occurred_at}`;
+    const state = event.action_uid === "QA-01-ACT-GATE-PASS" ? "PASSED" : event.action_uid === "QA-01-ACT-GATE-FAIL" ? "CORRECTION" : "PENDING";
+    const existing = reviews.find((row) => row.taskUid === taskUid);
+    if (existing) existing.state = state;
+    else reviews.push({ taskUid, project, topic, sourceDept: "EDIT-01", severity: "", state });
+  }
+  if (!reviews.length && (project || version)) {
+    reviews.push({ taskUid: `qa-task-${version || "current"}`, project, topic, sourceDept: "EDIT-01", severity: "", state: "PENDING" });
+  }
+  const queue: QaQueueState = { filters: { state: "", severity: "", sourceDept: "" }, search: "", reviews, selected: "" };
+  await writeField(FIELD_TABLE.qa, QA_STATE_QUEUE_UID, JSON.stringify(queue));
+  await writeField(FIELD_TABLE.qa, "QA-01-FLD-AUTO-PROGRESS", `0/${reviews.length}`);
+}
+
+// Word §12 Batch orchestration: AUTO walks the Topic QA queue serially
+// (max_active = 1) and derives one scorecard per task. Any failure flips the
+// batch to fail-closed (ERR-AUTO-001); no reorder, create or skip.
+async function runQaAuto(accountUid: string): Promise<void> {
+  const rawQueue = await readField(FIELD_TABLE.qa, QA_STATE_QUEUE_UID);
+  let queue: QaQueueState = { filters: { state: "", severity: "", sourceDept: "" }, search: "", reviews: [], selected: "" };
+  try {
+    queue = JSON.parse(rawQueue || "{}") as QaQueueState;
+  } catch {
+    // fall through with the empty default
+  }
+  const reviews = queue.reviews ?? [];
+  if (!reviews.length) {
+    await writeField(
+      FIELD_TABLE.qa,
+      QA_STATE_ERROR_UID,
+      JSON.stringify({ code: "QA-01-ERR-AUTO-001", detail: "AUTO cannot resolve the Topic QA queue; no reorder/create/skip", at: new Date().toISOString() }),
+    );
+    return;
+  }
+  await writeField(FIELD_TABLE.qa, QA_STATE_AUTO_UID, JSON.stringify({ status: "RUNNING", processed: 0, total: reviews.length, currentTask: reviews[0]?.taskUid ?? "", at: new Date().toISOString(), blocker: "" }));
+  const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>("SELECT control_uid, value_text FROM ghsn_core_field_projection");
+  const byUid = new Map(coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+  const criteriaVersion = (await readField(FIELD_TABLE.qa, "QA-01-FLD-CRITERIA-VERSION")) || (byUid.get("CORE-01-FLD-CRITERIA-VERSION") ?? "") || "";
+  for (let index = 0; index < reviews.length; index += 1) {
+    const review = reviews[index];
+    const card: QaScorecard = deriveQaScorecardForTask(review, byUid, criteriaVersion);
+    await writeField(FIELD_TABLE.qa, QA_STATE_SCORECARD_UID, JSON.stringify(card));
+    await writeField(FIELD_TABLE.qa, QA_STATE_AUTO_UID, JSON.stringify({ status: index + 1 === reviews.length ? "DONE" : "RUNNING", processed: index + 1, total: reviews.length, currentTask: review.taskUid, at: new Date().toISOString(), blocker: "" }));
+    await writeField(FIELD_TABLE.qa, "QA-01-FLD-AUTO-PROGRESS", `${index + 1}/${reviews.length}`);
+  }
+}
+
+function deriveQaScorecardForTask(
+  review: QaQueueReview,
+  byUid: Map<string, string | null>,
+  criteriaVersion: string,
+): QaScorecard {
+  const targetOutput = review.taskUid.startsWith("qa-task-") ? review.taskUid.slice("qa-task-".length) : review.taskUid;
+  const evidence = {
+    project: review.project || byUid.get("CORE-01-FLD-PROJECT") || "",
+    topic: review.topic || byUid.get("CORE-01-FLD-TOPIC") || "",
+    targetOutput,
+    qaScript: (byUid.get("CORE-01-FLD-QA-SCRIPT") ?? "") || "",
+    scriptHash: (byUid.get("CORE-01-FLD-SCRIPT-HASH") ?? "") || "",
+    criteriaVersion,
+    checksum: (byUid.get("CORE-01-FLD-CHECKSUM") ?? "") || "",
+    provenance: (byUid.get("CORE-01-FLD-PROVENANCE") ?? "") || "",
+    rights: (byUid.get("CORE-01-FLD-RIGHTS") ?? "") || "",
+    policy: (byUid.get("CORE-01-FLD-POLICY") ?? "") || "QA-GATE-V1",
+    requiredChecks: (byUid.get("CORE-01-FLD-REQUIRED-CHECKS") ?? "") || "",
+    openFindings: [],
+    manualOpen: false,
+  };
+  return deriveQaScorecard(evidence, targetOutput);
+}
+
   if (page === "qa") {
     const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
       "SELECT control_uid, value_text FROM ghsn_core_field_projection",
@@ -1933,7 +2048,24 @@ export async function applyWorkbenchAction(
       "QA-01-FLD-RIGHTS": inbound.rights || null,
       "QA-01-FLD-PROVENANCE": inbound.provenance || null,
     };
-    await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
+    // Word §gates: second authorization layer. Every EFFECTFUL action class
+    // requires its own permission; a refusal writes QA-01-ERR-PERM-001 and
+    // the preview is not applied. UI_LOCAL actions pass through and the
+    // preview resolves them to an empty patch (no projection write).
+    if (accountUid) {
+      const denial = await evaluateQaGate(accountUid, actionUid);
+      if (denial) {
+        await writeField(
+          FIELD_TABLE.qa,
+          QA_STATE_ERROR_UID,
+          JSON.stringify({ code: "QA-01-ERR-PERM-001", detail: denial, at: new Date().toISOString() }),
+        );
+        return;
+      }
+    }
+    const written = await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
+    if (written && actionUid === "QA-01-ACT-START-REVIEW") await seedQaQueue();
+    if (written && actionUid === "QA-01-ACT-AUTO-START" && accountUid) await runQaAuto(accountUid);
     return;
   }
   if (page === "sys") {

@@ -405,3 +405,43 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.dimTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.dimTable th,
+.dimTable td {
+  border-bottom: 1px solid var(--line, #333);
+  padding: 3px 6px;
+  text-align: left;
+}
+
+.dimTable th {
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.dimTable td:nth-child(n + 2),
+.dimTable th:nth-child(n + 2) {
+  text-align: right;
+}
+
+.seek input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent, #7c5cff);
+}
+
+.field select,
+.field input {
+  background: transparent;
+  border: 1px solid var(--line, #333);
+  border-radius: 6px;
+  color: inherit;
+  padding: 4px 8px;
+  font: inherit;
+  width: 100%;
+}

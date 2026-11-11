@@ -120,7 +120,7 @@ export interface QaReadModel {
   projectionUid: "QaWorkbenchProjection";
   pageUid: "QA-01";
   route: "/qa";
-  permission: "qa.01.view";
+  permission: "qa.task.read";
   chainUid: "QA-01-FWC-PAGE-01";
   authorized: boolean;
   fields: QaFieldValue[];
