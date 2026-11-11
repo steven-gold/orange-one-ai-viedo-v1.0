@@ -316,3 +316,15 @@ Entries discovered by the Agent during task execution should follow this format:
   - AUTO（runQaAuto）證據基線必須讀 QA-01-FLD-*（MANUAL seed 寫入的 governed inbound 解析結果），不可從 CORE-01-FLD-QA-SCRIPT/CHECKSUM 等幻影鍵取（全庫無寫入方→永遠 total=0 FAIL）；逐任務 ledger 寫 STATE-AUTO.results（taskUid/total/status）。
   - 隊列聚合配方：taskUid=qa-task-${SOURCE-VERSION}（按版本不按審計時間戳）；severity 從 OPEN findings 匹配 failedVersion/scope 取最高 rank（CRITICAL>HIGH>MEDIUM>LOW）。
   - 探針隔離教訓：chain_full/asset/video 探針會在共享 SQLite 留投影殘留污染 QA inbound——probe_qa_stages 開頭直寫覆蓋鏈根＋video 版本源即可，不必刪表。
+
+[Project Knowledge Summary]
+- Date: 2026-11-11
+- Context: QA-01 契約錯誤碼對齊（§1322-1376 的 17 碼）與 s14 負向探針
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - 錯誤碼對齊方法：`grep -o "QA-01-ERR-[A-Z0-9-]*" qa01_word_paras.txt` 抽 §1322-1376 行段清單，與 `grep -rho ... src/` 全庫 diff——契約全文 29 個提及含 QA-02/03/04 頁的碼，必須按行段抽樣。
+  - QA seed 每次 POST 都從 fingerprint 鏈重算 FLD-CHECKSUM/PROVENANCE：checksum=fingerprintChecksum(EDIT-01-LBL-BINDING-FINGERPRINT) || fingerprintChecksum(handoffContract)，handoffContract 又退回 videoVersion——負向測試清 checksum 必須同時清 FINGERPRINT＋VIDEO-01-FLD-VIDEO-VERSION＋CORE-01-FLD-DOWNSTREAM-VIDEO＋VIDEO-01-FLD-HANDOFF-CONTRACT，直清 QA-01-FLD-CHECKSUM 會被 seed 覆寫。
+  - GATE-PASS/GATE-FAIL 的合法別名配對是 QA-01-BTN-RECHECK（QA_ACTION_ALIASES）；用 QA-01-BTN-GATE-PASS 等自造控件會 404 UNDEFINED-001。
+  - 探針 POST 經過 waitField 長 idle（8s+）後 keep-alive 失效會 fetch failed——s14 之後的 POST 一律包 3 次重試（editApi 模式）。
+  - QA-01-ERR-UNDEFINED-001 在 route.ts knownQaAction 層不碰 DB：Neon 402 凍結期間仍可用 POST 未知動作驗證線上新版本是否部署（版本標記）。
+  - EVIDENCE-CAPTURE-001 是 CLIENT 本地閘（§2747）：QaVisual localEvidence 驗 TARGET-OUTPUT/CHECKSUM/PROVENANCE＋timecode，缺則只擋捕獲寫進 draft.captureError，API 探針測不到。
