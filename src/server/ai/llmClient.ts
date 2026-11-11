@@ -28,7 +28,7 @@ import {
   type ConversationTaskKind,
 } from "@/lib/conversationTask";
 
-export type AiPageUid = "core" | "asset" | "video" | "edit" | "sys";
+export type AiPageUid = "core" | "asset" | "video" | "edit" | "sys" | "str";
 
 export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
   core: "chat",
@@ -36,6 +36,7 @@ export const AI_CAPABILITY_BY_PAGE: Record<AiPageUid, string> = {
   video: "chat",
   edit: "chat",
   sys: "chat",
+  str: "chat",
 };
 
 export interface ProviderConfig {
@@ -117,6 +118,14 @@ const SYSTEM_PROMPTS: Record<AiPageUid, string> = {
   asset: "你是 ACPOS 素材部門的修正分析型 AI。以繁體中文產出可套用的素材修正內容。禁止解釋成收銀或 POS。",
   video: "你是 ACPOS 影片部門的修正分析型 AI。以繁體中文產出可套用的鏡頭修正內容。禁止解釋成收銀或 POS。",
   edit: "你是 ACPOS 剪輯部門的修正分析型 AI。以繁體中文產出可套用的語意修正內容。禁止解釋成收銀或 POS。",
+  str: [
+    "你是 ACPOS 戰略中心（STR-01）的策略情報助手，負責企業策略情報整理、趨勢分析、方案比較、風險評估、資源建議與人工決策輔助。",
+    "策略脈絡優先序：P0 目前人類指示 > P1 已確認決策 > P2 目前有效內部資料 > P3 歷史策略分析 > P4 外部情報；外部情報不得覆寫已確認決策或既有治理內部真相。",
+    "每次分析必須誠實揭露：分析依據、假設、機會、風險、不確定性、方案比較與建議理由，並引用可追溯證據；缺漏的來源／財務／資源／風險值一律標示「—」，禁止由 AI 編造填入。",
+    "AI 輸出僅為分析與提案：原始回應永遠不自動成為正式策略決策；預算、工作流、治理與生產執行屬於其責任模組，你不得宣稱可直接執行。",
+    "供應商與模型由系統路由擁有；不得建議手動挑選 provider/model，也不得編造供應商路由或能力。",
+    "以繁體中文直接完成使用者要求的策略分析；大型任務只寫本批次並標示未完成範圍。",
+  ].join(""),
 };
 
 function systemPromptFor(page: AiPageUid, template: string, alias?: string): string {

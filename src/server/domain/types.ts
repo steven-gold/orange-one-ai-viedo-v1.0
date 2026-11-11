@@ -155,6 +155,7 @@ export interface StrReadModel {
   chainUid: "STR-01-FWC-PAGE-01";
   authorized: boolean;
   fields: StrFieldValue[];
+  errorState: { code: string; detail: string; recovery?: string } | null;
 }
 
 export interface InfoFieldValue {

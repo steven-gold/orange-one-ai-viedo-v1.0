@@ -137,4 +137,23 @@ export interface StrReadModel {
   chainUid: typeof STR_CHAIN;
   authorized: boolean;
   fields: StrFieldValue[];
+  errorState: { code: string; detail: string; recovery?: string; at: string } | null;
 }
+
+// ACPOS STR-01 FINAL_LOCKED_ENCODING_PROVIDER_BOUND §permissions: page read
+// (STR_VIEW) plus the four effectful scopes. Projection-side state UIDs live
+// outside the 57-control denominator (same precedent as QA-01/DB-01).
+export const STR_CONVERSATION_PERMISSION = "conversation.write";
+export const STR_COMPARE_PERMISSION = "candidate.read";
+export const STR_REVIEW_PERMISSION = "strategy.decision.propose";
+export const STR_ADOPT_PERMISSION = "strategy.decision.approve";
+
+export const STR_STATE_ERROR_UID = "STR-01-STATE-ERROR";
+
+export const STR_PERMISSION_SCOPES: Record<string, string> = {
+  "STR-01-ACT-SEND": STR_CONVERSATION_PERMISSION,
+  "STR-01-ACT-STOP": STR_CONVERSATION_PERMISSION,
+  "STR-01-ACT-COMPARE": STR_COMPARE_PERMISSION,
+  "STR-01-ACT-REVIEW": STR_REVIEW_PERMISSION,
+  "STR-01-ACT-ADOPT": STR_ADOPT_PERMISSION,
+};

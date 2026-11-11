@@ -598,6 +598,7 @@ export interface StrReadModel {
   chainUid: "STR-01-FWC-PAGE-01";
   authorized: boolean;
   fields: StrFieldValue[];
+  errorState: { code: string; detail: string; recovery?: string; at: string } | null;
 }
 
 export class StrClientError extends Error {
@@ -632,15 +633,18 @@ export async function postStrAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   await fetch("/api/strategy/action", {
     method: "POST",
+    signal,
     headers: {
       "content-type": "application/json",
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, payload: nextValue }),
   });
 }
 

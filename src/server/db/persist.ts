@@ -93,6 +93,7 @@ import {
   STR_PROJECTION,
   STR_ROUTE,
   STR_VISIBLE_CONTROLS,
+  STR_STATE_ERROR_UID,
 } from "../domain/str";
 import {
   INFO_CHAIN,
@@ -1047,6 +1048,21 @@ export async function persistListStrFields(): Promise<StrFieldValue[]> {
 export async function persistGetStrReadModel(accountUid: string): Promise<StrReadModel> {
   const authorized = await persistHasStrPermission(accountUid);
   const fields = authorized ? await persistListStrFields() : [];
+  let errorState: StrReadModel["errorState"] = null;
+  if (authorized) {
+    const rows = await getSqlClient().all<{ value_text: string | null }>(
+      "SELECT value_text FROM ghsn_str_field_projection WHERE control_uid = ?",
+      [STR_STATE_ERROR_UID],
+    );
+    const raw = rows[0]?.value_text;
+    if (raw) {
+      try {
+        errorState = JSON.parse(raw) as StrReadModel["errorState"];
+      } catch {
+        errorState = null;
+      }
+    }
+  }
   return {
     projectionUid: STR_PROJECTION,
     pageUid: STR_PAGE_UID,
@@ -1055,6 +1071,7 @@ export async function persistGetStrReadModel(accountUid: string): Promise<StrRea
     chainUid: STR_CHAIN,
     authorized,
     fields,
+    errorState,
   };
 }
 
@@ -1066,8 +1083,10 @@ export async function persistRecordStrAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
+  signal?: AbortSignal,
 ): Promise<string> {
-  await applyWorkbenchAction("str", controlUid, actionUid);
+  await applyWorkbenchAction("str", controlUid, actionUid, nextValue, accountUid, signal);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { StrClientError, fetchStrReadModel, postStrAction, type StrFieldValue } from "@/lib/client";
@@ -10,8 +10,6 @@ import styles from "./StrVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
 const DEFAULT_SESSION = "sess-demo-001";
-
-type StrMode = "SINGLE" | "MULTI";
 
 const COMPARE_COLUMNS = [
   "str.col-candidate",
@@ -36,6 +34,35 @@ const CONTEXT_SOURCES = [
   "str.src-risk",
   "str.src-governance",
 ] as const;
+
+interface StrTurnView {
+  id: string;
+  role: "user" | "assistant" | "synthesis";
+  alias?: string;
+  text: string;
+  route?: string;
+  status: "SENT" | "FAILED" | "ABORTED";
+  at: string;
+}
+
+function parseTurns(raw: string | null): StrTurnView[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as { turns?: StrTurnView[] };
+    return Array.isArray(parsed.turns) ? parsed.turns : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseCard(raw: string | null): { title?: string; summary?: string; risk?: string; uncertainty?: string; evidence?: string } | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as { title?: string; summary?: string; risk?: string; uncertainty?: string; evidence?: string };
+  } catch {
+    return null;
+  }
+}
 
 function Field({
   uid,
@@ -86,11 +113,15 @@ function Btn({
 export function StrVisual() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [contractError, setContractError] = useState<{ code: string; detail: string; recovery?: string } | null>(null);
   const [authorized, setAuthorized] = useState(false);
   const [fields, setFields] = useState<StrFieldValue[]>([]);
-  const [mode, setMode] = useState<StrMode>("SINGLE");
+  const [draft, setDraft] = useState("");
+  const [search, setSearch] = useState("");
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -101,6 +132,7 @@ export function StrVisual() {
         if (cancelled) return;
         setAuthorized(model.authorized);
         setFields(model.fields.length ? model.fields : STR_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        setContractError(model.errorState);
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -124,29 +156,57 @@ export function StrVisual() {
     [fields],
   );
 
-  const act = useCallback(async (controlUid: string) => {
+  const act = useCallback(async (controlUid: string, nextValue?: string, signal?: AbortSignal) => {
     const actionUid = STR_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postStrAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
-    } catch {
+      await postStrAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, nextValue, signal);
+    } catch (cause: unknown) {
+      if (cause instanceof DOMException && cause.name === "AbortError") return;
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
     setTick((n) => n + 1);
   }, []);
 
+  const send = useCallback(async () => {
+    const message = draft.trim();
+    if (!message || sending) return;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setSending(true);
+    try {
+      await postStrAction(DEFAULT_ACCOUNT, "STR-01-INP-MESSAGE", "STR-01-ACT-SEND", DEFAULT_SESSION, message, controller.signal);
+    } catch (cause: unknown) {
+      if (!(cause instanceof DOMException && cause.name === "AbortError")) {
+        await postStrAction(DEFAULT_ACCOUNT, "STR-01-BTN-STOP", "STR-01-ACT-STOP", DEFAULT_SESSION).catch(() => undefined);
+      }
+    } finally {
+      abortRef.current = null;
+      setSending(false);
+      setDraft("");
+      setTick((n) => n + 1);
+    }
+  }, [draft, sending]);
+
+  const stop = useCallback(async () => {
+    abortRef.current?.abort();
+    await act("STR-01-BTN-STOP");
+  }, [act]);
+
   const disabled = !authorized && !loading;
-  const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
+  const busy = loading || sending;
+  const pageState = loading ? "LOADING" : sending ? "RESPONDING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayStrValue(null, loading);
   const v = (uid: string) => valueOf(uid);
 
   const visibleUids = useMemo(() => new Set<string>(STR_VISIBLE_CONTROLS), []);
 
-  const toggleMode = (next: StrMode) => {
-    setMode(next);
-    void act("STR-01-TGL-MODE");
-  };
+  const mode = (v("STR-01-TGL-MODE") ?? "SINGLE") === "MULTI" ? "MULTI" : "SINGLE";
+  const turns = parseTurns(v("STR-01-VIEW-CONVERSATION"));
+  const topicLines = (v("STR-01-LST-TOPICS") ?? "").split("\n").map((line) => line.trim()).filter(Boolean);
+  const compareRows = (v("STR-01-TBL-COMPARE") ?? "").split("\n").map((line) => line.trim()).filter(Boolean);
+  const openQuestions = v("STR-01-FLD-OPEN-QUESTIONS");
 
   return (
     <div
@@ -159,6 +219,12 @@ export function StrVisual() {
       aria-label={tx("str.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("str.error")}</div> : null}
+      {contractError ? (
+        <div className={styles.error} role="alert">
+          {contractError.code} · {contractError.detail}
+          {contractError.recovery ? ` · ${contractError.recovery}` : ""}
+        </div>
+      ) : null}
 
       <section className={`${styles.panel} ${styles.context}`} data-section-uid="STR-01-SEC-01" data-component-uid="STR-01-CMP-CONTEXT" data-visual-uid="STR-01-VIS-CONTEXT">
         <Field uid="STR-01-FLD-TOPIC" label={tx("str.fld-topic")} value={v("STR-01-FLD-TOPIC")} loading={loading} onAct={act} disabled={disabled} />
@@ -171,16 +237,16 @@ export function StrVisual() {
             type="button"
             className={`${styles.btn} ${mode === "SINGLE" ? styles.btnPrimary : ""}`}
             data-control-uid="STR-01-TGL-MODE"
-            disabled={disabled}
-            onClick={() => toggleMode("SINGLE")}
+            disabled={busy || disabled}
+            onClick={() => void act("STR-01-TGL-MODE", "SINGLE")}
           >
             {tx("str.mode-single")}
           </button>
           <button
             type="button"
             className={`${styles.btn} ${mode === "MULTI" ? styles.btnPrimary : ""}`}
-            disabled={disabled}
-            onClick={() => toggleMode("MULTI")}
+            disabled={busy || disabled}
+            onClick={() => void act("STR-01-TGL-MODE", "MULTI")}
           >
             {tx("str.mode-multi")}
           </button>
@@ -191,22 +257,45 @@ export function StrVisual() {
         <aside className={styles.col}>
           <section className={styles.panel} data-section-uid="STR-01-SEC-02" data-component-uid="STR-01-CMP-TOPICS" data-visual-uid="STR-01-VIS-LEFT-TOPIC">
             <h2 className={styles.title}>{tx("str.topics")}</h2>
-            <button type="button" className={styles.search} data-control-uid="STR-01-INP-TOPIC-SEARCH" disabled={disabled} onClick={() => void act("STR-01-INP-TOPIC-SEARCH")}>
-              {tx("str.inp-topic-search")}
-            </button>
+            <input
+              type="text"
+              className={styles.searchInput}
+              data-control-uid="STR-01-INP-TOPIC-SEARCH"
+              placeholder={tx("str.inp-topic-search")}
+              value={search}
+              disabled={busy || disabled}
+              onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  void act("STR-01-INP-TOPIC-SEARCH", search);
+                }
+              }}
+            />
             <div className={styles.list} data-control-uid="STR-01-LST-TOPICS">
-              {[0, 1, 2].map((index) => (
+              {topicLines.length === 0 ? (
                 <button
-                  key={index}
                   type="button"
                   className={styles.item}
-                  disabled={disabled}
-                  onClick={() => void act("STR-01-LST-TOPICS")}
+                  disabled={busy || disabled}
+                  onClick={() => void act("STR-01-LST-TOPICS", search)}
                 >
-                  {tx("str.topic-item")}
+                  {tx("str.topic-create-hint")}
                   <span>{dash}</span>
                 </button>
-              ))}
+              ) : (
+                topicLines.map((line) => (
+                  <button
+                    key={line}
+                    type="button"
+                    className={styles.item}
+                    disabled={busy || disabled}
+                    onClick={() => void act("STR-01-LST-TOPICS", line)}
+                  >
+                    {line}
+                  </button>
+                ))
+              )}
             </div>
           </section>
 
@@ -214,16 +303,13 @@ export function StrVisual() {
             <h2 className={styles.title}>{tx("str.context")}</h2>
             <div className={styles.list} data-control-uid="STR-01-LST-CONTEXT">
               {CONTEXT_SOURCES.map((key) => (
-                <button
+                <div
                   key={key}
-                  type="button"
                   className={styles.item}
-                  disabled={disabled}
-                  onClick={() => void act("STR-01-LST-CONTEXT")}
                 >
                   {tx(key)}
                   <span>{dash}</span>
-                </button>
+                </div>
               ))}
             </div>
             <div className={styles.stack}>
@@ -237,10 +323,10 @@ export function StrVisual() {
           <section className={styles.panel} data-section-uid="STR-01-SEC-04" data-component-uid="STR-01-CMP-ALERTS" data-visual-uid="STR-01-VIS-LEFT-ALERT">
             <h2 className={styles.title}>{tx("str.alerts")}</h2>
             <div className={styles.list} data-control-uid="STR-01-LST-ALERTS">
-              <button type="button" className={styles.item} disabled={disabled} onClick={() => void act("STR-01-LST-ALERTS")}>
-                {tx("str.alert-item")}
-                <span>{dash}</span>
-              </button>
+              <div className={styles.item}>
+                {openQuestions && openQuestions !== "—" ? openQuestions : tx("str.alert-item")}
+                <span>{openQuestions && openQuestions !== "—" ? "" : dash}</span>
+              </div>
             </div>
           </section>
         </aside>
@@ -248,21 +334,48 @@ export function StrVisual() {
         <main className={styles.col}>
           <section className={styles.panel} data-section-uid="STR-01-SEC-05" data-component-uid="STR-01-CMP-CONVERSATION" data-visual-uid="STR-01-VIS-CONVERSATION">
             <h2 className={styles.title}>{tx("str.conversation")}</h2>
-            <button type="button" className={styles.conversation} data-control-uid="STR-01-VIEW-CONVERSATION" disabled={disabled} onClick={() => void act("STR-01-VIEW-CONVERSATION")}>
-              <p className={styles.conversationTitle}>{tx("str.conversation-empty")}</p>
-              <span>{tx("str.conversation-meta")} {dash}</span>
-            </button>
+            <div className={styles.transcript} data-control-uid="STR-01-VIEW-CONVERSATION">
+              {turns.length === 0 ? (
+                <p className={styles.conversationTitle}>
+                  {tx("str.conversation-empty")} · {tx("str.conversation-meta")} {dash}
+                </p>
+              ) : (
+                turns.map((turn) => (
+                  <div key={turn.id} className={`${styles.bubble} ${turn.role === "user" ? styles.bubbleUser : ""}`} data-turn-status={turn.status}>
+                    <span className={styles.bubbleRole}>
+                      {turn.role === "user" ? tx("str.role-user") : turn.role === "synthesis" ? tx("str.role-synthesis") : `${tx("str.role-assistant")}${turn.alias ? ` @${turn.alias}` : ""}`}
+                      {turn.route ? ` · ${turn.route}` : ""}
+                      {turn.status === "FAILED" ? ` · ${tx("str.status-failed")}` : ""}
+                      {turn.status === "ABORTED" ? ` · ${tx("str.status-aborted")}` : ""}
+                    </span>
+                    <span className={styles.bubbleText}>{turn.text}</span>
+                  </div>
+                ))
+              )}
+            </div>
             <div className={styles.composer} data-component-uid="STR-01-CMP-COMPOSER">
-              <Btn uid="STR-01-BTN-ATTACH" label={tx("str.btn-attach")} onAct={act} disabled={disabled} />
-              <button type="button" className={styles.textarea} data-control-uid="STR-01-INP-MESSAGE" disabled={disabled} onClick={() => void act("STR-01-INP-MESSAGE")}>
-                {tx("str.inp-message")}
-              </button>
-              <Btn uid="STR-01-BTN-SEND" label={tx("str.btn-send")} onAct={act} disabled={disabled} primary />
-              <Btn uid="STR-01-BTN-STOP" label={tx("str.btn-stop")} onAct={act} disabled={disabled} />
+              <Btn uid="STR-01-BTN-ATTACH" label={tx("str.btn-attach")} onAct={act} disabled={busy || disabled} />
+              <textarea
+                className={styles.textareaInput}
+                data-control-uid="STR-01-INP-MESSAGE"
+                placeholder={tx("str.inp-message")}
+                value={draft}
+                disabled={busy || disabled}
+                rows={2}
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                    event.preventDefault();
+                    void send();
+                  }
+                }}
+              />
+              <Btn uid="STR-01-BTN-SEND" label={tx("str.btn-send")} onAct={() => void send()} disabled={busy || disabled || draft.trim() === ""} primary />
+              <Btn uid="STR-01-BTN-STOP" label={tx("str.btn-stop")} onAct={() => void stop()} disabled={disabled || !sending} />
             </div>
             <div className={styles.assistant} data-component-uid="STR-01-CMP-ASSISTANT">
               <Field uid="STR-01-FLD-ASSISTANT-SUMMARY" label={tx("str.fld-assistant-summary")} value={v("STR-01-FLD-ASSISTANT-SUMMARY")} loading={loading} onAct={act} disabled={disabled} />
-              <Field uid="STR-01-FLD-OPEN-QUESTIONS" label={tx("str.fld-open-questions")} value={v("STR-01-FLD-OPEN-QUESTIONS")} loading={loading} onAct={act} disabled={disabled} />
+              <Field uid="STR-01-FLD-OPEN-QUESTIONS" label={tx("str.fld-open-questions")} value={openQuestions} loading={loading} onAct={act} disabled={disabled} />
               <Field uid="STR-01-FLD-MEETING-RECORD" label={tx("str.fld-meeting-record")} value={v("STR-01-FLD-MEETING-RECORD")} loading={loading} onAct={act} disabled={disabled} />
             </div>
           </section>
@@ -284,22 +397,19 @@ export function StrVisual() {
           <section className={styles.panel} data-section-uid="STR-01-SEC-08" data-component-uid="STR-01-CMP-OUTPUTS" data-visual-uid="STR-01-VIS-RIGHT-OUTPUT">
             <h2 className={styles.title}>{tx("str.outputs")}</h2>
             <div className={styles.cards}>
-              <button type="button" className={styles.card} data-control-uid="STR-01-CARD-RECOMMENDATION" disabled={disabled} onClick={() => void act("STR-01-CARD-RECOMMENDATION")}>
-                <span className={styles.label}>{tx("str.card-recommendation")}</span>
-                <span className={styles.value}>{displayStrValue(v("STR-01-CARD-RECOMMENDATION"), loading)}</span>
-              </button>
-              <button type="button" className={styles.card} data-control-uid="STR-01-CARD-ALERT" disabled={disabled} onClick={() => void act("STR-01-CARD-ALERT")}>
-                <span className={styles.label}>{tx("str.card-alert")}</span>
-                <span className={styles.value}>{displayStrValue(v("STR-01-CARD-ALERT"), loading)}</span>
-              </button>
-              <button type="button" className={styles.card} data-control-uid="STR-01-CARD-RESOURCE" disabled={disabled} onClick={() => void act("STR-01-CARD-RESOURCE")}>
-                <span className={styles.label}>{tx("str.card-resource")}</span>
-                <span className={styles.value}>{displayStrValue(v("STR-01-CARD-RESOURCE"), loading)}</span>
-              </button>
-              <button type="button" className={styles.card} data-control-uid="STR-01-CARD-BRIEF" disabled={disabled} onClick={() => void act("STR-01-CARD-BRIEF")}>
-                <span className={styles.label}>{tx("str.card-brief")}</span>
-                <span className={styles.value}>{displayStrValue(v("STR-01-CARD-BRIEF"), loading)}</span>
-              </button>
+              {(["STR-01-CARD-RECOMMENDATION", "STR-01-CARD-ALERT", "STR-01-CARD-RESOURCE", "STR-01-CARD-BRIEF"] as const).map((uid, index) => {
+                const card = parseCard(v(uid));
+                const label = tx(["str.card-recommendation", "str.card-alert", "str.card-resource", "str.card-brief"][index] as TranslationKey);
+                return (
+                  <div key={uid} className={styles.card} data-control-uid={uid}>
+                    <span className={styles.label}>{label}</span>
+                    <span className={styles.value}>
+                      {card ? `${card.title ?? "—"} · ${card.summary ?? "—"}` : displayStrValue(null, loading)}
+                    </span>
+                    {card ? <span className={styles.cardMeta}>{`risk: ${card.risk ?? "—"} · uncertainty: ${card.uncertainty ?? "—"} · evidence: ${card.evidence ?? "—"}`}</span> : null}
+                  </div>
+                );
+              })}
             </div>
           </section>
 
@@ -314,8 +424,17 @@ export function StrVisual() {
               <Field uid="STR-01-FLD-EXECUTION-STATE" label={tx("str.fld-execution-state")} value={v("STR-01-FLD-EXECUTION-STATE")} loading={loading} onAct={act} disabled={disabled} />
             </div>
             <div className={styles.actions} data-component-uid="STR-01-CMP-REVIEW">
-              <Btn uid="STR-01-BTN-SUBMIT-REVIEW" label={tx("str.btn-submit-review")} onAct={act} disabled={disabled} primary />
-              <Btn uid="STR-01-BTN-ADOPT" label={tx("str.btn-adopt")} onAct={act} disabled={disabled} primary />
+              <Btn uid="STR-01-BTN-SUBMIT-REVIEW" label={tx("str.btn-submit-review")} onAct={act} disabled={busy || disabled} primary />
+              <Btn
+                uid="STR-01-BTN-ADOPT"
+                label={tx("str.btn-adopt")}
+                onAct={() => {
+                  const reason = typeof window !== "undefined" ? window.prompt(tx("str.btn-adopt")) ?? "" : "";
+                  if (reason.trim()) void act("STR-01-BTN-ADOPT", reason.trim());
+                }}
+                disabled={busy || disabled}
+                primary
+              />
               <Btn uid="STR-01-BTN-OPEN-OWNER" label={tx("str.btn-open-owner")} onAct={act} disabled={disabled} />
             </div>
           </section>
@@ -331,13 +450,23 @@ export function StrVisual() {
                 <span key={key}>{tx(key)}</span>
               ))}
             </div>
-            <button type="button" className={styles.trow} disabled={disabled} onClick={() => void act("STR-01-TBL-COMPARE")}>
-              {COMPARE_COLUMNS.map((key) => (
-                <span key={key}>{dash}</span>
-              ))}
-            </button>
+            {compareRows.length === 0 ? (
+              <div className={styles.trow}>
+                {COMPARE_COLUMNS.map((key) => (
+                  <span key={key}>{dash}</span>
+                ))}
+              </div>
+            ) : (
+              compareRows.map((row) => (
+                <div key={row} className={styles.trow}>
+                  {row.split(" · ").map((cell, index) => (
+                    <span key={`${row}-${index}`}>{cell}</span>
+                  ))}
+                </div>
+              ))
+            )}
           </div>
-          <Btn uid="STR-01-BTN-COMPARE" label={tx("str.btn-compare")} onAct={act} disabled={disabled} />
+          <Btn uid="STR-01-BTN-COMPARE" label={tx("str.btn-compare")} onAct={act} disabled={busy || disabled} />
         </div>
       </section>
 

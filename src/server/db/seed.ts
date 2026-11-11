@@ -13,7 +13,7 @@ import { AIAPI_PERMISSION, AIAPI_VISIBLE_CONTROLS } from "../domain/aiapi";
 import { SG02_PERMISSION, SG02_VISIBLE_CONTROLS } from "../domain/sg02";
 import { ADMIN_STR_PERMISSION, ADMIN_STR_VISIBLE_CONTROLS } from "../domain/adminStr";
 import { KB_PERMISSION, KB_VISIBLE_CONTROLS } from "../domain/kb";
-import { STR_PERMISSION, STR_VISIBLE_CONTROLS } from "../domain/str";
+import { STR_PERMISSION, STR_VISIBLE_CONTROLS, STR_CONVERSATION_PERMISSION, STR_COMPARE_PERMISSION, STR_REVIEW_PERMISSION, STR_ADOPT_PERMISSION } from "../domain/str";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import { CANONICAL_NAVIGATION_AUTHORITY } from "../domain/schema";
@@ -84,7 +84,7 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
     controls: DB_VISIBLE_CONTROLS,
     extraPermissions: [DB_TRACE_PERMISSION, DB_MIGRATION_PERMISSION, DB_INTEGRITY_PERMISSION, DB_AUDIT_PERMISSION],
   },
-  str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS },
+  str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS, extraPermissions: [STR_CONVERSATION_PERMISSION, STR_COMPARE_PERMISSION, STR_REVIEW_PERMISSION, STR_ADOPT_PERMISSION] },
   info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS },
   sys: { fieldTable: "ghsn_sys_field_projection", permissionTable: "ghsn_account_sys_permission", permission: SYS_PERMISSION, controls: SYS_VISIBLE_CONTROLS },
   iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS, extraPermissions: [IAM_CONFIGURE_PERMISSION] },
