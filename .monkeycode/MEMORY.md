@@ -348,3 +348,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - 正向鏈四跳欄位級落實：CORE→ASSET（resolveAssetInbound＋§22 receipt）、ASSET→VIDEO（HANDOFF-ASSET-VERSION/CHECKSUM/RIGHTS/LAYER-COMPOSITE，videoInbound :31-39）、VIDEO→EDIT（effectiveVideoCurrent 強制覆蓋＋HANDOFF-CONTRACT→fingerprint）、EDIT→QA（SOURCE-VERSION→targetOutput、FINGERPRINT→checksum、EVAL-SUMMARY→criteriaVersion）。
   - 反向鏈兩條：QA 修正迴路＝狀態機銜接（QA 只提請；EDIT HANDOFF 寫 correction newVersion＋UPSTREAM_DONE；QA RECHECK 強制 newVersion≠failedVersion＝契約「Verified NEW exact output」）；EDIT→CORE＝HANDOFF 寫 CORE-01-FLD-DOWNSTREAM-EDIT receipt（qaInbound provenance 消費）。
   - EDIT 25 個契約閘以條件內聯實作（editActionPreview），閘 UID 是聲明標籤——QA/CORE 同模式；ASSET/VIDEO 顯式引用閘 UID 僅是風格差異。GATE-BLUEPRINT-RETURN 契約未細化條件，實作＝OWNER_ORCHESTRATED 頁面狀態標記；GATE-STAGE-PASS＝upstreamStageScore 消費上游評分證據；GATE-PROJECT-SOURCE-MUTATION＝inbound 未就緒全寫入封鎖。
+
+[Project Knowledge Summary]
+- Date: 2026-11-11
+- Context: DB-01 真實資料工作區補齊（commit 6b293a0f）
+- Category: Build Methods
+- Instructions:
+  - DB-01 讀模型內省在 src/server/db/introspect.ts（dialect 分流：memory→sqlite_master/pragma_*，neon→information_schema）；pragma 查詢的 notnull 列是 SQLite 保留字必須加引號，pragma TVF 可吃綁定參數。
+  - DB-01 動作全在 src/server/db/dbActions.ts（15 動作/9 閘/10 ERR/5 階段），applyAction 的 page=="db" 分支只做 UNDEFINED-001 guard 後委派；錯誤狀態投影到 DB-01-STATE-ERROR（不在 49 控件分母內），DbVisual 從 read model.errorState 渲染橫幅。
+  - /api/db/action 的值欄位是 body.payload（與 /api/qa 一致）；nextValue 必須經 route→persistRecordDbAction→applyWorkbenchAction 四層傳遞，漏一層 ENTITY-SELECT 類動作會靜默落空 patch。
+  - DB 五權限 scope（database.metadata/trace/migration/integrity.read + audit.read）種在 ghsn_account_db_permission；線上 Neon 402 連 requireAuth 都過不了，動態 API 部署標記失效——改用本地 build+test+API 探針驗證。
