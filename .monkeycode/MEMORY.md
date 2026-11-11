@@ -339,3 +339,12 @@ Entries discovered by the Agent during task execution should follow this format:
   - 共享 DB 殘留的三個 fail-closed 源（契約正確行為，探針須自清）：EDIT-01-LST-VOICE-TAKES 殘留→對話軌在用→RECHECK/LOCK/RENDER 全擋；ASSET-01-FLD-MANIFEST 殘留 SFX item→圖層旅程 Not Applicable；core 快照/lifecycle 殘留→asset inbound ready=false→gated 動作全空 patch＋manifest completed 登記隨腳本投影丟失（直寫 MANIFEST-REQUIRED 補 completed）。
   - 探針斷言可被殘留騙過：「Handoff保留LDOC參照」PASS 但 HANDOFF 實際空 patch（殘留 LDOC 字串）——驗證 handoff 生效要看 ASSET-01-FLD-HANDOFF-ASSET-VERSION 落地。
   - 四頁現狀：probe_core_live(local)/asset_gaps/layer_runtime/layer_live/edit_gaps/edit_handoff/edit_timeline/chain_full 全 PASS；線上分母 95/95/170/87 全到位。
+
+[Project Knowledge Summary]
+- Date: 2026-11-11
+- Context: 五頁（CORE/ASSET/VIDEO/EDIT/QA）連動性審計
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - 正向鏈四跳欄位級落實：CORE→ASSET（resolveAssetInbound＋§22 receipt）、ASSET→VIDEO（HANDOFF-ASSET-VERSION/CHECKSUM/RIGHTS/LAYER-COMPOSITE，videoInbound :31-39）、VIDEO→EDIT（effectiveVideoCurrent 強制覆蓋＋HANDOFF-CONTRACT→fingerprint）、EDIT→QA（SOURCE-VERSION→targetOutput、FINGERPRINT→checksum、EVAL-SUMMARY→criteriaVersion）。
+  - 反向鏈兩條：QA 修正迴路＝狀態機銜接（QA 只提請；EDIT HANDOFF 寫 correction newVersion＋UPSTREAM_DONE；QA RECHECK 強制 newVersion≠failedVersion＝契約「Verified NEW exact output」）；EDIT→CORE＝HANDOFF 寫 CORE-01-FLD-DOWNSTREAM-EDIT receipt（qaInbound provenance 消費）。
+  - EDIT 25 個契約閘以條件內聯實作（editActionPreview），閘 UID 是聲明標籤——QA/CORE 同模式；ASSET/VIDEO 顯式引用閘 UID 僅是風格差異。GATE-BLUEPRINT-RETURN 契約未細化條件，實作＝OWNER_ORCHESTRATED 頁面狀態標記；GATE-STAGE-PASS＝upstreamStageScore 消費上游評分證據；GATE-PROJECT-SOURCE-MUTATION＝inbound 未就緒全寫入封鎖。
