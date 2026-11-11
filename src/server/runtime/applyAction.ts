@@ -25,7 +25,7 @@ import { appendCoreEvent, CORE_EVENT_NAMES } from "@/lib/coreEventLog";
 import { requiredPermissionFor } from "@/lib/coreActionPermission";
 import { pagePermissionEnforced } from "@/server/auth/pageAccess";
 import { evaluateIamGate, persistHasCorePermission } from "../db/persist";
-import { evaluateQaGate } from "../db/persist";
+import { evaluateQaGate, knownQaAction } from "../db/persist";
 import {
   QA_STATE_CORRECTION_UID,
   QA_STATE_AUTO_UID,
@@ -2070,6 +2070,16 @@ function deriveQaScorecardForTask(
 }
 
   if (page === "qa") {
+    // Word §errors: an unlisted control/action is BLOCK + REPORT_AUTHORITY_GAP,
+    // recorded on the page error state before any preview work runs.
+    if (!knownQaAction(controlUid, actionUid)) {
+      await writeField(
+        FIELD_TABLE.qa,
+        QA_STATE_ERROR_UID,
+        JSON.stringify({ code: "QA-01-ERR-UNDEFINED-001", detail: `Unlisted control/action requested: ${controlUid}/${actionUid}`, report: "REPORT_AUTHORITY_GAP", at: new Date().toISOString() }),
+      );
+      return;
+    }
     const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
       "SELECT control_uid, value_text FROM ghsn_core_field_projection",
     );

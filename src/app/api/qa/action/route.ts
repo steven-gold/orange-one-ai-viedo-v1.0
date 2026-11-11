@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const actionUid = String(body.actionUid ?? "");
     const nextValue = body.payload === undefined ? undefined : typeof body.payload === "string" ? body.payload : JSON.stringify(body.payload);
     if (!knownQaAction(controlUid, actionUid)) {
-      return jsonError("QA_ACTION_UNAVAILABLE", `Unknown control ${controlUid}`, 404);
+      return jsonError("QA-01-ERR-UNDEFINED-001", `Unlisted control/action requested = BLOCK + REPORT_AUTHORITY_GAP: ${controlUid}/${actionUid}`, 404);
     }
     const allowed = await persistHasQaPermission(principal.accountUid);
     if (!allowed) {

@@ -187,7 +187,8 @@ export function previewQaAction(
         return fail("QA-01-ERR-GATE-001", "FAIL decision requires an active review or recheck");
       }
       if (!outputResolved(checksum, provenance, targetOutput)) {
-        return fail("QA-01-ERR-GATE-001", "FAIL decision lacks sufficient exact evidence");
+        const missingEvidence = [!checksum && "checksum", !provenance && "provenance", !targetOutput && "targetOutput"].filter(Boolean);
+        return fail("QA-01-ERR-EVIDENCE-001", `required evidence missing: ${missingEvidence.join("/")}`);
       }
       return {
         [QA_STATE_GATE_UID]: JSON.stringify({ status: "FAIL", decidedBy: "qa.gate.decide", at: now(), blockers: [], reason: "governed FAIL decision" }),
@@ -196,6 +197,9 @@ export function previewQaAction(
       };
     }
     const blockers = gatePassBlockers(scorecard, findings, manual, rights, policy);
+    if (blockers.includes("MANUAL_REVIEW_OPEN")) {
+      return fail("QA-01-ERR-MANUAL-001", `ManualReviewCase unresolved/open: ${blockers.join(", ")}`);
+    }
     if (blockers.length) return fail("QA-01-ERR-GATE-001", `PASS prerequisites unmet: ${blockers.join(", ")}`);
     return {
       [QA_STATE_GATE_UID]: JSON.stringify({ status: "PASS", decidedBy: "qa.gate.decide", at: now(), blockers: [], reason: "bound criteria PASS" }),
@@ -374,6 +378,9 @@ export function previewQaAction(
       return { [QA_STATE_RELEASE_UID]: JSON.stringify(existing), "QA-01-FLD-REL-PACKAGE": existing.candidateUid };
     }
     if (!releaseReady) {
+      if (blockers.includes("MANUAL_OPEN")) {
+        return fail("QA-01-ERR-MANUAL-001", `manual review blocker: ${blockers.join(", ")}`);
+      }
       return fail("QA-01-ERR-RELEASE-001", `release candidate eligibility refs invalid: ${blockers.join(", ")}`);
     }
     const release: QaReleaseState = {

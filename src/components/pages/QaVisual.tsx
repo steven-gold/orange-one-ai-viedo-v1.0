@@ -44,6 +44,7 @@ interface EvidenceDraft {
   points: string[];
   rangeIn: string | null;
   rangeOut: string | null;
+  captureError: string | null;
 }
 
 function formatTimecode(ms: number): string {
@@ -195,7 +196,7 @@ export function QaVisual() {
   const [surface, setSurface] = useState<QaSurface>("AUTO");
   const [playing, setPlaying] = useState(false);
   const [timecodeMs, setTimecodeMs] = useState(0);
-  const [draft, setDraft] = useState<EvidenceDraft>({ points: [], rangeIn: null, rangeOut: null });
+  const [draft, setDraft] = useState<EvidenceDraft>({ points: [], rangeIn: null, rangeOut: null, captureError: null });
   const [queueFilters, setQueueFilters] = useState({ state: "", severity: "", sourceDept: "", search: "" });
   const [reviewMode, setReviewMode] = useState<"AUTO" | "MANUAL">("AUTO");
   const [findingForm, setFindingForm] = useState({ severity: "", category: "", scope: "", evidence: "" });
@@ -358,6 +359,21 @@ export function QaVisual() {
     (controlUid: string) => {
       const stamp = formatTimecode(timecodeMs);
       const actionUid = QA_CONTROL_ACTIONS[controlUid];
+      // §errors EVIDENCE-CAPTURE-001: capture without the exact
+      // output/version/checksum/provenance context or a valid point/range
+      // blocks the capture only; there is no manual Evidence ID fallback.
+      const captureReady = Boolean(
+        valueOf("QA-01-FLD-TARGET-OUTPUT") &&
+          valueOf("QA-01-FLD-CHECKSUM") &&
+          valueOf("QA-01-FLD-PROVENANCE") &&
+          Number.isFinite(timecodeMs) &&
+          timecodeMs >= 0,
+      );
+      if (!captureReady) {
+        setDraft((prev) => ({ ...prev, captureError: "QA-01-ERR-EVIDENCE-CAPTURE-001" }));
+        return;
+      }
+      setDraft((prev) => ({ ...prev, captureError: null }));
       if (actionUid === "QA-01-ACT-EVIDENCE-POINT") {
         setDraft((prev) => ({ ...prev, points: [...prev.points, stamp] }));
         setFindingForm((prev) => ({ ...prev, evidence: prev.evidence ? `${prev.evidence};${stamp}` : stamp }));
@@ -372,7 +388,7 @@ export function QaVisual() {
         void act(controlUid);
       }
     },
-    [act, timecodeMs],
+    [act, timecodeMs, valueOf],
   );
 
   const submitFinding = useCallback(
@@ -415,6 +431,10 @@ export function QaVisual() {
       "QA-01-FLD-TARGET-OUTPUT",
       "QA-01-FLD-REVIEW-STATE",
       "QA-01-BTN-START-REVIEW",
+      // Evidence capture gates require the governed checksum/provenance
+      // context on every surface that offers capture (§errors EVIDENCE-CAPTURE).
+      "QA-01-FLD-CHECKSUM",
+      "QA-01-FLD-PROVENANCE",
     ]);
     if (showQueue) {
       uids.add("QA-01-FLD-AUTO-PROGRESS");
@@ -670,6 +690,11 @@ export function QaVisual() {
           <span>{tx("qa.preview-meta")} {v("QA-01-FLD-TARGET-OUTPUT") || dash} · {v("QA-01-FLD-CHECKSUM") || dash}</span>
         </div>
       )}
+      {draft.captureError ? (
+        <div className={styles.criteriaBox} data-control-uid="QA-01-FLD-CAPTURE-ERROR">
+          <p className={styles.note}>{draft.captureError}</p>
+        </div>
+      ) : null}
       {draftEvidence ? (
         <div className={styles.criteriaBox} data-control-uid="QA-01-FLD-EVIDENCE">
           <h3>{tx("qa.draft-evidence")}</h3>
