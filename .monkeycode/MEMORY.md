@@ -328,3 +328,14 @@ Entries discovered by the Agent during task execution should follow this format:
   - 探針 POST 經過 waitField 長 idle（8s+）後 keep-alive 失效會 fetch failed——s14 之後的 POST 一律包 3 次重試（editApi 模式）。
   - QA-01-ERR-UNDEFINED-001 在 route.ts knownQaAction 層不碰 DB：Neon 402 凍結期間仍可用 POST 未知動作驗證線上新版本是否部署（版本標記）。
   - EVIDENCE-CAPTURE-001 是 CLIENT 本地閘（§2747）：QaVisual localEvidence 驗 TARGET-OUTPUT/CHECKSUM/PROVENANCE＋timecode，缺則只擋捕獲寫進 draft.captureError，API 探針測不到。
+
+[Project Knowledge Summary]
+- Date: 2026-11-11
+- Context: CORE/ASSET/VIDEO/EDIT 四頁契約完整性審計（控件/動作/gate/跨頁流程）
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - probe_core_live 與 probe_layer_live 預設 LIVE=true 打線上 Vercel（Neon 402 時 503）——本地跑必須 PROBE_TARGET=local；layer_live 已改為預設 local、PROBE_TARGET=live 才打線上。
+  - 四頁控件審計方法：契約 word_controls 檔過濾控件類型（BTN|FLD|INP|SEL|LST|SEG|LBL|CTL|VIEW|LIST）與 domain VISIBLE_CONTROLS diff——四頁 0 缺口；CMP/TAB/PNL/TOOL 屬 Component 層走 data-component-uid，計入 data-control-count 分母（core 50/asset 95/video 95/edit 170）。
+  - 共享 DB 殘留的三個 fail-closed 源（契約正確行為，探針須自清）：EDIT-01-LST-VOICE-TAKES 殘留→對話軌在用→RECHECK/LOCK/RENDER 全擋；ASSET-01-FLD-MANIFEST 殘留 SFX item→圖層旅程 Not Applicable；core 快照/lifecycle 殘留→asset inbound ready=false→gated 動作全空 patch＋manifest completed 登記隨腳本投影丟失（直寫 MANIFEST-REQUIRED 補 completed）。
+  - 探針斷言可被殘留騙過：「Handoff保留LDOC參照」PASS 但 HANDOFF 實際空 patch（殘留 LDOC 字串）——驗證 handoff 生效要看 ASSET-01-FLD-HANDOFF-ASSET-VERSION 落地。
+  - 四頁現狀：probe_core_live(local)/asset_gaps/layer_runtime/layer_live/edit_gaps/edit_handoff/edit_timeline/chain_full 全 PASS；線上分母 95/95/170/87 全到位。
