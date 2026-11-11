@@ -374,7 +374,7 @@ export interface MigrationResult {
 
 let bootstrapPromise: Promise<MigrationResult> | null = null;
 
-const MIGRATION_FILES = [
+export const MIGRATION_FILES = [
   "001_init.sql",
   "002_sessions_and_history.sql",
   "003_dashboard.sql",

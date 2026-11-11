@@ -184,7 +184,24 @@ async function main(): Promise<void> {
   await applyDbWorkbenchAction(DEMO, "DB-01-BTN-AUDIT", "DB-01-ACT-AUDIT-OPEN");
   const view = await readField("DB-01-VIEW-AUDIT");
   assert(view !== null && view.includes("EVT-TEST-DB-0001"), "audit view carries the real event");
-  assertEqual(await readField("DB-01-FLD-PAGE-STATE"), "DB-01-STAGE-04-INTEGRITY", "stage machine keeps max resolved stage");
+  assertEqual(await readField("DB-01-FLD-PAGE-STATE"), "DB-01-STAGE-05-AUDIT", "audit evidence resolves stage 05 (STTR-04)");
+}
+
+// Version lineage: history rows outside the registered manifest are BLOCKed.
+{
+  const client = await openSqlClient();
+  await client.run(
+    "INSERT INTO ghsn_schema_migration_history (filename, applied_at, checksum) VALUES (?, ?, ?) ON CONFLICT (filename) DO NOTHING",
+    ["999_tampered_orphan.sql", new Date().toISOString(), "999_tampered_orphan.sql"],
+  );
+  await applyDbWorkbenchAction(DEMO, "DB-01-BTN-MIGRATION-REFRESH", "DB-01-ACT-MIGRATION-REFRESH");
+  assertEqual((await readError())?.code, "DB-01-ERR-VERSION-001", "orphan history row raises version conflict");
+  const integrity = await readField("DB-01-FLD-MIGRATION-INTEGRITY");
+  assert(integrity !== null && integrity.startsWith("BLOCKED ·"), "migration integrity flags the orphan");
+  await client.run("DELETE FROM ghsn_schema_migration_history WHERE filename = ?", ["999_tampered_orphan.sql"]);
+  await applyDbWorkbenchAction(DEMO, "DB-01-BTN-MIGRATION-REFRESH", "DB-01-ACT-MIGRATION-REFRESH");
+  const restored = await readField("DB-01-FLD-MIGRATION-INTEGRITY");
+  assert(restored !== null && restored.startsWith("OK ·"), "lineage restores after fixture cleanup");
 }
 
 // Unlisted action lands BLOCK + REPORT_AUTHORITY_GAP.

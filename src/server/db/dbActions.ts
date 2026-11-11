@@ -1,4 +1,5 @@
 import { getSqlClient } from "./client";
+import { MIGRATION_FILES } from "./migrate";
 import {
   computeIntegrityFindings,
   describeColumns,
@@ -79,18 +80,20 @@ async function hasScope(accountUid: string | undefined, scope: string): Promise<
 
 // Stage machine: max stage resolved from persisted projection state.
 async function writeStage(): Promise<void> {
-  const [tracePath, findings, migrationIntegrity, columns, contextHead] = await Promise.all([
+  const [tracePath, findings, migrationIntegrity, columns, contextHead, auditView] = await Promise.all([
     readField("DB-01-VIEW-TRACE-PATH"),
     readField("DB-01-LIST-FINDINGS"),
     readField("DB-01-FLD-MIGRATION-INTEGRITY"),
     readField("DB-01-TBL-COLUMNS"),
     readField("DB-01-FLD-SCHEMA-HEAD"),
+    readField("DB-01-VIEW-AUDIT"),
   ]);
   let stage = "DB-01-STAGE-01-CONTEXT";
   if (contextHead) stage = "DB-01-STAGE-01-CONTEXT";
   if (columns) stage = "DB-01-STAGE-02-INSPECT";
   if (tracePath) stage = "DB-01-STAGE-03-TRACE";
   if (findings || migrationIntegrity) stage = "DB-01-STAGE-04-INTEGRITY";
+  if (auditView) stage = "DB-01-STAGE-05-AUDIT";
   await writeField("DB-01-FLD-PAGE-STATE", stage);
 }
 
@@ -292,7 +295,14 @@ export async function applyDbWorkbenchAction(
       await writeField(DB_STATE_ERROR_UID, null);
       await writeField("DB-01-TBL-MIGRATIONS", migrations.map((row) => `${row.filename} · ${row.appliedAt} · ${row.checksum === row.filename ? "checksum OK" : `checksum ${row.checksum || "missing"}`}`).join("\n"));
       const invalid = migrations.filter((row) => !row.checksum || row.checksum !== row.filename);
-      await writeField("DB-01-FLD-MIGRATION-INTEGRITY", invalid.length === 0 ? `OK · ${migrations.length} migrations` : `BLOCKED · ${invalid.length} invalid: ${invalid.map((row) => row.filename).join(", ")}`);
+      // GATE-VERSION: history rows outside the registered manifest break the
+      // immutable version lineage (Word: version/source snapshot conflict).
+      const orphans = migrations.filter((row) => !MIGRATION_FILES.includes(row.filename));
+      if (orphans.length > 0) {
+        await writeError(err("DB-01-ERR-VERSION-001", `Migration history carries rows outside the registered manifest: ${orphans.map((row) => row.filename).join(", ")}`, "Block any governed downstream use and surface exact conflict"));
+      }
+      const pending = MIGRATION_FILES.filter((filename) => !migrations.some((row) => row.filename === filename));
+      await writeField("DB-01-FLD-MIGRATION-INTEGRITY", invalid.length === 0 && orphans.length === 0 ? `OK · ${migrations.length} migrations` : `BLOCKED · ${[...invalid, ...orphans].map((row) => row.filename).join(", ")}` + (pending.length > 0 ? ` · ${pending.length} pending` : ""));
       if (invalid.length > 0) {
         await writeError(err("DB-01-ERR-MIGRATION-001", "Migration/checksum/dependency history invalid or incomplete", "Show migration integrity blocker; route change to System Lifecycle"));
       }

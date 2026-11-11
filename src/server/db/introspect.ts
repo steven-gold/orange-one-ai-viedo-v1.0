@@ -142,25 +142,25 @@ export async function describeColumns(client: SqlClient, table: string): Promise
     "SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema = 'public' AND table_name = ? ORDER BY ordinal_position",
     [table],
   );
+  // information_schema.columns carries no key metadata: resolve the primary
+  // key from table constraints so PK markers survive the neon dialect.
+  const pkRows = await client.all<{ column_name: string }>(
+    "SELECT kcu.column_name FROM information_schema.table_constraints tc JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name WHERE tc.table_schema = 'public' AND tc.table_name = ? AND tc.constraint_type = 'PRIMARY KEY' ORDER BY kcu.ordinal_position",
+    [table],
+  );
+  const pkNames = new Set(pkRows.map((row) => row.column_name));
   return rows.map((row) => ({
     name: row.column_name,
     type: row.data_type,
     notNull: row.is_nullable === "NO",
     defaultValue: row.column_default,
-    pk: false,
+    pk: pkNames.has(row.column_name),
   }));
 }
 
 export async function primaryKeysOf(client: SqlClient, table: string): Promise<string[]> {
   const columns = await describeColumns(client, table);
-  const pks = columns.filter((column) => column.pk).map((column) => column.name);
-  if (pks.length > 0 || client.dialect !== "neon") return pks;
-  // Postgres table_info emulation: constrain via information_schema (best effort).
-  const rows = await client.all<{ column_name: string }>(
-    "SELECT kcu.column_name FROM information_schema.table_constraints tc JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name WHERE tc.table_schema = 'public' AND tc.table_name = ? AND tc.constraint_type = 'PRIMARY KEY' ORDER BY kcu.ordinal_position",
-    [table],
-  );
-  return rows.map((row) => row.column_name);
+  return columns.filter((column) => column.pk).map((column) => column.name);
 }
 
 export async function listForeignKeys(client: SqlClient, table: string): Promise<DbRelationSpec[]> {
