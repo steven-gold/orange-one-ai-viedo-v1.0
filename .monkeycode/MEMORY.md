@@ -291,3 +291,17 @@ Entries discovered by the Agent during task execution should follow this format:
   - Vercel deploy: git push origin HEAD:main auto-triggers; no Vercel/gh credentials in this environment (gh 401, no VERCEL_TOKEN) — if the线上 marker stays stale >15min while local `npx next build` passes, report to user to check the Vercel dashboard instead of guessing
 - SYS-01 contract-gap closure (76135718): authorities/owners resolve from ghsn_account_permission_assignment (NOT services list); sandbox recomputes fingerprint via sysContextFingerprint and compares (tamper probe writes CTX-TAMPERED then re-runs sandbox on a SANDBOX_FAIL change); candidate creation has ledger hard gates — OPEN_P0/P1 needs supersedeDecisionIds (SYS_LEDGER_CONVERGENCE_REQUIRED), REJECTED reference without supersede = SYS_CONFLICTING_PROPOSAL; STOP writes cancelRequested into generation state and runSysConversationReply polls it every 300ms with AbortController (signal IS passed through generatePageReply options and generateIndependentPageReplies 6th param). Abort during the first call leaves newTurns empty — probe asserts "no new SENT assistant turn" rather than "last turn ABORTED". mock_llm supports a [SLOW-LLM] prompt marker (6s delay) for stop-path testing.
 - Sandbox is now 10 dimensions per contract (c46b26dd): regression counts real audit evidence across 10 service registries (ghsn_core/edit/qa/iam/dev/soc/aiapi/video/asset/erp_audit_event), end_to_end validates candidateAt<=requestedAt ordering. CRITICAL lesson: the AIAPI registry JSON has NO "provider" field — providerName is user-entered and may be empty, providerId is an ordinal index ("0"); using them as provider identity yields providers=none. Provider identity must come from resolveProviderConfigs (same resolver as the route snapshot, provider_selection SYSTEM_OWNED). Sandbox verdict can legitimately be PASS 10/10 in the sandbox now — s7 probe adapts to verdict via ternary.
+
+[Project Knowledge Summary]
+- Date: 2026-11-11
+- Context: QA-01 契約補齊（87 控件/7 權限/17 維 scorecard/17 錯誤碼）與 probe_qa_stages 探針編寫
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - QA 權限雙層 gate：route.ts 調 evaluateQaGate 回 403 AUTHORIZATION_DENIED；applyAction 第二層寫 QA-01-ERR-PERM-001 到 QA-01-STATE-ERROR。persistHasQaPermission 用 qaGateEnforced()（QA_GATE_ENFORCED=true 恒 enforce），照 IAM 模式。
+  - 契約動作矩陣 SCORECARD-SUBMIT/GATE-PASS/GATE-FAIL 無專屬控件：knownQaAction 走 QA_ACTION_ALIASES（SCORECARD-SUBMIT→BTN-START-REVIEW；GATE-PASS/FAIL→FLD-GATE-STATUS/BTN-RECHECK）。
+  - QA EFFECTFUL payload 經 route body.payload → persistRecordQaAction(nextValue) → applyWorkbenchAction；FINDING-CREATE/CORRECTION-REQUEST 的 payload 由 UI 表單組裝。
+  - deriveQaScorecard 是確定性證據推導：inbound 五要素齊（edit lock+handoff+SOURCE-VERSION+SCRIPT-SECTION+FINGERPRINT+EVAL-SUMMARY＋VIDEO RIGHTS）→ PASS total=100；缺任一 → 0 分 fail-closed。探針種子須直寫 ghsn_edit_field_projection 八欄＋video RIGHTS。
+  - QA 探針 post() 簽名 (controlUid, actionUid, payload, operator, session)；IAM 探針教訓適用：waitState 斷言等最終態、fail 時 written 也 truthy。
+  - dev server 對 persist.ts/route.ts 深層改動熱重載不可靠：跑探針前若斷言行為像舊碼，重啟 dev server（殺 term 再 background_terminal_create npm run dev）。
+  - correction newVersion 寫回點：EDIT-01-ACT-HANDOFF 且 VERSION-LOCK=locked → applyAction 寫 QA-01-STATE-CORRECTION status=UPSTREAM_DONE；RECHECK-START 驗 newVersion 存在且≠failedVersion。
+  - QA 探針 28 斷言 /tmp/opencode/probe_qa_stages.mjs；部署驗證標記＝線上 /qa data-control-count=87＋QA-01-LIST-SCORE-DIMENSIONS 在 DOM。
