@@ -305,3 +305,14 @@ Entries discovered by the Agent during task execution should follow this format:
   - dev server 對 persist.ts/route.ts 深層改動熱重載不可靠：跑探針前若斷言行為像舊碼，重啟 dev server（殺 term 再 background_terminal_create npm run dev）。
   - correction newVersion 寫回點：EDIT-01-ACT-HANDOFF 且 VERSION-LOCK=locked → applyAction 寫 QA-01-STATE-CORRECTION status=UPSTREAM_DONE；RECHECK-START 驗 newVersion 存在且≠failedVersion。
   - QA 探針 28 斷言 /tmp/opencode/probe_qa_stages.mjs；部署驗證標記＝線上 /qa data-control-count=87＋QA-01-LIST-SCORE-DIMENSIONS 在 DOM。
+
+[Project Knowledge Summary]
+- Date: 2026-11-11
+- Context: QA-01 四缺口補齊（audit/query 接線、AUTO 逐任務留檔、隊列 severity、RECHECK 正向鏈）排查跨頁投影殘留污染
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - Inbound 鏈根是 CORE-01-CTL-PROJECT/CTL-TOPIC（asset→video→edit→QA 逐層解析，effectiveVideoCurrent 會用 resolveVideoInbound 結果覆蓋 video 投影直寫值）：探針種子只寫 CORE-01-FLD-* 會被下游解析無視，必須連 CTL-PROJECT/CTL-TOPIC/BTN-PROJECT-LOCK/CONFIRM 一起種。
+  - edit seed 每次編輯 POST 都從 VIDEO-01-FLD-VIDEO-VERSION || CORE-01-FLD-DOWNSTREAM-VIDEO 重寫 EDIT-01-FLD-SOURCE-VERSION：上游 handoff manifest JSON 殘留在 DOWNSTREAM-VIDEO 時，HANDOFF 寫回 correction.newVersion 會變成 manifest 頭 80 字元。探針 s12 需同步推進 VIDEO-VERSION 與 DOWNSTREAM-VIDEO 再觸發 HANDOFF。
+  - AUTO（runQaAuto）證據基線必須讀 QA-01-FLD-*（MANUAL seed 寫入的 governed inbound 解析結果），不可從 CORE-01-FLD-QA-SCRIPT/CHECKSUM 等幻影鍵取（全庫無寫入方→永遠 total=0 FAIL）；逐任務 ledger 寫 STATE-AUTO.results（taskUid/total/status）。
+  - 隊列聚合配方：taskUid=qa-task-${SOURCE-VERSION}（按版本不按審計時間戳）；severity 從 OPEN findings 匹配 failedVersion/scope 取最高 rank（CRITICAL>HIGH>MEDIUM>LOW）。
+  - 探針隔離教訓：chain_full/asset/video 探針會在共享 SQLite 留投影殘留污染 QA inbound——probe_qa_stages 開頭直寫覆蓋鏈根＋video 版本源即可，不必刪表。
