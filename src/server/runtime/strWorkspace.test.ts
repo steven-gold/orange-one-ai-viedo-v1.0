@@ -4,6 +4,7 @@ import { seedScope } from "../db/seed";
 import { applyStrWorkbenchAction } from "./strActions";
 import { persistRecordStrAction } from "../db/persist";
 import { STR_STATE_ERROR_UID } from "../domain/str";
+import { deriveStrPageState } from "../../components/pages/strFormat";
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -189,6 +190,74 @@ async function main(): Promise<void> {
   await persistRecordStrAction(DEMO, "STR-01-BTN-SEND", "STR-01-ACT-STOP");
   await applyStrWorkbenchAction(DEMO, "STR-01-BTN-AUDIT", "STR-01-ACT-AUDIT");
   assert((await readField("STR-01-FLD-CORRELATION")) !== null, "audit correlation populated");
+
+  // Memory section renders real authorized sources only (GATE-MEMORY).
+  const patterns = await readField("STR-01-LST-PATTERNS");
+  assert(patterns !== null && patterns.includes("STR-CAND-TEST-A"), "memory patterns from adopted ledger");
+  const baselines = await readField("STR-01-LST-BASELINES");
+  assert(baselines === null || !baselines.includes("—"), "baselines carry real refs or stay empty");
+
+  // Feedback fields: Expected from the adopted ledger entry; Actual pending.
+  const expected = await readField("STR-01-FLD-EXPECTED");
+  assert(expected !== null && expected.includes("STR-CAND-TEST-A"), "expected from adopted candidate");
+  assertEqual(await readField("STR-01-FLD-ACTUAL"), null, "actual stays empty without owner result");
+
+  // Audit trace reports the registered feedback gap while results pending.
+  const trace = (await readField("STR-01-FLD-CORRELATION")) ?? "";
+  assert(trace.includes("STR-01-ERR-FEEDBACK-001"), "audit reports pending feedback gap");
+
+  // Owner module writes a real execution result ref -> feedback lands and
+  // the stage machine reaches STAGE-06-FEEDBACK (ACC-10).
+  await client.run(
+    `UPDATE ghsn_str_field_projection SET value_text = 'PENDING_OWNER_MODULE; RESULT: EXEC-REF-2026-Q4' WHERE control_uid = 'STR-01-FLD-EXECUTION-STATE'`,
+  );
+  await applyStrWorkbenchAction(DEMO, "STR-01-LST-TOPICS", "STR-01-ACT-TOPIC-SELECT", "亞太市場擴張評估");
+  assert((await readField("STR-01-FLD-ACTUAL") ?? "").includes("EXEC-REF-2026-Q4"), "actual from owner result ref");
+  assertEqual(await readField("STR-01-FLD-STATE"), "STR-01-STAGE-06-FEEDBACK", "stage reaches feedback");
+  assertEqual(deriveStrPageState({
+    authorized: true,
+    sending: false,
+    mode: "SINGLE",
+    topic: await readField("STR-01-FLD-TOPIC"),
+    candidates: "x",
+    reviewState: "ADOPTED",
+    decisionResult: "ADOPTED_CONTEXT",
+    feedbackActual: await readField("STR-01-FLD-ACTUAL"),
+    feedbackLearning: null,
+    error: null,
+  }), "FEEDBACK_AVAILABLE", "page state shows feedback available");
+
+  // Memory gap trace when no authorized memory projection exists.
+  const priorSources: Array<{ table: string; uid: string; value: string | null }> = [];
+  for (const [table, uid] of [
+    ["ghsn_core_field_projection", "CORE-01-FLD-DOWNSTREAM-EDIT"],
+    ["ghsn_edit_field_projection", "EDIT-01-LBL-STAGE-SCORE"],
+    ["ghsn_video_field_projection", "VIDEO-01-FLD-OVERALL-SCORE"],
+    ["ghsn_qa_field_projection", "QA-01-FLD-CRITERIA-VERSION"],
+  ] as Array<[string, string]>) {
+    const rows = await client.all<{ value_text: string | null }>(`SELECT value_text FROM ${table} WHERE control_uid = ?`, [uid]);
+    priorSources.push({ table, uid, value: rows[0]?.value_text ?? null });
+    await client.run(`UPDATE ${table} SET value_text = NULL WHERE control_uid = ?`, [uid]);
+  }
+  await client.run(`UPDATE ghsn_str_field_projection SET value_text = NULL WHERE control_uid IN ('STR-01-LST-PATTERNS','STR-01-LST-BASELINES')`);
+  const priorCandidates = await readField("STR-01-STATE-CANDIDATES");
+  const priorPattern = await readField("STR-01-FLD-PATTERN");
+  await client.run(`UPDATE ghsn_str_field_projection SET value_text = NULL WHERE control_uid IN ('STR-01-STATE-CANDIDATES','STR-01-FLD-PATTERN')`);
+  await applyStrWorkbenchAction(DEMO, "STR-01-BTN-AUDIT", "STR-01-ACT-AUDIT");
+  assert(((await readField("STR-01-FLD-CORRELATION")) ?? "").includes("STR-01-ERR-MEMORY-001"), "audit reports memory projection gap");
+  // Restore shared cross-module projections and the ledger touched by this probe.
+  for (const row of priorSources) {
+    await client.run(`UPDATE ${row.table} SET value_text = ? WHERE control_uid = ?`, [row.value, row.uid]);
+  }
+  await client.run(
+    `UPDATE ghsn_str_field_projection SET value_text = ? WHERE control_uid = 'STR-01-STATE-CANDIDATES'`,
+    [priorCandidates],
+  );
+  await client.run(
+    `UPDATE ghsn_str_field_projection SET value_text = ? WHERE control_uid = 'STR-01-FLD-PATTERN'`,
+    [priorPattern],
+  );
+  await applyStrWorkbenchAction(DEMO, "STR-01-LST-TOPICS", "STR-01-ACT-TOPIC-SELECT", "亞太市場擴張評估");
 
   // ACT-STOP flags the cancel watcher only.
   await applyStrWorkbenchAction(DEMO, "STR-01-BTN-STOP", "STR-01-ACT-STOP");

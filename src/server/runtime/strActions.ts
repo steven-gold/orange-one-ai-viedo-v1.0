@@ -256,6 +256,48 @@ async function refreshTopicPanels(): Promise<void> {
   );
 }
 
+// GATE-MEMORY: only real authorized sources render. Pattern/case history
+// comes from the append-only candidate ledger; baselines come from governed
+// cross-module projections. Sources without registered data stay —.
+async function refreshMemoryFields(): Promise<void> {
+  const candidates = await parseJson<StrCandidate[]>(CANDIDATES_UID, []);
+  const patternLines = candidates
+    .filter((row) => row.state === "ADOPTED")
+    .map((row) => `${row.candidateId} · v${row.version} · ${row.title} · ${row.summary} · ADOPTED`);
+  const currentPattern = await readField("STR-01-FLD-PATTERN");
+  if (currentPattern) patternLines.push(`ANALYSIS · ${currentPattern}`);
+  await writeField("STR-01-LST-PATTERNS", patternLines.join("\n") || null);
+  const cross = await buildContextBundle(null);
+  const baselineLines = Object.entries(cross)
+    .filter(([key, value]) => key !== "topic" && key !== "scope" && key !== "horizon" && key !== "priority" && value !== "—")
+    .map(([key, value]) => `BASELINE · ${key}: ${value}`);
+  await writeField("STR-01-LST-BASELINES", baselineLines.join("\n") || null);
+  await writeField("STR-01-LST-EXPERIMENTS", null);
+  await writeField("STR-01-LST-LEARNING", null);
+}
+
+// GATE-FEEDBACK: read-only. Expected comes from the adopted ledger entry;
+// Actual lands only when the owner module writes a real RESULT ref. Missing
+// execution data stays — (hard lock: AI must not invent performance).
+async function refreshFeedbackFields(): Promise<void> {
+  const result = await readField("STR-01-FLD-DECISION-RESULT");
+  if (result !== "ADOPTED_CONTEXT") {
+    await writeField("STR-01-FLD-EXPECTED", null);
+    await writeField("STR-01-FLD-ACTUAL", null);
+    await writeField("STR-01-FLD-DIFFERENCE", null);
+    await writeField("STR-01-FLD-KPI", null);
+    return;
+  }
+  const candidates = await parseJson<StrCandidate[]>(CANDIDATES_UID, []);
+  const adopted = [...candidates].reverse().find((row) => row.state === "ADOPTED");
+  await writeField("STR-01-FLD-EXPECTED", adopted ? `${adopted.candidateId} · v${adopted.version} · ${adopted.title} · ${adopted.summary}` : null);
+  const execution = (await readField("STR-01-FLD-EXECUTION-STATE")) ?? "";
+  const resultRef = execution.split("RESULT:")[1]?.trim();
+  await writeField("STR-01-FLD-ACTUAL", resultRef ? `RESULT: ${resultRef}` : null);
+  await writeField("STR-01-FLD-DIFFERENCE", null);
+  await writeField("STR-01-FLD-KPI", null);
+}
+
 async function refreshTopicFields(topic: StrTopic | null, bundle: Record<string, string>): Promise<void> {
   await writeField("STR-01-FLD-TOPIC", topic ? `${topic.topicId} · ${topic.title}` : null);
   await writeField("STR-01-FLD-SCOPE", topic?.scope ?? null);
@@ -344,6 +386,8 @@ export async function applyStrWorkbenchAction(
       const bundle = await buildContextBundle(topic);
       await refreshTopicFields(topic, bundle);
       await refreshTopicPanels();
+      await refreshMemoryFields();
+      await refreshFeedbackFields();
       await writeField(STR_STATE_ERROR_UID, null);
       const turns = turnsOfThread(topic.topicId, await parseJson<Array<{ topicId: string; turns: StrTurn[] }>>(CONVERSATION_UID, []));
       await writeField(
@@ -443,6 +487,7 @@ export async function applyStrWorkbenchAction(
         newTurns.push({ id: `TUR-${Date.now().toString(36)}-X`, role: "assistant", text: `[${code}]`, status: "FAILED", at: now });
         await writeThreadTurns(topic.topicId, [...turns, ...newTurns], store);
         await writeField("STR-01-VIEW-CONVERSATION", JSON.stringify({ topicId: topic.topicId, turns: [...turns, ...newTurns] }));
+        await writeField("STR-01-FLD-DISABLED", `[${code}] provider unavailable for this request`);
         await writeError(err("STR-01-ERR-CONVERSATION-001", `AI provider unavailable: ${code}`, "Preserve topic/context; show registered error/retry eligibility"));
         return;
       }
@@ -512,6 +557,8 @@ export async function applyStrWorkbenchAction(
       await writeField("STR-01-FLD-OWNER-BOUNDARY", "AI proposal only · budget/workflow/governance/production in owner modules");
       await writeField(GENERATION_UID, JSON.stringify({ cancelRequested: false }));
       await writeField(STR_STATE_ERROR_UID, null);
+      await writeField("STR-01-FLD-DISABLED", null);
+      await refreshMemoryFields();
       await writeStage();
       return;
     }
@@ -598,6 +645,8 @@ export async function applyStrWorkbenchAction(
       await writeField("STR-01-FLD-REVIEW-STATE", "ADOPTED");
       await writeField("STR-01-FLD-CANDIDATE-REF", `${candidate.candidateId} · v${candidate.version} · ADOPTED`);
       await writeField(STR_STATE_ERROR_UID, null);
+      await refreshMemoryFields();
+      await refreshFeedbackFields();
       await writeStage();
       return;
     }
@@ -612,7 +661,18 @@ export async function applyStrWorkbenchAction(
           "SELECT event_uid, action_uid, occurred_at FROM ghsn_str_audit_event ORDER BY occurred_at DESC, event_uid DESC LIMIT 8",
         )
         .catch(() => []);
-      await writeField("STR-01-FLD-CORRELATION", rows.map((row) => `${row.event_uid} · ${row.action_uid} · ${row.occurred_at}`).join("\n") || null);
+      await refreshMemoryFields();
+      await refreshFeedbackFields();
+      const lines = rows.map((row) => `${row.event_uid} · ${row.action_uid} · ${row.occurred_at}`);
+      // REPORT_AUTHORITY_GAP trace: registered section gaps surface here so
+      // unavailable projections stay visible instead of silent.
+      const memoryAvailable = (await readField("STR-01-LST-PATTERNS")) !== null || (await readField("STR-01-LST-BASELINES")) !== null;
+      if (!memoryAvailable) lines.push("STR-01-ERR-MEMORY-001 · authorized strategic memory projection unavailable (showing unavailable state)");
+      const adopted = (await readField("STR-01-FLD-DECISION-RESULT")) === "ADOPTED_CONTEXT";
+      if (adopted && !(await readField("STR-01-FLD-ACTUAL"))) {
+        lines.push("STR-01-ERR-FEEDBACK-001 · execution result/KPI refs missing (showing pending feedback)");
+      }
+      await writeField("STR-01-FLD-CORRELATION", lines.join("\n") || null);
       return;
     }
 

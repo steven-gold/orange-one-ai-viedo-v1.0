@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { StrClientError, fetchStrReadModel, postStrAction, type StrFieldValue } from "@/lib/client";
-import { displayStrValue } from "./strFormat";
+import { deriveStrPageState, displayStrValue } from "./strFormat";
 import { STR_CONTROL_ACTIONS, STR_VISIBLE_CONTROLS } from "./strControls";
 import styles from "./StrVisual.module.css";
 
@@ -195,14 +195,27 @@ export function StrVisual() {
 
   const disabled = !authorized && !loading;
   const busy = loading || sending;
-  const pageState = loading ? "LOADING" : sending ? "RESPONDING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
+  const v = (uid: string) => valueOf(uid);
+  const mode = (v("STR-01-TGL-MODE") ?? "SINGLE") === "MULTI" ? "MULTI" : "SINGLE";
+  const pageState = loading
+    ? "LOADING"
+    : deriveStrPageState({
+        authorized,
+        sending,
+        mode,
+        topic: v("STR-01-FLD-TOPIC"),
+        candidates: v("STR-01-FLD-CANDIDATE-REF") ? v("STR-01-STATE-CANDIDATES") : null,
+        reviewState: v("STR-01-FLD-REVIEW-STATE"),
+        decisionResult: v("STR-01-FLD-DECISION-RESULT"),
+        feedbackActual: v("STR-01-FLD-ACTUAL"),
+        feedbackLearning: v("STR-01-FLD-LEARNING"),
+        error: error ?? (contractError ? contractError.code : null),
+      });
   const tx = (key: TranslationKey) => t(key);
   const dash = displayStrValue(null, loading);
-  const v = (uid: string) => valueOf(uid);
 
   const visibleUids = useMemo(() => new Set<string>(STR_VISIBLE_CONTROLS), []);
 
-  const mode = (v("STR-01-TGL-MODE") ?? "SINGLE") === "MULTI" ? "MULTI" : "SINGLE";
   const turns = parseTurns(v("STR-01-VIEW-CONVERSATION"));
   const topicLines = (v("STR-01-LST-TOPICS") ?? "").split("\n").map((line) => line.trim()).filter(Boolean);
   const compareRows = (v("STR-01-TBL-COMPARE") ?? "").split("\n").map((line) => line.trim()).filter(Boolean);
