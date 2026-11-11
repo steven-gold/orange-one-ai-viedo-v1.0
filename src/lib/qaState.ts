@@ -16,6 +16,7 @@ export const QA_STATE_ERROR_UID = "QA-01-STATE-ERROR";
 export const QA_STATE_SURFACE_UID = "QA-01-STATE-SURFACE";
 export const QA_STATE_REVIEW_STATE_UID = "QA-01-STATE-REVIEW-STATE";
 export const QA_STATE_TASK_UID = "QA-01-STATE-TASK";
+export const QA_STATE_QUERY_UID = "QA-01-STATE-QUERY";
 
 export type QaDimensionStatus = "PASS" | "FINDING" | "HARD_BLOCK" | "N/A";
 
@@ -132,6 +133,12 @@ export interface QaQueueState {
   selected: string;
 }
 
+export interface QaAutoResult {
+  taskUid: string;
+  total: number;
+  status: QaScorecard["status"];
+}
+
 export interface QaAutoState {
   status: "IDLE" | "RUNNING" | "DONE" | "BLOCKED";
   processed: number;
@@ -139,6 +146,7 @@ export interface QaAutoState {
   currentTask: string;
   at: string;
   blocker: string;
+  results: QaAutoResult[];
 }
 
 export interface QaErrorState {

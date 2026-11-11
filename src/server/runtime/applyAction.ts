@@ -30,14 +30,17 @@ import {
   QA_STATE_CORRECTION_UID,
   QA_STATE_AUTO_UID,
   QA_STATE_ERROR_UID,
+  QA_STATE_FINDINGS_UID,
+  QA_STATE_QUERY_UID,
   QA_STATE_QUEUE_UID,
   QA_STATE_SCORECARD_UID,
   type QaCorrectionState,
+  type QaFinding,
   type QaQueueReview,
   type QaQueueState,
   type QaScorecard,
 } from "@/lib/qaState";
-import { deriveQaScorecard } from "@/lib/qaCriteria";
+import { deriveQaScorecard, type QaEvidenceInput } from "@/lib/qaCriteria";
 import {
   buildChapterArchitecture,
   buildStoryCore,
@@ -1932,20 +1935,72 @@ async function seedQaQueue(): Promise<void> {
   const project = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-PROJECT")) || "";
   const topic = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-TOPIC")) || "";
   const version = (await readField(FIELD_TABLE.edit, "EDIT-01-FLD-SOURCE-VERSION")) || "";
-  const reviews: QaQueueReview[] = [];
+  // One queue row per reviewed target version (word §11: queue rows are
+  // Topic QA tasks, not audit timestamps); gate decisions advance the row.
+  const byTask = new Map<string, QaQueueReview>();
+  const touch = (taskUid: string): QaQueueReview => {
+    let row = byTask.get(taskUid);
+    if (!row) {
+      row = { taskUid, project, topic, sourceDept: "EDIT-01", severity: "", state: "PENDING" };
+      byTask.set(taskUid, row);
+    }
+    return row;
+  };
   for (const event of events) {
-    const taskUid = `qa-task-${event.occurred_at}`;
-    const state = event.action_uid === "QA-01-ACT-GATE-PASS" ? "PASSED" : event.action_uid === "QA-01-ACT-GATE-FAIL" ? "CORRECTION" : "PENDING";
-    const existing = reviews.find((row) => row.taskUid === taskUid);
-    if (existing) existing.state = state;
-    else reviews.push({ taskUid, project, topic, sourceDept: "EDIT-01", severity: "", state });
+    const row = touch(`qa-task-${version || "current"}`);
+    if (event.action_uid === "QA-01-ACT-GATE-PASS") row.state = "PASSED";
+    else if (event.action_uid === "QA-01-ACT-GATE-FAIL") row.state = "CORRECTION";
   }
-  if (!reviews.length && (project || version)) {
-    reviews.push({ taskUid: `qa-task-${version || "current"}`, project, topic, sourceDept: "EDIT-01", severity: "", state: "PENDING" });
+  if (!byTask.size && (project || version)) touch(`qa-task-${version || "current"}`);
+  // Severity is derived from the exact open findings bound to the failed
+  // version; an empty severity means the task has no recorded finding.
+  const findingsRaw = await readField(FIELD_TABLE.qa, QA_STATE_FINDINGS_UID);
+  const correctionRaw = await readField(FIELD_TABLE.qa, QA_STATE_CORRECTION_UID);
+  let findings: QaFinding[] = [];
+  let correction: QaCorrectionState | null = null;
+  try {
+    findings = findingsRaw && findingsRaw.startsWith("[") ? (JSON.parse(findingsRaw) as QaFinding[]) : [];
+    correction = correctionRaw && correctionRaw.startsWith("{") ? (JSON.parse(correctionRaw) as QaCorrectionState) : null;
+  } catch {
+    // malformed state: leave severity empty
   }
+  const rank: Record<string, number> = { CRITICAL: 3, HIGH: 2, MEDIUM: 1, LOW: 0 };
+  for (const row of byTask.values()) {
+    const bound = [correction?.failedVersion, row.taskUid.startsWith("qa-task-") ? row.taskUid.slice("qa-task-".length) : ""].filter(Boolean);
+    const boundFindings = findings.filter((finding) => finding.state === "OPEN" && bound.includes(finding.scope));
+    if (boundFindings.length) {
+      row.severity = boundFindings.reduce((top, finding) => ((rank[finding.severity] ?? -1) > (rank[top] ?? -1) ? finding.severity : top), "LOW");
+    }
+  }
+  const reviews = [...byTask.values()];
   const queue: QaQueueState = { filters: { state: "", severity: "", sourceDept: "" }, search: "", reviews, selected: "" };
   await writeField(FIELD_TABLE.qa, QA_STATE_QUEUE_UID, JSON.stringify(queue));
   await writeField(FIELD_TABLE.qa, "QA-01-FLD-AUTO-PROGRESS", `0/${reviews.length}`);
+}
+
+// Word §STATUS: the audit display fields mirror the governed audit history
+// (ghsn_qa_audit_event); correlation carries the latest event uid so every
+// EFFECTFUL action has a traceable idempotency anchor.
+async function seedQaAudit(): Promise<void> {
+  const events = await getSqlClient().all<{ event_uid: string; account_uid: string; control_uid: string; action_uid: string; occurred_at: string }>(
+    "SELECT event_uid, account_uid, control_uid, action_uid, occurred_at FROM ghsn_qa_audit_event ORDER BY occurred_at DESC LIMIT 20",
+  );
+  if (!events.length) return;
+  const latest = events[0];
+  const rows = events.map((event) => `${event.occurred_at.slice(11, 19)} ${event.action_uid} ${event.event_uid}`);
+  await writeField(FIELD_TABLE.qa, "QA-01-FLD-AUDIT", rows.join(" | "));
+  await writeField(FIELD_TABLE.qa, "QA-01-FLD-CORRELATION", latest.event_uid);
+  await writeField(FIELD_TABLE.qa, "QA-01-STATE-AUDIT", JSON.stringify({ events: events.map((event) => ({ eventUid: event.event_uid, accountUid: event.account_uid, controlUid: event.control_uid, actionUid: event.action_uid, at: event.occurred_at })), at: latest.occurred_at }));
+}
+
+// Word §CONTEXT: the query state mirrors the resolved inbound context used
+// by every gate; it is a read model, never invented.
+async function seedQaQuery(): Promise<void> {
+  const project = (await readField(FIELD_TABLE.qa, "QA-01-FLD-PROJECT")) || "";
+  const topic = (await readField(FIELD_TABLE.qa, "QA-01-FLD-TOPIC")) || "";
+  const task = (await readField(FIELD_TABLE.qa, "QA-01-FLD-QA-TASK")) || "";
+  const targetOutput = (await readField(FIELD_TABLE.qa, "QA-01-FLD-TARGET-OUTPUT")) || "";
+  await writeField(FIELD_TABLE.qa, QA_STATE_QUERY_UID, JSON.stringify({ project, topic, task, targetOutput, at: new Date().toISOString() }));
 }
 
 // Word §12 Batch orchestration: AUTO walks the Topic QA queue serially
@@ -1968,37 +2023,46 @@ async function runQaAuto(accountUid: string): Promise<void> {
     );
     return;
   }
-  await writeField(FIELD_TABLE.qa, QA_STATE_AUTO_UID, JSON.stringify({ status: "RUNNING", processed: 0, total: reviews.length, currentTask: reviews[0]?.taskUid ?? "", at: new Date().toISOString(), blocker: "" }));
-  const coreRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>("SELECT control_uid, value_text FROM ghsn_core_field_projection");
-  const byUid = new Map(coreRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
-  const criteriaVersion = (await readField(FIELD_TABLE.qa, "QA-01-FLD-CRITERIA-VERSION")) || (byUid.get("CORE-01-FLD-CRITERIA-VERSION") ?? "") || "";
+  await writeField(FIELD_TABLE.qa, QA_STATE_AUTO_UID, JSON.stringify({ status: "RUNNING", processed: 0, total: reviews.length, currentTask: reviews[0]?.taskUid ?? "", at: new Date().toISOString(), blocker: "", results: [] }));
+  // AUTO resolves its evidence baseline from the same governed QA-01-FLD-*
+  // context the manual review writes (resolved inbound), never from
+  // unrelated projections; per task only the target output version differs.
+  const qaRows = await getSqlClient().all<{ control_uid: string; value_text: string | null }>(
+    "SELECT control_uid, value_text FROM ghsn_qa_field_projection",
+  );
+  const qaByUid = new Map(qaRows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text] as const));
+  const criteriaVersion = (await readField(FIELD_TABLE.qa, "QA-01-FLD-CRITERIA-VERSION")) || "";
+  const results: Array<{ taskUid: string; total: number; status: string }> = [];
   for (let index = 0; index < reviews.length; index += 1) {
     const review = reviews[index];
-    const card: QaScorecard = deriveQaScorecardForTask(review, byUid, criteriaVersion);
+    const card: QaScorecard = deriveQaScorecardForTask(review, (uid) => qaByUid.get(uid) ?? null, criteriaVersion);
     await writeField(FIELD_TABLE.qa, QA_STATE_SCORECARD_UID, JSON.stringify(card));
-    await writeField(FIELD_TABLE.qa, QA_STATE_AUTO_UID, JSON.stringify({ status: index + 1 === reviews.length ? "DONE" : "RUNNING", processed: index + 1, total: reviews.length, currentTask: review.taskUid, at: new Date().toISOString(), blocker: "" }));
+    // Per-task ledger: every walked task keeps its derived scorecard verdict
+    // (word §12 batch traceability), not just the last one.
+    results.push({ taskUid: review.taskUid, total: card.total, status: card.status });
+    await writeField(FIELD_TABLE.qa, QA_STATE_AUTO_UID, JSON.stringify({ status: index + 1 === reviews.length ? "DONE" : "RUNNING", processed: index + 1, total: reviews.length, currentTask: review.taskUid, at: new Date().toISOString(), blocker: "", results: [...results] }));
     await writeField(FIELD_TABLE.qa, "QA-01-FLD-AUTO-PROGRESS", `${index + 1}/${reviews.length}`);
   }
 }
 
 function deriveQaScorecardForTask(
   review: QaQueueReview,
-  byUid: Map<string, string | null>,
+  qaCurrent: (uid: string) => string | null,
   criteriaVersion: string,
 ): QaScorecard {
   const targetOutput = review.taskUid.startsWith("qa-task-") ? review.taskUid.slice("qa-task-".length) : review.taskUid;
-  const evidence = {
-    project: review.project || byUid.get("CORE-01-FLD-PROJECT") || "",
-    topic: review.topic || byUid.get("CORE-01-FLD-TOPIC") || "",
+  const evidence: QaEvidenceInput = {
+    project: review.project || qaCurrent("QA-01-FLD-PROJECT") || "",
+    topic: review.topic || qaCurrent("QA-01-FLD-TOPIC") || "",
     targetOutput,
-    qaScript: (byUid.get("CORE-01-FLD-QA-SCRIPT") ?? "") || "",
-    scriptHash: (byUid.get("CORE-01-FLD-SCRIPT-HASH") ?? "") || "",
+    qaScript: qaCurrent("QA-01-FLD-QA-SCRIPT") || "",
+    scriptHash: qaCurrent("QA-01-FLD-SCRIPT-HASH") || "",
     criteriaVersion,
-    checksum: (byUid.get("CORE-01-FLD-CHECKSUM") ?? "") || "",
-    provenance: (byUid.get("CORE-01-FLD-PROVENANCE") ?? "") || "",
-    rights: (byUid.get("CORE-01-FLD-RIGHTS") ?? "") || "",
-    policy: (byUid.get("CORE-01-FLD-POLICY") ?? "") || "QA-GATE-V1",
-    requiredChecks: (byUid.get("CORE-01-FLD-REQUIRED-CHECKS") ?? "") || "",
+    checksum: qaCurrent("QA-01-FLD-CHECKSUM") || "",
+    provenance: qaCurrent("QA-01-FLD-PROVENANCE") || "",
+    rights: qaCurrent("QA-01-FLD-RIGHTS") || "",
+    policy: qaCurrent("QA-01-FLD-POLICY") || "QA-GATE-V1",
+    requiredChecks: qaCurrent("QA-01-FLD-REQUIRED-CHECKS") || "",
     openFindings: [],
     manualOpen: false,
   };
@@ -2064,8 +2128,12 @@ function deriveQaScorecardForTask(
       }
     }
     const written = await applyProjectedAction(FIELD_TABLE.qa, previewQaAction, controlUid, actionUid, nextValue, seed);
-    if (written && actionUid === "QA-01-ACT-START-REVIEW") await seedQaQueue();
-    if (written && actionUid === "QA-01-ACT-AUTO-START" && accountUid) await runQaAuto(accountUid);
+    if (written) {
+      if (actionUid === "QA-01-ACT-START-REVIEW") await seedQaQueue();
+      if (actionUid === "QA-01-ACT-AUTO-START" && accountUid) await runQaAuto(accountUid);
+      await seedQaAudit();
+      await seedQaQuery();
+    }
     return;
   }
   if (page === "sys") {
