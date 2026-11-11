@@ -1,7 +1,7 @@
 import { ASSET_PERMISSION, ASSET_VISIBLE_CONTROLS } from "../domain/asset";
 import { CORE_PERMISSION, CORE_VISIBLE_CONTROLS } from "../domain/core";
 import { EDIT_PERMISSION, EDIT_VISIBLE_CONTROLS } from "../domain/edit";
-import { DB_PERMISSION, DB_VISIBLE_CONTROLS } from "../domain/db";
+import { DB_AUDIT_PERMISSION, DB_INTEGRITY_PERMISSION, DB_MIGRATION_PERMISSION, DB_PERMISSION, DB_TRACE_PERMISSION, DB_VISIBLE_CONTROLS } from "../domain/db";
 import { QA_PERMISSION, QA_PERMISSIONS, QA_VISIBLE_CONTROLS } from "../domain/qa";
 import { INFO_PERMISSION, INFO_VISIBLE_CONTROLS } from "../domain/info";
 import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
@@ -75,7 +75,15 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
       QA_PERMISSIONS.auto,
     ],
   },
-  db: { fieldTable: "ghsn_db_field_projection", permissionTable: "ghsn_account_db_permission", permission: DB_PERMISSION, controls: DB_VISIBLE_CONTROLS },
+  // ACPOS DB-01: ACC-DEMO holds all five DB permissions (page read + trace/
+  // migration/integrity/audit read models) so every panel is exercisable.
+  db: {
+    fieldTable: "ghsn_db_field_projection",
+    permissionTable: "ghsn_account_db_permission",
+    permission: DB_PERMISSION,
+    controls: DB_VISIBLE_CONTROLS,
+    extraPermissions: [DB_TRACE_PERMISSION, DB_MIGRATION_PERMISSION, DB_INTEGRITY_PERMISSION, DB_AUDIT_PERMISSION],
+  },
   str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS },
   info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS },
   sys: { fieldTable: "ghsn_sys_field_projection", permissionTable: "ghsn_account_sys_permission", permission: SYS_PERMISSION, controls: SYS_VISIBLE_CONTROLS },

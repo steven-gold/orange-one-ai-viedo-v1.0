@@ -82,6 +82,7 @@ import {
   DB_PERMISSION,
   DB_PROJECTION,
   DB_ROUTE,
+  DB_STATE_ERROR_UID,
   DB_VISIBLE_CONTROLS,
 } from "../domain/db";
 import {
@@ -970,6 +971,21 @@ export async function persistListDbFields(): Promise<DbFieldValue[]> {
 export async function persistGetDbReadModel(accountUid: string): Promise<DbReadModel> {
   const authorized = await persistHasDbPermission(accountUid);
   const fields = authorized ? await persistListDbFields() : [];
+  let errorState: { code: string; detail: string; recovery?: string } | null = null;
+  if (authorized) {
+    const rows = await getSqlClient().all<{ value_text: string | null }>(
+      "SELECT value_text FROM ghsn_db_field_projection WHERE control_uid = ?",
+      [DB_STATE_ERROR_UID],
+    );
+    const raw = rows[0]?.value_text;
+    if (raw && raw.startsWith("{")) {
+      try {
+        errorState = JSON.parse(raw) as { code: string; detail: string; recovery?: string };
+      } catch {
+        errorState = null;
+      }
+    }
+  }
   return {
     projectionUid: DB_PROJECTION,
     pageUid: DB_PAGE_UID,
@@ -978,6 +994,7 @@ export async function persistGetDbReadModel(accountUid: string): Promise<DbReadM
     chainUid: DB_CHAIN,
     authorized,
     fields,
+    errorState,
   };
 }
 
@@ -989,8 +1006,9 @@ export async function persistRecordDbAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("db", controlUid, actionUid);
+  await applyWorkbenchAction("db", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_db_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

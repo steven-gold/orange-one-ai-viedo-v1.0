@@ -107,6 +107,7 @@ export function DbVisual() {
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [contractError, setContractError] = useState<{ code: string; detail: string; recovery?: string } | null>(null);
   const [authorized, setAuthorized] = useState(false);
   const [fields, setFields] = useState<DbFieldValue[]>([]);
   const [surface, setSurface] = useState<DbSurface>("SCHEMA");
@@ -120,6 +121,7 @@ export function DbVisual() {
         if (cancelled) return;
         setAuthorized(model.authorized);
         setFields(model.fields.length ? model.fields : DB_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        setContractError(model.errorState ?? null);
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -128,6 +130,7 @@ export function DbVisual() {
         setError(cause instanceof DbClientError ? cause.code : "DB_READ_UNAVAILABLE");
         setAuthorized(false);
         setFields(DB_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
+        setContractError(null);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -264,6 +267,12 @@ export function DbVisual() {
       aria-label={tx("db.title")}
     >
       {error ? <div className={styles.error} role="alert">{tx("db.error")}</div> : null}
+      {contractError ? (
+        <div className={styles.error} role="alert">
+          {contractError.code}: {contractError.detail}
+          {contractError.recovery ? ` · ${contractError.recovery}` : ""}
+        </div>
+      ) : null}
 
       <header className={styles.head}>
         <h1 className={styles.title}>{tx("db.title")}</h1>

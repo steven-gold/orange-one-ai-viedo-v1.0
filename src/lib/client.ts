@@ -538,6 +538,7 @@ export interface DbReadModel {
   chainUid: "DB-01-FWC-PAGE-01";
   authorized: boolean;
   fields: DbFieldValue[];
+  errorState: { code: string; detail: string; recovery?: string } | null;
 }
 
 export class DbClientError extends Error {

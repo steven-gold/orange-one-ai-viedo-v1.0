@@ -25,7 +25,7 @@ import { appendCoreEvent, CORE_EVENT_NAMES } from "@/lib/coreEventLog";
 import { requiredPermissionFor } from "@/lib/coreActionPermission";
 import { pagePermissionEnforced } from "@/server/auth/pageAccess";
 import { evaluateIamGate, persistHasCorePermission } from "../db/persist";
-import { evaluateQaGate, knownQaAction } from "../db/persist";
+import { evaluateQaGate, knownQaAction, knownDbAction } from "../db/persist";
 import {
   QA_STATE_CORRECTION_UID,
   QA_STATE_AUTO_UID,
@@ -2144,6 +2144,23 @@ function deriveQaScorecardForTask(
       await seedQaAudit();
       await seedQaQuery();
     }
+    return;
+  }
+  if (page === "db") {
+    // ACPOS DB-01 FINAL_LOCKED_ENCODING: real-data workspace. The route layer
+    // 404s unlisted actions; this projection-level guard mirrors QA-01 so a
+    // direct runtime call still lands BLOCK + REPORT_AUTHORITY_GAP.
+    if (!knownDbAction(controlUid, actionUid)) {
+      const { DB_STATE_ERROR_UID } = await import("../db/dbActions");
+      await writeField(
+        FIELD_TABLE.db,
+        DB_STATE_ERROR_UID,
+        JSON.stringify({ code: "DB-01-ERR-UNDEFINED-001", detail: `Unlisted control/action requested: ${controlUid}/${actionUid}`, recovery: "BLOCK + REPORT_AUTHORITY_GAP", at: new Date().toISOString() }),
+      );
+      return;
+    }
+    const { applyDbWorkbenchAction } = await import("../db/dbActions");
+    await applyDbWorkbenchAction(accountUid, controlUid, actionUid, nextValue);
     return;
   }
   if (page === "sys") {

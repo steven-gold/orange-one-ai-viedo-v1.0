@@ -1,8 +1,23 @@
 export const DB_PERMISSION = "database.metadata.read";
+// ACPOS DB-01 permissions (5): page read + four scoped read models.
+export const DB_TRACE_PERMISSION = "database.trace.read";
+export const DB_MIGRATION_PERMISSION = "database.migration.read";
+export const DB_INTEGRITY_PERMISSION = "database.integrity.read";
+export const DB_AUDIT_PERMISSION = "audit.read";
+export const DB_PERMISSION_SCOPES = [
+  DB_PERMISSION,
+  DB_TRACE_PERMISSION,
+  DB_MIGRATION_PERMISSION,
+  DB_INTEGRITY_PERMISSION,
+  DB_AUDIT_PERMISSION,
+] as const;
 export const DB_PAGE_UID = "admin:DB-01";
 export const DB_ROUTE = "/db";
 export const DB_PROJECTION = "DbWorkbenchProjection";
 export const DB_CHAIN = "DB-01-FWC-PAGE-01";
+// Projection-side error state (mirrors QA-01-STATE-ERROR); kept outside the
+// 49-control contract denominator.
+export const DB_STATE_ERROR_UID = "DB-01-STATE-ERROR";
 
 export const DB_VISIBLE_CONTROLS = [
   "DB-01-FLD-ENV",
@@ -121,4 +136,5 @@ export interface DbReadModel {
   chainUid: typeof DB_CHAIN;
   authorized: boolean;
   fields: DbFieldValue[];
+  errorState: { code: string; detail: string; recovery?: string } | null;
 }
