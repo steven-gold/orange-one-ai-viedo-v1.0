@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const principal = await requireAuth(request);
   if (principal instanceof NextResponse) return principal;
   try {
-    const body = (await request.json()) as { controlUid?: string; actionUid?: string };
+    const body = (await request.json()) as { controlUid?: string; actionUid?: string; payload?: string };
     const controlUid = String(body.controlUid ?? "");
     const actionUid = String(body.actionUid ?? "");
     if (!knownErpAction(controlUid, actionUid)) {
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${ERP_PERMISSION} required`, 403);
     }
-    const eventUid = await persistRecordErpAction(principal.accountUid, controlUid, actionUid);
+    const eventUid = await persistRecordErpAction(principal.accountUid, controlUid, actionUid, body.payload);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected ERP runtime error", 500);

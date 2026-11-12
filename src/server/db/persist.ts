@@ -145,8 +145,10 @@ import {
 import {
   ERP_CHAIN,
   ERP_CONTROL_ACTIONS,
+  ERP_EXTRA_PROJECTION_KEYS,
   ERP_PAGE_UID,
   ERP_PERMISSION,
+  ERP_FINANCE_PERMISSION,
   ERP_PROJECTION,
   ERP_ROUTE,
   ERP_VISIBLE_CONTROLS,
@@ -1496,7 +1498,8 @@ export async function persistListErpFields(): Promise<ErpFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_erp_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return ERP_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...ERP_VISIBLE_CONTROLS, ...ERP_EXTRA_PROJECTION_KEYS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1505,6 +1508,28 @@ export async function persistListErpFields(): Promise<ErpFieldValue[]> {
 export async function persistGetErpReadModel(accountUid: string): Promise<ErpReadModel> {
   const authorized = await persistHasErpPermission(accountUid);
   const fields = authorized ? await persistListErpFields() : [];
+  // finance_contract: raw finance/provider cost values require explicit
+  // finance.read; otherwise masked non-amount status only. Masking happens
+  // server-side (denied_behavior: never render the denied value).
+  if (authorized) {
+    const { seedScope } = await import("./seed");
+    await seedScope("erp");
+    const financeRows = await getSqlClient().all<{ n: number }>(
+      "SELECT count(*)::int AS n FROM ghsn_account_erp_permission WHERE account_uid = ? AND permission_uid = ?",
+      [accountUid, ERP_FINANCE_PERMISSION],
+    );
+    // ERP-01 contract: the finance mask is page-contract behavior and is
+    // enforced whenever the account lacks finance.read, independent of the
+    // deferred account-page enforcement flag (page reachability is a
+    // separate layer from the finance field boundary).
+    const financeRead = Number(financeRows[0]?.n ?? 0) > 0;
+    if (!financeRead) {
+      const masked = "MASKED（finance.read required）";
+      for (const field of fields) {
+        if (field.controlUid.startsWith("ERP-01-FLD-FIN-")) field.value = masked;
+      }
+    }
+  }
   return {
     projectionUid: ERP_PROJECTION,
     pageUid: ERP_PAGE_UID,
@@ -1524,8 +1549,9 @@ export async function persistRecordErpAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("erp", controlUid, actionUid);
+  await applyWorkbenchAction("erp", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_erp_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

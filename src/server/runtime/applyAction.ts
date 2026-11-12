@@ -2250,6 +2250,14 @@ function deriveQaScorecardForTask(
     }
     return;
   }
+  if (page === "erp") {
+    // Word §gates: every ERP-01 action is gated server-side on the exact
+    // account scope (ACCOUNT_PERMISSION_ASSIGNMENT_ONLY); refusals write the
+    // registered error state (ERP-01-ERR-AUTH) and apply nothing.
+    const { applyErpWorkbenchAction } = await import("./erpActions");
+    await applyErpWorkbenchAction(accountUid, controlUid, actionUid, nextValue);
+    return;
+  }
   if (page === "kb") {
     await applyProjectedAction(FIELD_TABLE.kb, previewKbAction, controlUid, actionUid, nextValue);
     if (actionUid === "createAcquisitionJob") {

@@ -4,6 +4,58 @@ export const ERP_ROUTE = "/admin/erp";
 export const ERP_PROJECTION = "ErpWorkbenchProjection";
 export const ERP_CHAIN = "ERP-01-FWC-PAGE-01";
 
+// Contract permission_contract.current_page_permissions — server-side gates
+// per action (ACCOUNT_PERMISSION_ASSIGNMENT_ONLY).
+export const ERP_FINANCE_PERMISSION = "finance.read";
+export const ERP_CONNECTOR_WRITE_PERMISSION = "erp.connector.write";
+export const ERP_CONNECTOR_VALIDATE_PERMISSION = "erp.connector.validate";
+export const ERP_MAPPING_VALIDATE_PERMISSION = "erp.mapping.validate";
+export const ERP_SYNC_REQUEST_PERMISSION = "erp.sync.request";
+export const ERP_SYNC_RETRY_PERMISSION = "erp.sync.retry";
+export const ERP_SNAPSHOT_READ_PERMISSION = "erp.snapshot.read";
+
+// GATE conditions: registered action -> exact scope. Unlisted = default page
+// gate (erp.connector.read); runtime denies with ERP-01-ERR-AUTH.
+export const ERP_PERMISSION_SCOPES: Record<string, string> = {
+  "ERP-01-ACT-READ": ERP_PERMISSION,
+  "ERP-01-ACT-READ-FINANCE": ERP_FINANCE_PERMISSION,
+  "ERP-01-ACT-READ-CONNECTOR": ERP_PERMISSION,
+  "ERP-01-ACT-READ-SYNC": ERP_PERMISSION,
+  "ERP-01-ACT-FACTPACK": ERP_FINANCE_PERMISSION,
+  "ERP-01-ACT-GUARDRAILS": ERP_FINANCE_PERMISSION,
+  "ERP-01-ACT-FORECAST": ERP_FINANCE_PERMISSION,
+  "ERP-01-ACT-EXPORT": ERP_FINANCE_PERMISSION,
+  "ERP-01-ACT-CONNECTOR-CREATE": ERP_CONNECTOR_WRITE_PERMISSION,
+  "ERP-01-ACT-CONNECTOR-UPDATE": ERP_CONNECTOR_WRITE_PERMISSION,
+  "ERP-01-ACT-CONNECTOR-VALIDATE": ERP_CONNECTOR_VALIDATE_PERMISSION,
+  "ERP-01-ACT-MAPPING-VALIDATE": ERP_MAPPING_VALIDATE_PERMISSION,
+  "ERP-01-ACT-SNAPSHOT-REFRESH": ERP_SNAPSHOT_READ_PERMISSION,
+  "ERP-01-ACT-SYNC-CREATE": ERP_SYNC_REQUEST_PERMISSION,
+  "ERP-01-ACT-SYNC-STATUS": ERP_PERMISSION,
+  "ERP-01-ACT-SYNC-RETRY": ERP_SYNC_RETRY_PERMISSION,
+  "ERP-01-ACT-FAILURE-GET": ERP_PERMISSION,
+  "ERP-01-ACT-DETAIL-OPEN": ERP_PERMISSION,
+};
+
+// Registered state model (contract state_model). Connector/snapshot/sync
+// registry state lives in projection-side STATE uids outside the 42-control
+// denominator (same precedent as STR-01-STATE-*).
+export const ERP_STATE_ERROR_UID = "ERP-01-STATE-ERROR";
+export const ERP_STATE_CONNECTOR_UID = "ERP-01-STATE-CONNECTOR";
+export const ERP_STATE_SNAPSHOT_UID = "ERP-01-STATE-SNAPSHOT";
+export const ERP_STATE_SYNC_JOBS_UID = "ERP-01-STATE-SYNC-JOBS";
+export const ERP_STATE_FACTPACK_UID = "ERP-01-STATE-FACTPACK";
+export const ERP_STATE_EXPORTS_UID = "ERP-01-STATE-EXPORTS";
+
+export const ERP_EXTRA_PROJECTION_KEYS = [
+  ERP_STATE_ERROR_UID,
+  ERP_STATE_CONNECTOR_UID,
+  ERP_STATE_SNAPSHOT_UID,
+  ERP_STATE_SYNC_JOBS_UID,
+  ERP_STATE_FACTPACK_UID,
+  ERP_STATE_EXPORTS_UID,
+] as const;
+
 export const ERP_VISIBLE_CONTROLS = [
   "ERP-01-FLD-SCOPE",
   "ERP-01-FLD-SNAPSHOT",

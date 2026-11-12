@@ -8,7 +8,7 @@ import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
 import { IAM_PERMISSION, IAM_CONFIGURE_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
 import { DEV_PERMISSION, DEV_ACCOUNT_PERMISSIONS, DEV_VISIBLE_CONTROLS } from "../domain/dev";
 import { SOC_PERMISSION, SOC_VISIBLE_CONTROLS } from "../domain/soc";
-import { ERP_PERMISSION, ERP_VISIBLE_CONTROLS } from "../domain/erp";
+import { ERP_FINANCE_PERMISSION, ERP_CONNECTOR_VALIDATE_PERMISSION, ERP_CONNECTOR_WRITE_PERMISSION, ERP_MAPPING_VALIDATE_PERMISSION, ERP_PERMISSION, ERP_SNAPSHOT_READ_PERMISSION, ERP_SYNC_REQUEST_PERMISSION, ERP_SYNC_RETRY_PERMISSION, ERP_VISIBLE_CONTROLS } from "../domain/erp";
 import { AIAPI_PERMISSION, AIAPI_VISIBLE_CONTROLS } from "../domain/aiapi";
 import { SG02_PERMISSION, SG02_VISIBLE_CONTROLS } from "../domain/sg02";
 import { ADMIN_STR_PERMISSION, ADMIN_STR_VISIBLE_CONTROLS } from "../domain/adminStr";
@@ -90,7 +90,7 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
   iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS, extraPermissions: [IAM_CONFIGURE_PERMISSION] },
   dev: { fieldTable: "ghsn_dev_field_projection", permissionTable: "ghsn_account_dev_permission", permission: DEV_PERMISSION, controls: DEV_VISIBLE_CONTROLS, extraPermissions: DEV_ACCOUNT_PERMISSIONS },
   soc: { fieldTable: "ghsn_soc_field_projection", permissionTable: "ghsn_account_soc_permission", permission: SOC_PERMISSION, controls: SOC_VISIBLE_CONTROLS },
-  erp: { fieldTable: "ghsn_erp_field_projection", permissionTable: "ghsn_account_erp_permission", permission: ERP_PERMISSION, controls: ERP_VISIBLE_CONTROLS },
+  erp: { fieldTable: "ghsn_erp_field_projection", permissionTable: "ghsn_account_erp_permission", permission: ERP_PERMISSION, controls: ERP_VISIBLE_CONTROLS, extraPermissions: [ERP_FINANCE_PERMISSION, ERP_CONNECTOR_WRITE_PERMISSION, ERP_CONNECTOR_VALIDATE_PERMISSION, ERP_MAPPING_VALIDATE_PERMISSION, ERP_SYNC_REQUEST_PERMISSION, ERP_SYNC_RETRY_PERMISSION, ERP_SNAPSHOT_READ_PERMISSION] },
   aiapi: { fieldTable: "ghsn_aiapi_field_projection", permissionTable: "ghsn_account_aiapi_permission", permission: AIAPI_PERMISSION, controls: AIAPI_VISIBLE_CONTROLS },
   sg02: { fieldTable: "ghsn_sg02_field_projection", permissionTable: "ghsn_account_sg02_permission", permission: SG02_PERMISSION, controls: SG02_VISIBLE_CONTROLS },
   adminStr: { fieldTable: "ghsn_admin_str_field_projection", permissionTable: "ghsn_account_admin_str_permission", permission: ADMIN_STR_PERMISSION, controls: ADMIN_STR_VISIBLE_CONTROLS },
