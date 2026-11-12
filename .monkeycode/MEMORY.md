@@ -358,3 +358,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - DB-01 動作全在 src/server/db/dbActions.ts（15 動作/9 閘/10 ERR/5 階段），applyAction 的 page=="db" 分支只做 UNDEFINED-001 guard 後委派；錯誤狀態投影到 DB-01-STATE-ERROR（不在 49 控件分母內），DbVisual 從 read model.errorState 渲染橫幅。
   - /api/db/action 的值欄位是 body.payload（與 /api/qa 一致）；nextValue 必須經 route→persistRecordDbAction→applyWorkbenchAction 四層傳遞，漏一層 ENTITY-SELECT 類動作會靜默落空 patch。
   - DB 五權限 scope（database.metadata/trace/migration/integrity.read + audit.read）種在 ghsn_account_db_permission；線上 Neon 402 連 requireAuth 都過不了，動態 API 部署標記失效——改用本地 build+test+API 探針驗證。
+
+[Project Knowledge Summary]
+- Date: 2026-11-12
+- Context: ERP-01 動作運行時與 finance 邊界落地（commit ea35dae5）
+- Category: Build Methods
+- Instructions:
+  - ERP-01 18 動作運行時在 src/server/runtime/erpActions.ts：連接器狀態機（UNCONFIGURED→CONFIGURING→VALIDATING→READY|DEGRADED）、快照＝8 張治理投影表真實 count、同步作業、finance fact pack；STATE 註冊表存 ERP-01-STATE-* UIDs（不在 42 控件分母內）。
+  - finance 遮罩在 persistGetErpReadModel server-side 執行，且獨立於 pagePermissionEnforced()（ACCOUNT_PAGE_PERMISSION_ENFORCED=false 仍遮罩）——ERP-01 契約把 finance 邊界定義為頁面契約行為，與延後的帳戶頁面權限層分離；動作閘（hasScope）則始終查表強制。
+  - 連接器驗證對照 ghsn_aiapi_field_projection 的 AIAPI_REGISTRY_UID（readProfiles）：providerId 是序數索引（"0"），以 providerId==='"mock"' 比對會 DEGRADED——诚实失敗路徑 detail "provider X not in governed registry" 是契約行為；測試 fixture 用 serializeProfiles 帶 seq/credentialSet 全欄位，且必須捕獲並還原註冊表（跨模組共享狀態）。
+  - 工作區腳本測試（erpWorkspace/strWorkspace.test.ts）用 `npx tsx src/server/runtime/<file>.test.ts` 跑（node --test 的 tsx runner 吃不了頂層腳本式斷言）；跑前先 blank 該頁投影 STATE/FLD UIDs 保證決定性。
