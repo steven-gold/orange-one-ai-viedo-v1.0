@@ -368,3 +368,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - finance 遮罩在 persistGetErpReadModel server-side 執行，且獨立於 pagePermissionEnforced()（ACCOUNT_PAGE_PERMISSION_ENFORCED=false 仍遮罩）——ERP-01 契約把 finance 邊界定義為頁面契約行為，與延後的帳戶頁面權限層分離；動作閘（hasScope）則始終查表強制。
   - 連接器驗證對照 ghsn_aiapi_field_projection 的 AIAPI_REGISTRY_UID（readProfiles）：providerId 是序數索引（"0"），以 providerId==='"mock"' 比對會 DEGRADED——诚实失敗路徑 detail "provider X not in governed registry" 是契約行為；測試 fixture 用 serializeProfiles 帶 seq/credentialSet 全欄位，且必須捕獲並還原註冊表（跨模組共享狀態）。
   - 工作區腳本測試（erpWorkspace/strWorkspace.test.ts）用 `npx tsx src/server/runtime/<file>.test.ts` 跑（node --test 的 tsx runner 吃不了頂層腳本式斷言）；跑前先 blank 該頁投影 STATE/FLD UIDs 保證決定性。
+
+[Project Knowledge Summary]
+- Date: 2026-11-13
+- Context: STR-01 MULTI 多 AI 對話補齊（沙盒第二供應商註冊）
+- Category: Build Methods
+- Instructions:
+  - MULTI 需 ≥2 個「providerId 互異」的 chat profile 且各有憑證：resolveRoute 只收有 credential（ghsn_aiapi_credential.credential_uid==profileId）的 profile，uniqueProviders 按 providerId 去重——同 baseURL 不同 profileId 也算兩個供應商。
+  - 治理路徑一次呼叫建檔＋設憑證：POST /api/aiapi/action，controlUid=CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE、actionUid=createProviderModelProfile、body.value 帶 {providerId,baseUrl,endpointPath,modelId,capabilityType:"chat",adapterType:"openai",secret}（手動路徑：三欄位必填、promptTemplate 預設含 {{canonical_instruction}} token、secret 有值即自動 setAiapiCredential）。注意 aiapi 路由的值欄位是 body.value（qa/db/erp 是 body.payload）。
+  - llmClient 的 configCache 15 秒——註冊新供應商後立刻測 MULTI 會撞到舊快取，等 16 秒再發。
+  - 已驗證：MULTI 產生兩個獨立 assistant turn（provider "0"＋"mock-alt"）＋主持人 synthesis turn；單供應商時誠實報 AI_PROVIDER_MULTI_SHORT（FAILED turn 留在對話軌跡）。
