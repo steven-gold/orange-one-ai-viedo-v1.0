@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { ErpClientError, fetchErpReadModel, postErpAction, type ErpFieldValue } from "@/lib/client";
-import { displayErpValue } from "./erpFormat";
+import { deriveErpPageState, displayErpValue } from "./erpFormat";
 import { ERP_CONTROL_ACTIONS, ERP_VIEWS, ERP_VISIBLE_CONTROLS, type ErpView } from "./erpControls";
 import styles from "./ErpVisual.module.css";
 
@@ -172,25 +172,37 @@ export function ErpVisual() {
   }, [v]);
 
   const connectorStatus = v("ERP-01-FLD-CONN-CONNECTION-STATUS");
-  const pageState = loading
-    ? "LOADING"
-    : error || contractError
-      ? "ERROR"
-      : !authorized
-        ? "POLICY_BLOCKED"
-        : connectorStatus === "VALIDATING"
-          ? "CONNECTOR_VALIDATING"
-          : connectorStatus === "CONFIGURING"
-            ? "CONNECTOR_CONFIGURING"
-            : connectorStatus === "READY"
-              ? "CONNECTOR_READY"
-              : connectorStatus === "DEGRADED"
-                ? "CONNECTOR_DEGRADED"
-                : connectorStatus === "FAILED"
-                  ? "SNAPSHOT_FAILED"
-                  : connectorStatus
-                    ? "CONNECTOR_CONFIGURING"
-                    : "CONNECTOR_UNCONFIGURED";
+  const syncJobsRaw = v("ERP-01-STATE-SYNC-JOBS");
+  const snapshotRaw = v("ERP-01-STATE-SNAPSHOT");
+  const pageState = deriveErpPageState({
+    loading,
+    authorized,
+    errorCode: contractError?.code ?? null,
+    connectorStatus,
+    syncJobsRaw,
+    snapshotRaw,
+    completenessRaw: v("ERP-01-FLD-SYNC-COMPLETENESS"),
+  });
+
+  // Real drawer references: connector version/correlation and the actual
+  // retry eligibility (registered FAILED job recovery or the exact
+  // contract recovery text).
+  let connectorRef = dash;
+  let retryEligibility = dash;
+  try {
+    const raw = v("ERP-01-STATE-CONNECTOR");
+    const connector = raw ? (JSON.parse(raw) as { connectorId?: string; version?: number }) : null;
+    if (connector?.connectorId) connectorRef = `${connector.connectorId} · v${connector.version ?? "—"}`;
+  } catch {
+    connectorRef = dash;
+  }
+  try {
+    const jobs = syncJobsRaw ? (JSON.parse(syncJobsRaw) as Array<{ jobId?: string; status?: string }>) : [];
+    const failed = [...jobs].reverse().find((job) => job.status === "FAILED");
+    retryEligibility = failed?.jobId ? `RETRY-ELIGIBLE · ${failed.jobId}` : (contractError?.recovery ?? dash);
+  } catch {
+    retryEligibility = contractError?.recovery ?? dash;
+  }
 
   const selectView = (next: ErpView, uid: string) => {
     setView(next);
@@ -373,7 +385,7 @@ export function ErpVisual() {
           </section>
         ) : null}
 
-        <GovernanceRail t={tx} dash={dash} disabled={disabled} view={view} onDrawer={openDrawer} readiness={readiness} />
+        <GovernanceRail t={tx} dash={dash} disabled={disabled} view={view} onDrawer={openDrawer} readiness={readiness} connectorState={connectorStatus ?? dash} snapshotState={v("ERP-01-FLD-SYNC-COMPLETENESS") ?? dash} />
       </div>
 
       {drawerOpen ? (
@@ -384,6 +396,8 @@ export function ErpVisual() {
             <Kv uid="ERP-01-FLD-SYNC-FAILURE-ID" label={tx("erp.field-failure-id")} value={v("ERP-01-FLD-SYNC-FAILURE-ID") ?? dash} />
             <Kv uid="ERP-01-FLD-AUDIT-REF" label={tx("erp.field-audit-ref")} value={v("ERP-01-FLD-AUDIT-REF") ?? dash} />
             <Kv uid="ERP-01-FLD-READINESS" label={tx("erp.field-readiness")} value={readiness ?? dash} />
+            <Kv uid="ERP-01-FLD-CONN-CONNECTOR-ID" label={tx("erp.drawer-version")} value={connectorRef} />
+            <Kv uid="ERP-01-FLD-SYNC-LAST-SYNC-STATUS" label={tx("erp.drawer-retry")} value={retryEligibility} />
             <Kv uid="ERP-01-FLD-SYNC-CURRENCY-TIMEZONE" label={tx("erp.field-currency-timezone")} value={v("ERP-01-FLD-SYNC-CURRENCY-TIMEZONE") ?? dash} />
           </div>
           {factPack ? <pre className={styles.note}>{factPack.slice(0, 800)}</pre> : null}
@@ -403,6 +417,8 @@ function GovernanceRail({
   view,
   onDrawer,
   readiness,
+  connectorState,
+  snapshotState,
 }: {
   t: (key: TranslationKey) => string;
   dash: string;
@@ -410,6 +426,8 @@ function GovernanceRail({
   view: ErpView;
   onDrawer: () => void;
   readiness: string | null;
+  connectorState: string;
+  snapshotState: string;
 }) {
   return (
     <aside className={styles.rail} data-section-uid="ERP-01-SEC-06" data-component-uid="ERP-01-CMP-GOVERNANCE">
@@ -451,12 +469,12 @@ function GovernanceRail({
           </div>
           <div className={styles.railCard}>
             <span>{t("erp.rail-connector-state")}</span>
-            <strong>{t("erp.rail-connector-state-value")}</strong>
+            <strong data-control-uid="ERP-01-FLD-CONN-CONNECTION-STATUS">{connectorState || t("erp.rail-connector-state-value")}</strong>
             <i className={`${styles.dot} ${styles.dotInfo}`} />
           </div>
           <div className={styles.railCard}>
             <span>{t("erp.rail-snapshot-state")}</span>
-            <strong>{t("erp.rail-snapshot-state-value")}</strong>
+            <strong data-control-uid="ERP-01-FLD-SYNC-COMPLETENESS">{snapshotState || t("erp.rail-snapshot-state-value")}</strong>
             <i className={`${styles.dot} ${styles.dotWarn}`} />
           </div>
           <div className={styles.railCard}>

@@ -2232,6 +2232,8 @@ const catalog = {
   "erp.btn-detail": { "zh-TW": "查看詳細資料 / Audit", "zh-CN": "查看详细资料 / Audit", en: "View detail / audit" },
   "erp.drawer-title": { "zh-TW": "Exact source projection / Failure / Audit", "zh-CN": "Exact source projection / Failure / Audit", en: "Exact source projection / Failure / Audit" },
   "erp.drawer-hint": { "zh-TW": "低頻 detail 進 Drawer；Secret 只顯示 Reference ID，原始密文永不進一般 projection。", "zh-CN": "低频 detail 进 Drawer；Secret 只显示 Reference ID，原始密文永不进一般 projection。", en: "Low-frequency detail stays in the drawer; secrets stay as Reference ID and raw values never enter the projection." },
+  "erp.drawer-version": { "zh-TW": "版本／相關參照", "zh-CN": "版本／相关参照", en: "Version/correlation reference" },
+  "erp.drawer-retry": { "zh-TW": "錯誤／重試資格", "zh-CN": "错误／重试资格", en: "Error/retry eligibility" },
   "erp.field-failure-id": { "zh-TW": "Failure ID", "zh-CN": "Failure ID", en: "Failure ID" },
   "erp.field-audit-ref": { "zh-TW": "Audit Ref", "zh-CN": "Audit Ref", en: "Audit Ref" },
   "erp.field-readiness": { "zh-TW": "目前狀態 / Blockers", "zh-CN": "目前状态 / Blockers", en: "Current state / blockers" },

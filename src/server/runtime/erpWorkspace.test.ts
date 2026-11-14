@@ -12,6 +12,7 @@ import {
   ERP_STATE_SNAPSHOT_UID,
   ERP_STATE_SYNC_JOBS_UID,
 } from "../domain/erp";
+import { deriveErpPageState } from "../../components/pages/erpFormat";
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -274,6 +275,66 @@ async function main(): Promise<void> {
     await persistRecordErpAction(DEMO, "ERP-01-BTN-DETAIL", "ERP-01-ACT-DETAIL-OPEN");
     await applyErpWorkbenchAction(DEMO, "ERP-01-BTN-DETAIL", "ERP-01-ACT-DETAIL-OPEN");
     assert((await readField("ERP-01-FLD-AUDIT-REF")) !== null, "audit trail populated");
+
+    // Contract page-state vocabulary derivation (pure function).
+    const base = { loading: false, authorized: true, errorCode: null, connectorStatus: null, syncJobsRaw: null, snapshotRaw: null, completenessRaw: null };
+    assertEqual(deriveErpPageState({ ...base, loading: true }), "LOADING", "state LOADING");
+    assertEqual(deriveErpPageState({ ...base, errorCode: "ERP-01-ERR-VERSION" }), "VERSION_CONFLICT", "state VERSION_CONFLICT");
+    assertEqual(deriveErpPageState({ ...base, errorCode: "ERP-01-ERR-SYNC" }), "ERROR", "state ERROR");
+    assertEqual(deriveErpPageState({ ...base, authorized: false }), "POLICY_BLOCKED", "state POLICY_BLOCKED");
+    assertEqual(deriveErpPageState({ ...base, connectorStatus: "VALIDATING" }), "CONNECTOR_VALIDATING", "state CONNECTOR_VALIDATING");
+    assertEqual(deriveErpPageState({ ...base, connectorStatus: "CONFIGURING" }), "CONNECTOR_CONFIGURING", "state CONNECTOR_CONFIGURING");
+    assertEqual(
+      deriveErpPageState({ ...base, connectorStatus: "READY", syncJobsRaw: JSON.stringify([{ status: "RUNNING" }]) }),
+      "SNAPSHOT_SYNCING",
+      "state SNAPSHOT_SYNCING",
+    );
+    assertEqual(
+      deriveErpPageState({ ...base, connectorStatus: "READY", syncJobsRaw: JSON.stringify([{ status: "FAILED" }]) }),
+      "SNAPSHOT_FAILED",
+      "state SNAPSHOT_FAILED",
+    );
+    assertEqual(deriveErpPageState({ ...base, connectorStatus: "DEGRADED" }), "CONNECTOR_DEGRADED", "state CONNECTOR_DEGRADED");
+    assertEqual(deriveErpPageState({ ...base, connectorStatus: "FAILED" }), "CONNECTOR_DEGRADED", "connector FAILED maps to vocabulary");
+    assertEqual(
+      deriveErpPageState({
+        ...base,
+        connectorStatus: "READY",
+        syncJobsRaw: JSON.stringify([{ status: "COMPLETED", at: "2026-01-02T00:00:00.000Z" }]),
+        snapshotRaw: JSON.stringify({ at: "2026-01-01T00:00:00.000Z" }),
+        completenessRaw: "100%",
+      }),
+      "SNAPSHOT_STALE",
+      "state SNAPSHOT_STALE",
+    );
+    assertEqual(
+      deriveErpPageState({
+        ...base,
+        connectorStatus: "READY",
+        syncJobsRaw: JSON.stringify([{ status: "COMPLETED", at: "2026-01-01T00:00:00.000Z" }]),
+        snapshotRaw: JSON.stringify({ at: "2026-01-01T00:00:00.000Z" }),
+        completenessRaw: "50%",
+      }),
+      "DATA_INCOMPLETE",
+      "state DATA_INCOMPLETE",
+    );
+    assertEqual(
+      deriveErpPageState({
+        ...base,
+        connectorStatus: "READY",
+        syncJobsRaw: JSON.stringify([{ status: "COMPLETED", at: "2026-01-01T00:00:00.000Z" }]),
+        snapshotRaw: JSON.stringify({ at: "2026-01-01T00:00:00.000Z" }),
+        completenessRaw: "100%",
+      }),
+      "READY",
+      "state READY",
+    );
+    assertEqual(
+      deriveErpPageState({ ...base, connectorStatus: null, snapshotRaw: JSON.stringify({ at: "2026-01-01T00:00:00.000Z" }) }),
+      "CONNECTOR_UNCONFIGURED",
+      "state CONNECTOR_UNCONFIGURED with snapshot",
+    );
+    assertEqual(deriveErpPageState({ ...base }), "CONNECTOR_UNCONFIGURED", "state CONNECTOR_UNCONFIGURED empty");
 
     console.log("erp-workbench: all assertions passed");
   } finally {
