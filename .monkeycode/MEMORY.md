@@ -389,3 +389,14 @@ Entries discovered by the Agent during task execution should follow this format:
   - 三頁稽核結論：INFO-01（16 動作）/SG-02（3 動作）/admin:STR-01（16 動作）原本落 applyAction 通用 stub（statusFromAction 假 token）；其餘 12 頁（dashboard/core/asset/video/edit/qa/db/str/sys/iam/soc/dev/erp/kb/aiapi）均有專屬分支。SG-02 已補齊；INFO/adminStr 待做（同模式：runtime 模組＋applyAction 分支＋persist nextValue＋route payload＋Visual schema modal＋seed extraPermissions＋workspace 測試）。
   - 頁面契約稽核腳本 /tmp/opencode/audit-pages.mjs：TAB/STAGE/VIEW 類控件是 map 驅動（AIAPI_VIEWS/DEV_STAGES/KB_VIEWS/ADMIN_STR_VIEWS），腳本 literal diff 會誤報，需比對 map 鍵。
   - 契約 STATE UIDs（*-STATE-*）與 STR-01 同構：不計入控件分母、由 persistList*Fields union(VISIBLE_CONTROLS, EXTRA_KEYS, rows) 暴露、fail-closed 拒絕寫 {code,detail,recovery,at}。
+
+[Project Knowledge Summary]
+- Date: 2026-11-19
+- Context: INFO-01/SG-02/admin:STR-01 三頁效果型動作全部補齊（commits 47f4b1d7/051263b0/fe85a09d）
+- Category: Build Methods
+- Instructions:
+  - 三頁運行時模板已定形：src/server/runtime/{info,sg02,adminStr}Actions.ts 各自獨立（err/writeField/hasScope/parsePayload 同構）；applyAction 分支動態 import；persistList*Fields union(VISIBLE_CONTROLS, EXTRA_PROJECTION_KEYS, rows)。
+  - 契約語義要點：SG-02/approve 僅 REVIEW→APPROVED（DRAFT 拒絕是契約行為）；adminStr truth rules（candidate≠decision、compare 無 winner 寫入、adopt 只標 ADOPTED_AS_CONTEXT、saveDraft 僅 DRAFT_ONLY）；INFO adopt/decide 僅作用於 STATE-CANDIDATES 註冊表（空註冊表→fail-closed 是正確行為，測試用 SQL fixture 種候選）。
+  - Visual schema modal 模式：頁面 controls 檔放 FORM_SCHEMAS（label 直接用契約 schema 欄位名，免新增 i18n）；submit 組 JSON payload 經 act(controlUid, payload) → route body.payload。
+  - 16 頁 applyAction 全有專屬分支；通用 stub（statusFromAction）僅剩未知頁面最終防線。
+  - 驗證套裝：5 個 workspace 測試（erp/str/sg02/adminStr/info 共 ~100 斷言）+38 單元測試+tsc+build，全部背景終端執行。
