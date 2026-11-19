@@ -1168,6 +1168,8 @@ export interface AdminStrReadModel {
   permission: "strategy.administration.read";
   chainUid: "ADMIN-STR-01-FWC-PAGE-01";
   authorized: boolean;
+  writeAuthorized: boolean;
+  financeAuthorized: boolean;
   fields: AdminStrFieldValue[];
 }
 

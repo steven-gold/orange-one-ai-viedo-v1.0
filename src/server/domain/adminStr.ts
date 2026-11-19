@@ -1,5 +1,6 @@
 export const ADMIN_STR_PERMISSION = "strategy.administration.read";
 export const ADMIN_STR_WRITE_PERMISSION = "strategy.administration.write";
+export const ADMIN_STR_FINANCE_PERMISSION = "strategy.administration.finance";
 export const ADMIN_STR_PAGE_UID = "admin:STR-01";
 export const ADMIN_STR_ROUTE = "/admin/strategy";
 export const ADMIN_STR_PROJECTION = "AdminStrWorkbenchProjection";
@@ -14,6 +15,7 @@ export const ADMIN_STR_STATE_EXPORTS_UID = "CTRL-ADMIN-STR-01-STATE-EXPORTS";
 export const ADMIN_STR_STATE_DRAFT_UID = "CTRL-ADMIN-STR-01-STATE-DRAFT";
 export const ADMIN_STR_STATE_CANDIDATES_UID = "CTRL-ADMIN-STR-01-STATE-CANDIDATES";
 export const ADMIN_STR_STATE_COMPARE_UID = "CTRL-ADMIN-STR-01-STATE-COMPARE";
+export const ADMIN_STR_STATE_IDEMPOTENCY_UID = "CTRL-ADMIN-STR-01-STATE-IDEMPOTENCY";
 export const ADMIN_STR_STATE_AUDIT_UID = "CTRL-ADMIN-STR-01-STATE-AUDIT";
 
 export const ADMIN_STR_EXTRA_PROJECTION_KEYS = [
@@ -25,6 +27,7 @@ export const ADMIN_STR_EXTRA_PROJECTION_KEYS = [
   ADMIN_STR_STATE_DRAFT_UID,
   ADMIN_STR_STATE_CANDIDATES_UID,
   ADMIN_STR_STATE_COMPARE_UID,
+  ADMIN_STR_STATE_IDEMPOTENCY_UID,
   ADMIN_STR_STATE_AUDIT_UID,
 ] as const;
 
@@ -41,6 +44,56 @@ export const ADMIN_STR_ACTION_SCOPES: Record<string, string> = {
   compareCandidates: ADMIN_STR_WRITE_PERMISSION,
   rejectStrategyCandidate: ADMIN_STR_WRITE_PERMISSION,
   adoptAsContextCandidate: ADMIN_STR_WRITE_PERMISSION,
+};
+
+// Contract operation_policy.known_operations_by_view (exact registry).
+export const ADMIN_STR_VIEW_OPERATIONS: Record<string, readonly string[]> = {
+  "STR-CURRENT-VIEW-OVERVIEW": ["getUiProjection", "refreshProjection", "searchProjection"],
+  "STR-CURRENT-VIEW-INTELLIGENCE-FACT": [
+    "approveGovernedResource",
+    "configureGovernedResource",
+    "exportProjection",
+    "getUiProjection",
+    "searchProjection",
+  ],
+  "STR-CURRENT-VIEW-PLAYBOOK": ["approveGovernedResource", "getUiProjection", "saveDraft"],
+  "STR-CURRENT-VIEW-OPPORTUNITY": ["approveGovernedResource", "createCandidate", "getUiProjection"],
+  "STR-CURRENT-VIEW-DECISION": [
+    "adoptAsContextCandidate",
+    "compareCandidates",
+    "getUiProjection",
+    "rejectStrategyCandidate",
+  ],
+};
+
+// Control -> owning views (derived from the per-view action bindings).
+export const ADMIN_STR_CONTROL_VIEWS: Record<string, readonly string[]> = {
+  "CTRL-ADMIN-STR-01-VIEW-OVERVIEW": ["STR-CURRENT-VIEW-OVERVIEW"],
+  "CTRL-ADMIN-STR-01-VIEW-INTELLIGENCE-FACT": ["STR-CURRENT-VIEW-INTELLIGENCE-FACT"],
+  "CTRL-ADMIN-STR-01-VIEW-PLAYBOOK": ["STR-CURRENT-VIEW-PLAYBOOK"],
+  "CTRL-ADMIN-STR-01-VIEW-OPPORTUNITY": ["STR-CURRENT-VIEW-OPPORTUNITY"],
+  "CTRL-ADMIN-STR-01-VIEW-DECISION": ["STR-CURRENT-VIEW-DECISION"],
+  "CTRL-ADMIN-STR-01-ACT-SEARCH": ["STR-CURRENT-VIEW-OVERVIEW", "STR-CURRENT-VIEW-INTELLIGENCE-FACT"],
+  "CTRL-ADMIN-STR-01-ACT-REFRESH": ["STR-CURRENT-VIEW-OVERVIEW"],
+  "CTRL-ADMIN-STR-01-ACT-NAV-OPEN": [
+    "STR-CURRENT-VIEW-OVERVIEW",
+    "STR-CURRENT-VIEW-INTELLIGENCE-FACT",
+    "STR-CURRENT-VIEW-PLAYBOOK",
+    "STR-CURRENT-VIEW-OPPORTUNITY",
+    "STR-CURRENT-VIEW-DECISION",
+  ],
+  "CTRL-ADMIN-STR-01-ACT-CONFIGURE": ["STR-CURRENT-VIEW-INTELLIGENCE-FACT"],
+  "CTRL-ADMIN-STR-01-ACT-APPROVE": [
+    "STR-CURRENT-VIEW-INTELLIGENCE-FACT",
+    "STR-CURRENT-VIEW-PLAYBOOK",
+    "STR-CURRENT-VIEW-OPPORTUNITY",
+  ],
+  "CTRL-ADMIN-STR-01-ACT-EXPORT": ["STR-CURRENT-VIEW-INTELLIGENCE-FACT"],
+  "CTRL-ADMIN-STR-01-ACT-DRAFT-SAVE": ["STR-CURRENT-VIEW-PLAYBOOK"],
+  "CTRL-ADMIN-STR-01-ACT-CANDIDATE-CREATE": ["STR-CURRENT-VIEW-OPPORTUNITY"],
+  "CTRL-ADMIN-STR-01-ACT-CANDIDATE-COMPARE": ["STR-CURRENT-VIEW-DECISION"],
+  "CTRL-ADMIN-STR-01-ACT-CANDIDATE-DECIDE": ["STR-CURRENT-VIEW-DECISION"],
+  "CTRL-ADMIN-STR-01-ACT-ADOPT-CONTEXT": ["STR-CURRENT-VIEW-DECISION"],
 };
 
 export const ADMIN_STR_VISIBLE_CONTROLS = [
@@ -93,5 +146,7 @@ export interface AdminStrReadModel {
   permission: typeof ADMIN_STR_PERMISSION;
   chainUid: typeof ADMIN_STR_CHAIN;
   authorized: boolean;
+  writeAuthorized: boolean;
+  financeAuthorized: boolean;
   fields: AdminStrFieldValue[];
 }

@@ -87,7 +87,7 @@ export const ADMIN_STR_VIEW_ACTIONS: Record<AdminStrView, readonly string[]> = {
   ],
 };
 
-export { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID } from "@/server/domain/adminStr";
+export { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID, ADMIN_STR_STATE_CANDIDATES_UID, ADMIN_STR_STATE_AUDIT_UID } from "@/server/domain/adminStr";
 
 export interface AdminStrFormField {
   key: string;

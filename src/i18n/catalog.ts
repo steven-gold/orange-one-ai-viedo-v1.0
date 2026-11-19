@@ -2734,6 +2734,7 @@ const catalog = {
   "adminStr.modal-title": { "zh-TW": "Effectful Form Modal", "zh-CN": "Effectful Form Modal", en: "Effectful Form Modal" },
   "adminStr.modal-hint": { "zh-TW": "effectful_runtime_ready=true；依 registered schema 送出；未註冊寫入維持 fail-closed。", "zh-CN": "effectful_runtime_ready=true；按 registered schema 送出；未注册写入维持 fail-closed。", en: "effectful_runtime_ready=true; submit per registered schema; unregistered writes stay fail-closed." },
   "adminStr.modal-submit": { "zh-TW": "送出（registered schema）", "zh-CN": "送出（registered schema）", en: "Submit (registered schema)" },
+  "adminStr.audit-title": { "zh-TW": "稽核軌跡（最近 12 筆）", "zh-CN": "审计轨迹（最近 12 条）", en: "Audit trail (last 12)" },
   "kb.title": { "zh-TW": "知識庫", "zh-CN": "知识库", en: "Knowledge & Experience" },
   "kb.error": { "zh-TW": "知識庫讀取失敗", "zh-CN": "知识库读取失败", en: "Knowledge administration read failed" },
   "kb.views": { "zh-TW": "Current Views", "zh-CN": "Current Views", en: "Current Views" },

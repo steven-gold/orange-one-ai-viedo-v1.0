@@ -2,7 +2,9 @@ import { bootstrapDatabase } from "../db/migrate";
 import { seedScope } from "../db/seed";
 import { persistListAdminStrFields, persistRecordAdminStrAction } from "../db/persist";
 import { getSqlClient } from "../db/client";
-import { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID, ADMIN_STR_STATE_CANDIDATES_UID } from "../domain/adminStr";
+import { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID, ADMIN_STR_STATE_CANDIDATES_UID, ADMIN_STR_STATE_AUDIT_UID, ADMIN_STR_STATE_IDEMPOTENCY_UID } from "../domain/adminStr";
+import { persistGetAdminStrReadModel } from "../db/persist";
+import { deriveAdminStrPageState } from "../../components/pages/adminStrFormat";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -36,6 +38,7 @@ const STATE_KEYS = [
   ADMIN_STR_STATE_CANDIDATES_UID,
   "CTRL-ADMIN-STR-01-STATE-COMPARE",
   "CTRL-ADMIN-STR-01-STATE-AUDIT",
+  ADMIN_STR_STATE_IDEMPOTENCY_UID,
 ];
 
 async function readState(uid: string): Promise<string | null> {
@@ -196,12 +199,47 @@ async function main(): Promise<void> {
   const listedUids = new Set(listed.map((field) => field.controlUid));
   for (const uid of STATE_KEYS) assert(listedUids.has(uid), `field list exposes ${uid}`);
 
+  // 19. View-to-operation binding gate (contract known_operations_by_view).
+  await persistRecordAdminStrAction(DEMO, ACT_SEARCH, "saveDraft", JSON.stringify({ draft_id: "x", playbook_content: "y" }));
+  assertEqual((await readError())?.code, "ADMIN-STR-ERR-UNDEFINED", "saveDraft refused from non-owning control view");
+
+  // 20. Idempotency gate: same key replays without a second mutation.
+  const beforeIdem = (await readCandidates()).length;
+  await persistRecordAdminStrAction(DEMO, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "Idem A", candidate_summary: "first", source_opportunity: "opp-idem", idempotency_key: "idem-1" }));
+  assertEqual((await readCandidates()).length, beforeIdem + 1, "first idempotent create lands");
+  await persistRecordAdminStrAction(DEMO, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "Idem A", candidate_summary: "first", source_opportunity: "opp-idem", idempotency_key: "idem-1" }));
+  assertEqual((await readCandidates()).length, beforeIdem + 1, "same idempotency_key does not duplicate");
+  const auditRaw = await readState(ADMIN_STR_STATE_AUDIT_UID);
+  assert((auditRaw ?? "").includes("IDEMPOTENT-REPLAY"), "idempotent replay is audited");
+  const idemRegistry = JSON.parse((await readState(ADMIN_STR_STATE_IDEMPOTENCY_UID)) ?? "{}") as Record<string, string>;
+  assert(Boolean(idemRegistry["createCandidate:idem-1"]), "idempotency fingerprint stored");
+
+  // 21. Read model authorization flags (write + finance guardrail).
+  const demoModel = await persistGetAdminStrReadModel(DEMO);
+  assertEqual(demoModel.writeAuthorized, true, "DEMO holds write scope");
+  assertEqual(demoModel.financeAuthorized, true, "DEMO holds finance scope");
+  const readonlyModel = await persistGetAdminStrReadModel(READONLY);
+  assertEqual(readonlyModel.writeAuthorized, false, "READONLY lacks write scope");
+  assertEqual(readonlyModel.financeAuthorized, false, "READONLY lacks finance scope");
+  assertEqual(readonlyModel.authorized, true, "READONLY page scope still authorized");
+
+  // 22. data-page-state derivation (contract allowed_states vocabulary).
+  assertEqual(deriveAdminStrPageState({ loading: true, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "LOADING", "loading state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: "read failed", authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "ERROR", "fetch error state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "POLICY_BLOCKED", "denied maps to POLICY_BLOCKED");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: "ADMIN-STR-ERR-VERSION", resourceStatus: null, hasRuntimeState: true }), "VERSION_CONFLICT", "version conflict state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: "ADMIN-STR-ERR-STATE", resourceStatus: null, hasRuntimeState: true }), "POLICY_BLOCKED", "undefined refusal maps to POLICY_BLOCKED");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: true }), "READ_ONLY", "read-only state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: "REVIEW", hasRuntimeState: true }), "REVIEW_REQUIRED", "review required state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "EMPTY", "empty state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: null, hasRuntimeState: true }), "READY", "ready state");
+
   // Restore sandbox to clean state.
   for (const uid of STATE_KEYS) {
     await client.run("UPDATE ghsn_admin_str_field_projection SET value_text = NULL WHERE control_uid = ?", [uid]);
   }
 
-  console.log(`adminStrWorkspace: 18 checks passed (${new Date().toISOString()})`);
+  console.log(`adminStrWorkspace: 27 checks passed (${new Date().toISOString()})`);
   process.exit(0);
 }
 

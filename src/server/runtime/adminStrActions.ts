@@ -1,15 +1,18 @@
 import { getSqlClient } from "../db/client";
 import {
   ADMIN_STR_ACTION_SCOPES,
+  ADMIN_STR_CONTROL_VIEWS,
   ADMIN_STR_STATE_AUDIT_UID,
   ADMIN_STR_STATE_CANDIDATES_UID,
   ADMIN_STR_STATE_COMPARE_UID,
   ADMIN_STR_STATE_DRAFT_UID,
   ADMIN_STR_STATE_ERROR_UID,
   ADMIN_STR_STATE_EXPORTS_UID,
+  ADMIN_STR_STATE_IDEMPOTENCY_UID,
   ADMIN_STR_STATE_REFRESH_UID,
   ADMIN_STR_STATE_RESOURCE_UID,
   ADMIN_STR_STATE_SEARCH_UID,
+  ADMIN_STR_VIEW_OPERATIONS,
   ADMIN_STR_VISIBLE_CONTROLS,
 } from "../domain/adminStr";
 
@@ -17,7 +20,22 @@ import {
 // (known_operations_by_view, reuse_existing_operations, invent FORBIDDEN).
 // data_and_truth_rules: candidate != approved decision; Decision Lab never
 // writes canon lock/task/budget/publish; confidence never invented.
+// server_gate_order: identity -> account_permission -> scope -> condition ->
+// state_guard -> expected_version_when_write -> idempotency_when_side_effect
+// -> audit.
 const TABLE = "ghsn_admin_str_field_projection";
+
+// Side-effect operations guarded by idempotency keys.
+const SIDE_EFFECT_OPERATIONS = new Set([
+  "exportProjection",
+  "configureGovernedResource",
+  "approveGovernedResource",
+  "saveDraft",
+  "createCandidate",
+  "compareCandidates",
+  "rejectStrategyCandidate",
+  "adoptAsContextCandidate",
+]);
 
 interface AdminStrResource {
   resourceType: string;
@@ -125,6 +143,39 @@ export async function applyAdminStrAction(
     return;
   }
 
+  // View-to-operation binding: the invoking control must belong to a view
+  // whose registered operations include this action (unknown/missing binding
+  // => BLOCK + REPORT_AUTHORITY_GAP).
+  const owningViews = ADMIN_STR_CONTROL_VIEWS[controlUid];
+  const viewBound = Array.isArray(owningViews) && owningViews.some((view) => ADMIN_STR_VIEW_OPERATIONS[view]?.includes(actionUid));
+  if (!viewBound) {
+    await writeError(err("ADMIN-STR-ERR-UNDEFINED", `Operation ${actionUid} is not registered for control ${controlUid} in known_operations_by_view`, "BLOCK + REPORT_AUTHORITY_GAP"));
+    return;
+  }
+
+  // Idempotency gate: a repeated side-effect request with the same
+  // idempotency_key replays without a second mutation.
+  const payloadForGate = parsePayload(nextValue);
+  const idempotencyKey = payloadForGate ? String(payloadForGate.idempotency_key ?? "") : "";
+  if (SIDE_EFFECT_OPERATIONS.has(actionUid) && idempotencyKey) {
+    const registry = (await parseJson<Record<string, string>>(await readField(ADMIN_STR_STATE_IDEMPOTENCY_UID))) ?? {};
+    const fingerprint = `${actionUid}:${idempotencyKey}`;
+    if (registry[fingerprint]) {
+      await appendAudit(`IDEMPOTENT-REPLAY ${fingerprint}`);
+      await clearError();
+      return;
+    }
+  }
+
+  const recordIdempotency = async (): Promise<void> => {
+    if (!idempotencyKey) return;
+    const registry = (await parseJson<Record<string, string>>(await readField(ADMIN_STR_STATE_IDEMPOTENCY_UID))) ?? {};
+    registry[`${actionUid}:${idempotencyKey}`] = new Date().toISOString();
+    const entries = Object.entries(registry);
+    const trimmed = entries.length > 50 ? Object.fromEntries(entries.slice(entries.length - 50)) : registry;
+    await writeField(ADMIN_STR_STATE_IDEMPOTENCY_UID, JSON.stringify(trimmed));
+  };
+
   switch (actionUid) {
     case "getUiProjection": {
       await clearError();
@@ -170,6 +221,7 @@ export async function applyAdminStrAction(
       exports.unshift({ exportId: `EXP-${Date.now()}`, exportScope: scope, rowCount: rows.length, exportedAt: new Date().toISOString() });
       await writeField(ADMIN_STR_STATE_EXPORTS_UID, JSON.stringify(exports.slice(0, 10)));
       await appendAudit(`EXPORT ${scope} · ${rows.length} rows`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -203,6 +255,7 @@ export async function applyAdminStrAction(
       };
       await writeField(ADMIN_STR_STATE_RESOURCE_UID, JSON.stringify(resource));
       await appendAudit(`CONFIGURE ${resource.resourceType}/${resource.resourceId} v${resource.version} · DRAFT`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -232,6 +285,7 @@ export async function applyAdminStrAction(
       const next: AdminStrResource = { ...resource, status: "APPROVED", version: resource.version + 1, updatedAt: new Date().toISOString() };
       await writeField(ADMIN_STR_STATE_RESOURCE_UID, JSON.stringify(next));
       await appendAudit(`APPROVE ${next.resourceType}/${next.resourceId} v${next.version} · APPROVED`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -255,6 +309,7 @@ export async function applyAdminStrAction(
       };
       await writeField(ADMIN_STR_STATE_DRAFT_UID, JSON.stringify(draft));
       await appendAudit(`SAVE_DRAFT ${draft.draftId} v${draft.version} · DRAFT_ONLY`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -280,6 +335,7 @@ export async function applyAdminStrAction(
       candidates.push(candidate);
       await writeCandidates(candidates);
       await appendAudit(`CREATE_CANDIDATE ${candidate.candidateId} · CANDIDATE`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -302,6 +358,7 @@ export async function applyAdminStrAction(
         decision: null,
       }));
       await appendAudit(`COMPARE ${selected.length} candidates`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -328,6 +385,7 @@ export async function applyAdminStrAction(
       candidate.decidedAt = new Date().toISOString();
       await writeCandidates(candidates);
       await appendAudit(`REJECT ${candidate.candidateId}`);
+      await recordIdempotency();
       await clearError();
       return;
     }
@@ -355,6 +413,7 @@ export async function applyAdminStrAction(
       candidate.decidedAt = new Date().toISOString();
       await writeCandidates(candidates);
       await appendAudit(`ADOPT_CONTEXT ${candidate.candidateId} · ADOPTED_AS_CONTEXT`);
+      await recordIdempotency();
       await clearError();
       return;
     }

@@ -4,24 +4,21 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import {
-  AdminStrClientError,
-  fetchAdminStrReadModel,
-  postAdminStrAction,
-  type AdminStrFieldValue,
-} from "@/lib/client";
-import { displayAdminStrValue } from "./adminStrFormat";
-import {
   ADMIN_STR_CONTROL_ACTIONS,
   ADMIN_STR_FORM_SCHEMAS,
   ADMIN_STR_VIEW_ACTIONS,
   ADMIN_STR_VIEW_CONTROLS,
   ADMIN_STR_VIEWS,
   ADMIN_STR_VISIBLE_CONTROLS,
+  ADMIN_STR_STATE_CANDIDATES_UID,
+  ADMIN_STR_STATE_AUDIT_UID,
   ADMIN_STR_STATE_ERROR_UID,
   ADMIN_STR_STATE_RESOURCE_UID,
   type AdminStrDrawer,
   type AdminStrView,
 } from "./adminStrControls";
+import { deriveAdminStrPageState, displayAdminStrValue } from "./adminStrFormat";
+import { AdminStrClientError, fetchAdminStrReadModel, postAdminStrAction, type AdminStrFieldValue } from "@/lib/client";
 import styles from "./AdminStrVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -97,6 +94,8 @@ export function AdminStrVisual() {
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
   const [fields, setFields] = useState<AdminStrFieldValue[]>([]);
+  const [writeAuthorized, setWriteAuthorized] = useState(false);
+  const [financeAuthorized, setFinanceAuthorized] = useState(false);
   const [view, setView] = useState<AdminStrView>("STR-CURRENT-VIEW-OVERVIEW");
   const [drawer, setDrawer] = useState<AdminStrDrawer | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
@@ -111,6 +110,8 @@ export function AdminStrVisual() {
       .then((model) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
+        setWriteAuthorized(model.writeAuthorized);
+        setFinanceAuthorized(model.financeAuthorized);
         setFields(model.fields.length ? model.fields : ADMIN_STR_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
         setError(null);
       })
@@ -142,7 +143,6 @@ export function AdminStrVisual() {
   }, []);
 
   const disabled = !authorized && !loading;
-  const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displayAdminStrValue(null, loading);
   const visibleUids = useMemo(() => new Set<string>(ADMIN_STR_VISIBLE_CONTROLS), []);
@@ -213,6 +213,89 @@ export function AdminStrVisual() {
       return null;
     }
   }, [valueOf]);
+
+  const searchState = useMemo<{ query: string; matchedCount: number; matched: Array<{ controlUid: string; hasValue: boolean }> } | null>(() => {
+    const raw = valueOf("CTRL-ADMIN-STR-01-STATE-SEARCH");
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { query: string; matchedCount: number; matched: Array<{ controlUid: string; hasValue: boolean }> };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
+
+  const refreshState = useMemo<{ refreshedAt: string; rowsRead: number; rowsWithValue: number } | null>(() => {
+    const raw = valueOf("CTRL-ADMIN-STR-01-STATE-REFRESH");
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { refreshedAt: string; rowsRead: number; rowsWithValue: number };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
+
+  const exportsCount = useMemo<number>(() => {
+    const raw = valueOf("CTRL-ADMIN-STR-01-STATE-EXPORTS");
+    if (!raw) return 0;
+    try {
+      const parsed = JSON.parse(raw) as unknown[];
+      return Array.isArray(parsed) ? parsed.length : 0;
+    } catch {
+      return 0;
+    }
+  }, [valueOf]);
+
+  const draftState = useMemo<{ draftId: string; version: number; savedAt: string; playbookContent: string } | null>(() => {
+    const raw = valueOf("CTRL-ADMIN-STR-01-STATE-DRAFT");
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { draftId: string; version: number; savedAt: string; playbookContent: string };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
+
+  const candidates = useMemo<Array<{ candidateId: string; title: string; summary: string; sourceOpportunity: string; status: string }>>(() => {
+    const raw = valueOf(ADMIN_STR_STATE_CANDIDATES_UID);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw) as Array<{ candidateId: string; title: string; summary: string; sourceOpportunity: string; status: string }>;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }, [valueOf]);
+
+  const compareState = useMemo<{ comparedCount: number; candidates: Array<{ candidateId: string; title: string; status: string; sourceOpportunity: string }> } | null>(() => {
+    const raw = valueOf("CTRL-ADMIN-STR-01-STATE-COMPARE");
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { comparedCount: number; candidates: Array<{ candidateId: string; title: string; status: string; sourceOpportunity: string }> };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
+
+  const auditLines = useMemo<string[]>(() => {
+    const raw = valueOf(ADMIN_STR_STATE_AUDIT_UID);
+    if (!raw) return [];
+    return raw.split("\n").filter(Boolean);
+  }, [valueOf]);
+
+  const hasRuntimeState = useMemo(
+    () => Boolean(searchState || refreshState || exportsCount > 0 || draftState || candidates.length > 0 || compareState || auditLines.length > 0 || registry),
+    [searchState, refreshState, exportsCount, draftState, candidates, compareState, auditLines, registry],
+  );
+
+  const pageState = deriveAdminStrPageState({
+    loading,
+    fetchError: error,
+    authorized,
+    writeAuthorized,
+    errorCode: contractError?.code ?? null,
+    resourceStatus: registry?.status ?? null,
+    hasRuntimeState,
+  });
 
   const onAction = (uid: string) => {
     if (uid === "CTRL-ADMIN-STR-01-ACT-NAV-OPEN") {
@@ -286,11 +369,11 @@ export function AdminStrVisual() {
         <div className={styles.contextBar} data-section-uid="SEC-ADMIN-STR-01-OVERVIEW-CONTEXT">
           <div className={styles.contextItem}>
             <span>{tx("adminStr.scope")}</span>
-            <strong>{tx("adminStr.scope-value")}</strong>
+            <strong>{registry ? `${registry.resourceType}/${registry.resourceId} · ${registry.status}` : tx("adminStr.scope-value")}</strong>
           </div>
           <div className={styles.contextItem}>
             <span>{tx("adminStr.selected")}</span>
-            <strong>{dash}</strong>
+            <strong>{registry ? `${registry.resourceId} · v${registry.version}` : dash}</strong>
           </div>
           <div className={styles.contextItem}>
             <span>{tx("adminStr.truth")}</span>
@@ -304,7 +387,13 @@ export function AdminStrVisual() {
         <div className={styles.contextBar} data-section-uid="SEC-ADMIN-STR-01-DECISION-CONTEXT">
           <div className={styles.contextItem}>
             <span>{tx("adminStr.decision-context")}</span>
-            <strong>{tx("adminStr.decision-context-value")}</strong>
+            <strong>
+              {registry
+                ? `${registry.resourceType}/${registry.resourceId} · v${registry.version}`
+                : candidates.length > 0
+                  ? candidates[candidates.length - 1].title
+                  : tx("adminStr.decision-context-value")}
+            </strong>
           </div>
           <span className={`${styles.pill} ${styles.pillPurple}`}>{tx("adminStr.human-decision")}</span>
         </div>
@@ -314,11 +403,11 @@ export function AdminStrVisual() {
         <div className={styles.contextBar} data-section-uid={`SEC-ADMIN-STR-01-${view}`}>
           <div className={styles.contextItem}>
             <span>{tx("adminStr.scope")}</span>
-            <strong>{tx("adminStr.scope-value")}</strong>
+            <strong>{registry ? `${registry.resourceType}/${registry.resourceId} · ${registry.status}` : tx("adminStr.scope-value")}</strong>
           </div>
           <div className={styles.contextItem}>
             <span>{tx("adminStr.selected")}</span>
-            <strong>{dash}</strong>
+            <strong>{registry ? `${registry.resourceId} · v${registry.version}` : dash}</strong>
           </div>
         </div>
       ) : null}
@@ -335,32 +424,32 @@ export function AdminStrVisual() {
                 <article className={styles.card}>
                   <h3>{tx("adminStr.card-health")}</h3>
                   <p className={styles.note}>{tx("adminStr.card-health-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{refreshState ? `${refreshState.rowsWithValue}/${refreshState.rowsRead} rows · ${refreshState.refreshedAt}` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.card-quality")}</h3>
                   <p className={styles.note}>{tx("adminStr.card-quality-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{searchState ? `${searchState.matchedCount} matches · "${searchState.query}"` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.card-watchlist")}</h3>
                   <p className={styles.note}>{tx("adminStr.card-watchlist-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{exportsCount > 0 ? `${exportsCount} export records` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.card-risk")}</h3>
                   <p className={styles.note}>{tx("adminStr.card-risk-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong className={contractError ? styles.pillWarn : undefined}>{contractError ? contractError.code : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.card-queue")}</h3>
                   <p className={styles.note}>{tx("adminStr.card-queue-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{candidates.length > 0 ? `${candidates.length} candidates` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.card-pack")}</h3>
                   <p className={styles.note}>{tx("adminStr.card-pack-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{draftState ? `${draftState.draftId} v${draftState.version}` : dash}</strong>
                 </article>
               </div>
             </>
@@ -376,22 +465,22 @@ export function AdminStrVisual() {
                 <article className={styles.card}>
                   <h3>{tx("adminStr.intel-source")}</h3>
                   <p className={styles.note}>{tx("adminStr.intel-source-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{registry ? `${registry.resourceType}/${registry.resourceId}` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.intel-watchlist")}</h3>
                   <p className={styles.note}>{tx("adminStr.intel-watchlist-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{refreshState ? `${refreshState.rowsWithValue}/${refreshState.rowsRead} rows` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.intel-fact")}</h3>
                   <p className={styles.note}>{tx("adminStr.intel-fact-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{registry ? `${registry.status} · v${registry.version}` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.intel-cohort")}</h3>
                   <p className={styles.note}>{tx("adminStr.intel-cohort-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{candidates.length > 0 ? `${candidates.length} candidates` : dash}</strong>
                 </article>
               </div>
             </>
@@ -412,17 +501,17 @@ export function AdminStrVisual() {
                 <article className={styles.card}>
                   <h3>{tx("adminStr.playbook-scope")}</h3>
                   <p className={styles.note}>{tx("adminStr.playbook-scope-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{registry ? `${registry.resourceType}/${registry.resourceId} · ${registry.status}` : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.playbook-hypothesis")}</h3>
                   <p className={styles.note}>{tx("adminStr.playbook-hypothesis-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{draftState && draftState.playbookContent ? draftState.playbookContent.slice(0, 60) : dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.playbook-history")}</h3>
                   <p className={styles.note}>{tx("adminStr.playbook-history-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{draftState ? `v${draftState.version} · ${draftState.savedAt}` : dash}</strong>
                 </article>
               </div>
             </>
@@ -453,7 +542,7 @@ export function AdminStrVisual() {
                 <article className={styles.card}>
                   <h3>{tx("adminStr.opp-queue")}</h3>
                   <p className={styles.note}>{tx("adminStr.opp-queue-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{candidates.length > 0 ? `${candidates.length} candidates · ${candidates[candidates.length - 1].title}` : dash}</strong>
                 </article>
               </div>
             </>
@@ -477,21 +566,26 @@ export function AdminStrVisual() {
                         <th>{tx("adminStr.col-uncertainty")}</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>{tx("adminStr.compare-option")}</td>
-                        <td>{tx("adminStr.compare-evidence")}</td>
-                        <td>{dash}</td>
-                        <td>{tx("adminStr.compare-mask")}</td>
-                        <td>{dash}</td>
-                      </tr>
-                      <tr>
-                        <td>{tx("adminStr.compare-option")}</td>
-                        <td>{tx("adminStr.compare-evidence")}</td>
-                        <td>{dash}</td>
-                        <td>{tx("adminStr.compare-mask")}</td>
-                        <td>{dash}</td>
-                      </tr>
+                    <tbody data-block-uid="SEC-ADMIN-STR-01-COMPARE-TABLE">
+                      {(compareState?.candidates ?? candidates).length === 0 ? (
+                        <tr>
+                          <td>{dash}</td>
+                          <td>{dash}</td>
+                          <td>{dash}</td>
+                          <td>{financeAuthorized ? dash : tx("adminStr.compare-mask")}</td>
+                          <td>{dash}</td>
+                        </tr>
+                      ) : (
+                        (compareState?.candidates ?? candidates).map((candidate) => (
+                          <tr key={candidate.candidateId}>
+                            <td>{candidate.title}</td>
+                            <td>{candidate.sourceOpportunity || dash}</td>
+                            <td>{dash}</td>
+                            <td>{financeAuthorized ? dash : tx("adminStr.compare-mask")}</td>
+                            <td>{candidate.status}</td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -540,7 +634,14 @@ export function AdminStrVisual() {
             <>
               <h2>{tx("adminStr.rail-decision")}</h2>
               <div className={styles.kvList}>
-                <Kv label={tx("adminStr.rail-candidate")} value={dash} />
+                <Kv
+                  label={tx("adminStr.rail-candidate")}
+                  value={
+                    candidates.length > 0
+                      ? `${candidates.length} · ${candidates[candidates.length - 1].title}${compareState ? ` (compared ${compareState.comparedCount})` : ""}`
+                      : dash
+                  }
+                />
                 <Kv label={tx("adminStr.rail-completeness")} value={dash} />
                 <div className={styles.kvRow}>
                   <span>{tx("adminStr.rail-finance-visibility")}</span>
@@ -564,6 +665,16 @@ export function AdminStrVisual() {
                 </div>
               </div>
               <div className={styles.block}>{tx("adminStr.rail-block")}</div>
+              {auditLines.length > 0 ? (
+                <div className={styles.block} data-block-uid="SEC-ADMIN-STR-01-AUDIT">
+                  <strong>{tx("adminStr.audit-title")}</strong>
+                  {auditLines.slice(-12).map((line, index) => (
+                    <p key={`${index}-${line.slice(0, 12)}`} className={styles.note}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              ) : null}
             </>
           ) : (
             <>
@@ -591,7 +702,20 @@ export function AdminStrVisual() {
         <aside className={styles.drawer} data-section-uid="SEC-ADMIN-STR-01-DRAWER">
           <h3>{drawer === "search" ? tx("adminStr.drawer-search") : tx("adminStr.drawer-nav")}</h3>
           <p className={styles.note}>{tx("adminStr.drawer-hint")}</p>
-          <strong>{dash}</strong>
+          {drawer === "search" && searchState ? (
+            <div data-block-uid="SEC-ADMIN-STR-01-SEARCH-RESULTS">
+              <strong>
+                {searchState.matchedCount} matches · "{searchState.query}"
+              </strong>
+              {searchState.matched.slice(0, 8).map((hit) => (
+                <p key={hit.controlUid} className={styles.note}>
+                  {hit.controlUid} · {hit.hasValue ? "HAS_VALUE" : "NULL"}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <strong>{dash}</strong>
+          )}
           <Btn uid="CTRL-ADMIN-STR-01-ACT-NAV-OPEN" label={tx("global.common.close")} onAct={() => setDrawer(null)} disabled={false} />
         </aside>
       ) : null}

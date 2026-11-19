@@ -176,12 +176,14 @@ import {
 import {
   ADMIN_STR_CHAIN,
   ADMIN_STR_CONTROL_ACTIONS,
+  ADMIN_STR_FINANCE_PERMISSION,
   ADMIN_STR_PAGE_UID,
   ADMIN_STR_PERMISSION,
   ADMIN_STR_PROJECTION,
   ADMIN_STR_ROUTE,
   ADMIN_STR_VISIBLE_CONTROLS,
   ADMIN_STR_EXTRA_PROJECTION_KEYS,
+  ADMIN_STR_WRITE_PERMISSION,
 } from "../domain/adminStr";
 import {
   KB_CHAIN,
@@ -1731,6 +1733,18 @@ export async function persistListAdminStrFields(): Promise<AdminStrFieldValue[]>
 export async function persistGetAdminStrReadModel(accountUid: string): Promise<AdminStrReadModel> {
   const authorized = await persistHasAdminStrPermission(accountUid);
   const fields = authorized ? await persistListAdminStrFields() : [];
+  // Scope flags mirror the runtime action gates: query the permission table
+  // directly so the finance guardrail stays permission-driven regardless of
+  // the page-enforcement toggle.
+  const hasScope = async (permissionUid: string): Promise<boolean> => {
+    const rows = await getSqlClient().all<{ n: number }>(
+      "SELECT count(*)::int AS n FROM ghsn_account_admin_str_permission WHERE account_uid = ? AND permission_uid = ?",
+      [accountUid, permissionUid],
+    );
+    return Number(rows[0]?.n ?? 0) > 0;
+  };
+  const writeAuthorized = authorized && (await hasScope(ADMIN_STR_WRITE_PERMISSION));
+  const financeAuthorized = authorized && (await hasScope(ADMIN_STR_FINANCE_PERMISSION));
   return {
     projectionUid: ADMIN_STR_PROJECTION,
     pageUid: ADMIN_STR_PAGE_UID,
@@ -1738,6 +1752,8 @@ export async function persistGetAdminStrReadModel(accountUid: string): Promise<A
     permission: ADMIN_STR_PERMISSION,
     chainUid: ADMIN_STR_CHAIN,
     authorized,
+    writeAuthorized,
+    financeAuthorized,
     fields,
   };
 }
