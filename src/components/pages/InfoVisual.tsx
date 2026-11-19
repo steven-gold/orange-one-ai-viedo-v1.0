@@ -5,7 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { InfoClientError, fetchInfoReadModel, postInfoAction, type InfoFieldValue } from "@/lib/client";
 import { displayInfoValue } from "./infoFormat";
-import { INFO_CONTROL_ACTIONS, INFO_VISIBLE_CONTROLS } from "./infoControls";
+import { INFO_CONTROL_ACTIONS, INFO_FORM_SCHEMAS, INFO_MODAL_ACTIONS, INFO_STATE_ERROR_UID, INFO_VISIBLE_CONTROLS } from "./infoControls";
 import styles from "./InfoVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -133,16 +133,52 @@ export function InfoVisual() {
     [fields],
   );
 
-  const act = useCallback(async (controlUid: string) => {
+  const act = useCallback(async (controlUid: string, payload?: string) => {
     const actionUid = INFO_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postInfoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      await postInfoAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, payload);
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
     setTick((n) => n + 1);
   }, []);
+
+  const [modalUid, setModalUid] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const onAction = (uid: string) => {
+    if (INFO_MODAL_ACTIONS.has(uid)) {
+      setModalUid(uid);
+      setFormValues(Object.fromEntries((INFO_FORM_SCHEMAS[uid] ?? []).map((field) => [field.key, ""])));
+      return;
+    }
+    void act(uid);
+  };
+
+  const submitModal = useCallback(async () => {
+    if (!modalUid) return;
+    const payload: Record<string, unknown> = {};
+    for (const field of INFO_FORM_SCHEMAS[modalUid] ?? []) {
+      const raw = (formValues[field.key] ?? "").trim();
+      if (raw) payload[field.key] = raw;
+    }
+    setSubmitting(true);
+    await act(modalUid, JSON.stringify(payload));
+    setSubmitting(false);
+    setModalUid(null);
+  }, [act, formValues, modalUid]);
+
+  const contractError = useMemo<{ code: string; detail: string; recovery?: string } | null>(() => {
+    const raw = valueOf(INFO_STATE_ERROR_UID);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { code: string; detail: string; recovery?: string };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
 
   const disabled = !authorized && !loading;
   const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
@@ -179,8 +215,8 @@ export function InfoVisual() {
         <Field uid="INFO-01-FLD-LAST-REFRESH" label={tx("info.fld-last-refresh")} value={v("INFO-01-FLD-LAST-REFRESH")} loading={loading} onAct={act} disabled={disabled} />
         <div className={styles.contextSpacer} />
         <div className={styles.contextActions}>
-          <Btn uid="INFO-01-BTN-SEARCH" label={tx("info.btn-search")} onAct={act} disabled={disabled} />
-          <Btn uid="INFO-01-BTN-REFRESH" label={tx("info.btn-refresh")} onAct={act} disabled={disabled} primary />
+          <Btn uid="INFO-01-BTN-SEARCH" label={tx("info.btn-search")} onAct={onAction} disabled={disabled} />
+          <Btn uid="INFO-01-BTN-REFRESH" label={tx("info.btn-refresh")} onAct={onAction} disabled={disabled} primary />
         </div>
       </section>
 
@@ -357,9 +393,9 @@ export function InfoVisual() {
               <h2 className={styles.title}>{tx("info.actions")}</h2>
               <span className={styles.hint}>{tx("info.actions-hint")}</span>
             </div>
-            <Btn uid="INFO-01-BTN-EXPORT" label={tx("info.btn-export")} onAct={act} disabled={disabled} />
-            <Btn uid="INFO-01-BTN-CANDIDATE-DECIDE" label={tx("info.btn-candidate-decide")} onAct={act} disabled={disabled} />
-            <Btn uid="INFO-01-BTN-ADOPT-CONTEXT" label={tx("info.btn-adopt-context")} onAct={act} disabled={disabled} primary />
+            <Btn uid="INFO-01-BTN-EXPORT" label={tx("info.btn-export")} onAct={onAction} disabled={disabled} />
+            <Btn uid="INFO-01-BTN-CANDIDATE-DECIDE" label={tx("info.btn-candidate-decide")} onAct={onAction} disabled={disabled} />
+            <Btn uid="INFO-01-BTN-ADOPT-CONTEXT" label={tx("info.btn-adopt-context")} onAct={onAction} disabled={disabled} primary />
             <div className={styles.noteBox}>
               <p className={styles.selectedTitle}>{tx("info.gate-note")}</p>
               <p className={styles.note}>{tx("info.gate-note-1")}</p>
@@ -455,6 +491,52 @@ export function InfoVisual() {
           </div>
         </div>
       </section>
+
+      {contractError ? (
+        <div className={styles.contractError} role="alert" data-control-uid={INFO_STATE_ERROR_UID}>
+          {contractError.code} · {contractError.detail}
+          {contractError.recovery ? ` · ${contractError.recovery}` : ""}
+        </div>
+      ) : null}
+
+      {modalUid ? (
+        <aside className={styles.modal} role="dialog" data-control-uid={modalUid}>
+          <h3>{tx("info.modal-title")}</h3>
+          <p className={styles.hint}>{tx("info.modal-hint")}</p>
+          <div className={styles.formFields}>
+            {(INFO_FORM_SCHEMAS[modalUid] ?? []).map((field) => (
+              <div key={field.key} className={styles.formRow}>
+                <span>{field.label}</span>
+                {field.area ? (
+                  <textarea
+                    value={formValues[field.key] ?? ""}
+                    onChange={(event) => setFormValues((prev) => ({ ...prev, [field.key]: event.target.value }))}
+                  />
+                ) : (
+                  <input
+                    value={formValues[field.key] ?? ""}
+                    onChange={(event) => setFormValues((prev) => ({ ...prev, [field.key]: event.target.value }))}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.btn} onClick={() => setModalUid(null)} disabled={submitting}>
+              {tx("global.common.close")}
+            </button>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnPrimary}`}
+              data-control-uid={`${modalUid}-SUBMIT`}
+              disabled={submitting}
+              onClick={() => void submitModal()}
+            >
+              {tx("info.modal-submit")}
+            </button>
+          </div>
+        </aside>
+      ) : null}
 
       <div className={styles.inventory} aria-hidden="true">
         {INFO_VISIBLE_CONTROLS.filter((uid) => !visibleUids.has(uid)).map((uid) => (

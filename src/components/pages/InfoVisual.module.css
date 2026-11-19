@@ -436,3 +436,72 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.contractError {
+  border: 1px solid #b91c1c;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.modal {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: min(420px, calc(100vw - 48px));
+  border: 1px solid var(--info-border, #d1d5db);
+  border-radius: 14px;
+  background: var(--info-surface, #fff);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+  z-index: 60;
+}
+
+.modal h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formRow span {
+  font-size: 12px;
+  color: var(--info-muted, #6b7280);
+}
+
+.formRow input,
+.formRow textarea {
+  border: 1px solid var(--info-border, #d1d5db);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  background: #fff;
+  color: inherit;
+}
+
+.formRow textarea {
+  min-height: 64px;
+  resize: vertical;
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

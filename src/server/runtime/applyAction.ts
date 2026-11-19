@@ -2281,6 +2281,13 @@ function deriveQaScorecardForTask(
     }
     return;
   }
+  if (page === "info") {
+    // INFO-01 contract: effectful ops (refresh/search/export/adopt/decide)
+    // with INFO_* scope gates; read-model actions are context-preserving.
+    const { applyInfoAction } = await import("./infoActions");
+    await applyInfoAction(accountUid, controlUid, actionUid, nextValue);
+    return;
+  }
   if (page === "adminStr") {
     // admin:STR-01 contract: registered operations by view; truth rules
     // (candidate != decision, no canon/task/budget/publish writes).

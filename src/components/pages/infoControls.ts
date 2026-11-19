@@ -135,3 +135,28 @@ export const INFO_CONTROL_ACTIONS: Record<string, string> = {
   "INFO-01-FLD-FIREWALL": "INFO-01-ACT-NOOP",
   "INFO-01-BTN-AUDIT": "INFO-01-ACT-AUDIT-OPEN",
 };
+
+export { INFO_STATE_ERROR_UID, INFO_STATE_REFRESH_UID } from "@/server/domain/info";
+
+export interface InfoFormField {
+  key: string;
+  label: string;
+  area?: boolean;
+}
+
+// Exact registered request schemas per effectful control.
+export const INFO_FORM_SCHEMAS: Record<string, readonly InfoFormField[]> = {
+  "INFO-01-BTN-SEARCH": [{ key: "query", label: "query" }],
+  "INFO-01-BTN-EXPORT": [{ key: "export_scope", label: "export_scope" }],
+  "INFO-01-BTN-ADOPT-CONTEXT": [
+    { key: "candidate_id", label: "candidate_id" },
+    { key: "rationale", label: "rationale", area: true },
+  ],
+  "INFO-01-BTN-CANDIDATE-DECIDE": [
+    { key: "candidate_id", label: "candidate_id" },
+    { key: "decision", label: "decision (ACCEPTED|REJECTED)" },
+    { key: "rationale", label: "rationale", area: true },
+  ],
+};
+
+export const INFO_MODAL_ACTIONS: ReadonlySet<string> = new Set(Object.keys(INFO_FORM_SCHEMAS));

@@ -98,6 +98,7 @@ import {
 import {
   INFO_CHAIN,
   INFO_CONTROL_ACTIONS,
+  INFO_EXTRA_PROJECTION_KEYS,
   INFO_PAGE_UID,
   INFO_PERMISSION,
   INFO_PROJECTION,
@@ -1120,7 +1121,8 @@ export async function persistListInfoFields(): Promise<InfoFieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_info_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return INFO_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...INFO_VISIBLE_CONTROLS, ...INFO_EXTRA_PROJECTION_KEYS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1148,8 +1150,9 @@ export async function persistRecordInfoAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("info", controlUid, actionUid);
+  await applyWorkbenchAction("info", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_info_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
