@@ -180,6 +180,7 @@ import {
   ADMIN_STR_PROJECTION,
   ADMIN_STR_ROUTE,
   ADMIN_STR_VISIBLE_CONTROLS,
+  ADMIN_STR_EXTRA_PROJECTION_KEYS,
 } from "../domain/adminStr";
 import {
   KB_CHAIN,
@@ -1717,7 +1718,8 @@ export async function persistListAdminStrFields(): Promise<AdminStrFieldValue[]>
     "SELECT control_uid, value_text FROM ghsn_admin_str_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return ADMIN_STR_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...ADMIN_STR_VISIBLE_CONTROLS, ...ADMIN_STR_EXTRA_PROJECTION_KEYS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1745,8 +1747,9 @@ export async function persistRecordAdminStrAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("adminStr", controlUid, actionUid);
+  await applyWorkbenchAction("adminStr", controlUid, actionUid, nextValue, accountUid);
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_admin_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)

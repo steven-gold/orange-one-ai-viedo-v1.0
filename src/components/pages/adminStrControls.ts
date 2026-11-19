@@ -86,3 +86,49 @@ export const ADMIN_STR_VIEW_ACTIONS: Record<AdminStrView, readonly string[]> = {
     "CTRL-ADMIN-STR-01-ACT-NAV-OPEN",
   ],
 };
+
+export { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID } from "@/server/domain/adminStr";
+
+export interface AdminStrFormField {
+  key: string;
+  label: string;
+  area?: boolean;
+  list?: boolean;
+}
+
+// Exact registered request schemas per effectful control (labels are the
+// contract's registered schema field names).
+export const ADMIN_STR_FORM_SCHEMAS: Record<string, readonly AdminStrFormField[]> = {
+  "CTRL-ADMIN-STR-01-ACT-SEARCH": [{ key: "query", label: "query" }],
+  "CTRL-ADMIN-STR-01-ACT-CONFIGURE": [
+    { key: "resource_type", label: "resource_type" },
+    { key: "resource_id", label: "resource_id" },
+    { key: "config_patch_json", label: "config_patch_json", area: true },
+    { key: "reason", label: "reason", area: true },
+  ],
+  "CTRL-ADMIN-STR-01-ACT-APPROVE": [
+    { key: "resource_type", label: "resource_type" },
+    { key: "resource_id", label: "resource_id" },
+    { key: "rationale", label: "rationale", area: true },
+    { key: "expected_resource_version", label: "expected_resource_version" },
+  ],
+  "CTRL-ADMIN-STR-01-ACT-EXPORT": [{ key: "export_scope", label: "export_scope" }],
+  "CTRL-ADMIN-STR-01-ACT-DRAFT-SAVE": [
+    { key: "draft_id", label: "draft_id" },
+    { key: "playbook_content", label: "playbook_content", area: true },
+  ],
+  "CTRL-ADMIN-STR-01-ACT-CANDIDATE-CREATE": [
+    { key: "candidate_title", label: "candidate_title" },
+    { key: "candidate_summary", label: "candidate_summary", area: true },
+    { key: "source_opportunity", label: "source_opportunity" },
+  ],
+  "CTRL-ADMIN-STR-01-ACT-CANDIDATE-COMPARE": [{ key: "candidate_ids", label: "candidate_ids (comma separated)", list: true }],
+  "CTRL-ADMIN-STR-01-ACT-CANDIDATE-DECIDE": [
+    { key: "candidate_id", label: "candidate_id" },
+    { key: "rationale", label: "rationale", area: true },
+  ],
+  "CTRL-ADMIN-STR-01-ACT-ADOPT-CONTEXT": [
+    { key: "candidate_id", label: "candidate_id" },
+    { key: "rationale", label: "rationale", area: true },
+  ],
+};

@@ -2281,6 +2281,13 @@ function deriveQaScorecardForTask(
     }
     return;
   }
+  if (page === "adminStr") {
+    // admin:STR-01 contract: registered operations by view; truth rules
+    // (candidate != decision, no canon/task/budget/publish writes).
+    const { applyAdminStrAction } = await import("./adminStrActions");
+    await applyAdminStrAction(accountUid, controlUid, actionUid, nextValue);
+    return;
+  }
   if (page === "sg02") {
     // SG-02 contract: exact form schemas + server-side scope gates;
     // refusals write CTRL-ADMIN-SG-02-STATE-ERROR and apply nothing.

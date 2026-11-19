@@ -12,10 +12,13 @@ import {
 import { displayAdminStrValue } from "./adminStrFormat";
 import {
   ADMIN_STR_CONTROL_ACTIONS,
+  ADMIN_STR_FORM_SCHEMAS,
   ADMIN_STR_VIEW_ACTIONS,
   ADMIN_STR_VIEW_CONTROLS,
   ADMIN_STR_VIEWS,
   ADMIN_STR_VISIBLE_CONTROLS,
+  ADMIN_STR_STATE_ERROR_UID,
+  ADMIN_STR_STATE_RESOURCE_UID,
   type AdminStrDrawer,
   type AdminStrView,
 } from "./adminStrControls";
@@ -93,10 +96,12 @@ export function AdminStrVisual() {
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
-  const [, setFields] = useState<AdminStrFieldValue[]>([]);
+  const [fields, setFields] = useState<AdminStrFieldValue[]>([]);
   const [view, setView] = useState<AdminStrView>("STR-CURRENT-VIEW-OVERVIEW");
   const [drawer, setDrawer] = useState<AdminStrDrawer | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -125,11 +130,11 @@ export function AdminStrVisual() {
     };
   }, [tick]);
 
-  const act = useCallback(async (controlUid: string) => {
+  const act = useCallback(async (controlUid: string, payload?: string) => {
     const actionUid = ADMIN_STR_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postAdminStrAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      await postAdminStrAction(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, payload);
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
@@ -156,9 +161,58 @@ export function AdminStrVisual() {
   };
 
   const openModal = (uid: string) => {
+    // Effectful actions open the registered-schema form modal; the submit
+    // posts one JSON payload per exact action request schema.
     setModalUid(uid);
-    void act(uid);
+    setFormValues(Object.fromEntries((ADMIN_STR_FORM_SCHEMAS[uid] ?? []).map((field) => [field.key, ""])));
   };
+
+  const submitModal = useCallback(async () => {
+    if (!modalUid) return;
+    const actionUid = ADMIN_STR_CONTROL_ACTIONS[modalUid];
+    const payload: Record<string, unknown> = {};
+    for (const field of ADMIN_STR_FORM_SCHEMAS[modalUid] ?? []) {
+      const raw = (formValues[field.key] ?? "").trim();
+      if (field.list) {
+        const items = raw.split(",").map((item) => item.trim()).filter(Boolean);
+        if (items.length) payload[field.key] = items;
+      } else if (raw) {
+        payload[field.key] = raw;
+      }
+    }
+    setSubmitting(true);
+    await act(modalUid, JSON.stringify(payload));
+    setSubmitting(false);
+    setModalUid(null);
+  }, [act, formValues, modalUid]);
+
+  const valueOf = useCallback(
+    (uid: string): string | null => {
+      const field = fields.find((item) => item.controlUid === uid);
+      return field?.value ?? null;
+    },
+    [fields],
+  );
+
+  const contractError = useMemo<{ code: string; detail: string; recovery?: string } | null>(() => {
+    const raw = valueOf(ADMIN_STR_STATE_ERROR_UID);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { code: string; detail: string; recovery?: string };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
+
+  const registry = useMemo<{ resourceType: string; resourceId: string; version: number; status: string } | null>(() => {
+    const raw = valueOf(ADMIN_STR_STATE_RESOURCE_UID);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { resourceType: string; resourceId: string; version: number; status: string };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
 
   const onAction = (uid: string) => {
     if (uid === "CTRL-ADMIN-STR-01-ACT-NAV-OPEN") {
@@ -215,6 +269,18 @@ export function AdminStrVisual() {
           </button>
         ))}
       </nav>
+
+      {contractError ? (
+        <div className={styles.contractError} role="alert" data-control-uid={ADMIN_STR_STATE_ERROR_UID}>
+          {contractError.code} · {contractError.detail}
+          {contractError.recovery ? ` · ${contractError.recovery}` : ""}
+        </div>
+      ) : null}
+      {registry ? (
+        <div className={styles.contractStrip} data-control-uid={ADMIN_STR_STATE_RESOURCE_UID}>
+          {registry.resourceType}/{registry.resourceId} · {registry.status} · v{registry.version}
+        </div>
+      ) : null}
 
       {view === "STR-CURRENT-VIEW-OVERVIEW" ? (
         <div className={styles.contextBar} data-section-uid="SEC-ADMIN-STR-01-OVERVIEW-CONTEXT">
@@ -531,11 +597,39 @@ export function AdminStrVisual() {
       ) : null}
 
       {modalUid ? (
-        <aside className={styles.modal} data-section-uid="SEC-ADMIN-STR-01-MODAL" role="dialog">
+        <aside className={styles.modal} data-section-uid="SEC-ADMIN-STR-01-MODAL" role="dialog" data-control-uid={modalUid}>
           <h3>{tx("adminStr.modal-title")}</h3>
           <p className={styles.note}>{tx("adminStr.modal-hint")}</p>
-          <strong>{dash}</strong>
-          <Btn uid={modalUid} label={tx("global.common.close")} onAct={() => setModalUid(null)} disabled={false} />
+          <div className={styles.formFields}>
+            {(ADMIN_STR_FORM_SCHEMAS[modalUid] ?? []).map((field) => (
+              <div key={field.key} className={styles.formRow}>
+                <span>{field.label}</span>
+                {field.area ? (
+                  <textarea
+                    value={formValues[field.key] ?? ""}
+                    onChange={(event) => setFormValues((prev) => ({ ...prev, [field.key]: event.target.value }))}
+                  />
+                ) : (
+                  <input
+                    value={formValues[field.key] ?? ""}
+                    onChange={(event) => setFormValues((prev) => ({ ...prev, [field.key]: event.target.value }))}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className={styles.modalActions}>
+            <Btn uid={`${modalUid}-CANCEL`} label={tx("global.common.close")} onAct={() => setModalUid(null)} disabled={submitting} />
+            <button
+              type="button"
+              className={styles.submitBtn}
+              data-control-uid={`${modalUid}-SUBMIT`}
+              disabled={submitting}
+              onClick={() => void submitModal()}
+            >
+              {tx("adminStr.modal-submit")}
+            </button>
+          </div>
         </aside>
       ) : null}
     </div>
