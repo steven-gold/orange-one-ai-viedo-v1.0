@@ -400,3 +400,14 @@ Entries discovered by the Agent during task execution should follow this format:
   - Visual schema modal 模式：頁面 controls 檔放 FORM_SCHEMAS（label 直接用契約 schema 欄位名，免新增 i18n）；submit 組 JSON payload 經 act(controlUid, payload) → route body.payload。
   - 16 頁 applyAction 全有專屬分支；通用 stub（statusFromAction）僅剩未知頁面最終防線。
   - 驗證套裝：5 個 workspace 測試（erp/str/sg02/adminStr/info 共 ~100 斷言）+38 單元測試+tsc+build，全部背景終端執行。
+
+[Project Knowledge Summary]
+- Date: 2026-11-19
+- Context: admin:STR-01 契約缺口補齊 B6-B9（commit d686d70f）
+- Category: Build Methods
+- Instructions:
+  - read-model 的 scope 旗標（writeAuthorized/financeAuthorized 等）必須直接查 permission 表，照 runtime 閘的語義；跟隨 pagePermissionEnforced() bypass 會讓旗標恆等 authorized，finance 遮罩失效。
+  - action route 的 knownAdminStrAction(control, action) pair 預檢會先攔 mismatched pair（404 Unknown control）；runtime 的 view-to-operation 閘只對直接呼叫 applyAdminStrAction 可達，是防禦縱深層。HTTP 探針驗證 binding 閘＝驗證 404 pair 攔截；runtime 閘由 workspace 測試覆蓋。
+  - idempotency 模式：SIDE_EFFECT_OPERATIONS 集合＋payload.idempotency_key；fingerprint `${actionUid}:${key}` 存 STATE-IDEMPOTENCY（保留近 50 筆）；replay＝appendAudit IDEMPOTENT-REPLAY＋return，不重複變異不報錯。
+  - derive*PageState 契約詞彙對照表：!authorized→POLICY_BLOCKED（DENIED 不在 allowed_states）；ERR-VERSION→VERSION_CONFLICT；ERR-STATE/AUTH/UNDEFINED→POLICY_BLOCKED；!writeAuthorized→READ_ONLY；registry status=REVIEW→REVIEW_REQUIRED；全 STATE null→EMPTY。
+  - 探針帳號 session 手工種法：ghsn_account_session INSERT (session_uid, account_uid)；identity_session 表可為空（requireAuth 走 account_session）。
