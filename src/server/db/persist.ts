@@ -170,6 +170,7 @@ import {
   SG02_PROJECTION,
   SG02_ROUTE,
   SG02_VISIBLE_CONTROLS,
+  SG02_EXTRA_PROJECTION_KEYS,
 } from "../domain/sg02";
 import {
   ADMIN_STR_CHAIN,
@@ -457,7 +458,7 @@ export async function persistRecordCoreAction(
   stream?: GenerationStreamSink,
 ): Promise<string> {
   await applyWorkbenchAction("core", controlUid, actionUid, nextValue, accountUid, signal, stream);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_core_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -549,7 +550,7 @@ export async function persistRecordAssetAction(
   stream?: GenerationStreamSink,
 ): Promise<string> {
   await applyWorkbenchAction("asset", controlUid, actionUid, nextValue, accountUid, signal, stream);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_asset_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -666,7 +667,7 @@ export async function persistRecordVideoAction(
   stream?: GenerationStreamSink,
 ): Promise<string> {
   await applyWorkbenchAction("video", controlUid, actionUid, nextValue, accountUid, signal, stream);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_video_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -788,7 +789,7 @@ export async function persistRecordEditAction(
   stream?: GenerationStreamSink,
 ): Promise<string> {
   await applyWorkbenchAction("edit", controlUid, actionUid, nextValue, accountUid, signal, stream);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_edit_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -936,7 +937,7 @@ export async function persistRecordQaAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("qa", controlUid, actionUid, nextValue, accountUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_qa_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1012,7 +1013,7 @@ export async function persistRecordDbAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("db", controlUid, actionUid, nextValue, accountUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_db_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1089,7 +1090,7 @@ export async function persistRecordStrAction(
   signal?: AbortSignal,
 ): Promise<string> {
   await applyWorkbenchAction("str", controlUid, actionUid, nextValue, accountUid, signal);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1148,7 +1149,7 @@ export async function persistRecordInfoAction(
   actionUid: string,
 ): Promise<string> {
   await applyWorkbenchAction("info", controlUid, actionUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_info_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1222,7 +1223,7 @@ export async function persistRecordSysAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("sys", controlUid, actionUid, nextValue, accountUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_sys_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1335,7 +1336,7 @@ export async function persistRecordIamAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("iam", controlUid, actionUid, nextValue, accountUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_iam_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1408,7 +1409,7 @@ export async function persistRecordDevAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("dev", controlUid, actionUid, nextValue);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_dev_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1469,7 +1470,7 @@ export async function persistRecordSocAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("soc", controlUid, actionUid, nextValue);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_soc_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1552,7 +1553,7 @@ export async function persistRecordErpAction(
   nextValue?: string,
 ): Promise<string> {
   await applyWorkbenchAction("erp", controlUid, actionUid, nextValue, accountUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_erp_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1626,7 +1627,7 @@ export async function persistRecordAiapiAction(
   value?: string,
 ): Promise<{ eventUid: string; outcome: AiapiOutcome | null }> {
   const result = await applyWorkbenchAction("aiapi", controlUid, actionUid, value);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_aiapi_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1655,7 +1656,8 @@ export async function persistListSg02Fields(): Promise<Sg02FieldValue[]> {
     "SELECT control_uid, value_text FROM ghsn_sg02_field_projection",
   );
   const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
-  return SG02_VISIBLE_CONTROLS.map((controlUid) => ({
+  const uids = new Set<string>([...SG02_VISIBLE_CONTROLS, ...SG02_EXTRA_PROJECTION_KEYS, ...rows.map((row) => row.control_uid)]);
+  return [...uids].map((controlUid) => ({
     controlUid,
     value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
   }));
@@ -1683,9 +1685,10 @@ export async function persistRecordSg02Action(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("sg02", controlUid, actionUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await applyWorkbenchAction("sg02", controlUid, actionUid, nextValue, accountUid);
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_sg02_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1744,7 +1747,7 @@ export async function persistRecordAdminStrAction(
   actionUid: string,
 ): Promise<string> {
   await applyWorkbenchAction("adminStr", controlUid, actionUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_admin_str_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
@@ -1804,7 +1807,7 @@ export async function persistRecordKbAction(
   actionUid: string,
 ): Promise<string> {
   await applyWorkbenchAction("kb", controlUid, actionUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_kb_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,

@@ -2600,6 +2600,7 @@ const catalog = {
   "sg02.drawer-hint": { "zh-TW": "低頻 detail 進 Drawer；缺值顯示 —，不以假門檻或樣本資料代替。", "zh-CN": "低频 detail 进 Drawer；缺值显示 —，不以假门槛或样本资料代替。", en: "Low-frequency detail stays in the drawer; missing values render as em dash, never fake thresholds or sample data." },
   "sg02.modal-title": { "zh-TW": "Effectful Form Modal", "zh-CN": "Effectful Form Modal", en: "Effectful Form Modal" },
   "sg02.modal-hint": { "zh-TW": "設定與核准走 Form Modal；ACTIVE 不可原地覆寫；未註冊寫入維持 fail-closed。", "zh-CN": "设定与核准走 Form Modal；ACTIVE 不可原地覆写；未注册写入维持 fail-closed。", en: "Configure and approve use a form modal; ACTIVE cannot be overwritten in place; unregistered writes stay fail-closed." },
+  "sg02.modal-submit": { "zh-TW": "送出（registered schema）", "zh-CN": "送出（registered schema）", en: "Submit (registered schema)" },
   "adminStr.title": { "zh-TW": "戰略中心後台", "zh-CN": "战略中心后台", en: "Strategy Center Administration" },
   "adminStr.error": { "zh-TW": "戰略中心後台讀取失敗", "zh-CN": "战略中心后台读取失败", en: "Strategy administration read failed" },
   "adminStr.views": { "zh-TW": "Current Views", "zh-CN": "Current Views", en: "Current Views" },

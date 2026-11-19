@@ -1142,6 +1142,7 @@ export async function postSg02Action(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  payload?: string,
 ): Promise<void> {
   await fetch("/api/sg02/action", {
     method: "POST",
@@ -1150,7 +1151,7 @@ export async function postSg02Action(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, payload }),
   });
 }
 

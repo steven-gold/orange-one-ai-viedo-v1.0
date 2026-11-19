@@ -2281,6 +2281,13 @@ function deriveQaScorecardForTask(
     }
     return;
   }
+  if (page === "sg02") {
+    // SG-02 contract: exact form schemas + server-side scope gates;
+    // refusals write CTRL-ADMIN-SG-02-STATE-ERROR and apply nothing.
+    const { applySg02Action } = await import("./sg02Actions");
+    await applySg02Action(accountUid, controlUid, actionUid, nextValue);
+    return;
+  }
   if (page === "aiapi") {
     if (actionUid === "createProviderModelProfile") return runCreateProviderProfile(nextValue);
     if (actionUid === "testProviderModelProfile") return runConnectionTest(nextValue);

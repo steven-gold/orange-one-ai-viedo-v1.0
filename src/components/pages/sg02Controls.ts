@@ -50,3 +50,5 @@ export type Sg02Drawer =
   | "nav";
 
 export type Sg02Surface = "main" | "approval";
+
+export { SG02_STATE_ERROR_UID, SG02_STATE_RESOURCE_UID, SG02_STATE_AUDIT_UID } from "@/server/domain/sg02";

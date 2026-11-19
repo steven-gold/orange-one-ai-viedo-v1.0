@@ -1,8 +1,25 @@
 export const SG02_PERMISSION = "quality.criteria.configure";
+export const SG02_CONFIGURE_PERMISSION = "governance.configure";
+export const SG02_APPROVE_PERMISSION = "governance.approve";
 export const SG02_PAGE_UID = "admin:SG-02";
 export const SG02_ROUTE = "/admin/qa-criteria";
 export const SG02_PROJECTION = "Sg02WorkbenchProjection";
 export const SG02_CHAIN = "SG-02-FWC-PAGE-01";
+
+// Contract state/registry uids outside the 11-control denominator (same
+// precedent as ERP-01-STATE-* / STR-01-STATE-*).
+export const SG02_STATE_ERROR_UID = "CTRL-ADMIN-SG-02-STATE-ERROR";
+export const SG02_STATE_RESOURCE_UID = "CTRL-ADMIN-SG-02-STATE-RESOURCE";
+export const SG02_STATE_AUDIT_UID = "CTRL-ADMIN-SG-02-STATE-AUDIT";
+
+export const SG02_EXTRA_PROJECTION_KEYS = [SG02_STATE_ERROR_UID, SG02_STATE_RESOURCE_UID, SG02_STATE_AUDIT_UID] as const;
+
+// Server-side action scope map (ACCOUNT_PERMISSION_ASSIGNMENT_ONLY).
+export const SG02_ACTION_SCOPES: Record<string, string> = {
+  configureGovernedResource: SG02_CONFIGURE_PERMISSION,
+  approveGovernedResource: SG02_APPROVE_PERMISSION,
+  getUiProjection: SG02_PERMISSION,
+};
 
 export const SG02_VISIBLE_CONTROLS = [
   "CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN",

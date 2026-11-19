@@ -10,6 +10,8 @@ import {
   SG02_LIFECYCLE_ROWS,
   SG02_TABLE_COLUMNS,
   SG02_VISIBLE_CONTROLS,
+  SG02_STATE_ERROR_UID,
+  SG02_STATE_RESOURCE_UID,
   type Sg02Drawer,
   type Sg02Surface,
 } from "./sg02Controls";
@@ -71,10 +73,12 @@ export function Sg02Visual() {
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
-  const [, setFields] = useState<Sg02FieldValue[]>([]);
+  const [fields, setFields] = useState<Sg02FieldValue[]>([]);
   const [surface, setSurface] = useState<Sg02Surface>("main");
   const [drawer, setDrawer] = useState<Sg02Drawer | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -103,11 +107,11 @@ export function Sg02Visual() {
     };
   }, [tick]);
 
-  const act = useCallback(async (controlUid: string) => {
+  const act = useCallback(async (controlUid: string, payload?: string) => {
     const actionUid = SG02_CONTROL_ACTIONS[controlUid];
     if (!actionUid) return;
     try {
-      await postSg02Action(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION);
+      await postSg02Action(DEFAULT_ACCOUNT, controlUid, actionUid, DEFAULT_SESSION, payload);
     } catch {
       // PAGE_ACTION remains fail-closed even if the audit post is unavailable.
     }
@@ -126,9 +130,50 @@ export function Sg02Visual() {
   };
 
   const openModal = (uid: string) => {
+    // Exact contract form schemas; the modal posts one JSON payload per action.
     setModalUid(uid);
-    void act(uid);
+    setFormValues(
+      uid === "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE"
+        ? { resource_type: "quality_criteria_version", resource_id: "", config_patch_json: "", reason: "" }
+        : { resource_type: "quality_criteria_version", resource_id: "", rationale: "", expected_resource_version: "" },
+    );
   };
+
+  const submitModal = useCallback(async () => {
+    if (!modalUid) return;
+    setSubmitting(true);
+    await act(modalUid, JSON.stringify(formValues));
+    setSubmitting(false);
+    setModalUid(null);
+  }, [act, formValues, modalUid]);
+
+  const valueOf = useCallback(
+    (uid: string): string | null => {
+      const field = fields.find((item) => item.controlUid === uid);
+      return field?.value ?? null;
+    },
+    [fields],
+  );
+
+  const contractError = useMemo<{ code: string; detail: string; recovery?: string } | null>(() => {
+    const raw = valueOf(SG02_STATE_ERROR_UID);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { code: string; detail: string; recovery?: string };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
+
+  const resource = useMemo<{ resourceType: string; resourceId: string; version: number; status: string; configPatch: string; updatedAt: string } | null>(() => {
+    const raw = valueOf(SG02_STATE_RESOURCE_UID);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as { resourceType: string; resourceId: string; version: number; status: string; configPatch: string; updatedAt: string };
+    } catch {
+      return null;
+    }
+  }, [valueOf]);
 
   const openApproval = (uid: string) => {
     setSurface("approval");
@@ -274,7 +319,9 @@ export function Sg02Visual() {
               <h2>{tx("sg02.rail-title")}</h2>
               <div className={styles.railCard}>
                 <span>{tx("sg02.rail-integrity")}</span>
-                <strong>{dash}</strong>
+                <strong className={contractError ? styles.required : undefined}>
+                  {contractError ? contractError.code : dash}
+                </strong>
               </div>
               <button
                 type="button"
@@ -284,7 +331,7 @@ export function Sg02Visual() {
                 onClick={() => openDrawer("approval", "CTRL-ADMIN-SG-02-APPROVAL-OPEN")}
               >
                 <span>{tx("sg02.rail-approval")}</span>
-                <strong>{dash}</strong>
+                <strong>{resource ? `${resource.status} · v${resource.version}` : dash}</strong>
               </button>
               <div className={styles.railCard}>
                 <span>{tx("sg02.rail-impact")}</span>
@@ -299,6 +346,18 @@ export function Sg02Visual() {
                 <strong className={styles.required}>{tx("sg02.rail-history-value")}</strong>
               </div>
               <h3>{tx("sg02.dock-title")}</h3>
+              {contractError ? (
+                <p className={styles.note} data-control-uid={SG02_STATE_ERROR_UID}>
+                  {contractError.code} · {contractError.detail}
+                  {contractError.recovery ? ` · ${contractError.recovery}` : ""}
+                </p>
+              ) : null}
+              {resource ? (
+                <div className={styles.railCard} data-control-uid={SG02_STATE_RESOURCE_UID}>
+                  <span>{resource.resourceType}/{resource.resourceId}</span>
+                  <strong>{resource.status} · v{resource.version}</strong>
+                </div>
+              ) : null}
               <div className={styles.actions}>
                 <Btn uid="CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE" label={tx("sg02.btn-configure")} onAct={openModal} disabled={disabled} primary />
                 <Btn uid="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE" label={tx("sg02.btn-approve")} onAct={openApproval} disabled={disabled} />
@@ -319,38 +378,40 @@ export function Sg02Visual() {
               <div className={styles.summary}>
                 <div className={styles.summaryItem}>
                   <span>{tx("sg02.col-version")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{resource ? `v${resource.version}` : dash}</strong>
                 </div>
                 <div className={styles.summaryItem}>
                   <span>{tx("sg02.col-state")}</span>
-                  <strong className={styles.stateReview}>{tx("sg02.state-review")}</strong>
+                  <strong className={resource?.status === "REVIEW" ? styles.stateReview : styles.stateDraft}>
+                    {resource ? resource.status : tx("sg02.state-review")}
+                  </strong>
                 </div>
                 <div className={styles.summaryItem}>
                   <span>{tx("sg02.field-scope")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{resource ? resource.resourceType : dash}</strong>
                 </div>
                 <div className={styles.summaryItem}>
                   <span>{tx("sg02.field-base")}</span>
-                  <strong>{dash}</strong>
+                  <strong>{resource ? resource.resourceId : dash}</strong>
                 </div>
               </div>
               <h2>{tx("sg02.configure-title")}</h2>
               <div className={styles.kvList}>
                 <div className={styles.kvRow}>
                   <span>{tx("sg02.field-resource-type")}</span>
-                  <div className={styles.formField}>{tx("sg02.field-resource-type-value")}</div>
+                  <div className={styles.formField}>{resource ? resource.resourceType : tx("sg02.field-resource-type-value")}</div>
                 </div>
                 <div className={styles.kvRow}>
                   <span>{tx("sg02.field-resource-id")}</span>
-                  <div className={styles.formField}>{dash}</div>
+                  <div className={styles.formField}>{resource ? resource.resourceId : dash}</div>
                 </div>
                 <div className={styles.kvRow}>
                   <span>{tx("sg02.field-patch")}</span>
-                  <div className={styles.formField}>{dash}</div>
+                  <div className={styles.formField}>{resource ? resource.configPatch : dash}</div>
                 </div>
                 <div className={styles.kvRow}>
                   <span>{tx("sg02.field-reason")}</span>
-                  <div className={styles.formField}>{dash}</div>
+                  <div className={styles.formField}>{resource ? resource.updatedAt : dash}</div>
                 </div>
               </div>
               <h2>{tx("sg02.impact-title")}</h2>
@@ -367,7 +428,7 @@ export function Sg02Visual() {
             <aside className={styles.rail} data-section-uid="SEC-ADMIN-SG-02-APPROVAL" data-component-uid="SG-02-CMP-APPROVAL-RAIL">
               <h2>{tx("sg02.approval-drawer-title")}</h2>
               <p className={styles.note}>{tx("sg02.field-expected")}</p>
-              <div className={styles.formField}>{dash}</div>
+              <div className={styles.formField}>{resource ? `v${resource.version}` : dash}</div>
               <p className={styles.note}>{tx("sg02.field-rationale")}</p>
               <div className={`${styles.formField} ${styles.formArea}`}>{dash}</div>
               <h3>{tx("sg02.gate-title")}</h3>
@@ -419,20 +480,66 @@ export function Sg02Visual() {
           <div className={styles.kvList}>
             <div className={styles.kvRow}>
               <span>{tx("sg02.field-resource-type")}</span>
-              <div className={styles.formField}>{tx("sg02.field-resource-type-value")}</div>
+              <div className={styles.formField}>
+                <input
+                  value={formValues.resource_type ?? ""}
+                  onChange={(event) => setFormValues((prev) => ({ ...prev, resource_type: event.target.value }))}
+                />
+              </div>
             </div>
             <div className={styles.kvRow}>
               <span>{tx("sg02.field-resource-id")}</span>
-              <div className={styles.formField}>{dash}</div>
+              <div className={styles.formField}>
+                <input
+                  value={formValues.resource_id ?? ""}
+                  onChange={(event) => setFormValues((prev) => ({ ...prev, resource_id: event.target.value }))}
+                />
+              </div>
             </div>
+            {modalUid === "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE" ? (
+              <div className={styles.kvRow}>
+                <span>{tx("sg02.field-patch")}</span>
+                <div className={styles.formField}>
+                  <textarea
+                    value={formValues.config_patch_json ?? ""}
+                    onChange={(event) => setFormValues((prev) => ({ ...prev, config_patch_json: event.target.value }))}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className={styles.kvRow}>
+                <span>{tx("sg02.field-expected")}</span>
+                <div className={styles.formField}>
+                  <input
+                    value={formValues.expected_resource_version ?? ""}
+                    onChange={(event) => setFormValues((prev) => ({ ...prev, expected_resource_version: event.target.value }))}
+                  />
+                </div>
+              </div>
+            )}
             <div className={styles.kvRow}>
-              <span>{tx("sg02.field-reason")}</span>
-              <div className={`${styles.formField} ${styles.formArea}`}>{dash}</div>
+              <span>{modalUid === "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE" ? tx("sg02.field-reason") : tx("sg02.field-rationale")}</span>
+              <div className={`${styles.formField} ${styles.formArea}`}>
+                <textarea
+                  value={formValues[modalUid === "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE" ? "reason" : "rationale"] ?? ""}
+                  onChange={(event) =>
+                    setFormValues((prev) => ({
+                      ...prev,
+                      [modalUid === "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE" ? "reason" : "rationale"]: event.target.value,
+                    }))
+                  }
+                />
+              </div>
             </div>
           </div>
-          <button type="button" className={styles.btn} onClick={() => setModalUid(null)}>
-            {tx("global.common.close")}
-          </button>
+          <div className={styles.actions}>
+            <button type="button" className={styles.btn} onClick={() => setModalUid(null)}>
+              {tx("global.common.close")}
+            </button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} disabled={submitting} onClick={() => void submitModal()}>
+              {tx("sg02.modal-submit")}
+            </button>
+          </div>
         </section>
       ) : null}
     </div>
