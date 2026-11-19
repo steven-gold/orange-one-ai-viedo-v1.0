@@ -378,3 +378,14 @@ Entries discovered by the Agent during task execution should follow this format:
   - 治理路徑一次呼叫建檔＋設憑證：POST /api/aiapi/action，controlUid=CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE、actionUid=createProviderModelProfile、body.value 帶 {providerId,baseUrl,endpointPath,modelId,capabilityType:"chat",adapterType:"openai",secret}（手動路徑：三欄位必填、promptTemplate 預設含 {{canonical_instruction}} token、secret 有值即自動 setAiapiCredential）。注意 aiapi 路由的值欄位是 body.value（qa/db/erp 是 body.payload）。
   - llmClient 的 configCache 15 秒——註冊新供應商後立刻測 MULTI 會撞到舊快取，等 16 秒再發。
   - 已驗證：MULTI 產生兩個獨立 assistant turn（provider "0"＋"mock-alt"）＋主持人 synthesis turn；單供應商時誠實報 AI_PROVIDER_MULTI_SHORT（FAILED turn 留在對話軌跡）。
+
+[Project Knowledge Summary]
+- Date: 2026-11-19
+- Context: SG-02 契約運行時落地（commit 47f4b1d7），其餘頁面效果型動作稽核
+- Category: Build Methods
+- Instructions:
+  - applyWorkbenchAction 的 accountUid 是第 5 參數（page, controlUid, actionUid, nextValue, accountUid）；persistRecord*Action 必須把 accountUid 傳進去，漏傳則 runtime 的 scope 閘收到 undefined → 一律 SG-xx-ERR-AUTH。
+  - 17 個 persistRecord*Action 的 event_uid 原為 `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`，同控制同毫秒兩次動作會 UNIQUE 撞鍵；已全數加 Math.random 後綴。
+  - 三頁稽核結論：INFO-01（16 動作）/SG-02（3 動作）/admin:STR-01（16 動作）原本落 applyAction 通用 stub（statusFromAction 假 token）；其餘 12 頁（dashboard/core/asset/video/edit/qa/db/str/sys/iam/soc/dev/erp/kb/aiapi）均有專屬分支。SG-02 已補齊；INFO/adminStr 待做（同模式：runtime 模組＋applyAction 分支＋persist nextValue＋route payload＋Visual schema modal＋seed extraPermissions＋workspace 測試）。
+  - 頁面契約稽核腳本 /tmp/opencode/audit-pages.mjs：TAB/STAGE/VIEW 類控件是 map 驅動（AIAPI_VIEWS/DEV_STAGES/KB_VIEWS/ADMIN_STR_VIEWS），腳本 literal diff 會誤報，需比對 map 鍵。
+  - 契約 STATE UIDs（*-STATE-*）與 STR-01 同構：不計入控件分母、由 persistList*Fields union(VISIBLE_CONTROLS, EXTRA_KEYS, rows) 暴露、fail-closed 拒絕寫 {code,detail,recovery,at}。
