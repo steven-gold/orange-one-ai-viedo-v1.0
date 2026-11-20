@@ -423,6 +423,16 @@ Entries discovered by the Agent during task execution should follow this format:
 
 [Project Knowledge Summary]
 - Date: 2026-11-20
+- Context: admin:SG-02 QA 評分契約缺口補齊（commit bfa31180）：registries/idempotency/引擎活化/visual
+- Category: Build Methods | Testing Methods
+- Instructions:
+  - 契約語義：approve 僅 REVIEW→APPROVED 且版本不變（版本遞增發生在 configure 新 DRAFT 版）；governance engine 活化 APPROVED→ACTIVE 並把同 id 舊 ACTIVE→SUPERSEDED（supersededBy）；criteria registry 列需帶 resourceId 否則 reconfigure 版本計算落空。
+  - /api/sg02/action 的值欄位是 body.payload（qa/db/erp 同構；core 系 nextValue、aiapi 是 value）——HTTP 探針用檔案傳 JSON（shell 內嵌轉義會讓 payload 變空觸發 missing-fields）。
+  - 探針帳號：ACC-SG02-NOSCOPE 僅頁面權限，session sess-sg02-noscope-001 手工種入；HTTP 探針後直寫 UPDATE value_text=NULL 還原 11 個 STATE UIDs＋2 動作控件。
+  - Sg02Visual 綁定：主表格吃 STATE-CRITERIA 真實列（空註冊表退回 6 狀態 dash 列）、8 drawer 綁各 registry、focus useEffect＋lastFocusedRef、modal submit 自動注入 idempotency_key、狀態列含 audit/idempotency/approvals/pageState。
+
+[Project Knowledge Summary]
+- Date: 2026-11-20
 - Context: admin:KB-01 全契約實作（commit e5ce8310）：runtime/爬蟲/visual/跨頁 context
 - Category: Build Methods | Troubleshooting & Debugging
 - Instructions:
