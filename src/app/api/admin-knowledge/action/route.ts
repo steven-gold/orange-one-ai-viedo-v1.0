@@ -9,9 +9,10 @@ export async function POST(request: Request) {
   const principal = await requireAuth(request);
   if (principal instanceof NextResponse) return principal;
   try {
-    const body = (await request.json()) as { controlUid?: string; actionUid?: string };
+    const body = (await request.json()) as { controlUid?: string; actionUid?: string; payload?: string };
     const controlUid = String(body.controlUid ?? "");
     const actionUid = String(body.actionUid ?? "");
+    const payload = typeof body.payload === "string" ? body.payload : undefined;
     if (!knownKbAction(controlUid, actionUid)) {
       return jsonError("KB_ACTION_UNAVAILABLE", `Unknown control ${controlUid}`, 404);
     }
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
     if (!allowed) {
       return jsonError("AUTHORIZATION_DENIED", `${KB_PERMISSION} required`, 403);
     }
-    const eventUid = await persistRecordKbAction(principal.accountUid, controlUid, actionUid);
+    const eventUid = await persistRecordKbAction(principal.accountUid, controlUid, actionUid, payload);
     return NextResponse.json({ eventUid, controlUid, actionUid }, { status: 202 });
   } catch {
     return jsonError("INTERNAL_ERROR", "Unexpected admin:KB-01 runtime error", 500);

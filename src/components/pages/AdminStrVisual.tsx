@@ -96,6 +96,7 @@ export function AdminStrVisual() {
   const [fields, setFields] = useState<AdminStrFieldValue[]>([]);
   const [writeAuthorized, setWriteAuthorized] = useState(false);
   const [financeAuthorized, setFinanceAuthorized] = useState(false);
+  const [patternForecast, setPatternForecast] = useState<string | null>(null);
   const [view, setView] = useState<AdminStrView>("STR-CURRENT-VIEW-OVERVIEW");
   const [drawer, setDrawer] = useState<AdminStrDrawer | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
@@ -136,6 +137,7 @@ export function AdminStrVisual() {
         setAuthorized(model.authorized);
         setWriteAuthorized(model.writeAuthorized);
         setFinanceAuthorized(model.financeAuthorized);
+        setPatternForecast(model.patternBaselineForecast);
         setFields(model.fields.length ? model.fields : ADMIN_STR_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
         setError(null);
       })
@@ -568,10 +570,10 @@ export function AdminStrVisual() {
                   <p className={styles.note}>{tx("adminStr.opp-momentum-hint")}</p>
                   <strong>{dash}</strong>
                 </article>
-                <article className={styles.card}>
+                <article className={styles.card} data-context-ref="STR-01-FLD-PATTERN">
                   <h3>{tx("adminStr.opp-forecast")}</h3>
                   <p className={styles.note}>{tx("adminStr.opp-forecast-hint")}</p>
-                  <strong>{dash}</strong>
+                  <strong>{patternForecast ?? dash}</strong>
                 </article>
                 <article className={styles.card}>
                   <h3>{tx("adminStr.opp-queue")}</h3>

@@ -292,6 +292,7 @@ export interface AdminStrReadModel {
   authorized: boolean;
   writeAuthorized: boolean;
   financeAuthorized: boolean;
+  patternBaselineForecast: string | null;
   fields: AdminStrFieldValue[];
 }
 

@@ -1170,6 +1170,7 @@ export interface AdminStrReadModel {
   authorized: boolean;
   writeAuthorized: boolean;
   financeAuthorized: boolean;
+  patternBaselineForecast: string | null;
   fields: AdminStrFieldValue[];
 }
 
@@ -1265,6 +1266,7 @@ export async function postKbAction(
   controlUid: string,
   actionUid: string,
   sessionUid = "sess-demo-001",
+  payload?: string,
 ): Promise<void> {
   await fetch("/api/admin-knowledge/action", {
     method: "POST",
@@ -1273,6 +1275,6 @@ export async function postKbAction(
       "x-account-uid": accountUid,
       "x-session-uid": sessionUid,
     },
-    body: JSON.stringify({ controlUid, actionUid }),
+    body: JSON.stringify({ controlUid, actionUid, payload }),
   });
 }

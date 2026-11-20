@@ -330,6 +330,17 @@ const DDL = [
     action_uid TEXT NOT NULL,
     occurred_at TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_kb_acquisition_snapshot (
+    snapshot_uid TEXT PRIMARY KEY,
+    run_id TEXT NOT NULL,
+    source_ref TEXT NOT NULL,
+    url TEXT NOT NULL,
+    http_status INTEGER NOT NULL,
+    content_hash TEXT NOT NULL,
+    fetched_at TEXT NOT NULL,
+    depth INTEGER NOT NULL,
+    content_text TEXT
+  )`,
   `CREATE TABLE IF NOT EXISTS ghsn_runtime_account (
     account_uid TEXT PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,

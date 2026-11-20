@@ -12,7 +12,7 @@ import { ERP_FINANCE_PERMISSION, ERP_CONNECTOR_VALIDATE_PERMISSION, ERP_CONNECTO
 import { AIAPI_PERMISSION, AIAPI_VISIBLE_CONTROLS } from "../domain/aiapi";
 import { SG02_APPROVE_PERMISSION, SG02_CONFIGURE_PERMISSION, SG02_PERMISSION, SG02_VISIBLE_CONTROLS } from "../domain/sg02";
 import { ADMIN_STR_FINANCE_PERMISSION, ADMIN_STR_PERMISSION, ADMIN_STR_VISIBLE_CONTROLS, ADMIN_STR_WRITE_PERMISSION } from "../domain/adminStr";
-import { KB_PERMISSION, KB_VISIBLE_CONTROLS } from "../domain/kb";
+import { KB_PERMISSION, KB_PERMISSIONS, KB_VISIBLE_CONTROLS } from "../domain/kb";
 import { STR_PERMISSION, STR_VISIBLE_CONTROLS, STR_CONVERSATION_PERMISSION, STR_COMPARE_PERMISSION, STR_REVIEW_PERMISSION, STR_ADOPT_PERMISSION } from "../domain/str";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
@@ -94,7 +94,7 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
   aiapi: { fieldTable: "ghsn_aiapi_field_projection", permissionTable: "ghsn_account_aiapi_permission", permission: AIAPI_PERMISSION, controls: AIAPI_VISIBLE_CONTROLS },
   sg02: { fieldTable: "ghsn_sg02_field_projection", permissionTable: "ghsn_account_sg02_permission", permission: SG02_PERMISSION, controls: SG02_VISIBLE_CONTROLS, extraPermissions: [SG02_CONFIGURE_PERMISSION, SG02_APPROVE_PERMISSION] },
   adminStr: { fieldTable: "ghsn_admin_str_field_projection", permissionTable: "ghsn_account_admin_str_permission", permission: ADMIN_STR_PERMISSION, controls: ADMIN_STR_VISIBLE_CONTROLS, extraPermissions: [ADMIN_STR_WRITE_PERMISSION, ADMIN_STR_FINANCE_PERMISSION] },
-  kb: { fieldTable: "ghsn_kb_field_projection", permissionTable: "ghsn_account_kb_permission", permission: KB_PERMISSION, controls: KB_VISIBLE_CONTROLS },
+  kb: { fieldTable: "ghsn_kb_field_projection", permissionTable: "ghsn_account_kb_permission", permission: KB_PERMISSION, controls: KB_VISIBLE_CONTROLS, extraPermissions: [KB_PERMISSIONS.SOURCE_READ, KB_PERMISSIONS.SOURCE_CONFIGURE, KB_PERMISSIONS.INGESTION_READ, KB_PERMISSIONS.INGESTION_EXECUTE, KB_PERMISSIONS.CONTEXT_CREATE, KB_PERMISSIONS.EXPERIENCE_READ, KB_PERMISSIONS.LEARNING_CREATE, KB_PERMISSIONS.DRAFT_WRITE, KB_PERMISSIONS.REVIEW_APPROVE] },
 };
 
 async function insertRows(

@@ -223,8 +223,19 @@ async function main(): Promise<void> {
   assertEqual(readonlyModel.financeAuthorized, false, "READONLY lacks finance scope");
   assertEqual(readonlyModel.authorized, true, "READONLY page scope still authorized");
 
-  // 22. data-page-state derivation (contract allowed_states vocabulary).
-  assertEqual(deriveAdminStrPageState({ loading: true, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "LOADING", "loading state");
+  // 21b. Cross-page read-only context: STR-01 pattern baseline forecast flows
+  // into the admin read model; the admin page never writes back.
+  await client.run(
+    "UPDATE ghsn_str_field_projection SET value_text = ? WHERE control_uid = 'STR-01-FLD-PATTERN'",
+    ["Demand signals trend toward consolidation; forecast confidence moderate"],
+  );
+  const patternModel = await persistGetAdminStrReadModel(DEMO);
+  assertEqual(patternModel.patternBaselineForecast, "Demand signals trend toward consolidation; forecast confidence moderate", "pattern forecast exposed");
+  await client.run("UPDATE ghsn_str_field_projection SET value_text = NULL WHERE control_uid = 'STR-01-FLD-PATTERN'");
+  const patternEmpty = await persistGetAdminStrReadModel(DEMO);
+  assertEqual(patternEmpty.patternBaselineForecast, null, "pattern forecast null-safe");
+
+  // 22. data-page-state derivation (contract allowed_states vocabulary).  assertEqual(deriveAdminStrPageState({ loading: true, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "LOADING", "loading state");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: "read failed", authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "ERROR", "fetch error state");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "POLICY_BLOCKED", "denied maps to POLICY_BLOCKED");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: "ADMIN-STR-ERR-VERSION", resourceStatus: null, hasRuntimeState: true }), "VERSION_CONFLICT", "version conflict state");
@@ -239,7 +250,7 @@ async function main(): Promise<void> {
     await client.run("UPDATE ghsn_admin_str_field_projection SET value_text = NULL WHERE control_uid = ?", [uid]);
   }
 
-  console.log(`adminStrWorkspace: 27 checks passed (${new Date().toISOString()})`);
+  console.log(`adminStrWorkspace: 29 checks passed (${new Date().toISOString()})`);
   process.exit(0);
 }
 

@@ -1,6 +1,7 @@
 import { seedScope } from "./seed";
 import { pagePermissionEnforced } from "../auth/pageAccess";
 import { applyWorkbenchAction } from "../runtime/applyAction";
+import { applyKbAction } from "../runtime/kbActions";
 import type { GenerationStreamSink } from "@/lib/conversationTask";
 import { fillProtocolNotes, refreshPublishedNotes, type AiapiOutcome } from "../aiapi/runtime";
 import { resolveAssetInbound } from "@/lib/assetInbound";
@@ -1745,6 +1746,16 @@ export async function persistGetAdminStrReadModel(accountUid: string): Promise<A
   };
   const writeAuthorized = authorized && (await hasScope(ADMIN_STR_WRITE_PERMISSION));
   const financeAuthorized = authorized && (await hasScope(ADMIN_STR_FINANCE_PERMISSION));
+  // Path 1: read-only cross-page context from the STR-01 workspace projection.
+  let patternBaselineForecast: string | null = null;
+  try {
+    const rows = await getSqlClient().all<{ value_text: string | null }>(
+      "SELECT value_text FROM ghsn_str_field_projection WHERE control_uid = 'STR-01-FLD-PATTERN'",
+    );
+    patternBaselineForecast = rows[0]?.value_text || null;
+  } catch {
+    patternBaselineForecast = null;
+  }
   return {
     projectionUid: ADMIN_STR_PROJECTION,
     pageUid: ADMIN_STR_PAGE_UID,
@@ -1754,6 +1765,7 @@ export async function persistGetAdminStrReadModel(accountUid: string): Promise<A
     authorized,
     writeAuthorized,
     financeAuthorized,
+    patternBaselineForecast,
     fields,
   };
 }
@@ -1827,15 +1839,12 @@ export async function persistRecordKbAction(
   accountUid: string,
   controlUid: string,
   actionUid: string,
+  nextValue?: string,
 ): Promise<string> {
-  await applyWorkbenchAction("kb", controlUid, actionUid);
-  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
-  await getSqlClient().run(
-    `INSERT INTO ghsn_kb_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
-     VALUES (?, ?, ?, ?, ?)`,
-    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
-  );
-  return eventUid;
+  // admin:KB-01 runtime owns gates, state machines, idempotency and audit;
+  // the audit event is written by the runtime (appendAudit) itself.
+  await applyKbAction(accountUid, controlUid, actionUid, nextValue);
+  return `EVT-KB-ACTION-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${controlUid}`;
 }
 
 export interface RuntimeAccountRow {

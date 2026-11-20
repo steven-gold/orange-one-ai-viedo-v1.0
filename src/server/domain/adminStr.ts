@@ -148,5 +148,8 @@ export interface AdminStrReadModel {
   authorized: boolean;
   writeAuthorized: boolean;
   financeAuthorized: boolean;
+  // Cross-page read-only context: pattern baseline forecast written by the
+  // STR-01 workspace runtime (STR-01-FLD-PATTERN). admin:STR-01 never writes it.
+  patternBaselineForecast: string | null;
   fields: AdminStrFieldValue[];
 }
