@@ -275,6 +275,7 @@ export interface Sg02ReadModel {
   permission: "quality.criteria.configure";
   chainUid: "SG-02-FWC-PAGE-01";
   authorized: boolean;
+  configureAuthorized: boolean;
   fields: Sg02FieldValue[];
 }
 

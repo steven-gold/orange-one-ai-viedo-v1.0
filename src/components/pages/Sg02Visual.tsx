@@ -1,17 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { Sg02ClientError, fetchSg02ReadModel, postSg02Action, type Sg02FieldValue } from "@/lib/client";
-import { displaySg02Value } from "./sg02Format";
+import { deriveSg02PageState, displaySg02Value } from "./sg02Format";
 import {
   SG02_CONTROL_ACTIONS,
   SG02_LIFECYCLE_ROWS,
   SG02_TABLE_COLUMNS,
   SG02_VISIBLE_CONTROLS,
+  SG02_STATE_APPROVALS_UID,
+  SG02_STATE_AUDIT_UID,
+  SG02_STATE_CHECKS_UID,
+  SG02_STATE_CRITERIA_UID,
+  SG02_STATE_DIMENSIONS_UID,
   SG02_STATE_ERROR_UID,
+  SG02_STATE_IDEMPOTENCY_UID,
+  SG02_STATE_MAPPINGS_UID,
+  SG02_STATE_POLICIES_UID,
   SG02_STATE_RESOURCE_UID,
+  SG02_STATE_THRESHOLDS_UID,
   type Sg02Drawer,
   type Sg02Surface,
 } from "./sg02Controls";
@@ -60,6 +69,12 @@ function Kv({
   );
 }
 
+function stateOf(state: string): (typeof SG02_LIFECYCLE_ROWS)[number] {
+  return (SG02_LIFECYCLE_ROWS as readonly string[]).includes(state)
+    ? (state as (typeof SG02_LIFECYCLE_ROWS)[number])
+    : "DRAFT";
+}
+
 function stateClass(state: (typeof SG02_LIFECYCLE_ROWS)[number]): string {
   if (state === "DRAFT") return styles.stateDraft;
   if (state === "REVIEW") return styles.stateReview;
@@ -73,12 +88,16 @@ export function Sg02Visual() {
   const [tick, setTick] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(false);
+  const [configureAuthorized, setConfigureAuthorized] = useState(false);
   const [fields, setFields] = useState<Sg02FieldValue[]>([]);
   const [surface, setSurface] = useState<Sg02Surface>("main");
   const [drawer, setDrawer] = useState<Sg02Drawer | null>(null);
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const drawerRef = useRef<HTMLElement | null>(null);
+  const modalRef = useRef<HTMLElement | null>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -88,6 +107,7 @@ export function Sg02Visual() {
       .then((model) => {
         if (cancelled) return;
         setAuthorized(model.authorized);
+        setConfigureAuthorized(model.configureAuthorized);
         setFields(model.fields.length ? model.fields : SG02_VISIBLE_CONTROLS.map((controlUid) => ({ controlUid, value: null })));
         setError(null);
       })
@@ -119,18 +139,19 @@ export function Sg02Visual() {
   }, []);
 
   const disabled = !authorized && !loading;
-  const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
   const tx = (key: TranslationKey) => t(key);
   const dash = displaySg02Value(null, loading);
   const visibleUids = useMemo(() => new Set<string>(SG02_VISIBLE_CONTROLS), []);
 
   const openDrawer = (next: Sg02Drawer, uid: string) => {
+    lastFocusedRef.current = document.activeElement as HTMLElement | null;
     setDrawer(next);
     void act(uid);
   };
 
   const openModal = (uid: string) => {
     // Exact contract form schemas; the modal posts one JSON payload per action.
+    lastFocusedRef.current = document.activeElement as HTMLElement | null;
     setModalUid(uid);
     setFormValues(
       uid === "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE"
@@ -142,7 +163,10 @@ export function Sg02Visual() {
   const submitModal = useCallback(async () => {
     if (!modalUid) return;
     setSubmitting(true);
-    await act(modalUid, JSON.stringify(formValues));
+    // Side-effect operations require idempotency_key per contract
+    // required_backend_gates (idempotency_when_side_effect).
+    const payload = { ...formValues, idempotency_key: `idem-${modalUid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` };
+    await act(modalUid, JSON.stringify(payload));
     setSubmitting(false);
     setModalUid(null);
   }, [act, formValues, modalUid]);
@@ -175,11 +199,87 @@ export function Sg02Visual() {
     }
   }, [valueOf]);
 
+  // Contract read-model registries (5 read_model_object fields) derived from
+  // the runtime STATE projections; empty registry renders missing_value dash.
+  const criteriaVersions = useMemo<Array<{ version: number; status: string; configPatch: string; updatedAt: string; supersededBy?: number }>>(() => {
+    const raw = valueOf(SG02_STATE_CRITERIA_UID);
+    if (!raw) return [];
+    try {
+      return JSON.parse(raw) as Array<{ version: number; status: string; configPatch: string; updatedAt: string; supersededBy?: number }>;
+    } catch {
+      return [];
+    }
+  }, [valueOf]);
+
+  const parseEntries = useCallback((uid: string): Array<{ resourceId: string; version: number; configPatch: string; updatedAt: string }> => {
+    const raw = valueOf(uid);
+    if (!raw) return [];
+    try {
+      return JSON.parse(raw) as Array<{ resourceId: string; version: number; configPatch: string; updatedAt: string }>;
+    } catch {
+      return [];
+    }
+  }, [valueOf]);
+
+  const dimensions = useMemo(() => parseEntries(SG02_STATE_DIMENSIONS_UID), [parseEntries]);
+  const thresholds = useMemo(() => parseEntries(SG02_STATE_THRESHOLDS_UID), [parseEntries]);
+  const mappings = useMemo(() => parseEntries(SG02_STATE_MAPPINGS_UID), [parseEntries]);
+  const checks = useMemo(() => parseEntries(SG02_STATE_CHECKS_UID), [parseEntries]);
+  const policies = useMemo(() => parseEntries(SG02_STATE_POLICIES_UID), [parseEntries]);
+  const approvals = useMemo<Array<{ approvalId?: string; resourceType: string; resourceId: string; version: number; approvedAt: string }>>(() => {
+    const raw = valueOf(SG02_STATE_APPROVALS_UID);
+    if (!raw) return [];
+    try {
+      return JSON.parse(raw) as Array<{ approvalId?: string; resourceType: string; resourceId: string; version: number; approvedAt: string }>;
+    } catch {
+      return [];
+    }
+  }, [valueOf]);
+  const idempotency = useMemo<Record<string, string>>(() => {
+    const raw = valueOf(SG02_STATE_IDEMPOTENCY_UID);
+    if (!raw) return {};
+    try {
+      return JSON.parse(raw) as Record<string, string>;
+    } catch {
+      return {};
+    }
+  }, [valueOf]);
+  const auditLines = useMemo(() => {
+    const raw = valueOf(SG02_STATE_AUDIT_UID);
+    return raw ? raw.split("\n") : [];
+  }, [valueOf]);
+
+  const activeCriteria = criteriaVersions.filter((v) => v.status === "ACTIVE");
+  const pageState = deriveSg02PageState({
+    loading,
+    fetchError: error,
+    authorized,
+    configureAuthorized,
+    errorCode: contractError?.code ?? null,
+    resourceStatus: resource?.status ?? null,
+    hasRuntimeState: criteriaVersions.length > 0 || dimensions.length > 0 || thresholds.length > 0 || mappings.length > 0 || checks.length > 0 || policies.length > 0,
+  });
+
   const openApproval = (uid: string) => {
     setSurface("approval");
     setDrawer("approval");
     void act(uid);
   };
+
+  // Focus management (drawer_modal_contract): focus first focusable element
+  // when drawer/modal opens; restore focus to the invoker on close.
+  useEffect(() => {
+    if (!drawer && !modalUid) return;
+    const host = drawer ? drawerRef.current : modalRef.current;
+    if (host) {
+      const target = host.querySelector<HTMLElement>("input, textarea, button, select");
+      if (target) target.focus();
+    }
+    return () => {
+      const prior = lastFocusedRef.current;
+      if (prior && document.contains(prior)) prior.focus();
+    };
+  }, [drawer, modalUid]);
 
   const drawerTitle = (key: Sg02Drawer): TranslationKey => {
     if (key === "criteria_table") return "sg02.drawer-criteria";
@@ -219,11 +319,11 @@ export function Sg02Visual() {
           <div className={styles.statusBar} data-section-uid="SEC-ADMIN-SG-02-CRITERIA-TABLE" data-component-uid="SG-02-CMP-STATUS">
             <div className={styles.statusItem}>
               <span>{tx("sg02.status-current")}</span>
-              <strong className={styles.chip}>{dash}</strong>
+              <strong className={styles.chip}>{activeCriteria.length ? `v${activeCriteria[activeCriteria.length - 1].version}` : dash}</strong>
             </div>
             <div className={styles.statusItem}>
               <span>{tx("sg02.status-lifecycle")}</span>
-              <strong className={styles.chip}>{dash}</strong>
+              <strong className={styles.chip}>{resource ? resource.status : dash}</strong>
             </div>
             <button
               type="button"
@@ -233,7 +333,7 @@ export function Sg02Visual() {
               onClick={() => openDrawer("department_mapping", "CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN")}
             >
               <span>{tx("sg02.status-department")}</span>
-              <strong className={styles.chip}>{dash}</strong>
+              <strong className={styles.chip}>{mappings.length ? `${mappings.length} mappings` : dash}</strong>
             </button>
             <button
               type="button"
@@ -243,7 +343,7 @@ export function Sg02Visual() {
               onClick={() => openDrawer("impact", "CTRL-ADMIN-SG-02-IMPACT-OPEN")}
             >
               <span>{tx("sg02.status-impact")}</span>
-              <strong className={styles.chip}>{dash}</strong>
+              <strong className={styles.chip}>{criteriaVersions.length + dimensions.length + thresholds.length + policies.length + checks.length > 0 ? `${criteriaVersions.length + dimensions.length + thresholds.length + policies.length + checks.length} governed` : dash}</strong>
             </button>
             <Btn
               uid="CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN"
@@ -282,17 +382,31 @@ export function Sg02Visual() {
                     </tr>
                   </thead>
                   <tbody>
-                    {SG02_LIFECYCLE_ROWS.map((state) => (
-                      <tr key={state}>
-                        <td>{dash}</td>
-                        <td className={stateClass(state)}>{state}</td>
-                        <td>{dash}</td>
-                        <td>{dash}</td>
-                        <td>{dash}</td>
-                        <td>{dash}</td>
-                        <td>{dash}</td>
-                      </tr>
-                    ))}
+                    {criteriaVersions.length ? (
+                      criteriaVersions.map((version) => (
+                        <tr key={version.version}>
+                          <td>{`v${version.version}${version.supersededBy ? ` -> v${version.supersededBy}` : ""}`}</td>
+                          <td className={stateClass(stateOf(version.status))}>{version.status}</td>
+                          <td>{dimensions.length ? `${dimensions.length} dimensions` : dash}</td>
+                          <td>{thresholds.length ? `${thresholds.length} thresholds` : dash}</td>
+                          <td>{mappings.length ? `${mappings.length} departments` : dash}</td>
+                          <td>{approvals.some((a) => a.version === version.version) ? "APPROVED" : dash}</td>
+                          <td>{version.configPatch.length > 0 ? dash : dash}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      SG02_LIFECYCLE_ROWS.map((state) => (
+                        <tr key={state}>
+                          <td>{dash}</td>
+                          <td className={stateClass(state)}>{state}</td>
+                          <td>{dash}</td>
+                          <td>{dash}</td>
+                          <td>{dash}</td>
+                          <td>{dash}</td>
+                          <td>{dash}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -335,15 +449,15 @@ export function Sg02Visual() {
               </button>
               <div className={styles.railCard}>
                 <span>{tx("sg02.rail-impact")}</span>
-                <strong>{dash}</strong>
+                <strong>{checks.length || mappings.length ? `${checks.length} checks · ${mappings.length} depts` : dash}</strong>
               </div>
               <div className={styles.railCard}>
                 <span>{tx("sg02.rail-revalidation")}</span>
-                <strong>{dash}</strong>
+                <strong>{activeCriteria.length ? `${activeCriteria.length} active require revalidation` : dash}</strong>
               </div>
               <div className={styles.railCard}>
                 <span>{tx("sg02.rail-history")}</span>
-                <strong className={styles.required}>{tx("sg02.rail-history-value")}</strong>
+                <strong className={styles.required}>{criteriaVersions.length ? `${criteriaVersions.length} versions retained` : tx("sg02.rail-history-value")}</strong>
               </div>
               <h3>{tx("sg02.dock-title")}</h3>
               {contractError ? (
@@ -459,13 +573,82 @@ export function Sg02Visual() {
       )}
 
       {drawer ? (
-        <section className={styles.drawer} data-section-uid="SEC-ADMIN-SG-02-ACTION-DOCK" data-component-uid="SG-02-CMP-DRAWER">
+        <section className={styles.drawer} data-section-uid="SEC-ADMIN-SG-02-ACTION-DOCK" data-component-uid="SG-02-CMP-DRAWER" ref={drawerRef}>
           <h3>{tx(drawerTitle(drawer))}</h3>
           <p className={styles.note}>{tx("sg02.drawer-hint")}</p>
           <div className={styles.kvList}>
-            <Kv uid="CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN" label={tx("sg02.col-version")} value={dash} />
-            <Kv uid="CTRL-ADMIN-SG-02-GATE-POLICY-OPEN" label={tx("sg02.col-threshold")} value={dash} />
-            <Kv uid="CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN" label={tx("sg02.col-department")} value={dash} />
+            {drawer === "criteria_table" ? (
+              criteriaVersions.length ? (
+                criteriaVersions.map((version) => (
+                  <Kv key={version.version} uid="CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN" label={`v${version.version}`} value={`${version.status} · ${version.updatedAt.slice(0, 10)}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN" label={tx("sg02.col-version")} value={dash} />
+              )
+            ) : null}
+            {drawer === "dimension_library" ? (
+              dimensions.length ? (
+                dimensions.map((entry) => (
+                  <Kv key={`${entry.resourceId}-${entry.version}`} uid="CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN" label={entry.resourceId} value={`v${entry.version} · ${entry.configPatch.slice(0, 80)}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN" label={tx("sg02.card-dimension")} value={dash} />
+              )
+            ) : null}
+            {drawer === "thresholds" ? (
+              thresholds.length ? (
+                thresholds.map((entry) => (
+                  <Kv key={`${entry.resourceId}-${entry.version}`} uid="CTRL-ADMIN-SG-02-THRESHOLDS-OPEN" label={entry.resourceId} value={`v${entry.version} · ${entry.configPatch.slice(0, 80)}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-THRESHOLDS-OPEN" label={tx("sg02.col-threshold")} value={dash} />
+              )
+            ) : null}
+            {drawer === "department_mapping" ? (
+              mappings.length ? (
+                mappings.map((entry) => (
+                  <Kv key={`${entry.resourceId}-${entry.version}`} uid="CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN" label={entry.resourceId} value={`v${entry.version} · ${entry.configPatch.slice(0, 80)}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN" label={tx("sg02.col-department")} value={dash} />
+              )
+            ) : null}
+            {drawer === "required_checks" ? (
+              checks.length ? (
+                checks.map((entry) => (
+                  <Kv key={`${entry.resourceId}-${entry.version}`} uid="CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN" label={entry.resourceId} value={`v${entry.version} · ${entry.configPatch.slice(0, 80)}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN" label={tx("sg02.card-checks")} value={dash} />
+              )
+            ) : null}
+            {drawer === "gate_policy" ? (
+              policies.length ? (
+                policies.map((entry) => (
+                  <Kv key={`${entry.resourceId}-${entry.version}`} uid="CTRL-ADMIN-SG-02-GATE-POLICY-OPEN" label={entry.resourceId} value={`v${entry.version} · ${entry.configPatch.slice(0, 80)}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-GATE-POLICY-OPEN" label={tx("sg02.col-threshold")} value={dash} />
+              )
+            ) : null}
+            {drawer === "approval" ? (
+              approvals.length ? (
+                approvals.map((entry) => (
+                  <Kv key={String(entry.approvalId ?? entry.resourceId)} uid="CTRL-ADMIN-SG-02-APPROVAL-OPEN" label={String(entry.approvalId ?? dash)} value={`${entry.resourceType}/${entry.resourceId} · v${entry.version}`} />
+                ))
+              ) : (
+                <Kv uid="CTRL-ADMIN-SG-02-APPROVAL-OPEN" label={tx("sg02.rail-approval")} value={resource ? `${resource.status} · v${resource.version}` : dash} />
+              )
+            ) : null}
+            {drawer === "impact" ? (
+              <>
+                <Kv uid="CTRL-ADMIN-SG-02-IMPACT-OPEN" label={tx("sg02.field-departments")} value={mappings.length ? `${mappings.length} mappings` : dash} />
+                <Kv uid="CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN" label={tx("sg02.field-tasks")} value={checks.length ? `${checks.length} checks` : dash} />
+              </>
+            ) : null}
+            {drawer === "nav" ? (
+              <Kv uid="CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN" label={tx("sg02.table-title")} value={activeCriteria.length ? `ACTIVE v${activeCriteria[activeCriteria.length - 1].version}` : dash} />
+            ) : null}
           </div>
           <button type="button" className={styles.btn} onClick={() => setDrawer(null)}>
             {tx("global.common.close")}
@@ -474,7 +657,16 @@ export function Sg02Visual() {
       ) : null}
 
       {modalUid ? (
-        <section className={styles.modal} data-section-uid="SEC-ADMIN-SG-02-ACTION-DOCK" data-component-uid="SG-02-CMP-MODAL" data-control-uid={modalUid}>
+        <section
+          className={styles.modal}
+          data-section-uid="SEC-ADMIN-SG-02-ACTION-DOCK"
+          data-component-uid="SG-02-CMP-MODAL"
+          data-control-uid={modalUid}
+          role="dialog"
+          aria-modal="true"
+          tabIndex={-1}
+          ref={modalRef}
+        >
           <h3>{tx("sg02.modal-title")}</h3>
           <p className={styles.note}>{tx("sg02.modal-hint")}</p>
           <div className={styles.kvList}>
@@ -542,6 +734,25 @@ export function Sg02Visual() {
           </div>
         </section>
       ) : null}
+
+      <div className={styles.statusBar} data-section-uid="SEC-ADMIN-SG-02-ACTION-DOCK" data-component-uid="SG-02-CMP-STATUS-STATE">
+        <div className={styles.statusItem}>
+          <span>audit</span>
+          <strong className={styles.chip}>{auditLines.length ? `${auditLines.length} events · ${auditLines[0].slice(0, 40)}` : dash}</strong>
+        </div>
+        <div className={styles.statusItem}>
+          <span>idempotency registry</span>
+          <strong className={styles.chip}>{Object.keys(idempotency).length ? `${Object.keys(idempotency).length} keys` : dash}</strong>
+        </div>
+        <div className={styles.statusItem}>
+          <span>approvals</span>
+          <strong className={styles.chip}>{approvals.length ? `${approvals.length} approved` : dash}</strong>
+        </div>
+        <div className={styles.statusItem}>
+          <span>page state</span>
+          <strong className={styles.chip}>{pageState}</strong>
+        </div>
+      </div>
     </div>
   );
 }

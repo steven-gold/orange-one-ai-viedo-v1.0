@@ -173,6 +173,7 @@ import {
   SG02_ROUTE,
   SG02_VISIBLE_CONTROLS,
   SG02_EXTRA_PROJECTION_KEYS,
+  SG02_CONFIGURE_PERMISSION,
 } from "../domain/sg02";
 import {
   ADMIN_STR_CHAIN,
@@ -1673,6 +1674,14 @@ export async function persistListSg02Fields(): Promise<Sg02FieldValue[]> {
 export async function persistGetSg02ReadModel(accountUid: string): Promise<Sg02ReadModel> {
   const authorized = await persistHasSg02Permission(accountUid);
   const fields = authorized ? await persistListSg02Fields() : [];
+  // Scope flag mirrors the runtime action gates: query the permission table
+  // directly so the configure guardrail stays permission-driven regardless of
+  // the page-enforcement toggle.
+  const scopeRows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_sg02_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, SG02_CONFIGURE_PERMISSION],
+  );
+  const configureAuthorized = authorized && Number(scopeRows[0]?.n ?? 0) > 0;
   return {
     projectionUid: SG02_PROJECTION,
     pageUid: SG02_PAGE_UID,
@@ -1680,6 +1689,7 @@ export async function persistGetSg02ReadModel(accountUid: string): Promise<Sg02R
     permission: SG02_PERMISSION,
     chainUid: SG02_CHAIN,
     authorized,
+    configureAuthorized,
     fields,
   };
 }
