@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import {
@@ -101,6 +101,30 @@ export function AdminStrVisual() {
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const drawerRef = useRef<HTMLElement | null>(null);
+  const modalRef = useRef<HTMLElement | null>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
+
+  // drawer_modal_contract.focus_management: REQUIRED — focus moves into the
+  // opened surface and returns to the trigger when it closes.
+  useEffect(() => {
+    if (!drawer) return;
+    const target =
+      drawerRef.current?.querySelector<HTMLElement>("button, input, textarea, [tabindex]") ?? drawerRef.current;
+    target?.focus();
+    return () => {
+      lastFocusedRef.current?.focus();
+    };
+  }, [drawer]);
+
+  useEffect(() => {
+    if (!modalUid) return;
+    const target = modalRef.current?.querySelector<HTMLElement>("input, textarea") ?? modalRef.current;
+    target?.focus();
+    return () => {
+      lastFocusedRef.current?.focus();
+    };
+  }, [modalUid]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -156,15 +180,25 @@ export function AdminStrVisual() {
   };
 
   const openDrawer = (next: AdminStrDrawer, uid: string) => {
+    lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setDrawer(next);
     void act(uid);
+  };
+
+  const closeDrawer = () => {
+    setDrawer(null);
   };
 
   const openModal = (uid: string) => {
     // Effectful actions open the registered-schema form modal; the submit
     // posts one JSON payload per exact action request schema.
+    lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setModalUid(uid);
     setFormValues(Object.fromEntries((ADMIN_STR_FORM_SCHEMAS[uid] ?? []).map((field) => [field.key, ""])));
+  };
+
+  const closeModal = () => {
+    setModalUid(null);
   };
 
   const submitModal = useCallback(async () => {
@@ -699,7 +733,7 @@ export function AdminStrVisual() {
       </div>
 
       {drawer ? (
-        <aside className={styles.drawer} data-section-uid="SEC-ADMIN-STR-01-DRAWER">
+        <aside ref={drawerRef} className={styles.drawer} data-section-uid="SEC-ADMIN-STR-01-DRAWER" tabIndex={-1}>
           <h3>{drawer === "search" ? tx("adminStr.drawer-search") : tx("adminStr.drawer-nav")}</h3>
           <p className={styles.note}>{tx("adminStr.drawer-hint")}</p>
           {drawer === "search" && searchState ? (
@@ -716,12 +750,12 @@ export function AdminStrVisual() {
           ) : (
             <strong>{dash}</strong>
           )}
-          <Btn uid="CTRL-ADMIN-STR-01-ACT-NAV-OPEN" label={tx("global.common.close")} onAct={() => setDrawer(null)} disabled={false} />
+          <Btn uid="CTRL-ADMIN-STR-01-ACT-NAV-OPEN" label={tx("global.common.close")} onAct={closeDrawer} disabled={false} />
         </aside>
       ) : null}
 
       {modalUid ? (
-        <aside className={styles.modal} data-section-uid="SEC-ADMIN-STR-01-MODAL" role="dialog" data-control-uid={modalUid}>
+        <aside ref={modalRef} className={styles.modal} data-section-uid="SEC-ADMIN-STR-01-MODAL" role="dialog" aria-modal="true" data-control-uid={modalUid} tabIndex={-1}>
           <h3>{tx("adminStr.modal-title")}</h3>
           <p className={styles.note}>{tx("adminStr.modal-hint")}</p>
           <div className={styles.formFields}>
@@ -743,7 +777,7 @@ export function AdminStrVisual() {
             ))}
           </div>
           <div className={styles.modalActions}>
-            <Btn uid={`${modalUid}-CANCEL`} label={tx("global.common.close")} onAct={() => setModalUid(null)} disabled={submitting} />
+            <Btn uid={`${modalUid}-CANCEL`} label={tx("global.common.close")} onAct={closeModal} disabled={submitting} />
             <button
               type="button"
               className={styles.submitBtn}
