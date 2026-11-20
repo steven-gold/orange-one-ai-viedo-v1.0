@@ -411,3 +411,12 @@ Entries discovered by the Agent during task execution should follow this format:
   - idempotency 模式：SIDE_EFFECT_OPERATIONS 集合＋payload.idempotency_key；fingerprint `${actionUid}:${key}` 存 STATE-IDEMPOTENCY（保留近 50 筆）；replay＝appendAudit IDEMPOTENT-REPLAY＋return，不重複變異不報錯。
   - derive*PageState 契約詞彙對照表：!authorized→POLICY_BLOCKED（DENIED 不在 allowed_states）；ERR-VERSION→VERSION_CONFLICT；ERR-STATE/AUTH/UNDEFINED→POLICY_BLOCKED；!writeAuthorized→READ_ONLY；registry status=REVIEW→REVIEW_REQUIRED；全 STATE null→EMPTY。
   - 探針帳號 session 手工種法：ghsn_account_session INSERT (session_uid, account_uid)；identity_session 表可為空（requireAuth 走 account_session）。
+
+[Project Knowledge Summary]
+- Date: 2026-11-19
+- Context: admin:STR-01 construction_gate 前置項核實（commits c0115393）
+- Category: Build Methods
+- Instructions:
+  - Global Navigation Registry binding 已滿足：CANONICAL_NAVIGATION_ITEMS（src/lib/navigation.ts + src/server/domain/schema.ts）註冊 admin:STR-01→/admin/strategy，ghsn_navigation_authority 表種子齊，resolveVisibleNavigation 可解析；頁面僅宣告 data-page-uid，選單順序由 shell route 比對（ACC-04 滿足）。
+  - resource remap 平台模型＝每頁三表（ghsn_*_field_projection／ghsn_account_*_permission／ghsn_*_audit_event），無中央 remap 表；契約「remap 驗證」＝契約 PAGE/CONTROL uids 與實作 1:1 比對。
+  - drawer_modal_contract focus_management 模式：ref＋useEffect（開啟聚焦第一個可聚焦元素）＋lastFocusedRef cleanup 還原焦點；modal 加 aria-modal=true tabIndex=-1。
