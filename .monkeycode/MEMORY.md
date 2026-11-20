@@ -420,3 +420,15 @@ Entries discovered by the Agent during task execution should follow this format:
   - Global Navigation Registry binding 已滿足：CANONICAL_NAVIGATION_ITEMS（src/lib/navigation.ts + src/server/domain/schema.ts）註冊 admin:STR-01→/admin/strategy，ghsn_navigation_authority 表種子齊，resolveVisibleNavigation 可解析；頁面僅宣告 data-page-uid，選單順序由 shell route 比對（ACC-04 滿足）。
   - resource remap 平台模型＝每頁三表（ghsn_*_field_projection／ghsn_account_*_permission／ghsn_*_audit_event），無中央 remap 表；契約「remap 驗證」＝契約 PAGE/CONTROL uids 與實作 1:1 比對。
   - drawer_modal_contract focus_management 模式：ref＋useEffect（開啟聚焦第一個可聚焦元素）＋lastFocusedRef cleanup 還原焦點；modal 加 aria-modal=true tabIndex=-1。
+
+[Project Knowledge Summary]
+- Date: 2026-11-20
+- Context: admin:KB-01 全契約實作（commit e5ce8310）：runtime/爬蟲/visual/跨頁 context
+- Category: Build Methods | Troubleshooting & Debugging
+- Instructions:
+  - 沙盒 sqlite 檔（/tmp/acpos-sandbox-workbench.sqlite）的 ghsn_schema_migration_history 會把 MIGRATION_FILES 全標記為已套用；migrate.ts DDL 陣列新增的表在舊沙盒檔上不會建立。workspace 測試需自行 CREATE TABLE IF NOT EXISTS 新表（冪等）。
+  - 爬蟲 E2E 測試用本地 http fixture（node:http 127.0.0.1 隨機埠＋/robots.txt＋doc 頁），斷言 robots-disallow 頁被排除；PROBE_TARGET=local 探針打 localhost:3000（dev server PID 檢查 ps -p 17663）。
+  - 探針帳號 session 表欄位只有 (session_uid, account_uid, issued_at)；expires_at 欄位不存在，INSERT 用 ISO 字串。
+  - experience capture（ACPOSExperienceEngine）是後端服務轉移，契約無頁面操作；run 完成時由 runtime 從真實 items 註冊（REAL_EXECUTION_ONLY），ID 用 hash+runId 後綴避免同 hash 同 attempt 碰撞。
+  - getCitation 未知 ID 的契約錯誤是 E:001 KB_PERMISSION_DENIED（CITATION-OPEN 的 contract_errors=["E:001"]），測試預期要對齊契約錯誤碼表而非直覺。
+  - 跨頁唯讀 context（路徑 1）：persistGetAdminStrReadModel 直接 SELECT ghsn_str_field_projection 'STR-01-FLD-PATTERN'（try/catch null-safe），測試斷言後必須還原為 NULL（共享投影暫時修改要復原）。
