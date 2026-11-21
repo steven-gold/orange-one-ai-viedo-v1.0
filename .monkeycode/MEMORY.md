@@ -442,3 +442,15 @@ Entries discovered by the Agent during task execution should follow this format:
   - experience capture（ACPOSExperienceEngine）是後端服務轉移，契約無頁面操作；run 完成時由 runtime 從真實 items 註冊（REAL_EXECUTION_ONLY），ID 用 hash+runId 後綴避免同 hash 同 attempt 碰撞。
   - getCitation 未知 ID 的契約錯誤是 E:001 KB_PERMISSION_DENIED（CITATION-OPEN 的 contract_errors=["E:001"]），測試預期要對齊契約錯誤碼表而非直覺。
   - 跨頁唯讀 context（路徑 1）：persistGetAdminStrReadModel 直接 SELECT ghsn_str_field_projection 'STR-01-FLD-PATTERN'（try/catch null-safe），測試斷言後必須還原為 NULL（共享投影暫時修改要復原）。
+
+[Project Knowledge Summary]
+- Date: 2026-11-21
+- Context: INFO-01 + admin:STR-01 契約缺口補齊（commits d00a364d + ffb85ebd）：idempotency/閘序/綁定/測試擴充
+- Category: Build Methods | Testing Methods
+- Instructions:
+  - INFO-01 閘序＝control binding（INFO_CONTROL_ACTIONS 未知 pair→UNDEFINED-001）→scope→payload schema→idempotency missing/replay；5 個 side-effect 動作（REFRESH/SEARCH/EXPORT/ADOPT-CONTEXT/CANDIDATE-DECIDE）必帶 idempotency_key，replay 寫 IDEMPOTENT-REPLAY 審計且零寫入（fingerprint `${actionUid}:${key}` registry cap 50）。
+  - 契約 payload 欄位名（對齊 yaml 不要直覺）：export=projection_type/scope_ref/format（舊 export_scope 已廢）、adopt=context_candidate_id/decision_reason、decide=candidate_id/decision（rationale 欄位已移除）；adopt/decide 另需 expected_version 對應候選 version（fixture 種候選必須帶 version 欄位）。
+  - INFO read model `scopes: string[]`＝INFO_PERMISSION_SET 7 權限交集（seed 的 info extraPermissions 需含 INFO_PAGE_VIEW_PERMISSION 才齊 7）；refresh 寫 4 個 header 欄位（FLD-SCOPE 排序逗號串/FLD-PAGE-STATE READY|EMPTY/FLD-PROJECTION-VERSION 遞增/FLD-LAST-REFRESH）。
+  - adminStr approve 語義與 SG-02 不同：adminStr approve 仍 bump version（SG-02 approve 版本不變）；approve 缺 expected_resource_version→UNDEFINED、錯→VERSION、狀態須 REVIEW。閘序 idempotency 在 schema 之前（缺 key 的錯誤訊息先出現）。
+  - /api/info/action route 同 admin-strategy 已接受 object payload（自動 JSON.stringify）；HTTP 探針成功樣板：configure→DRAFT v1→approve 缺 expected version→UNDEFINED；INFO refresh 帶 key→4 欄位＋結構化審計、replay→版本不變、無 key→CONTEXT-001。
+  - 探針殘留清理＝重跑對應 workspace 測試（infoWorkspace 16 斷言／adminStrWorkspace 32 斷言會把投影重置）。
