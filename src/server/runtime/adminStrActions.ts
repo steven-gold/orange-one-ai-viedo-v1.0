@@ -167,6 +167,13 @@ export async function applyAdminStrAction(
     }
   }
 
+  // server_gate_order: side-effect operations require idempotency_key
+  // (idempotency_when_side_effect); missing key refuses the write.
+  if (SIDE_EFFECT_OPERATIONS.has(actionUid) && !idempotencyKey) {
+    await writeError(err("ADMIN-STR-ERR-UNDEFINED", `${actionUid} requires idempotency_key per server_gate_order (idempotency_when_side_effect)`, "Resend with idempotency key"));
+    return;
+  }
+
   const recordIdempotency = async (): Promise<void> => {
     if (!idempotencyKey) return;
     const registry = (await parseJson<Record<string, string>>(await readField(ADMIN_STR_STATE_IDEMPOTENCY_UID))) ?? {};
@@ -273,8 +280,14 @@ export async function applyAdminStrAction(
         await writeError(err("ADMIN-STR-ERR-UNDEFINED", "No registered resource matches resource_type/resource_id", "Configure the governed resource first"));
         return;
       }
+      // expected_version_when_write gate: an approve without the expected
+      // version refuses (missing field), a mismatch returns VERSION_CONFLICT.
       const expected = String(payload.expected_resource_version ?? "").trim();
-      if (expected && Number(expected) !== resource.version) {
+      if (!expected) {
+        await writeError(err("ADMIN-STR-ERR-UNDEFINED", "ApproveGovernedResourceRequest requires expected_resource_version per server_gate_order (expected_version_when_write)", "Provide the version observed on the exact projection"));
+        return;
+      }
+      if (Number(expected) !== resource.version) {
         await writeError(err("ADMIN-STR-ERR-VERSION", `Expected resource version ${expected}, current ${resource.version}`, "Return VERSION_CONFLICT; reload exact projection"));
         return;
       }

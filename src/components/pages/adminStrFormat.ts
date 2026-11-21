@@ -28,7 +28,10 @@ export function deriveAdminStrPageState(input: AdminStrPageStateInput): string {
   if (code === "ADMIN-STR-ERR-STATE" || code === "ADMIN-STR-ERR-AUTH" || code === "ADMIN-STR-ERR-UNDEFINED") return "POLICY_BLOCKED";
   if (input.errorCode) return "ERROR";
   if (!input.writeAuthorized) return "READ_ONLY";
-  if ((input.resourceStatus ?? "").toUpperCase() === "REVIEW") return "REVIEW_REQUIRED";
+  const resourceStatus = (input.resourceStatus ?? "").toUpperCase();
+  if (resourceStatus === "RETIRED") return "ARCHIVED";
+  if (resourceStatus === "REVIEW") return "REVIEW_REQUIRED";
+  if (resourceStatus === "PENDING_EXTERNAL") return "EXTERNAL_PENDING";
   if (!input.hasRuntimeState) return "EMPTY";
   return "READY";
 }

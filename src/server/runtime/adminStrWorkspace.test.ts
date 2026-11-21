@@ -2,7 +2,7 @@ import { bootstrapDatabase } from "../db/migrate";
 import { seedScope } from "../db/seed";
 import { persistListAdminStrFields, persistRecordAdminStrAction } from "../db/persist";
 import { getSqlClient } from "../db/client";
-import { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID, ADMIN_STR_STATE_CANDIDATES_UID, ADMIN_STR_STATE_AUDIT_UID, ADMIN_STR_STATE_IDEMPOTENCY_UID } from "../domain/adminStr";
+import { ADMIN_STR_STATE_ERROR_UID, ADMIN_STR_STATE_RESOURCE_UID, ADMIN_STR_STATE_CANDIDATES_UID, ADMIN_STR_STATE_AUDIT_UID, ADMIN_STR_STATE_IDEMPOTENCY_UID, ADMIN_STR_STATE_DRAFT_UID } from "../domain/adminStr";
 import { persistGetAdminStrReadModel } from "../db/persist";
 import { deriveAdminStrPageState } from "../../components/pages/adminStrFormat";
 
@@ -70,6 +70,13 @@ async function readCandidates(): Promise<Array<{ candidateId: string; status: st
   }
 }
 
+
+let idemSeq = 0;
+function k(): string {
+  idemSeq += 1;
+  return `idem-t-${String(idemSeq).padStart(3, "0")}`;
+}
+
 const CONFIG_PAYLOAD = {
   resource_type: "intelligence_fact",
   resource_id: "fact-q4-demand",
@@ -120,26 +127,26 @@ async function main(): Promise<void> {
   assertEqual((await readError())?.code, undefined, "refresh clears error");
 
   // 5. exportProjection: registered audit record.
-  await persistRecordAdminStrAction(DEMO, ACT_EXPORT, "exportProjection", JSON.stringify({ export_scope: "intelligence_fact" }));
+  await persistRecordAdminStrAction(DEMO, ACT_EXPORT, "exportProjection", JSON.stringify({ export_scope: "intelligence_fact" , idempotency_key: k() }));
   const exports = JSON.parse((await readState("CTRL-ADMIN-STR-01-STATE-EXPORTS")) ?? "[]") as Array<{ exportScope: string }>;
   assertEqual(exports[0]?.exportScope, "intelligence_fact", "export recorded");
 
   // 6. configure missing fields -> refusal.
-  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify({ resource_type: "intelligence_fact" }));
+  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify({ resource_type: "intelligence_fact" , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-UNDEFINED", "configure schema refusal");
 
   // 7. configure invalid patch json -> refusal.
-  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify({ ...CONFIG_PAYLOAD, config_patch_json: "{bad" }));
+  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify({ ...CONFIG_PAYLOAD, config_patch_json: "{bad" , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-UNDEFINED", "configure patch json refusal");
 
   // 8. configure valid -> DRAFT v1.
-  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify(CONFIG_PAYLOAD));
+  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify({ ...CONFIG_PAYLOAD, idempotency_key: k() }));
   const resourceV1 = JSON.parse((await readState(ADMIN_STR_STATE_RESOURCE_UID)) ?? "{}") as { version: number; status: string };
   assertEqual(resourceV1.status, "DRAFT", "configured DRAFT");
   assertEqual(resourceV1.version, 1, "first version");
 
   // 9. approve DRAFT -> exact-state refusal.
-  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "intelligence_fact", resource_id: "fact-q4-demand", rationale: "ok" }));
+  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "intelligence_fact", resource_id: "fact-q4-demand", rationale: "ok", expected_resource_version: "1", idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-STATE", "approve refuses DRAFT");
   assertEqual((JSON.parse((await readState(ADMIN_STR_STATE_RESOURCE_UID)) ?? "{}") as { status: string }).status, "DRAFT", "DRAFT preserved");
 
@@ -148,49 +155,49 @@ async function main(): Promise<void> {
     "UPDATE ghsn_admin_str_field_projection SET value_text = ? WHERE control_uid = ?",
     [JSON.stringify({ resourceType: "intelligence_fact", resourceId: "fact-q4-demand", version: 2, status: "REVIEW", configPatch: "{}", updatedAt: new Date().toISOString() }), ADMIN_STR_STATE_RESOURCE_UID],
   );
-  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "intelligence_fact", resource_id: "fact-q4-demand", rationale: "ok", expected_resource_version: "1" }));
+  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "intelligence_fact", resource_id: "fact-q4-demand", rationale: "ok", expected_resource_version: "1" , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-VERSION", "approve version conflict");
 
   // 11. REVIEW + matching version -> APPROVED.
-  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "intelligence_fact", resource_id: "fact-q4-demand", rationale: "Release", expected_resource_version: "2" }));
+  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "intelligence_fact", resource_id: "fact-q4-demand", rationale: "Release", expected_resource_version: "2" , idempotency_key: k() }));
   const approved = JSON.parse((await readState(ADMIN_STR_STATE_RESOURCE_UID)) ?? "{}") as { status: string; version: number };
   assertEqual(approved.status, "APPROVED", "review approved");
   assertEqual(approved.version, 3, "approval bumps version");
 
   // 12. saveDraft -> DRAFT_ONLY (playbook_rule: never a publish command).
-  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "pb-2026-11", playbook_content: "Escalation path" }));
+  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "pb-2026-11", playbook_content: "Escalation path" , idempotency_key: k() }));
   const draft = JSON.parse((await readState("CTRL-ADMIN-STR-01-STATE-DRAFT")) ?? "{}") as { version: number; publishState: string };
   assertEqual(draft.publishState, "DRAFT_ONLY", "draft stays DRAFT_ONLY");
-  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "pb-2026-11", playbook_content: "Escalation path v2" }));
+  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "pb-2026-11", playbook_content: "Escalation path v2" , idempotency_key: k() }));
   assertEqual((JSON.parse((await readState("CTRL-ADMIN-STR-01-STATE-DRAFT")) ?? "{}") as { version: number }).version, 2, "draft version bumps");
 
   // 13. createCandidate -> CANDIDATE status (candidate_rule).
-  await persistRecordAdminStrAction(DEMO, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "Expand QA capacity", candidate_summary: "Add reviewer pool", source_opportunity: "opp-7" }));
-  await persistRecordAdminStrAction(DEMO, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "Automate triage", candidate_summary: "Reduce manual triage", source_opportunity: "opp-8" }));
+  await persistRecordAdminStrAction(DEMO, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "Expand QA capacity", candidate_summary: "Add reviewer pool", source_opportunity: "opp-7" , idempotency_key: k() }));
+  await persistRecordAdminStrAction(DEMO, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "Automate triage", candidate_summary: "Reduce manual triage", source_opportunity: "opp-8" , idempotency_key: k() }));
   const candidates = await readCandidates();
   assertEqual(candidates.length, 2, "two candidates registered");
   assertEqual(candidates[0].status, "CANDIDATE", "candidate stays CANDIDATE");
 
   // 14. compare with <2 -> refusal; with 2 -> factual comparison, no winner.
-  await persistRecordAdminStrAction(DEMO, ACT_COMPARE, "compareCandidates", JSON.stringify({ candidate_ids: [candidates[0].candidateId] }));
+  await persistRecordAdminStrAction(DEMO, ACT_COMPARE, "compareCandidates", JSON.stringify({ candidate_ids: [candidates[0].candidateId] , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-STATE", "compare requires 2 candidates");
-  await persistRecordAdminStrAction(DEMO, ACT_COMPARE, "compareCandidates", JSON.stringify({ candidate_ids: [candidates[0].candidateId, candidates[1].candidateId] }));
+  await persistRecordAdminStrAction(DEMO, ACT_COMPARE, "compareCandidates", JSON.stringify({ candidate_ids: [candidates[0].candidateId, candidates[1].candidateId] , idempotency_key: k() }));
   const comparison = JSON.parse((await readState("CTRL-ADMIN-STR-01-STATE-COMPARE")) ?? "{}") as { comparedCount: number; decision: string | null };
   assertEqual(comparison.comparedCount, 2, "comparison covers both candidates");
   assertEqual(comparison.decision, null, "comparison writes no decision");
 
   // 15. reject with rationale -> REJECTED; reject again -> state refusal.
-  await persistRecordAdminStrAction(DEMO, ACT_DECIDE, "rejectStrategyCandidate", JSON.stringify({ candidate_id: candidates[0].candidateId, rationale: "out of scope" }));
+  await persistRecordAdminStrAction(DEMO, ACT_DECIDE, "rejectStrategyCandidate", JSON.stringify({ candidate_id: candidates[0].candidateId, rationale: "out of scope" , idempotency_key: k() }));
   assertEqual((await readCandidates())[0].status, "REJECTED", "candidate rejected");
-  await persistRecordAdminStrAction(DEMO, ACT_DECIDE, "rejectStrategyCandidate", JSON.stringify({ candidate_id: candidates[0].candidateId, rationale: "again" }));
+  await persistRecordAdminStrAction(DEMO, ACT_DECIDE, "rejectStrategyCandidate", JSON.stringify({ candidate_id: candidates[0].candidateId, rationale: "again" , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-STATE", "reject refuses non-CANDIDATE");
 
   // 16. adopt context -> ADOPTED_AS_CONTEXT (decision_rule: no canon/task/budget/publish writes).
-  await persistRecordAdminStrAction(DEMO, ACT_ADOPT, "adoptAsContextCandidate", JSON.stringify({ candidate_id: candidates[1].candidateId, rationale: "use as context" }));
+  await persistRecordAdminStrAction(DEMO, ACT_ADOPT, "adoptAsContextCandidate", JSON.stringify({ candidate_id: candidates[1].candidateId, rationale: "use as context" , idempotency_key: k() }));
   assertEqual((await readCandidates())[1].status, "ADOPTED_AS_CONTEXT", "candidate adopted as context");
 
   // 17. Scope gate: page scope alone cannot write.
-  await persistRecordAdminStrAction(READONLY, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "x", candidate_summary: "y" }));
+  await persistRecordAdminStrAction(READONLY, ACT_CREATE, "createCandidate", JSON.stringify({ candidate_title: "x", candidate_summary: "y" , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-AUTH", "scope gate blocks write");
   assertEqual((await readCandidates()).length, 2, "denied write applied nothing");
 
@@ -200,7 +207,7 @@ async function main(): Promise<void> {
   for (const uid of STATE_KEYS) assert(listedUids.has(uid), `field list exposes ${uid}`);
 
   // 19. View-to-operation binding gate (contract known_operations_by_view).
-  await persistRecordAdminStrAction(DEMO, ACT_SEARCH, "saveDraft", JSON.stringify({ draft_id: "x", playbook_content: "y" }));
+  await persistRecordAdminStrAction(DEMO, ACT_SEARCH, "saveDraft", JSON.stringify({ draft_id: "x", playbook_content: "y" , idempotency_key: k() }));
   assertEqual((await readError())?.code, "ADMIN-STR-ERR-UNDEFINED", "saveDraft refused from non-owning control view");
 
   // 20. Idempotency gate: same key replays without a second mutation.
@@ -235,7 +242,29 @@ async function main(): Promise<void> {
   const patternEmpty = await persistGetAdminStrReadModel(DEMO);
   assertEqual(patternEmpty.patternBaselineForecast, null, "pattern forecast null-safe");
 
-  // 22. data-page-state derivation (contract allowed_states vocabulary).  assertEqual(deriveAdminStrPageState({ loading: true, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "LOADING", "loading state");
+  // 21c. Side-effect operations require idempotency_key (missing key refuses).
+  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "draft-noidem", playbook_content: "content" }));
+  assertEqual((await readError())?.code, "ADMIN-STR-ERR-UNDEFINED", "saveDraft without idempotency key refused");
+  assertEqual((JSON.parse((await readState(ADMIN_STR_STATE_DRAFT_UID)) ?? "{}") as { draftId?: string }).draftId ?? null, "pb-2026-11", "keyless saveDraft applied nothing (prior draft preserved)");
+
+  // 21d. Replay gates on saveDraft and configureGovernedResource.
+  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "draft-idem", playbook_content: "content", idempotency_key: "idem-draft-1" }));
+  const draftAfterFirst = JSON.parse((await readState(ADMIN_STR_STATE_DRAFT_UID)) ?? "{}") as { draftId?: string; version?: number };
+  assertEqual(draftAfterFirst.draftId, "draft-idem", "first saveDraft lands");
+  await persistRecordAdminStrAction(DEMO, ACT_DRAFT, "saveDraft", JSON.stringify({ draft_id: "draft-idem", playbook_content: "content v2", idempotency_key: "idem-draft-1" }));
+  const draftAfterReplay = JSON.parse((await readState(ADMIN_STR_STATE_DRAFT_UID)) ?? "{}") as { playbookContent?: string; version?: number };
+  assertEqual(draftAfterReplay.playbookContent, "content", "draft replay preserves first version");
+
+  // 21e. approve requires expected_resource_version (expected_version_when_write).
+  await persistRecordAdminStrAction(DEMO, ACT_CONFIGURE, "configureGovernedResource", JSON.stringify({ resource_type: "strategy_playbook", resource_id: "pb-idem", config_patch_json: "{}", reason: "gate", idempotency_key: "idem-cfg-gate" }));
+  await client.run("UPDATE ghsn_admin_str_field_projection SET value_text = ? WHERE control_uid = ?", [JSON.stringify({ resourceType: "strategy_playbook", resourceId: "pb-idem", version: 1, status: "REVIEW", updatedAt: new Date().toISOString() }), ADMIN_STR_STATE_RESOURCE_UID]);
+  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "strategy_playbook", resource_id: "pb-idem", rationale: "no version", idempotency_key: "idem-apr-gate" }));
+  assertEqual((await readError())?.code, "ADMIN-STR-ERR-UNDEFINED", "approve without expected version refused");
+  await persistRecordAdminStrAction(DEMO, ACT_APPROVE, "approveGovernedResource", JSON.stringify({ resource_type: "strategy_playbook", resource_id: "pb-idem", rationale: "with version", expected_resource_version: "1", idempotency_key: "idem-apr-gate" }));
+  assertEqual(JSON.parse((await readState(ADMIN_STR_STATE_RESOURCE_UID)) ?? "{}").status, "APPROVED", "approve with expected version lands");
+
+  // 22. data-page-state derivation (contract allowed_states vocabulary).
+  assertEqual(deriveAdminStrPageState({ loading: true, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "LOADING", "loading state");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: "read failed", authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "ERROR", "fetch error state");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: false, writeAuthorized: false, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "POLICY_BLOCKED", "denied maps to POLICY_BLOCKED");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: "ADMIN-STR-ERR-VERSION", resourceStatus: null, hasRuntimeState: true }), "VERSION_CONFLICT", "version conflict state");
@@ -244,13 +273,15 @@ async function main(): Promise<void> {
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: "REVIEW", hasRuntimeState: true }), "REVIEW_REQUIRED", "review required state");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: null, hasRuntimeState: false }), "EMPTY", "empty state");
   assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: null, hasRuntimeState: true }), "READY", "ready state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: "PENDING_EXTERNAL", hasRuntimeState: true }), "EXTERNAL_PENDING", "external pending state");
+  assertEqual(deriveAdminStrPageState({ loading: false, fetchError: null, authorized: true, writeAuthorized: true, errorCode: null, resourceStatus: "RETIRED", hasRuntimeState: true }), "ARCHIVED", "archived state");
 
   // Restore sandbox to clean state.
   for (const uid of STATE_KEYS) {
     await client.run("UPDATE ghsn_admin_str_field_projection SET value_text = NULL WHERE control_uid = ?", [uid]);
   }
 
-  console.log(`adminStrWorkspace: 29 checks passed (${new Date().toISOString()})`);
+  console.log(`adminStrWorkspace: 32 sections passed (${new Date().toISOString()})`);
   process.exit(0);
 }
 

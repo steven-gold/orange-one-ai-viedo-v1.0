@@ -505,3 +505,25 @@
   gap: 8px;
   justify-content: flex-end;
 }
+
+.candidateList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.candidateRow {
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid var(--border, #d0d5dd);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.candidateRow:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

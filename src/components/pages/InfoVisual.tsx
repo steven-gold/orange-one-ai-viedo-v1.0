@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { InfoClientError, fetchInfoReadModel, postInfoAction, type InfoFieldValue } from "@/lib/client";
-import { displayInfoValue } from "./infoFormat";
+import { deriveInfoPageState, displayInfoValue } from "./infoFormat";
 import { INFO_CONTROL_ACTIONS, INFO_FORM_SCHEMAS, INFO_MODAL_ACTIONS, INFO_STATE_ERROR_UID, INFO_VISIBLE_CONTROLS } from "./infoControls";
+const INFO_STATE_AUDIT_UID = "INFO-01-STATE-AUDIT";
+const INFO_STATE_CANDIDATES_UID = "INFO-01-STATE-CANDIDATES";
 import styles from "./InfoVisual.module.css";
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -147,9 +149,15 @@ export function InfoVisual() {
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
+  const drawerRef = useRef<HTMLElement | null>(null);
+  const modalRef = useRef<HTMLElement | null>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   const onAction = (uid: string) => {
     if (INFO_MODAL_ACTIONS.has(uid)) {
+      lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setModalUid(uid);
       setFormValues(Object.fromEntries((INFO_FORM_SCHEMAS[uid] ?? []).map((field) => [field.key, ""])));
       return;
@@ -157,6 +165,16 @@ export function InfoVisual() {
     void act(uid);
   };
 
+  const candidates = useMemo<Array<{ candidateId: string; scope: string; status: string; decidedAt: string | null; version: number }>>(() => {
+    const raw = valueOf(INFO_STATE_CANDIDATES_UID);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw) as Array<{ candidateId: string; scope: string; status: string; decidedAt: string | null; version: number }>;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }, [valueOf]);
   const submitModal = useCallback(async () => {
     if (!modalUid) return;
     const payload: Record<string, unknown> = {};
@@ -164,11 +182,26 @@ export function InfoVisual() {
       const raw = (formValues[field.key] ?? "").trim();
       if (raw) payload[field.key] = raw;
     }
+    // common_effectful_context: scope + expected_version + correlation_id +
+    // idempotency_key on every effectful submission.
+    payload.idempotency_key = `idem-${modalUid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    payload.correlation_id = `corr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const selected = candidates.find((candidate) => candidate.candidateId === selectedCandidateId) ?? candidates[0];
+    if (selected) {
+      payload.expected_version = String(selected.version);
+      if (modalUid === "INFO-01-BTN-ADOPT-CONTEXT") payload.context_candidate_id = selected.candidateId;
+      if (modalUid === "INFO-01-BTN-CANDIDATE-DECIDE") payload.candidate_id = selected.candidateId;
+    }
     setSubmitting(true);
     await act(modalUid, JSON.stringify(payload));
     setSubmitting(false);
     setModalUid(null);
-  }, [act, formValues, modalUid]);
+  }, [act, formValues, modalUid, candidates, selectedCandidateId]);
+
+  useEffect(() => {
+    if (modalUid) modalRef.current?.focus?.();
+    else if (auditOpen) drawerRef.current?.focus?.();
+  }, [modalUid, auditOpen]);
 
   const contractError = useMemo<{ code: string; detail: string; recovery?: string } | null>(() => {
     const raw = valueOf(INFO_STATE_ERROR_UID);
@@ -181,7 +214,21 @@ export function InfoVisual() {
   }, [valueOf]);
 
   const disabled = !authorized && !loading;
-  const pageState = loading ? "LOADING" : error ? "ERROR" : authorized ? "READY" : "DENIED";
+  const auditLines = useMemo(() => {
+    const raw = valueOf(INFO_STATE_AUDIT_UID);
+    return raw ? raw.split("\n") : [];
+  }, [valueOf]);
+  const hasRuntimeState = auditLines.length > 0 || candidates.length > 0 || Boolean(valueOf("INFO-01-STATE-REFRESH") ?? valueOf("INFO-01-STATE-SEARCH") ?? valueOf("INFO-01-STATE-EXPORTS"));
+  const pageState = deriveInfoPageState({
+    loading,
+    fetchError: error,
+    authorized,
+    errorCode: contractError?.code ?? null,
+    stale: false,
+    incomplete: false,
+    hasOpenCandidates: candidates.some((candidate) => candidate.status === "CANDIDATE"),
+    hasRuntimeState,
+  });
   const tx = (key: TranslationKey) => t(key);
   const v = (uid: string) => valueOf(uid);
   const visibleUids = useMemo(() => new Set<string>(INFO_VISIBLE_CONTROLS), []);
@@ -365,7 +412,29 @@ export function InfoVisual() {
         <div className={styles.candidateGrid}>
           <div className={styles.stack} data-component-uid="INFO-01-CMP-CANDIDATE-FACTS">
             <h2 className={styles.title}>{tx("info.fact-selection")}</h2>
-            <Field uid="INFO-01-LST-CANDIDATES" label={tx("info.lst-candidates")} value={v("INFO-01-LST-CANDIDATES")} loading={loading} onAct={act} disabled={disabled} row />
+            <div className={styles.candidateList} data-control-uid="INFO-01-LST-CANDIDATES">
+              {candidates.length ? (
+                candidates.map((candidate) => (
+                  <button
+                    key={candidate.candidateId}
+                    type="button"
+                    className={styles.candidateRow}
+                    data-candidate-id={candidate.candidateId}
+                    data-candidate-status={candidate.status}
+                    disabled={disabled}
+                    onClick={() => {
+                      lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+                      setSelectedCandidateId(candidate.candidateId);
+                      void act("INFO-01-ACT-CANDIDATE-SELECT");
+                    }}
+                  >
+                    {`${candidate.candidateId} · ${candidate.status} · v${candidate.version}${selectedCandidateId === candidate.candidateId ? " · SELECTED" : ""}`}
+                  </button>
+                ))
+              ) : (
+                <Field uid="INFO-01-LST-CANDIDATES" label={tx("info.lst-candidates")} value={v("INFO-01-LST-CANDIDATES")} loading={loading} onAct={act} disabled={disabled} row />
+              )}
+            </div>
             <Field uid="INFO-01-FLD-CANDIDATE-FACTS" label={tx("info.fld-candidate-facts")} value={v("INFO-01-FLD-CANDIDATE-FACTS")} loading={loading} onAct={act} disabled={disabled} row />
             <div className={styles.noteBox} data-component-uid="INFO-01-CMP-CANDIDATE-SCOPE">
               <p className={styles.selectedTitle}>{tx("info.selection-rule")}</p>
@@ -425,7 +494,16 @@ export function InfoVisual() {
         <Field uid="INFO-01-FLD-SOURCE-SYNC" label={tx("info.fld-source-sync")} value={v("INFO-01-FLD-SOURCE-SYNC")} loading={loading} onAct={act} disabled={disabled} />
         <Field uid="INFO-01-FLD-DISABLED" label={tx("info.fld-disabled")} value={v("INFO-01-FLD-DISABLED")} loading={loading} onAct={act} disabled={disabled} />
         <div className={styles.actionButtons}>
-          <Btn uid="INFO-01-BTN-AUDIT" label={tx("info.btn-audit")} onAct={act} disabled={disabled} />
+          <Btn
+            uid="INFO-01-BTN-AUDIT"
+            label={tx("info.btn-audit")}
+            onAct={(uid) => {
+              lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+              setAuditOpen(true);
+              void act(uid);
+            }}
+            disabled={disabled}
+          />
         </div>
       </section>
 
@@ -500,7 +578,7 @@ export function InfoVisual() {
       ) : null}
 
       {modalUid ? (
-        <aside className={styles.modal} role="dialog" data-control-uid={modalUid}>
+        <aside className={styles.modal} role="dialog" aria-modal="true" data-control-uid={modalUid} ref={modalRef} tabIndex={-1}>
           <h3>{tx("info.modal-title")}</h3>
           <p className={styles.hint}>{tx("info.modal-hint")}</p>
           <div className={styles.formFields}>
@@ -522,7 +600,15 @@ export function InfoVisual() {
             ))}
           </div>
           <div className={styles.modalActions}>
-            <button type="button" className={styles.btn} onClick={() => setModalUid(null)} disabled={submitting}>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() => {
+                setModalUid(null);
+                lastFocusedRef.current?.focus?.();
+              }}
+              disabled={submitting}
+            >
               {tx("global.common.close")}
             </button>
             <button
@@ -533,6 +619,45 @@ export function InfoVisual() {
               onClick={() => void submitModal()}
             >
               {tx("info.modal-submit")}
+            </button>
+          </div>
+        </aside>
+      ) : null}
+
+      {auditOpen ? (
+        <aside
+          className={styles.modal}
+          role="dialog"
+          aria-modal="true"
+          data-control-uid="INFO-01-CMP-AUDIT-DRAWER"
+          data-audit-count={String(auditLines.length)}
+          ref={drawerRef}
+          tabIndex={-1}
+        >
+          <h3>{tx("info.btn-audit")}</h3>
+          <div className={styles.formFields}>
+            {auditLines.length ? (
+              auditLines.map((line, index) => (
+                <div key={index} className={styles.formRow}>
+                  <span>{line}</span>
+                </div>
+              ))
+            ) : (
+              <div className={styles.formRow}>
+                <span>—</span>
+              </div>
+            )}
+          </div>
+          <div className={styles.modalActions}>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() => {
+                setAuditOpen(false);
+                lastFocusedRef.current?.focus?.();
+              }}
+            >
+              {tx("global.common.close")}
             </button>
           </div>
         </aside>

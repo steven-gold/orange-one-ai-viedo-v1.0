@@ -102,6 +102,8 @@ export function AdminStrVisual() {
   const [modalUid, setModalUid] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [detailValue, setDetailValue] = useState<string | null>(null);
   const drawerRef = useRef<HTMLElement | null>(null);
   const modalRef = useRef<HTMLElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
@@ -177,13 +179,21 @@ export function AdminStrVisual() {
   const switchView = (next: AdminStrView) => {
     setView(next);
     setDrawer(null);
-    setModalUid(null);
+    // preserve_unsubmitted_form_state: keep the open modal and its values
+    // across view switches (view_switching contract).
     void act(ADMIN_STR_VIEW_CONTROLS[next]);
   };
 
   const openDrawer = (next: AdminStrDrawer, uid: string) => {
     lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setDrawer(next);
+    if (next === "search") {
+      // The search drawer opens with the registered query form; the search
+      // itself runs when the operator submits the query.
+      setSearchQuery("");
+      return;
+    }
+    if (next === "detail") return;
     void act(uid);
   };
 
@@ -193,10 +203,27 @@ export function AdminStrVisual() {
 
   const openModal = (uid: string) => {
     // Effectful actions open the registered-schema form modal; the submit
-    // posts one JSON payload per exact action request schema.
+    // posts one JSON payload per exact action request schema. Read-model
+    // data auto-carries forward (input_behavior AUTO_CARRY_FORWARD_WHEN_
+    // AVAILABLE; manual retype of read-model data is forbidden).
     lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const prefill: Record<string, string> = {};
+    if (uid === "CTRL-ADMIN-STR-01-ACT-APPROVE" && registry) {
+      prefill.resource_type = registry.resourceType;
+      prefill.resource_id = registry.resourceId;
+      prefill.expected_resource_version = String(registry.version);
+    }
+    if ((uid === "CTRL-ADMIN-STR-01-ACT-CANDIDATE-DECIDE" || uid === "CTRL-ADMIN-STR-01-ACT-ADOPT-CONTEXT") && candidates.length) {
+      prefill.candidate_id = candidates[0].candidateId;
+    }
+    if (uid === "CTRL-ADMIN-STR-01-ACT-CANDIDATE-COMPARE" && candidates.length) {
+      prefill.candidate_ids = candidates.filter((candidate) => candidate.status !== "REJECTED").map((candidate) => candidate.candidateId).join(",");
+    }
     setModalUid(uid);
-    setFormValues(Object.fromEntries((ADMIN_STR_FORM_SCHEMAS[uid] ?? []).map((field) => [field.key, ""])));
+    setFormValues({
+      ...Object.fromEntries((ADMIN_STR_FORM_SCHEMAS[uid] ?? []).map((field) => [field.key, ""])),
+      ...prefill,
+    });
   };
 
   const closeModal = () => {
@@ -216,6 +243,9 @@ export function AdminStrVisual() {
         payload[field.key] = raw;
       }
     }
+    // server_gate_order idempotency_when_side_effect: every modal submit
+    // carries a client-generated idempotency key.
+    payload.idempotency_key = `idem-${modalUid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     setSubmitting(true);
     await act(modalUid, JSON.stringify(payload));
     setSubmitting(false);
@@ -614,8 +644,8 @@ export function AdminStrVisual() {
                       ) : (
                         (compareState?.candidates ?? candidates).map((candidate) => (
                           <tr key={candidate.candidateId}>
-                            <td>{candidate.title}</td>
-                            <td>{candidate.sourceOpportunity || dash}</td>
+                            <td className={styles.cellLong} onClick={() => { setDetailValue(candidate.title); openDrawer("detail", "CTRL-ADMIN-STR-01-ACT-NAV-OPEN"); }}>{candidate.title}</td>
+                            <td className={styles.cellLong} onClick={() => { setDetailValue(candidate.sourceOpportunity || dash); openDrawer("detail", "CTRL-ADMIN-STR-01-ACT-NAV-OPEN"); }}>{candidate.sourceOpportunity || dash}</td>
                             <td>{dash}</td>
                             <td>{financeAuthorized ? dash : tx("adminStr.compare-mask")}</td>
                             <td>{candidate.status}</td>
@@ -738,16 +768,41 @@ export function AdminStrVisual() {
         <aside ref={drawerRef} className={styles.drawer} data-section-uid="SEC-ADMIN-STR-01-DRAWER" tabIndex={-1}>
           <h3>{drawer === "search" ? tx("adminStr.drawer-search") : tx("adminStr.drawer-nav")}</h3>
           <p className={styles.note}>{tx("adminStr.drawer-hint")}</p>
-          {drawer === "search" && searchState ? (
+          {drawer === "search" ? (
             <div data-block-uid="SEC-ADMIN-STR-01-SEARCH-RESULTS">
-              <strong>
-                {searchState.matchedCount} matches · "{searchState.query}"
-              </strong>
-              {searchState.matched.slice(0, 8).map((hit) => (
-                <p key={hit.controlUid} className={styles.note}>
-                  {hit.controlUid} · {hit.hasValue ? "HAS_VALUE" : "NULL"}
-                </p>
-              ))}
+              <div className={styles.formFields}>
+                <div className={styles.formRow}>
+                  <span>query</span>
+                  <input
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") void act("CTRL-ADMIN-STR-01-ACT-SEARCH", JSON.stringify({ query: searchQuery }));
+                    }}
+                  />
+                </div>
+              </div>
+              <button type="button" className={styles.submitBtn} onClick={() => void act("CTRL-ADMIN-STR-01-ACT-SEARCH", JSON.stringify({ query: searchQuery }))}>
+                {tx("adminStr.act-search")}
+              </button>
+              {searchState ? (
+                <>
+                  <strong>
+                    {searchState.matchedCount} matches · "{searchState.query}"
+                  </strong>
+                  {searchState.matched.slice(0, 8).map((hit) => (
+                    <p key={hit.controlUid} className={styles.note}>
+                      {hit.controlUid} · {hit.hasValue ? "HAS_VALUE" : "NULL"}
+                    </p>
+                  ))}
+                </>
+              ) : (
+                <strong>{dash}</strong>
+              )}
+            </div>
+          ) : drawer === "detail" ? (
+            <div data-block-uid="SEC-ADMIN-STR-01-DETAIL-VALUE">
+              <p className={styles.note}>{detailValue ?? dash}</p>
             </div>
           ) : (
             <strong>{dash}</strong>

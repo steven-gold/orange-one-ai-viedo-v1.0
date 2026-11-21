@@ -3,7 +3,7 @@ import { CORE_PERMISSION, CORE_VISIBLE_CONTROLS } from "../domain/core";
 import { EDIT_PERMISSION, EDIT_VISIBLE_CONTROLS } from "../domain/edit";
 import { DB_AUDIT_PERMISSION, DB_INTEGRITY_PERMISSION, DB_MIGRATION_PERMISSION, DB_PERMISSION, DB_TRACE_PERMISSION, DB_VISIBLE_CONTROLS } from "../domain/db";
 import { QA_PERMISSION, QA_PERMISSIONS, QA_VISIBLE_CONTROLS } from "../domain/qa";
-import { INFO_CANDIDATE_DECIDE_PERMISSION, INFO_CONTEXT_ADOPT_PERMISSION, INFO_EXPORT_PERMISSION, INFO_PERMISSION, INFO_REFRESH_PERMISSION, INFO_SEARCH_PERMISSION, INFO_VISIBLE_CONTROLS } from "../domain/info";
+import { INFO_CANDIDATE_DECIDE_PERMISSION, INFO_CONTEXT_ADOPT_PERMISSION, INFO_EXPORT_PERMISSION, INFO_PERMISSION, INFO_REFRESH_PERMISSION, INFO_SEARCH_PERMISSION, INFO_VISIBLE_CONTROLS, INFO_PAGE_VIEW_PERMISSION } from "../domain/info";
 import { SYS_PERMISSION, SYS_VISIBLE_CONTROLS } from "../domain/sys";
 import { IAM_PERMISSION, IAM_CONFIGURE_PERMISSION, IAM_VISIBLE_CONTROLS } from "../domain/iam";
 import { DEV_PERMISSION, DEV_ACCOUNT_PERMISSIONS, DEV_VISIBLE_CONTROLS } from "../domain/dev";
@@ -85,7 +85,7 @@ const PAGE_SEEDS: Record<Exclude<SeedScope, "identity" | "navigation" | "dashboa
     extraPermissions: [DB_TRACE_PERMISSION, DB_MIGRATION_PERMISSION, DB_INTEGRITY_PERMISSION, DB_AUDIT_PERMISSION],
   },
   str: { fieldTable: "ghsn_str_field_projection", permissionTable: "ghsn_account_str_permission", permission: STR_PERMISSION, controls: STR_VISIBLE_CONTROLS, extraPermissions: [STR_CONVERSATION_PERMISSION, STR_COMPARE_PERMISSION, STR_REVIEW_PERMISSION, STR_ADOPT_PERMISSION] },
-  info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS, extraPermissions: [INFO_REFRESH_PERMISSION, INFO_SEARCH_PERMISSION, INFO_EXPORT_PERMISSION, INFO_CONTEXT_ADOPT_PERMISSION, INFO_CANDIDATE_DECIDE_PERMISSION] },
+  info: { fieldTable: "ghsn_info_field_projection", permissionTable: "ghsn_account_info_permission", permission: INFO_PERMISSION, controls: INFO_VISIBLE_CONTROLS, extraPermissions: [INFO_PAGE_VIEW_PERMISSION, INFO_REFRESH_PERMISSION, INFO_SEARCH_PERMISSION, INFO_EXPORT_PERMISSION, INFO_CONTEXT_ADOPT_PERMISSION, INFO_CANDIDATE_DECIDE_PERMISSION] },
   sys: { fieldTable: "ghsn_sys_field_projection", permissionTable: "ghsn_account_sys_permission", permission: SYS_PERMISSION, controls: SYS_VISIBLE_CONTROLS },
   iam: { fieldTable: "ghsn_iam_field_projection", permissionTable: "ghsn_account_iam_permission", permission: IAM_PERMISSION, controls: IAM_VISIBLE_CONTROLS, extraPermissions: [IAM_CONFIGURE_PERMISSION] },
   dev: { fieldTable: "ghsn_dev_field_projection", permissionTable: "ghsn_account_dev_permission", permission: DEV_PERMISSION, controls: DEV_VISIBLE_CONTROLS, extraPermissions: DEV_ACCOUNT_PERMISSIONS },

@@ -19,6 +19,7 @@ export const INFO_STATE_SEARCH_UID = "INFO-01-STATE-SEARCH";
 export const INFO_STATE_EXPORTS_UID = "INFO-01-STATE-EXPORTS";
 export const INFO_STATE_CANDIDATES_UID = "INFO-01-STATE-CANDIDATES";
 export const INFO_STATE_AUDIT_UID = "INFO-01-STATE-AUDIT";
+export const INFO_STATE_IDEMPOTENCY_UID = "INFO-01-STATE-IDEMPOTENCY";
 
 export const INFO_EXTRA_PROJECTION_KEYS = [
   INFO_STATE_ERROR_UID,
@@ -27,7 +28,20 @@ export const INFO_EXTRA_PROJECTION_KEYS = [
   INFO_STATE_EXPORTS_UID,
   INFO_STATE_CANDIDATES_UID,
   INFO_STATE_AUDIT_UID,
+  INFO_STATE_IDEMPOTENCY_UID,
 ] as const;
+
+// All seven registered INFO permissions; the read model carries the exact
+// held set so the UI can gate per-action instead of one global boolean.
+export const INFO_PERMISSION_SET: ReadonlySet<string> = new Set([
+  INFO_PERMISSION,
+  INFO_PAGE_VIEW_PERMISSION,
+  INFO_REFRESH_PERMISSION,
+  INFO_SEARCH_PERMISSION,
+  INFO_EXPORT_PERMISSION,
+  INFO_CONTEXT_ADOPT_PERMISSION,
+  INFO_CANDIDATE_DECIDE_PERMISSION,
+]);
 
 // Server-side action scopes by registered action_uid.
 export const INFO_ACTION_SCOPES: Record<string, string> = {
@@ -200,5 +214,6 @@ export interface InfoReadModel {
   permission: typeof INFO_PERMISSION;
   chainUid: typeof INFO_CHAIN;
   authorized: boolean;
+  scopes: string[];
   fields: InfoFieldValue[];
 }

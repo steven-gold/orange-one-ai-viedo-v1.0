@@ -146,16 +146,20 @@ export interface InfoFormField {
 
 // Exact registered request schemas per effectful control.
 export const INFO_FORM_SCHEMAS: Record<string, readonly InfoFormField[]> = {
+  "INFO-01-BTN-REFRESH": [],
   "INFO-01-BTN-SEARCH": [{ key: "query", label: "query" }],
-  "INFO-01-BTN-EXPORT": [{ key: "export_scope", label: "export_scope" }],
+  "INFO-01-BTN-EXPORT": [
+    { key: "projection_type", label: "projection_type" },
+    { key: "scope_ref", label: "scope_ref" },
+    { key: "format", label: "format" },
+  ],
   "INFO-01-BTN-ADOPT-CONTEXT": [
-    { key: "candidate_id", label: "candidate_id" },
-    { key: "rationale", label: "rationale", area: true },
+    { key: "context_candidate_id", label: "context_candidate_id" },
+    { key: "decision_reason", label: "decision_reason", area: true },
   ],
   "INFO-01-BTN-CANDIDATE-DECIDE": [
     { key: "candidate_id", label: "candidate_id" },
     { key: "decision", label: "decision (ACCEPTED|REJECTED)" },
-    { key: "rationale", label: "rationale", area: true },
   ],
 };
 

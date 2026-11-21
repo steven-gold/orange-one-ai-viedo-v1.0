@@ -660,6 +660,7 @@ export interface InfoReadModel {
   permission: "information.read";
   chainUid: "INFO-01-FWC-PAGE-01";
   authorized: boolean;
+  scopes: string[];
   fields: InfoFieldValue[];
 }
 

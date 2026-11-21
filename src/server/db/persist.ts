@@ -105,6 +105,7 @@ import {
   INFO_PROJECTION,
   INFO_ROUTE,
   INFO_VISIBLE_CONTROLS,
+  INFO_PERMISSION_SET,
 } from "../domain/info";
 import {
   SYS_CHAIN,
@@ -1135,6 +1136,14 @@ export async function persistListInfoFields(): Promise<InfoFieldValue[]> {
 export async function persistGetInfoReadModel(accountUid: string): Promise<InfoReadModel> {
   const authorized = await persistHasInfoPermission(accountUid);
   const fields = authorized ? await persistListInfoFields() : [];
+  // Per-permission scope flags mirror the runtime action gates: query the
+  // permission table for the registered seven-scope set.
+  const scopeRows = await getSqlClient().all<{ permission_uid: string }>(
+    `SELECT permission_uid FROM ghsn_account_info_permission WHERE account_uid = ?`,
+    [accountUid],
+  );
+  const held = new Set(scopeRows.map((row) => row.permission_uid));
+  const scopes = [...INFO_PERMISSION_SET].filter((permission) => held.has(permission));
   return {
     projectionUid: INFO_PROJECTION,
     pageUid: INFO_PAGE_UID,
@@ -1142,6 +1151,7 @@ export async function persistGetInfoReadModel(accountUid: string): Promise<InfoR
     permission: INFO_PERMISSION,
     chainUid: INFO_CHAIN,
     authorized,
+    scopes,
     fields,
   };
 }
