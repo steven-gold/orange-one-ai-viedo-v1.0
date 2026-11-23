@@ -454,3 +454,13 @@ Entries discovered by the Agent during task execution should follow this format:
   - adminStr approve 語義與 SG-02 不同：adminStr approve 仍 bump version（SG-02 approve 版本不變）；approve 缺 expected_resource_version→UNDEFINED、錯→VERSION、狀態須 REVIEW。閘序 idempotency 在 schema 之前（缺 key 的錯誤訊息先出現）。
   - /api/info/action route 同 admin-strategy 已接受 object payload（自動 JSON.stringify）；HTTP 探針成功樣板：configure→DRAFT v1→approve 缺 expected version→UNDEFINED；INFO refresh 帶 key→4 欄位＋結構化審計、replay→版本不變、無 key→CONTEXT-001。
   - 探針殘留清理＝重跑對應 workspace 測試（infoWorkspace 16 斷言／adminStrWorkspace 32 斷言會把投影重置）。
+
+[Project Knowledge Summary]
+- Date: 2026-11-23
+- Context: SG-02 契約缺口收尾（commits 8dfffc06 + 4cd8c620）：EXTERNAL_PENDING/事件標記/FUNC-CTRL 全覆蓋＋dev server 排障
+- Category: Build Methods | Troubleshooting & Debugging
+- Instructions:
+  - SG-02 最終缺口：deriveSg02PageState 補 EXTERNAL_PENDING（resourceStatus PENDING_EXTERNAL→EXTERNAL_PENDING，對齊 adminStr 先例；Word lifecycle 無此狀態、YAML 為權威）；configure/approve 審計行帶 event=governance.configured / event=governance.approved（writeResourceFields 會另寫一條無標記狀態行，屬既有行為）；expected_resource_version 維持 optional（YAML required:false，Word TBL11 CONDITIONAL 分歧已記錄不收緊）。
+  - qa_acceptance 11 個 FUNC-CTRL 控件測試現為 11/11（7 個 drawer open＋ACT-03-NAV-OPEN 走 getUiProjection 讀模型斷言）；sg02Workspace 28 sections。
+  - dev server 跑舊碼排障鏈：Next 16 Turbopack dev 持久快取在 .next/dev/cache/turbopack（不是 ~/.cache）；症狀＝route 202 但 runtime 零寫入＋審計無新特徵字串；解法＝kill dev terminal→mv .next .next.bak-xxx→npm run dev 重編譯；另外 route catch{} 吞錯，加暫時 console.error 才看得到 stack。
+  - action route payload 陷阱完整清單：sg02/info/admin-strategy route 都曾 string-only（sg02 已補 object→JSON.stringify 同 info 修法）；probe JSON 檔路徑打錯→curl 空 body→route 500 JSON.parse 錯（先驗證檔案存在再 curl）。
