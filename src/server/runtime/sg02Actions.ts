@@ -244,7 +244,7 @@ export async function applySg02Action(
       }
       await writeField(SG02_STATE_RESOURCE_UID, JSON.stringify({ ...entry, status: "DRAFT" } satisfies Sg02Resource));
       await writeField("CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE", `CONFIGURED · ${entry.resourceType}/${entry.resourceId} · v${entry.version}`);
-      await writeAudit(`DRAFT · ${entry.resourceType}/${entry.resourceId} · v${entry.version} · ${entry.updatedAt}`);
+      await writeAudit(`DRAFT · ${entry.resourceType}/${entry.resourceId} · v${entry.version} · ${entry.updatedAt} · event=governance.configured`);
       await clearError();
       return;
     }
@@ -325,6 +325,7 @@ export async function applySg02Action(
       }
       await writeField(registryUid, JSON.stringify(registryNow));
       await writeResourceFields(active);
+      await writeAudit(`APPROVED · ${approved.resourceType}/${approved.resourceId} · v${approved.version} · event=governance.approved`);
       await writeAudit(`ACTIVE · ${active.resourceType}/${active.resourceId} · v${active.version} · governance.approved engine activation`);
       await clearError();
       return;

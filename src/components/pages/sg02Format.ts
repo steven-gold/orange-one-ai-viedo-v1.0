@@ -23,6 +23,7 @@ export function deriveSg02PageState(input: Sg02PageStateInput): string {
   if (input.errorCode === "SG-02-ERR-VERSION") return "VERSION_CONFLICT";
   if (input.errorCode === "SG-02-ERR-STATE") return "REVIEW_REQUIRED";
   if (input.errorCode) return "POLICY_BLOCKED";
+  if (input.resourceStatus === "PENDING_EXTERNAL") return "EXTERNAL_PENDING";
   if (input.resourceStatus === "REVIEW") return "REVIEW_REQUIRED";
   if (input.resourceStatus === "RETIRED") return "ARCHIVED";
   if (!input.configureAuthorized) return "READ_ONLY";

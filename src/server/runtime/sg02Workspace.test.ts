@@ -151,6 +151,7 @@ async function main(): Promise<void> {
   assert(configuredValue?.includes("CONFIGURED") && configuredValue.includes("v1"), "action control records configure");
   const auditLine = await readState(SG02_STATE_AUDIT_UID);
   assert(auditLine?.includes("DRAFT · quality_criteria_version/qcv-2026-11 · v1"), "audit trail records configure");
+  assert(auditLine?.includes("event=governance.configured"), "configure audit carries contract event marker");
 
   // 5. Idempotency replay: same action+key performs no new write.
   const registryBeforeReplay = await readCriteria();
@@ -221,6 +222,7 @@ async function main(): Promise<void> {
   const criteriaAfterApproval = await readCriteria();
   assertEqual(criteriaAfterApproval.find((v) => v.version === 1)?.status, "DRAFT", "prior draft untouched");
   assertEqual(criteriaAfterApproval.find((v) => v.version === 2)?.status, "ACTIVE", "approved version ACTIVE in registry");
+  assert((await readState(SG02_STATE_AUDIT_UID))?.includes("APPROVED · quality_criteria_version/qcv-2026-11 · v2 · event=governance.approved"), "approve audit carries contract event marker");
   assert((await readState(SG02_STATE_AUDIT_UID))?.includes("governance.approved engine activation"), "audit records engine activation");
   const approvals = await readRegistryEntries(SG02_STATE_APPROVALS_UID);
   assertEqual(approvals.length, 1, "approval registered");
@@ -249,6 +251,35 @@ async function main(): Promise<void> {
   await persistRecordSg02Action(DEMO, "CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN", "getUiProjection");
   assert((await readResource()), "projection read keeps registry");
   assertEqual((await readError())?.code, undefined, "projection read clears error");
+  // Remaining FUNC-CTRL-ADMIN-SG-02-* control tests: every registered drawer
+  // open and the rail nav action run as read-model projections.
+  for (const controlUid of [
+    "CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN",
+    "CTRL-ADMIN-SG-02-THRESHOLDS-OPEN",
+    "CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN",
+    "CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN",
+    "CTRL-ADMIN-SG-02-GATE-POLICY-OPEN",
+    "CTRL-ADMIN-SG-02-APPROVAL-OPEN",
+    "CTRL-ADMIN-SG-02-IMPACT-OPEN",
+    "CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN",
+  ]) {
+    await persistRecordSg02Action(DEMO, controlUid, "getUiProjection");
+    assertEqual((await readError())?.code, undefined, `${controlUid} accepted`);
+    assert((await readResource()), `${controlUid} keeps registry`);
+  }
+  // Contract state_contract.allowed_states: full 10-state vocabulary.
+  const baseInput = { loading: false, fetchError: null as string | null, authorized: true, configureAuthorized: true, errorCode: null as string | null, resourceStatus: null as string | null, hasRuntimeState: true };
+  assertEqual(deriveSg02PageState({ ...baseInput, loading: true }), "LOADING", "state LOADING");
+  assertEqual(deriveSg02PageState({ ...baseInput, fetchError: "x" }), "ERROR", "state ERROR");
+  assertEqual(deriveSg02PageState({ ...baseInput, authorized: false }), "POLICY_BLOCKED", "state POLICY_BLOCKED");
+  assertEqual(deriveSg02PageState({ ...baseInput, errorCode: "SG-02-ERR-VERSION" }), "VERSION_CONFLICT", "state VERSION_CONFLICT");
+  assertEqual(deriveSg02PageState({ ...baseInput, errorCode: "SG-02-ERR-STATE" }), "REVIEW_REQUIRED", "state REVIEW_REQUIRED by code");
+  assertEqual(deriveSg02PageState({ ...baseInput, resourceStatus: "REVIEW" }), "REVIEW_REQUIRED", "state REVIEW_REQUIRED by status");
+  assertEqual(deriveSg02PageState({ ...baseInput, resourceStatus: "PENDING_EXTERNAL" }), "EXTERNAL_PENDING", "state EXTERNAL_PENDING");
+  assertEqual(deriveSg02PageState({ ...baseInput, resourceStatus: "RETIRED" }), "ARCHIVED", "state ARCHIVED");
+  assertEqual(deriveSg02PageState({ ...baseInput, configureAuthorized: false }), "READ_ONLY", "state READ_ONLY");
+  assertEqual(deriveSg02PageState({ ...baseInput, hasRuntimeState: false }), "EMPTY", "state EMPTY");
+  assertEqual(deriveSg02PageState(baseInput), "READY", "state READY");
 
   // 16. Server-side scope gate: page scope alone cannot configure.
   await persistRecordSg02Action(SCOPED, ACTION_CONFIGURE, "configureGovernedResource", JSON.stringify({ ...CONFIG_PAYLOAD, idempotency_key: idem() }));
@@ -321,7 +352,7 @@ async function main(): Promise<void> {
     await client.run("UPDATE ghsn_sg02_field_projection SET value_text = NULL WHERE control_uid = ?", [uid]);
   }
 
-  console.log(`sg02Workspace: 25 sections passed (${new Date().toISOString()})`);
+  console.log(`sg02Workspace: 28 sections passed (${new Date().toISOString()})`);
   process.exit(0);
 }
 
