@@ -9,10 +9,10 @@ export async function POST(request: Request) {
   const principal = await requireAuth(request);
   if (principal instanceof NextResponse) return principal;
   try {
-    const body = (await request.json()) as { controlUid?: string; actionUid?: string; payload?: string };
+    const body = (await request.json()) as { controlUid?: string; actionUid?: string; payload?: string | Record<string, unknown> };
     const controlUid = String(body.controlUid ?? "");
     const actionUid = String(body.actionUid ?? "");
-    const payload = typeof body.payload === "string" ? body.payload : undefined;
+    const payload = typeof body.payload === "string" ? body.payload : body.payload ? JSON.stringify(body.payload) : undefined;
     if (!knownSg02Action(controlUid, actionUid)) {
       return jsonError("SG02_ACTION_UNAVAILABLE", `Unknown control ${controlUid}`, 404);
     }
