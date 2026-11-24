@@ -464,3 +464,15 @@ Entries discovered by the Agent during task execution should follow this format:
   - qa_acceptance 11 個 FUNC-CTRL 控件測試現為 11/11（7 個 drawer open＋ACT-03-NAV-OPEN 走 getUiProjection 讀模型斷言）；sg02Workspace 28 sections。
   - dev server 跑舊碼排障鏈：Next 16 Turbopack dev 持久快取在 .next/dev/cache/turbopack（不是 ~/.cache）；症狀＝route 202 但 runtime 零寫入＋審計無新特徵字串；解法＝kill dev terminal→mv .next .next.bak-xxx→npm run dev 重編譯；另外 route catch{} 吞錯，加暫時 console.error 才看得到 stack。
   - action route payload 陷阱完整清單：sg02/info/admin-strategy route 都曾 string-only（sg02 已補 object→JSON.stringify 同 info 修法）；probe JSON 檔路徑打錯→curl 空 body→route 500 JSON.parse 錯（先驗證檔案存在再 curl）。
+
+[Project Knowledge Summary]
+- Date: 2026-11-24
+- Context: KB-01 契約缺口補齊（commit f91a9945）：request schema 對齊＋drawer 控件改 modal 流
+- Category: Build Methods | Testing Methods
+- Instructions:
+  - KB-01 契約 schema 閘已對齊：KBSearchRequest 必帶 query+scope、SourceStateChangeRequest 必帶 reason（pause/resume/retire 共用）、CreateACPOSContextCandidateRequest 必帶 evidence_refs（非空陣列）、CreateACPOSLearningCandidateRequest 必帶 experience_refs+limitations、CreateKnowledgeDraftFromExperienceRequest 必帶 experience_refs、ReviewKnowledgeDraftRequest 必帶 mandatory_check_results（三種決策共用，空物件 {} 也拒）。Compare*Request 是 READ_COMPARE：additionalProperties false、不需 idempotency_key（visual SIDE_EFFECT_ACTIONS 不得含 VERSION-COMPARE/REPLAY-COMPARE）。
+  - KB registry 投影列是 camelCase（sourceId/version/status），payload 是 snake_case（source_id/expected_version）——測試取樣時勿混用。
+  - drawer 型控件（SEARCH/CITATION-OPEN/REPLAY-OPEN/INGEST-START/RETRY/CONTEXT-ADD/REMOVE）已改為 modal 收 payload→提交→開 drawer 顯示投影；以無 payload 呼叫 op 開 drawer 會被 schema 閘擋（KB_SCOPE_INVALID）。
+  - /api/admin-knowledge/action route 已接受 object payload（同 info/sg02/admin-strategy 修法）。
+  - dev server HTTP 探針認證：header 路徑查 ghsn_account_session（pattern sess-[a-z0-9-]{6,}；現成 sess-demo-001→ACC-DEMO 已種）；ghsn_identity_session 是 cookie 路徑用，兩表不同。ghsn_account_kb_permission 欄位名是 permission_uid。
+  - npm run build 會重寫 .next 與 dev server（Turbopack）衝突；build 後必須 kill dev→重啟，否則 route 行為混亂。
