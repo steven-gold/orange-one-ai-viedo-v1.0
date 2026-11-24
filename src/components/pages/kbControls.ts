@@ -84,8 +84,8 @@ export interface KbFormField {
 
 // Contract request_schemas: required/optional fields per effectful action.
 export const KB_FORM_SCHEMAS: Record<string, KbFormField[]> = {
-  "CTRL-ADMIN-KB-01-ACT-SEARCH": [{ key: "query", label: "query" }],
-  "CTRL-ADMIN-KB-01-ACT-SEARCH-GLOBAL": [{ key: "query", label: "query" }],
+  "CTRL-ADMIN-KB-01-ACT-SEARCH": [{ key: "query", label: "query", required: true }, { key: "scope", label: "scope", required: true }],
+  "CTRL-ADMIN-KB-01-ACT-SEARCH-GLOBAL": [{ key: "query", label: "query", required: true }, { key: "scope", label: "scope", required: true }],
   "CTRL-ADMIN-KB-01-ACT-SOURCE-CREATE": [
     { key: "name", label: "name", required: true },
     { key: "source_type", label: "source_type", required: true },
@@ -137,6 +137,7 @@ export const KB_FORM_SCHEMAS: Record<string, KbFormField[]> = {
   "CTRL-ADMIN-KB-01-ACT-CONTEXT-CREATE": [
     { key: "purpose", label: "purpose", required: true, area: true },
     { key: "scope", label: "scope", required: true },
+    { key: "evidence_refs", label: "evidence_refs (comma separated)", list: true, required: true },
   ],
   "CTRL-ADMIN-KB-01-ACT-REPLAY-OPEN": [{ key: "experience_id", label: "experience_id", required: true }],
   "CTRL-ADMIN-KB-01-ACT-REPLAY-COMPARE": [
@@ -144,17 +145,17 @@ export const KB_FORM_SCHEMAS: Record<string, KbFormField[]> = {
     { key: "compare_refs", label: "compare_refs (comma separated)", list: true, required: true },
   ],
   "CTRL-ADMIN-KB-01-ACT-LEARNING-CREATE": [
+    { key: "experience_refs", label: "experience_refs (comma separated)", list: true, required: true },
     { key: "scope", label: "scope", required: true },
     { key: "pattern", label: "pattern", required: true, area: true },
     { key: "proposed_improvement", label: "proposed_improvement", required: true, area: true },
-    { key: "limitations", label: "limitations", area: true },
-    { key: "experience_refs", label: "experience_refs (comma separated)", list: true },
+    { key: "limitations", label: "limitations", area: true, required: true },
   ],
   "CTRL-ADMIN-KB-01-ACT-DRAFT-FROM-EXP": [
+    { key: "experience_refs", label: "experience_refs (comma separated)", list: true, required: true },
     { key: "scope", label: "scope", required: true },
     { key: "knowledge_type", label: "knowledge_type", required: true },
     { key: "title_seed", label: "title_seed" },
-    { key: "experience_refs", label: "experience_refs (comma separated)", list: true },
   ],
   "CTRL-ADMIN-KB-01-ACT-DRAFT-SAVE": [
     { key: "knowledge_id", label: "knowledge_id", required: true },
@@ -181,11 +182,13 @@ export const KB_FORM_SCHEMAS: Record<string, KbFormField[]> = {
     { key: "knowledge_id", label: "knowledge_id", required: true },
     { key: "expected_version", label: "expected_version", required: true },
     { key: "review_rationale", label: "review_rationale", required: true, area: true },
+    { key: "mandatory_check_results", label: "mandatory_check_results (JSON)", area: true, required: true },
   ],
   "CTRL-ADMIN-KB-01-ACT-REJECT": [
     { key: "knowledge_id", label: "knowledge_id", required: true },
     { key: "expected_version", label: "expected_version", required: true },
     { key: "review_rationale", label: "review_rationale", required: true, area: true },
+    { key: "mandatory_check_results", label: "mandatory_check_results (JSON)", area: true, required: true },
   ],
 };
 

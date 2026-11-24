@@ -200,7 +200,7 @@ async function main(): Promise<void> {
     ok("scope gate denies source.configure for READONLY");
 
     // 2. READONLY knowledge.read search is allowed.
-    await persistRecordKbAction(READONLY, ACT_SEARCH, "searchKnowledge", JSON.stringify({ query: "" }));
+    await persistRecordKbAction(READONLY, ACT_SEARCH, "searchKnowledge", JSON.stringify({ query: "probe", scope: "governance" }));
     assertEqual((await readError())?.code, undefined, "readonly search allowed");
     ok("READONLY knowledge.read search allowed");
 
@@ -292,14 +292,14 @@ async function main(): Promise<void> {
     assertEqual(basket.length, 1, "basket holds ref");
     // 16. Context add untraceable ref -> citation gate on create.
     await persistRecordKbAction(DEMO, ACT_CONTEXT_ADD, "addContextDraftItem", JSON.stringify({ ref: "https://untraceable.example/no-evidence" }));
-    await persistRecordKbAction(DEMO, ACT_CONTEXT_CREATE, "createContextCandidate", JSON.stringify({ purpose: "Probe", scope: "governance", idempotency_key: idem("ctx-probe") }));
+    await persistRecordKbAction(DEMO, ACT_CONTEXT_CREATE, "createContextCandidate", JSON.stringify({ purpose: "Probe", scope: "governance", evidence_refs: ["CIT-fixture"], idempotency_key: idem("ctx-probe") }));
     assertEqual((await readError())?.code, "KB_CITATION_REQUIRED", "citation gate");
     ok("untraceable context -> KB_CITATION_REQUIRED");
     // 17. Remove untraceable, create candidate with traceable basket.
     await persistRecordKbAction(DEMO, ACT_CONTEXT_REMOVE, "removeContextDraftItem", JSON.stringify({ ref: "https://untraceable.example/no-evidence" }));
     basket = await readRegistry<{ ref: string }>(KB_STATE_BASKET_UID);
     assertEqual(basket.length, 1, "untraceable ref removed");
-    await persistRecordKbAction(DEMO, ACT_CONTEXT_CREATE, "createContextCandidate", JSON.stringify({ purpose: "Governance probe", scope: "governance", idempotency_key: idem("ctx-real") }));
+    await persistRecordKbAction(DEMO, ACT_CONTEXT_CREATE, "createContextCandidate", JSON.stringify({ purpose: "Governance probe", scope: "governance", evidence_refs: ["CIT-fixture"], idempotency_key: idem("ctx-real") }));
     assertEqual((await readError())?.code, undefined, "candidate created");
     const candidates = await readRegistry<Record<string, unknown>>(KB_STATE_CANDIDATES_UID);
     assertEqual(candidates.length, 1, "one candidate");
@@ -324,10 +324,13 @@ async function main(): Promise<void> {
     assertEqual(replay.records.length, 2, "compare records");
     ok("replay compare with two records");
 
-    // 20. Learning gate: fake experience ref -> OUTCOME_PENDING.
-    await persistRecordKbAction(DEMO, ACT_LEARNING_CREATE, "createLearningCandidate", JSON.stringify({ scope: "governance", pattern: "p", proposed_improvement: "i", experience_refs: ["EXP-fake"], idempotency_key: idem("learn-fake") }));
+    // 20. Learning gate: missing limitations -> schema refusal; fake experience ref -> OUTCOME_PENDING.
+    await persistRecordKbAction(DEMO, ACT_LEARNING_CREATE, "createLearningCandidate", JSON.stringify({ scope: "governance", pattern: "p", proposed_improvement: "i", experience_refs: ["EXP-fake"], idempotency_key: idem("learn-schema") }));
+    assertEqual((await readError())?.code, "KB_SCOPE_INVALID", "learning schema requires limitations");
+    ok("learning request schema requires limitations (contract)");
+    await persistRecordKbAction(DEMO, ACT_LEARNING_CREATE, "createLearningCandidate", JSON.stringify({ scope: "governance", pattern: "p", proposed_improvement: "i", limitations: "probe", experience_refs: ["EXP-fake"], idempotency_key: idem("learn-fake") }));
     assertEqual((await readError())?.code, "KB_OUTCOME_PENDING", "learning outcome gate");
-    await persistRecordKbAction(DEMO, ACT_LEARNING_CREATE, "createLearningCandidate", JSON.stringify({ scope: "governance", pattern: "Crawl same-domain only", proposed_improvement: "Raise depth cap for fixture docs", experience_refs: [experienceId], idempotency_key: idem("learn-real") }));
+    await persistRecordKbAction(DEMO, ACT_LEARNING_CREATE, "createLearningCandidate", JSON.stringify({ scope: "governance", pattern: "Crawl same-domain only", proposed_improvement: "Raise depth cap for fixture docs", limitations: "Probe fixture scope only", experience_refs: [experienceId], idempotency_key: idem("learn-real") }));
     assertEqual((await readError())?.code, undefined, "learning created");
     const learning = await readRegistry<Record<string, unknown>>(KB_STATE_LEARNING_UID);
     assertEqual(learning.length, 1, "learning registered");
@@ -390,8 +393,11 @@ async function main(): Promise<void> {
     assertEqual((await readError())?.code, "KB_SOURCE_RIGHTS_INVALID", "missing seed gate");
     ok("source without seed_url -> KB_SOURCE_RIGHTS_INVALID");
 
-    // 28. Search: approved knowledge included with __kind.
+    // 28. Search: approved knowledge included with __kind (KBSearchRequest requires query+scope).
     await persistRecordKbAction(DEMO, ACT_SEARCH_GLOBAL, "searchKnowledge", JSON.stringify({ query: "fixture" }));
+    assertEqual((await readError())?.code, "KB_SCOPE_INVALID", "search schema requires scope");
+    ok("KBSearchRequest scope required (contract)");
+    await persistRecordKbAction(DEMO, ACT_SEARCH_GLOBAL, "searchKnowledge", JSON.stringify({ query: "fixture", scope: "governance" }));
     const searched = await readRegistry<Record<string, string>>(KB_STATE_RESULTS_UID);
     assert(searched.some((row) => row.__kind === "APPROVED_KNOWLEDGE"), "approved knowledge searchable");
     ok("global search matches approved knowledge");
@@ -419,14 +425,49 @@ async function main(): Promise<void> {
       return String(last.knowledge_id);
     };
     const returnId = await makeReviewDraft("return");
-    await persistRecordKbAction(DEMO, ACT_RETURN, "returnKnowledgeDraft", JSON.stringify({ knowledge_id: returnId, expected_version: 1, review_rationale: "Needs more evidence", idempotency_key: idem("return") }));
+    await persistRecordKbAction(DEMO, ACT_RETURN, "returnKnowledgeDraft", JSON.stringify({ knowledge_id: returnId, expected_version: 1, review_rationale: "Needs more evidence", idempotency_key: idem("return-nocheck") }));
+    assertEqual((await readError())?.code, "KB_REVIEW_CHECK_INCOMPLETE", "review schema requires mandatory_check_results");
+    ok("ReviewKnowledgeDraftRequest mandatory_check_results required (contract)");
+    await persistRecordKbAction(DEMO, ACT_RETURN, "returnKnowledgeDraft", JSON.stringify({ knowledge_id: returnId, expected_version: 1, review_rationale: "Needs more evidence", mandatory_check_results: { checklist_reviewed: true }, idempotency_key: idem("return") }));
     drafts = await readRegistry<Record<string, unknown>>(KB_STATE_DRAFTS_UID);
     assertEqual(drafts.find((d) => String(d.knowledge_id) === returnId)?.state, "RETURNED", "draft returned");
     const rejectId = await makeReviewDraft("reject");
-    await persistRecordKbAction(DEMO, ACT_REJECT, "rejectKnowledgeDraft", JSON.stringify({ knowledge_id: rejectId, expected_version: 1, review_rationale: "Duplicate of canon", idempotency_key: idem("reject") }));
+    await persistRecordKbAction(DEMO, ACT_REJECT, "rejectKnowledgeDraft", JSON.stringify({ knowledge_id: rejectId, expected_version: 1, review_rationale: "Duplicate of canon", mandatory_check_results: { duplicate_check: true }, idempotency_key: idem("reject") }));
     drafts = await readRegistry<Record<string, unknown>>(KB_STATE_DRAFTS_UID);
     assertEqual(drafts.find((d) => String(d.knowledge_id) === rejectId)?.state, "REJECTED", "draft rejected");
     ok("return and reject review paths enforced");
+
+    // 30. Contract request-schema gates (KB-01 locked encoding).
+    // SourceStateChangeRequest: source_id + expected_version + reason required.
+    const pauseSource = JSON.parse((await readState(KB_STATE_SOURCES_UID)) ?? "[]").find(
+      (s: Record<string, unknown>) => s.name === "No Seed",
+    ) as Record<string, unknown> | undefined;
+    await persistRecordKbAction(DEMO, ACT_SOURCE_PAUSE, "pauseKnowledgeSource", JSON.stringify({ source_id: pauseSource?.sourceId, expected_version: pauseSource?.version, idempotency_key: idem("pause-noreason") }));
+    assertEqual((await readError())?.code, "KB_SCOPE_INVALID", "state change schema requires reason");
+    ok("SourceStateChangeRequest reason required (contract)");
+    await persistRecordKbAction(DEMO, ACT_SOURCE_PAUSE, "pauseKnowledgeSource", JSON.stringify({ source_id: pauseSource?.sourceId, expected_version: pauseSource?.version, reason: "probe", idempotency_key: idem("pause-real") }));
+    assertEqual((await readError())?.code, undefined, "pause applied");
+    const pausedSource = JSON.parse((await readState(KB_STATE_SOURCES_UID)) ?? "[]").find(
+      (s: Record<string, unknown>) => s.sourceId === pauseSource?.sourceId,
+    ) as Record<string, unknown> | undefined;
+    await persistRecordKbAction(DEMO, ACT_SOURCE_RESUME, "resumeKnowledgeSource", JSON.stringify({ source_id: pausedSource?.sourceId, expected_version: pausedSource?.version, reason: "probe", idempotency_key: idem("resume-real") }));
+    assertEqual((await readError())?.code, undefined, "resume applied");
+    ok("pause/resume honored with reason");
+
+    // 31. CreateACPOSContextCandidateRequest requires evidence_refs.
+    await persistRecordKbAction(DEMO, ACT_CONTEXT_CREATE, "createContextCandidate", JSON.stringify({ purpose: "probe", scope: "governance", selected_refs: ["https://fixture.example/a"], idempotency_key: idem("ctx-noevidence") }));
+    assertEqual((await readError())?.code, "KB_SCOPE_INVALID", "context schema requires evidence_refs");
+    ok("context candidate evidence_refs required (contract)");
+
+    // 32. CreateKnowledgeDraftFromExperienceRequest requires experience_refs.
+    await persistRecordKbAction(DEMO, ACT_DRAFT_FROM_EXP, "createKnowledgeDraftFromExperience", JSON.stringify({ scope: "governance", knowledge_type: "GUIDE", idempotency_key: idem("draft-norefs") }));
+    assertEqual((await readError())?.code, "KB_SCOPE_INVALID", "draft schema requires experience_refs");
+    ok("draft from experience requires experience_refs (contract)");
+
+    // 33. CompareKnowledgeVersionsRequest is READ_COMPARE: no idempotency_key needed.
+    await persistRecordKbAction(DEMO, ACT_VERSION_COMPARE, "compareKnowledgeVersions", JSON.stringify({ knowledge_id: String(drafts[0].knowledge_id), left_version: "1", right_version: "2" }));
+    assertEqual((await readError())?.code, undefined, "version compare without idempotency_key");
+    ok("READ_COMPARE version compare accepts payload without idempotency_key");
 
     // 32. Read model: fields include all STATE keys; account separation lives in
     // the permission table (page reachability is site-wide by design; effectful

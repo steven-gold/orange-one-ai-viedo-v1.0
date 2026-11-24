@@ -377,6 +377,11 @@ export async function applyKbAction(
 }
 
 async function searchKnowledge(payload: Record<string, unknown>): Promise<void> {
+  const missingSearch = requireFields(payload, ["query", "scope"]);
+  if (missingSearch) {
+    await writeError(err("KB_SCOPE_INVALID", `Missing required search field: ${missingSearch}`, "CORRECT_SCOPE"));
+    return;
+  }
   const query = String(payload.query ?? "").trim().toLowerCase();
   const sources = await readSourcesAsync();
   const results = parse<Array<Record<string, unknown>>>(await readField(KB_STATE_RESULTS_UID), []);
@@ -464,6 +469,11 @@ async function updateKnowledgeSource(accountUid: string, controlUid: string, pay
 }
 
 async function changeSourceState(accountUid: string, controlUid: string, payload: Record<string, unknown>, next: KbSourceStatus, required: KbSourceStatus): Promise<void> {
+  const missingState = requireFields(payload, ["source_id", "expected_version", "reason"]);
+  if (missingState) {
+    await writeError(err("KB_SCOPE_INVALID", `Missing required source state field: ${missingState}`, "FIX_SOURCE_GOVERNANCE"));
+    return;
+  }
   const sources = await readSourcesAsync();
   const source = sources.find((s) => s.sourceId === String(payload.source_id ?? ""));
   if (!source) {
@@ -487,6 +497,11 @@ async function changeSourceState(accountUid: string, controlUid: string, payload
 }
 
 async function retireSource(accountUid: string, controlUid: string, payload: Record<string, unknown>): Promise<void> {
+  const missingRetire = requireFields(payload, ["source_id", "expected_version", "reason"]);
+  if (missingRetire) {
+    await writeError(err("KB_SCOPE_INVALID", `Missing required source state field: ${missingRetire}`, "FIX_SOURCE_GOVERNANCE"));
+    return;
+  }
   const sources = await readSourcesAsync();
   const source = sources.find((s) => s.sourceId === String(payload.source_id ?? ""));
   if (!source) {
@@ -668,9 +683,14 @@ async function removeContextDraftItem(payload: Record<string, unknown>): Promise
 }
 
 async function createContextCandidate(accountUid: string, controlUid: string, payload: Record<string, unknown>): Promise<void> {
-  const missing = requireFields(payload, ["purpose", "scope"]);
+  const missing = requireFields(payload, ["purpose", "scope", "evidence_refs"]);
   if (missing) {
     await writeError(err("KB_SCOPE_INVALID", `Missing required context field: ${missing}`, "CORRECT_SCOPE"));
+    return;
+  }
+  const evidenceRefs = Array.isArray(payload.evidence_refs) ? (payload.evidence_refs as string[]) : [];
+  if (evidenceRefs.length === 0) {
+    await writeError(err("KB_SCOPE_INVALID", "evidence_refs >= 1 required (context claims need evidence)", "CORRECT_SCOPE"));
     return;
   }
   const basket = parse<Array<Record<string, string>>>(await readField(KB_STATE_BASKET_UID), []);
@@ -742,12 +762,16 @@ async function compareExperienceReplay(payload: Record<string, unknown>): Promis
 }
 
 async function createLearningCandidate(accountUid: string, controlUid: string, payload: Record<string, unknown>): Promise<void> {
-  const missing = requireFields(payload, ["scope", "pattern", "proposed_improvement"]);
+  const missing = requireFields(payload, ["experience_refs", "scope", "pattern", "proposed_improvement", "limitations"]);
   if (missing) {
     await writeError(err("KB_SCOPE_INVALID", `Missing required learning field: ${missing}`, "CORRECT_SCOPE"));
     return;
   }
   const experienceRefs = Array.isArray(payload.experience_refs) ? (payload.experience_refs as string[]) : [];
+  if (experienceRefs.length === 0) {
+    await writeError(err("KB_OUTCOME_PENDING", "experience_refs >= 1 required (learning needs experience lineage)", "WAIT_FOR_REAL_OUTCOME"));
+    return;
+  }
   const experience = parse<Array<Record<string, unknown>>>(await readField(KB_STATE_EXPERIENCE_UID), []);
   const incomplete = experienceRefs.filter((ref) => {
     const record = experience.find((e) => String(e.experience_id ?? "") === ref);
@@ -775,12 +799,16 @@ async function createLearningCandidate(accountUid: string, controlUid: string, p
 }
 
 async function createKnowledgeDraftFromExperience(accountUid: string, controlUid: string, payload: Record<string, unknown>): Promise<void> {
-  const missing = requireFields(payload, ["scope", "knowledge_type"]);
+  const missing = requireFields(payload, ["experience_refs", "scope", "knowledge_type"]);
   if (missing) {
     await writeError(err("KB_SCOPE_INVALID", `Missing required draft field: ${missing}`, "CORRECT_SCOPE"));
     return;
   }
   const experienceRefs = Array.isArray(payload.experience_refs) ? (payload.experience_refs as string[]) : [];
+  if (experienceRefs.length === 0) {
+    await writeError(err("KB_OUTCOME_PENDING", "experience_refs >= 1 required (draft needs experience lineage)", "WAIT_FOR_REAL_OUTCOME"));
+    return;
+  }
   const experience = parse<Array<Record<string, unknown>>>(await readField(KB_STATE_EXPERIENCE_UID), []);
   const pending = experienceRefs.filter((ref) => {
     const record = experience.find((e) => String(e.experience_id ?? "") === ref);
@@ -866,9 +894,18 @@ async function compareKnowledgeVersions(payload: Record<string, unknown>): Promi
 }
 
 async function reviewKnowledgeDraft(accountUid: string, controlUid: string, payload: Record<string, unknown>, decision: "APPROVED" | "RETURNED" | "REJECTED"): Promise<void> {
-  const missing = requireFields(payload, ["knowledge_id", "expected_version", "review_rationale"]);
+  const missing = requireFields(payload, ["knowledge_id", "expected_version", "review_rationale", "mandatory_check_results"]);
   if (missing) {
     await writeError(err("KB_REVIEW_CHECK_INCOMPLETE", `Missing required review field: ${missing}`, "COMPLETE_REVIEW_CHECKLIST"));
+    return;
+  }
+  const checkResults = payload.mandatory_check_results;
+  const checkOk =
+    (typeof checkResults === "string" && checkResults.trim().length > 0 && checkResults.trim() !== "{}") ||
+    (Array.isArray(checkResults) && checkResults.length > 0) ||
+    (checkResults !== null && typeof checkResults === "object" && Object.keys(checkResults as Record<string, unknown>).length > 0);
+  if (!checkOk) {
+    await writeError(err("KB_REVIEW_CHECK_INCOMPLETE", "mandatory_check_results must record at least one check outcome", "COMPLETE_REVIEW_CHECKLIST"));
     return;
   }
   const drafts = parse<Array<Record<string, unknown>>>(await readField(KB_STATE_DRAFTS_UID), []);

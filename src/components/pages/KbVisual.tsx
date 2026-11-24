@@ -133,7 +133,8 @@ const SIDE_EFFECT_ACTIONS = new Set([
   "CTRL-ADMIN-KB-01-ACT-LEARNING-CREATE",
   "CTRL-ADMIN-KB-01-ACT-DRAFT-FROM-EXP",
   "CTRL-ADMIN-KB-01-ACT-DRAFT-SAVE",
-  "CTRL-ADMIN-KB-01-ACT-VERSION-COMPARE",
+  // CompareKnowledgeVersionsRequest / CompareExperienceReplayRequest are
+  // READ_COMPARE operations: additionalProperties false, no idempotency_key.
   "CTRL-ADMIN-KB-01-ACT-APPROVE",
   "CTRL-ADMIN-KB-01-ACT-RETURN",
   "CTRL-ADMIN-KB-01-ACT-REJECT",
@@ -247,13 +248,6 @@ export function KbVisual() {
     void act(KB_VIEW_CONTROLS[next]);
   };
 
-  const openDrawer = (next: KbDrawer, uid: string) => {
-    lastFocusedRef.current = document.activeElement as HTMLElement | null;
-    setDrawer(next);
-    setFormValues({});
-    void act(uid);
-  };
-
   const openModal = (uid: string) => {
     lastFocusedRef.current = document.activeElement as HTMLElement | null;
     setModalUid(uid);
@@ -283,30 +277,29 @@ export function KbVisual() {
     }
     if (SIDE_EFFECT_ACTIONS.has(uid)) payload.idempotency_key = `idem-${uid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     closeModal();
+    const drawer = DRAWER_FOR_CONTROL[uid];
+    if (drawer) {
+      setDrawer(drawer);
+      void act(uid, JSON.stringify(payload));
+      return;
+    }
     void act(uid, JSON.stringify(payload));
   };
 
+  // Drawer-bound controls collect their request payload through the modal,
+  // then the drawer displays the projection the operation produced.
+  const DRAWER_FOR_CONTROL: Record<string, KbDrawer> = {
+    "CTRL-ADMIN-KB-01-ACT-SEARCH": "search",
+    "CTRL-ADMIN-KB-01-ACT-SEARCH-GLOBAL": "search",
+    "CTRL-ADMIN-KB-01-ACT-CITATION-OPEN": "citation",
+    "CTRL-ADMIN-KB-01-ACT-REPLAY-OPEN": "replay",
+    "CTRL-ADMIN-KB-01-ACT-INGEST-START": "ingestion",
+    "CTRL-ADMIN-KB-01-ACT-INGEST-RETRY": "ingestion",
+    "CTRL-ADMIN-KB-01-ACT-CONTEXT-ADD": "basket",
+    "CTRL-ADMIN-KB-01-ACT-CONTEXT-REMOVE": "basket",
+  };
+
   const onAction = (uid: string) => {
-    if (uid === "CTRL-ADMIN-KB-01-ACT-SEARCH" || uid === "CTRL-ADMIN-KB-01-ACT-SEARCH-GLOBAL") {
-      openDrawer("search", uid);
-      return;
-    }
-    if (uid === "CTRL-ADMIN-KB-01-ACT-CITATION-OPEN") {
-      openDrawer("citation", uid);
-      return;
-    }
-    if (uid === "CTRL-ADMIN-KB-01-ACT-REPLAY-OPEN") {
-      openDrawer("replay", uid);
-      return;
-    }
-    if (uid === "CTRL-ADMIN-KB-01-ACT-INGEST-START" || uid === "CTRL-ADMIN-KB-01-ACT-INGEST-RETRY") {
-      openDrawer("ingestion", uid);
-      return;
-    }
-    if (uid === "CTRL-ADMIN-KB-01-ACT-CONTEXT-ADD" || uid === "CTRL-ADMIN-KB-01-ACT-CONTEXT-REMOVE") {
-      openDrawer("basket", uid);
-      return;
-    }
     if (KB_FORM_SCHEMAS[uid]) {
       openModal(uid);
       return;
